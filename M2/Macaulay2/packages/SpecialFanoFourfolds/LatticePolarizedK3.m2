@@ -150,7 +150,7 @@ globalAssignment EmbeddedK3SurfaceFromDoublySpecialCubicFourfold;
 EmbeddedK3SurfaceFromDoublySpecialCubicFourfold.synonym = "K3 surface";
 
 embeddedK3SurfaceFromDoublySpecialCubicFourfold = method(TypicalValue => EmbeddedK3SurfaceFromDoublySpecialCubicFourfold);
-embeddedK3SurfaceFromDoublySpecialCubicFourfold (K3SurfaceFromDoublySpecialCubicFourfold,MultirationalMap,MultiprojectiveVariety,Matrix) := (E,h,D,A) -> (
+embeddedK3SurfaceFromDoublySpecialCubicFourfold (K3SurfaceFromDoublySpecialCubicFourfold,RationalMap,MultiprojectiveVariety,Matrix) := (E,h,D,A) -> (
     assert(dim D == 1 and dim image h == 2 and isSubset(D,image h));
     L := new LatticePolarizationOnK3Surface from {
         symbol cache => new CacheTable,

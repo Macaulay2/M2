@@ -88,14 +88,14 @@ cubicFourfold (String,Ring) := o -> (str,K) -> (
     );
     if str === "3-nodal septic scroll" or str === "Farkas-Verra C26" then (
         t := gens ring PP_K^2;
-        f := multirationalMap legacyRationalMap(ring PP_K^2,ring PP_K^8,{t_0^5, t_0^4*t_1, t_0^3*t_1^2, t_0^2*t_1^3, t_0^4*t_2, t_0^3*t_1*t_2, t_0^2*t_1^2*t_2, t_0*t_1^3*t_2, t_1^4*t_2});
+        f := rationalMap legacyRationalMap(ring PP_K^2,ring PP_K^8,{t_0^5, t_0^4*t_1, t_0^3*t_1^2, t_0^2*t_1^3, t_0^4*t_2, t_0^3*t_1*t_2, t_0^2*t_1^2*t_2, t_0*t_1^3*t_2, t_1^4*t_2});
         f = f * rationalMap linearSpan apply(3,i -> point linearSpan {f point source f,f point source f});
         X = cubicFourfold(image f,NumNodes=>3,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#(surface X,"label") = "FarkasVerra";
         return X;
     );
    if str === "one-nodal septic del Pezzo surface" then (
-       g := multirationalMap legacyRationalMap(ring PP_K^2,{3,2});
+       g := rationalMap legacyRationalMap(ring PP_K^2,{3,2});
        g = g * legacyRationalMap(ring target g,ring PP_K^5,gens ideal linearSpan {point target g,point linearSpan {g point source g,g point source g}});
        X = cubicFourfold(image g,NumNodes=>1,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
        X.cache#(surface X,"label") = "oneNodalSepticDelPezzoSurfaceC26";
@@ -314,7 +314,7 @@ unirationalParametrization (CubicFourfold,EmbeddedProjectiveVariety) := (X,L) ->
     Kr := ringP1xP3[r];
     P := first first entries gens sub(ideal X,apply(gens ringP5,flatten entries(submatrix(sub(M,Kr),{0}) + r*submatrix(sub(M,Kr),{1})),(v,v') -> v => v'));
     psi := legacyRationalMap(ringP1xP3,ringP5,transpose(coefficient(r^3,P) * submatrix(M,{0}) - coefficient(r^2,P) * submatrix(M,{1})));
-    Psi := multirationalMap({parametrize psi},X);
+    Psi := rationalMap({parametrize psi},X);
     if not isSubset(Psi point source Psi,X) then error "internal error encountered";
     Psi
 );
@@ -325,8 +325,8 @@ randomS42data = method();
 randomS42data Ring := K -> (
     p := apply(5,i -> point PP_K^2);
     f := (rationalMap(p_0 + p_2 + p_3 + p_4,2)) | (rationalMap(p_0 + p_1,2));
-    s := multirationalMap segre target f;
-    f = multirationalMap segre f;
+    s := rationalMap segre target f;
+    f = rationalMap segre f;
     L := linearSpan {f point source f,f point source f};
     j := parametrize random(1,L);
     pr := rationalMap point (j^^ L);

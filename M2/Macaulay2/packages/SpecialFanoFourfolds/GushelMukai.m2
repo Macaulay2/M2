@@ -396,7 +396,7 @@ random GushelMukaiFourfold := o -> X -> (
     X'
 );
 
-toGrass = method(TypicalValue => MultirationalMap);
+toGrass = method(TypicalValue => RationalMap);
 
 toGrass EmbeddedProjectiveVariety := (cacheValue "toGrass") (X -> (
     K := coefficientRing X;
@@ -414,7 +414,7 @@ toGrass EmbeddedProjectiveVariety := (cacheValue "toGrass") (X -> (
         j := toGrass Var sub(ideal X',K[flatten entries submatrix'(vars ring ambient X,{0})]);
         y0 := local y0;
         coneG := quotient sub(ideal target j,K[y0,gens ring ambient target j]);
-        J := multirationalMap(
+        J := rationalMap(
                  legacyRationalMap(ring X,ring X',matrix first factor inverse f) *
                  legacyRationalMap(ring X',coneG,matrix{{first gens ring ambient X}}|sub(lift(matrix first factor j,ring ambient source j),ring ambient X))
              );
@@ -438,7 +438,7 @@ toGrass GushelMukaiFourfold := (cacheValue "toGrass") (X -> ( -- for better docu
     psi := toGrass Y;
     if dim singLocus Y == -1 then return psi|X;
     K := coefficientRing X;
-    check multirationalMap((psi|X) * legacyRationalMap(ring target psi,ring GG(K,1,4),submatrix'(vars ring ambient target psi,{0})),GG(K,1,4))
+    check rationalMap((psi|X) * legacyRationalMap(ring target psi,ring GG(K,1,4),submatrix'(vars ring ambient target psi,{0})),GG(K,1,4))
 ));
 
 isAdmissibleGM = method();
@@ -525,7 +525,7 @@ unirationalParametrization GushelMukaiFourfold := (cacheValue "unirationalParame
     el := legacyRationalMap((map e) * (map l));
     el = legacyRationalMap(source el,target el,(lcm apply(flatten entries sub(last coefficients matrix el,K''),denominator)) * (matrix el));
     psi := legacyRationalMap(ringP2xP2,ring ambient X,sub(transpose coefficients el,ringP2xP2));
-    Psi := multirationalMap({parametrize psi},X);
+    Psi := rationalMap({parametrize psi},X);
     if not isSubset(Psi point source Psi,X) then error "internal error encountered";
     Psi
 ));
@@ -555,14 +555,14 @@ GMtables = method(Options => {Verify => true});
 GMtables (ZZ,Ring) := o -> (i,K) -> (
     if i < 1 or i > 21 then error "expected an integer between 1 and 21";
     t := gens ring PP_K^2;
-    s := multirationalMap legacyRationalMap(ring PP_K^2,ring PP_K^5,{t_0^2,t_0*t_1,t_1^2,t_0*t_2,t_1*t_2,0});
+    s := rationalMap legacyRationalMap(ring PP_K^2,ring PP_K^5,{t_0^2,t_0*t_1,t_1^2,t_0*t_2,t_1*t_2,0});
     S := image s;
     p0 := Var ideal(t_0,t_1); -- base point of s
     assert(p0 == baseLocus s);
     x := gens ring PP_K^5;
     L0 := Var ideal(x_0,x_1,x_2,x_5); -- directrix line of S
     u := gens ring PP_K^3;
-    b := multirationalMap legacyRationalMap(ring PP_K^3,ring PP_K^5,{u_0^3*u_1-u_0*u_1^3, u_0^2*u_1^2-u_0*u_1^3+u_0^3*u_2-u_1^3*u_3, u_0^2*u_1*u_2-u_1^3*u_3, -u_0^2*u_1^2+u_0*u_1^3+u_0*u_1^2*u_2-u_1^3*u_3, u_0^2*u_1*u_3-u_1^3*u_3, u_0^2*u_1^2-u_0*u_1^3+u_0*u_1^2*u_3-u_1^3*u_3});
+    b := rationalMap legacyRationalMap(ring PP_K^3,ring PP_K^5,{u_0^3*u_1-u_0*u_1^3, u_0^2*u_1^2-u_0*u_1^3+u_0^3*u_2-u_1^3*u_3, u_0^2*u_1*u_2-u_1^3*u_3, -u_0^2*u_1^2+u_0*u_1^3+u_0*u_1^2*u_2-u_1^3*u_3, u_0^2*u_1*u_3-u_1^3*u_3, u_0^2*u_1^2-u_0*u_1^3+u_0*u_1^2*u_3-u_1^3*u_3});
     B := image b;
     E := (Var ideal(u_0,u_1), Var ideal(u_3,u_0), Var ideal(u_2,u_1), Var ideal(u_2-u_3,u_0-u_1)); -- base locus of b: E_0 triple line, E_1,E_2,E_3 simple lines
     assert(⋃ {3*E_0,E_1,E_2,E_3} == baseLocus b);
@@ -748,7 +748,7 @@ GMtables (ZZ,Ring) := o -> (i,K) -> (
         v = rationalMap(⋃ p,4) << PP_K^5;
         V = image v;
         j = (inverse rationalMap((p_0)_(random({2},⋃ take(p,5))))) * v;
-        j = multirationalMap(j,image j);
+        j = rationalMap(j,image j);
         (target j).cache#"rationalParametrization" = j;
         D = image j;
         phi = findIsomorphism(D,C,Verify=>o.Verify);
@@ -913,7 +913,7 @@ makeGMfromCurveOnSurfaceInP6 EmbeddedProjectiveVariety := o -> C -> (
        # select(degs,d -> d == 3) < o.Degrees#3_0 or # select(degs,d -> d == 3) > o.Degrees#3_1
     then error "request on the degrees is not satisfied";
     if o.InputCheck >= 2 then (
-        if isIsomorphism multirationalMap(psi|S,V) then (
+        if isIsomorphism rationalMap(psi|S,V) then (
             if S.cache#?"FiniteNumberOfNodes" and S.cache#"FiniteNumberOfNodes" == 0 then (V.cache#"top" = V; V.cache#"singularLocus" = 0_V);
             if S.cache#?"FiniteNumberOfNodes" and S.cache#"FiniteNumberOfNodes" > 0 then V.cache#"FiniteNumberOfNodes" = S.cache#"FiniteNumberOfNodes";
             V.cache#"euler" = eulerCharacteristic S;
@@ -1013,7 +1013,7 @@ glueScroll' EmbeddedProjectiveVariety := C -> (
 );
 
 CubicScroll = memoize(K -> (
-    s := (multirationalMap segre parametrize(PP_K^1 ** PP_K^2)) << PP_K^6;
+    s := (rationalMap segre parametrize(PP_K^1 ** PP_K^2)) << PP_K^6;
     p := (baseLocus s)\top baseLocus s;
     L := top baseLocus s;
     assert(baseLocus s == L + p and dim(L*p) == -1 and dim L == 1 and degree L == 1 and dim p == 0 and degree p == 1);

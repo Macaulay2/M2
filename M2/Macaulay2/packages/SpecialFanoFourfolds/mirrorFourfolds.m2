@@ -69,7 +69,7 @@ surfaceDeterminingInverseOfFanoMap DoublySpecialCubicFourfold := o -> X -> (
         );
     ) else if Str === "Approximate" then (
         if o.Verbose then << "-- computing approximate inverse of the restricted map..." << endl << flush;
-        eta = multirationalMap approximateInverseMap(toLegacyRationalMap mu',Verbose=>o.Verbose,Certify=>false);
+        eta = rationalMap approximateInverseMap(toLegacyRationalMap mu',Verbose=>o.Verbose,Certify=>false);
         if o.Verbose then << "-- approximate inverse computed: defined by forms of degree " << degreeOfDefiningForms eta << endl << flush;
     ) else (
         error("invalid strategy: '" | toString(Str) | "'; available options are \"Inverse\" or \"Approximate\"");

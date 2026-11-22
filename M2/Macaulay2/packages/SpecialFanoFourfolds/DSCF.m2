@@ -22,7 +22,7 @@ specialFourfold (PairOfSurfaces,EmbeddedProjectiveVariety) := cubicFourfold (Pai
     (nS,nT) := if instance(o.NumNodes,VisibleList) and # o.NumNodes == 2 then toSequence o.NumNodes else (o.NumNodes,o.NumNodes);
     Y := cubicFourfold(T,X,NumNodes=>nT,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
     Z := new DoublySpecialCubicFourfold from cubicFourfold(S,Y,NumNodes=>nS,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
-    Z.cache#"parentCubicFourfold" = Y;
+    Z.cache#(S,T,"parentCubicFourfold") = Y;
     assert(surface Z === S and surface Y === T and take(Z#"SurfaceContainedInTheFourfold",2) === {S,T});
     if dim(S * T) == 2 then error "intersection of the two surfaces has dimension 2 (unsupported)";
     Z
@@ -56,7 +56,7 @@ rationalSurfaceWithAttachedPlaneInCubicFourfold (EmbeddedProjectiveVariety,Visib
         << "-- from points on the linear span of" << endl;
         << "  -- " << ? C << endl;
     );
-    piLin := if dim linearSpan S > 5 then rationalMap linearSpan apply(dim linearSpan S - 5, i -> point linearSpan C) else multirationalMap(ambient S,ambient S);
+    piLin := if dim linearSpan S > 5 then rationalMap linearSpan apply(dim linearSpan S - 5, i -> point linearSpan C) else rationalMap(ambient S,ambient S);
     if dim target piLin != 5 then error "linear projection failed, target dimension is not 5";
     f := (super parametrize S) * piLin;
     S' := new RationalSurfaceWithAttachedPlaneInCubicFourfold from image f;
@@ -111,6 +111,11 @@ specialFourfold RationalSurfaceWithAttachedPlaneInCubicFourfold := cubicFourfold
 surfaces = method();
 surfaces DoublySpecialCubicFourfold := X -> toSequence take(X#"SurfaceContainedInTheFourfold",2);
 
+parentCubicFourfold = X -> (
+    (S,T) := surfaces X;
+    X.cache#(S,T,"parentCubicFourfold")
+);
+
 netTexDescription DoublySpecialCubicFourfold := o -> X -> (
     if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (
         toString getAttribute(X,ReverseDictionary),
@@ -150,10 +155,8 @@ netTexDescription DoublySpecialCubicFourfold := o -> X -> (
 );
 
 describe DoublySpecialCubicFourfold := X -> (
-    (S,T) := surfaces X;
-    Y := X.cache#"parentCubicFourfold";
     d1 := discriminant X;
-    d2 := discriminant Y;
+    d2 := discriminant parentCubicFourfold X;
     A := latticeIntersectionMatrix3x3 X;
     (q,r) := quotientRemainder(det A,8);
     Cd1Cd2 := "C_" | (toString d1);
@@ -166,6 +169,7 @@ describe DoublySpecialCubicFourfold := X -> (
     netDescr = netDescr || ((net(newline | "det(")) | (net A) | (net(newline | ") = " | (toString det A) | " = " | (toString q) | "*8 + " | (toString r))));
     texDescr := "\\begin{aligned}&\\text{Cubic fourfold in }" | texCd1Cd2 | "\\text{ over }" | (texMath coefficientRing X) | "\\text{ of lattice discriminant}";
     texDescr = texDescr | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath det A) | " = " | (texMath q) | "\\cdot 8 + " | (texMath r);
+    (S,T) := surfaces X;
     numberNodes(S,Verbose=>false);
     numberNodes(T,Verbose=>false);
     (netS,texS) := netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true,"Indent"=>3);
@@ -218,9 +222,8 @@ describe DoublySpecialCubicFourfold := X -> (
 
 shortDescriptionFourfold (DoublySpecialCubicFourfold,Boolean) := (X,UseAttribute) -> (
     if UseAttribute and hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
-    Y := X.cache#"parentCubicFourfold";
     d1 := discriminant X;
-    d2 := discriminant Y;
+    d2 := discriminant parentCubicFourfold X;
     Cd1Cd2 := "C_"|(toString d1);
     if d1 != d2 then Cd1Cd2 = Cd1Cd2|" ∩ C_"|(toString d2);
     "cubic fourfold in "|Cd1Cd2
@@ -228,9 +231,8 @@ shortDescriptionFourfold (DoublySpecialCubicFourfold,Boolean) := (X,UseAttribute
 
 shortDescriptionFourfoldTeX (DoublySpecialCubicFourfold,Boolean) := (X,UseAttribute) -> (
     if UseAttribute and hasAttribute(X,ReverseDictionary) then return shortTeX texMath getAttribute(X,ReverseDictionary);
-    Y := X.cache#"parentCubicFourfold";
     d1 := discriminant X;
-    d2 := discriminant Y;
+    d2 := discriminant parentCubicFourfold X;
     Cd1Cd2 := "\\mathcal{C}_{" | (texMath d1) | "}";
     if d1 != d2 then Cd1Cd2 = Cd1Cd2 | "\\cap\\mathcal{C}_{" | (texMath d2) | "}";
     shortTeX("\\text{cubic fourfold in }" | Cd1Cd2)
@@ -266,7 +268,7 @@ latticeIntersectionMatrix3x3 DoublySpecialCubicFourfold := X -> (
     if X.cache#?(S,T,"LatticeIntersectionMatrix3x3") then return X.cache#(S,T,"LatticeIntersectionMatrix3x3");
     d1 := discriminant X;
     MS := X.cache#(S,"LatticeIntersectionMatrix");
-    Y := X.cache#"parentCubicFourfold";
+    Y := parentCubicFourfold X;
     d2 := discriminant Y;
     MT := Y.cache#(T,"LatticeIntersectionMatrix");
     h2sq := MS_(0,0);   -- (H^2)^2 = deg X (= 3)
@@ -423,7 +425,7 @@ parameterCount DoublySpecialCubicFourfold := o -> X -> (
     if o.Verbose then << endl << "-- moduli count for " << numPts << " points in ℙ²: " << modCountPts << endl;
     dimGrass := (n-5)*(r-n+6); -- dim GG(n-6,PP^r)
     numPts2 := sum toList drop(dj1j2j3,1);
-    m := dim target multirationalMap legacyRationalMap(ring(PP_(coefficientRing X)^2), {first dj1j2j3, numPts2});
+    m := dim target rationalMap legacyRationalMap(ring(PP_(coefficientRing X)^2), {first dj1j2j3, numPts2});
     if o.Verbose then << "-- dimension of the space of plane curves of degree " << first dj1j2j3 << " passing through " << numPts2 << " general points: " << m << endl;
     if n > 5 and o.Verbose then << "-- dim GG(" << n-6 << "," << r << ") = " << dimGrass << endl;
     dimAutS := max(0, 8 - 2*numPts);
@@ -879,7 +881,7 @@ runExampleTest = (i,charK,degS,gS,dX,degU,gU,chiOU,ambW,degW,gW,degL,degC,gK3,M)
     describe X;
     assert(X.cache#(S,P,"labelDSCF") === "DSCF-V1-"|toString(i));
     assert(degree P == 1 and degree S == degS and sectionalGenus S == gS);
-    assert(discriminant X == dX and discriminant X.cache#"parentCubicFourfold" == 8);
+    assert(discriminant X == dX and discriminant X.cache#(S,P,"parentCubicFourfold") == 8);
     assert(computationStatus X == -1);
     E := polarizedK3surface(X,Verbose=>true);
     assert sanityCheckDSCF E;

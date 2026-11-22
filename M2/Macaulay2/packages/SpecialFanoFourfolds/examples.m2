@@ -486,7 +486,7 @@ fanoFourfold (ZZ,ZZ) := o -> (d,g) -> (
     return X;
 );
 
-parametrizeFanoFourfold = method(TypicalValue => MultirationalMap, Options => {Strategy => 1});
+parametrizeFanoFourfold = method(TypicalValue => RationalMap, Options => {Strategy => 1});
 parametrizeFanoFourfold EmbeddedProjectiveVariety := o -> X -> (
     X#InverseMethod = inverse3;
     if dim X != 4 then error "expected a fourfold";
@@ -496,7 +496,7 @@ parametrizeFanoFourfold EmbeddedProjectiveVariety := o -> X -> (
         p := point X;
         C := line(X,p) + line(X,p);
         if degree C != 2 then error "something went wrong while finding conic on fourfold";
-        return inverse3 multirationalMap legacyRationalMap(sub(ideal C,ring X),1);
+        return inverse3 rationalMap legacyRationalMap(sub(ideal C,ring X),1);
     );
     if o.Strategy =!= 1 then error "strategy not available";
     parametrize X
