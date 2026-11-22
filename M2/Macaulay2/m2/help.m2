@@ -154,7 +154,7 @@ descendants' = T -> flatten prepend(L := subobjects T, apply(L, descendants'))
 
 -- specialized templates for documentation nodes
 documentationValue := method(TypicalValue => Hypertext)
-documentationValue(Symbol, Thing) := (S, X) -> ()
+documentationValue(Symbol, Thing) := (S, X) -> null
 -- e.g. Macaulay2Doc :: MethodFunction
 documentationValue(Symbol, Type)  := (S, T) -> (
     -- catch when an unexported type is documented; TODO: where should this be caught?
