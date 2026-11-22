@@ -13,9 +13,9 @@ TEST ///  --- quadro-quadric Cremona transformations
 ///
 
 TEST ///
-    for i from 1 to 11 do assert(degrees specialQuadraticTransformation i === projectiveDegrees rationalMap map specialQuadraticTransformation(i,ZZ/33331))
-    for i from 1 to 11 do assert isBirational rationalMap map specialQuadraticTransformation(i,ZZ/3331)
-    for i from 1 to 11 do assert isDominant rationalMap map specialQuadraticTransformation(i,ZZ/3331)
+    for i from 1 to 11 do assert(degrees specialQuadraticTransformation i === projectiveDegrees legacyRationalMap map specialQuadraticTransformation(i,ZZ/33331))
+    for i from 1 to 11 do assert isBirational legacyRationalMap map specialQuadraticTransformation(i,ZZ/3331)
+    for i from 1 to 11 do assert isDominant legacyRationalMap map specialQuadraticTransformation(i,ZZ/3331)
 ///
     
 TEST /// -- Hankel matrices
@@ -41,7 +41,7 @@ TEST /// -- Hankel matrices
 
 TEST ///  -- special map P^8 ---> P^11
     Phi = specialQuadraticTransformation(8,ZZ/3331)
-    phi = map rationalMap Phi;
+    phi = map legacyRationalMap Phi;
     Z = ideal target Phi;
     time assert(kernel(phi,2) == Z)
     time assert(projectiveDegrees phi == {1, 2, 4, 8, 16, 23, 23, 16, 8})
@@ -59,10 +59,10 @@ TEST ///  -- special map P^8 ---> P^11
 TEST /// -- a quadric surface bundle in P^2 x P^5
 K := ZZ/3331; P2xP5 := K[t_0..t_2,x_2..x_7,Degrees=>{3:{1,0},6:{0,1}}]; P5 := K[y_0..y_5];
 J = ideal(t_1*x_5-t_2*x_5-t_0*x_7-2*t_1*x_7-2*t_2*x_7,t_2*x_4-t_0*x_6-2*t_1*x_6-2*t_2*x_6,t_2*x_2^2+t_1*x_3^2+t_0*x_5^2+t_1*x_4*x_6+t_0*x_7^2+2*t_1*x_7^2+2*t_2*x_7^2);
-p1 = (rationalMap {t_0,t_1,t_2})|J
-p2 = rationalMap((rationalMap(P2xP5,P5,{x_7,x_6,x_5,x_4,x_3,x_2}))|source(p1),Dominant=>4)
-phi = rationalMap {8*y_2^2*y_3-4*y_1*y_3^2-4*y_3*y_4^2,-16*y_2^3+4*y_1*y_2*y_3+4*y_2*y_4^2+4*y_2*y_5^2,-4*y_2*y_3*y_5,-4*y_2*y_3*y_4,-4*y_2*y_3^2,-4*y_2^2*y_3,-4*y_1*y_2*y_3,-4*y_0*y_2*y_3}
-phi = rationalMap(phi|(target p2),Dominant=>2)
+p1 = (legacyRationalMap {t_0,t_1,t_2})|J
+p2 = legacyRationalMap((legacyRationalMap(P2xP5,P5,{x_7,x_6,x_5,x_4,x_3,x_2}))|source(p1),Dominant=>4)
+phi = legacyRationalMap {8*y_2^2*y_3-4*y_1*y_3^2-4*y_3*y_4^2,-16*y_2^3+4*y_1*y_2*y_3+4*y_2*y_4^2+4*y_2*y_5^2,-4*y_2*y_3*y_5,-4*y_2*y_3*y_4,-4*y_2*y_3^2,-4*y_2^2*y_3,-4*y_1*y_2*y_3,-4*y_0*y_2*y_3}
+phi = legacyRationalMap(phi|(target p2),Dominant=>2)
 assert(projectiveDegrees phi == {4, 7, 8, 8, 8})
 assert(isBirational(phi,Certify=>true))
 assert(degrees phi == {4, 7, 8, 8, 8})
@@ -133,13 +133,13 @@ TEST ///
 ///
 
 TEST ///
-  phi = rationalMap map specialCremonaTransformation(3,ZZ/33331);
+  phi = legacyRationalMap map specialCremonaTransformation(3,ZZ/33331);
   phi' = abstractRationalMap phi;
   psi' = inverseMap phi'
-  psi = rationalMap psi';
+  psi = legacyRationalMap psi';
   assert isInverseMap(phi,psi)
   Phi' = abstractRationalMap(source phi',target phi',q -> phi' q)
-  assert(phi == rationalMap Phi')
+  assert(phi == legacyRationalMap Phi')
 ///
 
 TEST ///
@@ -149,7 +149,7 @@ P3 = K[x_0..x_3];
 C = minors(2,matrix{{x_0,x_1,x_2},{x_1,x_2,x_3}}); 
 f = abstractRationalMap(C,"OADP")
 assert(3 == projectiveDegrees(f,2))
-B = ideal rationalMap f;
+B = ideal legacyRationalMap f;
 assert(B:C == C)
 -- Scroll surface S(2,2)
 P5 = K[x_0..x_5];
@@ -164,12 +164,12 @@ assert(5 == projectiveDegrees(h,4))
 
 TEST /// -- bug fixed in inverseMap (25/01/2019)
    x := local x; P2 := (ZZ/65521)[x_0..x_2];
-   f = rationalMap(P2,{6,1,7});
+   f = legacyRationalMap(P2,{6,1,7});
    S = image f;
    p = for i to 2 list random(ZZ/65521);
    J = sub(transpose jacobian matrix f,{x_0=>p_0,x_1=>p_1,x_2=>p_2});
-   T = image rationalMap(P2,target f,transpose(J*(transpose vars P2)));
-   h = (rationalMap T)|S;
+   T = image legacyRationalMap(P2,target f,transpose(J*(transpose vars P2)));
+   h = (legacyRationalMap T)|S;
    assert isDominant(h,Certify=>true)
    assert(degreeMap h == 2)
    assert(try inverseMap h else true)
@@ -179,12 +179,12 @@ TEST /// -- bug fixed in inverseMap (25/01/2019)
 
 TEST /// -- graph of inverse map
 P5 := ZZ/100003[x_0..x_5];
-phi = rationalMap(minors(2,matrix{{x_0,x_1,x_2,x_3,x_4},{x_1,x_2,x_3,x_4,x_5}}),Dominant=>2);
+phi = legacyRationalMap(minors(2,matrix{{x_0,x_1,x_2,x_3,x_4},{x_1,x_2,x_3,x_4,x_5}}),Dominant=>2);
 (p1,p2) = graph phi;
 (q1,q2) = graph inverse phi;
 assert(q1 * inverse phi == q2 and q2 * phi == q1 and p1 * phi == p2 and p2 * inverse phi == p1)
 Bl = ideal source q1;
-Bl' = ideal source first graph rationalMap map inverse phi;
+Bl' = ideal source first graph legacyRationalMap map inverse phi;
 assert(sub(Bl,vars ring Bl') == Bl' and sub(Bl',vars ring Bl) == Bl)
 --
 phi = specialCubicTransformation(2,ZZ/100003);
@@ -192,7 +192,21 @@ phi = specialCubicTransformation(2,ZZ/100003);
 (q1,q2) = graph inverse phi;
 assert(q1 * inverse phi == q2 and q2 * phi == q1 and p1 * phi == p2 and p2 * inverse phi == p1)
 Bl = ideal source q1;
-Bl' = ideal source first graph rationalMap map inverse phi;
+Bl' = ideal source first graph legacyRationalMap map inverse phi;
 assert(sub(Bl,vars ring Bl') == Bl' and sub(Bl',vars ring Bl) == Bl)
 ///
 
+TEST /// -- deprecated synonyms RationalMap and rationalMap (up to version 5.2.1)
+    assert(RationalMap === LegacyRationalMap)
+    assert(toString LegacyRationalMap == "LegacyRationalMap")
+    assert(toString class segre(ZZ/101[x_0,x_1,y_0,y_1,Degrees=>{2:{1,0},2:{0,1}}]) == "LegacyMultihomogeneousRationalMap")
+    assert(set apply(methods legacyRationalMap,m -> drop(m,1)) === set apply(methods rationalMap,m -> drop(m,1)))
+    R = ZZ/33331[x_0..x_3];
+    F = {x_2^2-x_1*x_3,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2};
+    phi = rationalMap F;
+    assert(instance(phi,LegacyRationalMap) and phi == legacyRationalMap F)
+    psi = rationalMap(F,Dominant=>true);
+    assert(psi#"isDominant" === true and psi == legacyRationalMap(F,Dominant=>true))
+    assert(rationalMap(ideal F,2) == legacyRationalMap(ideal F,2))
+    assert(rationalMap R == legacyRationalMap R)
+///
