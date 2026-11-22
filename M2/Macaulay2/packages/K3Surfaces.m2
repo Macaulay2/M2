@@ -10,7 +10,7 @@
 newPackage(
     "K3Surfaces",
     Version => "1.2", 
-    Date => "November 11, 2026",
+    Date => "November 22, 2026",
     Authors => {{Name => "Michael Hoff", 
                  Email => "hahn@math.uni-sb.de"},
                 {Name => "Giovanni Staglianò", 
@@ -21,15 +21,7 @@ newPackage(
     DebuggingMode => false
 )
 
-if SpecialFanoFourfolds.Options.Version < "2.8.1" then (
-    <<endl<<"Your version of the SpecialFanoFourfolds package is outdated (required version 2.8.1 or newer);"<<endl;
-    <<"you can manually download the latest version from"<<endl;
-    <<"https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages."<<endl;
-    <<"To automatically download the latest version of SpecialFanoFourfolds in your current directory,"<<endl;
-    <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
-    <<///run "curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2";///<<endl<<endl<<"***"<<endl;
-    error "required SpecialFanoFourfolds package version 2.8.1 or newer";
-);
+if SpecialFanoFourfolds.Options.Version < "2.8.1" then error "the package SpecialFanoFourfolds is outdated (required version 2.8.1 or newer); see updatePackage";
 
 export{"K3","LatticePolarizedK3surface","EmbeddedK3surface","project","mukaiModel",
        "trigonalK3","tetragonalK3","pentagonalK3"}
@@ -294,7 +286,7 @@ trigonalK3 ZZ := o -> g -> (
     f := rationalMap((0_P)%S,{a,1});
     T := image f;  
     assert(dim ambient T == g and dim T == 2 and degree T == 2*g-2 and sectionalGenus T == g);
-    pr1 := multirationalMap first projections S;
+    pr1 := rationalMap first projections S;
     C := f(pr1^* point target pr1);
     assert(dim C == 1 and degree C == 3);
     latticePolarizedK3surface(T,C,{g,3,0})
@@ -499,7 +491,7 @@ randomPointedMukaiThreefold ZZ := o -> g -> (
         return (X,p);
     );
     if g == 7 then (
-        quinticDelPezzoSurface := Var image rationalMap(ring PP_K^2,{3,4});
+        quinticDelPezzoSurface := Var image legacyRationalMap(ring PP_K^2,{3,4});
         psi = rationalMap(quinticDelPezzoSurface * random(1,0_quinticDelPezzoSurface),2);
         p = psi point source psi;
         j = parametrize random({{1},{1}},p);
@@ -562,7 +554,7 @@ randomMukaiThreefoldContainingLine ZZ := o -> g -> (
         return (X,L);
     );
     if g == 7 then (
-        mapDP5 := multirationalMap rationalMap(ring PP_K^2,{3,4});
+        mapDP5 := rationalMap legacyRationalMap(ring PP_K^2,{3,4});
         pt := mapDP5 point source mapDP5;
         psi = rationalMap((image mapDP5) * random(1,pt),2);
         L = psi linearSpan {pt,point source psi};
@@ -646,9 +638,9 @@ pointLineAndConicOnMukaiThreefoldOfGenus10 = (K,withLine,withConic) -> (
     -- psi is the map Q --> PP^11 defined by the quintic hypersurfaces with double points along C
     psi := rationalMap(C_Q,5,2);
     if dim target psi != 11 then error "something went wrong";
-    psi = toRationalMap psi;
+    psi = toLegacyRationalMap psi;
     if K === ZZ/(char K) then interpolateImage(psi,toList(28:2),2) else forceImage(psi,image(2,psi));
-    psi = multirationalMap psi;
+    psi = rationalMap psi;
     X := psi#"image";
     assert(X =!= null);
     q = psi q;
@@ -666,11 +658,11 @@ pointLineAndConicOnMukaiThreefoldOfGenus10 = (K,withLine,withConic) -> (
         conic = F;
     );
     if withLine then (
-        psi = toRationalMap rationalMap(psi,Dominant=>true);
+        psi = toLegacyRationalMap rationalMap(psi,Dominant=>true);
         -- B is the base locus of psi^-1, B-Supp(B) is a line.
         B := trim lift(ideal matrix approximateInverseMap(psi,Verbose=>false),ambient target psi);
-        j := parametrize ideal matrix rationalMap(B,1);
-        pr := rationalMap for i to 3 list random(1,source j);
+        j := parametrize ideal matrix legacyRationalMap(B,1);
+        pr := legacyRationalMap for i to 3 list random(1,source j);
         B' := pr j^* B;
         E' := B' : radical B';
         E := j radical trim (j^* ideal X + pr^* E');
@@ -682,11 +674,11 @@ pointLineAndConicOnMukaiThreefoldOfGenus10 = (K,withLine,withConic) -> (
 
 pointLineAndConicOnMukaiThreefoldOfGenus12 = (K,withLine,withConic) -> (
     line := null; conic := null;
-    f := rationalMap veronese(1,6,K);
-    f = f * rationalMap(target f,ring PP_K^4,for i to 4 list random(1,target f));
+    f := legacyRationalMap veronese(1,6,K);
+    f = f * legacyRationalMap(target f,ring PP_K^4,for i to 4 list random(1,target f));
     p := ideal point PP_K^4;    
     C := trim sub(image f,quotient ideal random(2,Var intersect(p,image f)));
-    psi := rationalMap(saturate(C^2),5);
+    psi := legacyRationalMap(saturate(C^2),5);
     if numgens target psi != 14 then error "something went wrong";
     if K === ZZ/(char K) then interpolateImage(psi,toList(45:2),2) else forceImage(psi,image(2,psi));
     X := psi#"idealImage";
@@ -694,11 +686,11 @@ pointLineAndConicOnMukaiThreefoldOfGenus12 = (K,withLine,withConic) -> (
     p = psi p;
     if not(dim Var p == 0 and degree Var p == 1) then error "something went wrong";
     if withConic then (
-        psi = rationalMap(psi,Dominant=>true);
+        psi = legacyRationalMap(psi,Dominant=>true);
         -- B is the base locus of psi^-1, B-Supp(B) is a conic.
         B := trim lift(ideal matrix approximateInverseMap(psi,Verbose=>false),ambient target psi);
-        j := parametrize ideal matrix rationalMap(B,1);
-        pr := rationalMap for i to 3 list random(1,source j);
+        j := parametrize ideal matrix legacyRationalMap(B,1);
+        pr := legacyRationalMap for i to 3 list random(1,source j);
         B' := pr j^* B;
         E' := B' : radical B';
         E := j radical trim (j^* X + pr^* E');
@@ -734,12 +726,12 @@ power0 (Ideal,ZZ) := (p,d) -> (
 );
 
 projectionInt = method();
-projectionInt (VisibleList,RationalMap,ZZ,ZZ) := (L,phi,D,g) -> (
+projectionInt (VisibleList,LegacyRationalMap,ZZ,ZZ) := (L,phi,D,g) -> (
    try assert(ring matrix{L} === ZZ and #L>0) else error "expected a list of integers";
    E := invProjection(L,D,g,g);
    d := max flatten degrees ideal matrix phi;
-   J := rationalMap(intersect apply(L,i -> power0(point source phi,i)),d);   
-   f := rationalMap(intersect(ideal matrix phi,ideal matrix J),d);
+   J := legacyRationalMap(intersect apply(L,i -> power0(point source phi,i)),d);   
+   f := legacyRationalMap(intersect(ideal matrix phi,ideal matrix J),d);
    X := if char coefficientRing phi <= 65521 then Var image(f,"F4") else Var image f;
    <<endl;
    if E != (degree X,sectionalGenus X,dim ambient X) then <<"--warning: output is not as expected"<<endl else <<"-- (degree and genus are as expected)"<<endl;
@@ -747,9 +739,9 @@ projectionInt (VisibleList,RationalMap,ZZ,ZZ) := (L,phi,D,g) -> (
 );
 
 project = method();
-project (VisibleList,LatticePolarizedK3surface,ZZ,ZZ) := (L,S,a,b) -> projectionInt(L,toRationalMap map(S,a,b),degree(S,a,b),genus(S,a,b));
+project (VisibleList,LatticePolarizedK3surface,ZZ,ZZ) := (L,S,a,b) -> projectionInt(L,toLegacyRationalMap map(S,a,b),degree(S,a,b),genus(S,a,b));
 project (VisibleList,EmbeddedK3surface) := (L,S) -> (
-    if S.cache#?"GeneralK3" and S.cache#"GeneralK3" then return projectionInt(L,toRationalMap map S,degree S,genus S);
+    if S.cache#?"GeneralK3" and S.cache#"GeneralK3" then return projectionInt(L,toLegacyRationalMap map S,degree S,genus S);
     (T,ab) := construction S;
     project(L,T,ab_0,ab_1)
 );
@@ -794,7 +786,7 @@ randomEllipticCurve = method(Options => {CoefficientRing => ZZ/65521});
 randomEllipticCurve (ZZ,ZZ) := o -> (d,n) -> (
     K := o.CoefficientRing;
     C := randomEllipticNormalCurve(d,CoefficientRing=>K);
-    f := rationalMap(ring PP_K^(d-1),ring PP_K^n,for i to n list random(1,ring PP_K^(d-1)));
+    f := legacyRationalMap(ring PP_K^(d-1),ring PP_K^n,for i to n list random(1,ring PP_K^(d-1)));
     f C
 );
 
@@ -802,7 +794,7 @@ randomRationalCurve = method(Options => {CoefficientRing => ZZ/65521});
 randomRationalCurve (ZZ,ZZ) := o -> (d,n) -> (
     K := o.CoefficientRing;
     C := PP_K^(1,d);
-    f := rationalMap(ring ambient C,ring PP_K^n,for i to n list random(1,ring ambient C));
+    f := legacyRationalMap(ring ambient C,ring PP_K^n,for i to n list random(1,ring ambient C));
     f C
 );
 
@@ -850,7 +842,7 @@ mukaiModel ZZ := o -> g -> (
                      {-w_0,-w_1,-w_2,-w_3,-w_4,-w_5,0}};
         X = projectiveVariety pfaffians(4,M);
         assert(dim X == 5 and codim X == 8 and degree X == 18 and sectionalGenus X == 10);
-        psi = inverse((rationalMap {w_1,w_5,w_8,w_9,w_13,w_12})|X);
+        psi = inverse((legacyRationalMap {w_1,w_5,w_8,w_9,w_13,w_12})|X);
         X.cache#"rationalParametrization" = psi;        
         return X;
     );
@@ -872,7 +864,7 @@ beginDocumentation()
 document {Key => K3Surfaces, 
 Headline => "construction of explicit examples of K3 surfaces",
 "This package is for constructing explicit examples of K3 surfaces.",
-References => UL{{"M. H. and G. S., ",EM"Explicit constructions of K3 surfaces and unirational Noether-Lefschetz divisors",", available at ",HREF{"https://arxiv.org/abs/2110.15819","arXiv:2110.15819"}," (2021)."}}}
+References => UL{{"M. Hoff and G. Staglianò, ",EM"Explicit constructions of K3 surfaces and unirational Noether-Lefschetz divisors",", available at ",HREF{"https://arxiv.org/abs/2110.15819","arXiv:2110.15819"}," (2021)."}}}
 
 document {Key => {LatticePolarizedK3surface}, 
 Headline => "the class of all lattice-polarized K3 surfaces",
