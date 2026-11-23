@@ -92,7 +92,7 @@ Node
 getPrimaryData = method(TypicalValue => PrimaryDataList)
 -------------------------------------------------------------------------
 getPrimaryData(Ideal) := I -> (
-  D := decompose I;
+  D := primaryDecomposition I;
   new PrimaryDataList from apply(D, Q -> (
     P := radical Q;
     {Q, dim P}
@@ -298,7 +298,7 @@ filterIdeal = method(TypicalValue=>Ideal);
 filterIdeal(Ideal,ZZ,PrimaryDataList) := Ideal => (I,i,L) -> (
   S := ring I;
   d := dim I;
-  d0 := minimumDimension I;
+  d0 := minimumDimension L;
 
   if i < -1 or i > d then (
     error("Expected an integer greater than -2 and at most " | toString(d));
@@ -307,9 +307,9 @@ filterIdeal(Ideal,ZZ,PrimaryDataList) := Ideal => (I,i,L) -> (
   if i < d0 then return I;
   if i == d then return ideal(S^1);
 
-  Pi := for c in select(L, l -> l#1 > i) list c#0;
+  Qi := for c in select(L, l -> l#1 > i) list c#0;
 
-  intersect(Pi)
+  intersect(Qi)
 )
 -------------------------------------------------------------------------
 filterIdeal(Ideal,ZZ) := Ideal => (I,i) -> (
