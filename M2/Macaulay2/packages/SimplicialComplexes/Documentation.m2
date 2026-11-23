@@ -2607,7 +2607,6 @@ doc ///
 doc ///
     Key
         (isProper, SimplicialComplex)
-	isProper
     Headline
         whether an abstract simplicial complex is properly colored
     Usage

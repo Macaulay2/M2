@@ -201,10 +201,6 @@ diagonalToricMap NormalToricVariety := ToricMap => X -> diagonalToricMap(X, 2)
 -- properties of toric maps
 ------------------------------------------------------------------------------
 
-
-
-isProper = method()
-------------------------------------------------------------------------------
 isProper ToricMap := Boolean => (cacheValue symbol isProper) (f -> (
     	X := source f;
     	Y := target f;
