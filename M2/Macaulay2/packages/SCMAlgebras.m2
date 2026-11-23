@@ -10,7 +10,7 @@ newPackage(
   }},
   Headline => "sequentially Cohen-Macaulay modules or ideals",
   Keywords => {"Commutative Algebra"},
-  PackageExports => {"Depth","MinimalPrimes"},
+  PackageExports => {"Depth","PrimaryDecomposition"},
   DebuggingMode => false
 )
 
@@ -62,9 +62,8 @@ PrimaryDataList = new Type of List
 
 --=======================================================================
 -- constructor of a PrimaryDataList for a given ideal I
--- gives a list containing all pairs {Q, dim P}
--- where P is the radical of Q, for every primary
--- component Q of a given ideal I
+-- gives a list containing all pairs {Q, dim Q}
+-- for every primary component Q of a given ideal I
 --=======================================================================
 MyDoc=concatenate(MyDoc,///
 Node
@@ -82,7 +81,7 @@ Node
     L:PrimaryDataList
   Description
     Text
-      Let $S=K[x_1,\ldots,x_n]$ be the polynomial ring. Given a homogeneous ideal $I$, {\tt getPrimaryData(I)} returns a special list, containing all pairs $\{Q,\dim \sqrt{Q}\}$ where $Q$ is a primary component of $I$.
+      Let $S=K[x_1,\ldots,x_n]$ be the polynomial ring. Given a homogeneous ideal $I$, {\tt getPrimaryData(I)} returns a special list, containing all pairs $\{Q,\dim Q\}$ where $Q$ is a primary component of $I$.
     Example
       S=QQ[x,y,z];
       I=monomialIdeal(x*z,y*z);
@@ -93,10 +92,7 @@ getPrimaryData = method(TypicalValue => PrimaryDataList)
 -------------------------------------------------------------------------
 getPrimaryData(Ideal) := I -> (
   D := primaryDecomposition I;
-  new PrimaryDataList from apply(D, Q -> (
-    P := radical Q;
-    {Q, dim P}
-  ))
+  new PrimaryDataList from apply(D, Q -> {Q, dim Q})
 )
 --=======================================================================
 
