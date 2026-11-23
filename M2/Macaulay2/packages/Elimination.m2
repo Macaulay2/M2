@@ -126,8 +126,9 @@ resultant(RingElement, RingElement, RingElement) := o -> (f,g,x) ->
 
 discriminant = method(Options => { Algorithm => null })
 discriminant(RingElement, RingElement) := RingElement => o -> (f,x) -> (
-     if diff(f,x) == 0 then return 0;
-     resultant(f, diff(x,f), x, o)
+     df:= diff(x,f);
+     if df == 0 then return substitute(0_(ring f), x => 0)
+     else resultant(f,df,x,o)
 )
 -----------------------------------------------
 -- documentation and tests
