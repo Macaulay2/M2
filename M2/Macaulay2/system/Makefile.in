@@ -4,6 +4,9 @@ VPATH = @srcdir@
 all: supervisor.o m2file.o tests.o
 include ../../include/config.Makefile
 
+CFLAGS   += $(GCOV_CFLAGS)
+CXXFLAGS += $(GCOV_CXXFLAGS)
+
 %.dep: %.cpp
 	$(SHOW) " ** creating $@ from $<"
 	$(HIDE) @CXX@ -MM -MP $(CPPFLAGS) $(CXXFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep

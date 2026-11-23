@@ -746,8 +746,25 @@ doc ///
 	    {\tt "Freudenthal"} for Freudenthal's recursive algorithm; see Humphreys, {\it Introduction to Lie Algebras and Representation Theory}, Section 22.3.
 	    {\tt "Weyl"} for Weyl's character formula (in classical types).
 	    {\tt "JacobiTrudi"} and {\tt "JacobiTrudi'"} for Jacobi-Trudi and dual Jacobi-Trudi formulae (in type A).
+	    By default, {\tt "Weyl"} is used in classical types of rank at most 2.
+	    Otherwise, {\tt "JacobiTrudi'"} is used in type A of rank $m$ for highest weights $(v_1,\dots,v_m)$
+	    whose coordinates sum to at most 2, or for which $\prod_i {m+1 \choose i}^{v_i} \leq 5000$,
+	    and {\tt "Freudenthal"} in all other cases.
+	    If the weight is not dominant, the result is the virtual character given by Weyl's character formula:
+	    $0$ if the weight plus $\rho$ is fixed by a reflection in the Weyl group, and otherwise
+	    plus or minus the character of the dominant weight obtained from it by the dot action of the Weyl group.
     SeeAlso
         weightDiagram
+///
+
+TEST ///
+    -- non-dominant weights
+    g=simpleLieAlgebra("A",1);
+    assert(character(g,{-3}) == -character(g,{1}))
+    assert(character(g,{-1}) == 0)
+    h=simpleLieAlgebra("B",3);
+    assert(character(h,{1,-2,3}) != 0)
+    assert(character(h,{1,-2,3},Strategy=>"Freudenthal") == character(h,{1,-2,3},Strategy=>"Weyl"))
 ///
 
 TEST ///
@@ -3077,6 +3094,14 @@ TEST ///
     assert(LieAlgebraModuleFromWeights(character M, g) === M)
     --a character from a different Lie algebra's ring is rejected
     assert(try (LieAlgebraModuleFromWeights(character M, simpleLieAlgebra("B",2)); false) else true)
+    --as are weights that aren't invariant under the Weyl group
+    assert(try (LieAlgebraModuleFromWeights(tally {{1,0}}, g); false) else true)
+    assert(try (LieAlgebraModuleFromWeights(weightDiagram M + tally {{1,1}}, g); false) else true)
+    --zero multiplicities are dropped, e.g., when restricting a virtual module whose weights cancel
+    h = subLieAlgebra(g,{1})
+    U = irreducibleLieAlgebraModule(g,{1,0})
+    U' = irreducibleLieAlgebraModule(g,{0,1})
+    assert(branchingRule(U ++ U'^(-1), h) == 0)
 ///
 
 --tests adams (Adams operations on Lie algebra modules)
@@ -3091,5 +3116,16 @@ TEST ///
     assert(adams(-1,S) === irreducibleLieAlgebraModule(g,{0,1}))
     --Adams operations permute the weight diagram, so they preserve dimension
     assert(dim adams(2,S) == dim S)
+///
+
+--tests rank 0 Lie algebras
+TEST ///
+    g = simpleLieAlgebra("A",2)
+    z = subLieAlgebra(g,{})
+    assert(cartanMatrix z == map(ZZ^0,ZZ^0,0))
+    T = trivialModule z
+    assert(T ** T === T)
+    assert(symmetricPower(2,T) === T)
+    assert(exteriorPower(2,T) == 0)
 ///
 

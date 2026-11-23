@@ -244,7 +244,7 @@ algorithms#(kernel, RingMap) = new MutableHashTable from {
         (R, S) := (target f, source f);
         if not isCommutative S then return null;
         if isCommutative R then return null;
-        inc := try(center R) else return null;
+        inc := try(centerMap R) else return null;
 
         C := source inc;
         G := graphRing inc;
@@ -596,6 +596,25 @@ map(Module,Module,RingMap,Matrix) := Matrix => o -> (M,N,p,f) -> map(M,N,p,raw f
 map(Module,Module,RingMap,List) := Matrix => o -> (M,N,p,f) -> map(M,N,p,map(M,ring M ** N,f),o)
 map(Module,Nothing,RingMap,List) := Matrix => o -> (M,N,p,f) -> map(M,N,p,map(M,,f),o)
 map(Module,RingMap) := Matrix => o -> (M,p) -> map(M,,p,map(M,cover M,1),o)
+
+pullbackDegrees = method()
+pullbackDegrees(RingMap) := (f) -> (
+    -- f: RingMap S -> R
+    -- returns f': RingMap T -> R
+    -- where T is a ring that is abstractly isomorphic to S but which has the
+    -- same degree group as R.
+    -- f' is homogeneous and is "the same" as f but with DegreeMap == identity.
+    if not isHomogeneous f then error "pullbackDegrees: non-homogeneous input is invalid";
+
+    (S, R) := (source f, target f);
+    T := newRing(
+        -- mimics the check in newRing that the ambient ring of S is a polynomial ring
+        if isPolynomialRing ring presentation S then S else S[],
+        DegreeGroup => degreeGroup R,
+        Degrees => for i from 0 to numgens S-1 list f.cache.DegreeMap degree S_i
+    );
+    map(R, T, f * map(S, T), DegreeMap => identity)
+)
 
 --
 setupPromote (RingMap,Ring,Ring,Function) := lookup(setupPromote,Function,Ring,Ring,Function)

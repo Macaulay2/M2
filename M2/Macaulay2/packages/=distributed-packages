@@ -171,6 +171,7 @@ Tropical
 SymbolicPowers
 Complexes
 OldChainComplexes
+CanonicalMaps
 GroebnerWalk
 RandomMonomialIdeals
 Matroids
@@ -300,3 +301,6 @@ LanguageServer
 NongeneralTypeSurfacesInP4
 HilbertSchemeStrata
 HookPieri
+ComprehensiveGBs
+PALPInterface
+KoszulFiltrations
