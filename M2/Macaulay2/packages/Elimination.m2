@@ -339,6 +339,16 @@ TEST ///
 R=ZZ/2[x]
 F=x^24+x^22+x^20+x^14+x^12+x^8+x^4
 assert(discriminant(F,x) == 0)
+-- Issue 4449: derivative vanishing identically
+R = ZZ/3[x];
+d = discriminant(x^3+2,x);
+assert(d==0);
+assert(ring d === ring discriminant(x^2,x));
+-- Also check if there are other variables present
+S = ZZ/3[x,y];
+d = discriminant(x^3+y,x);
+assert(d==0);
+assert(ring d === ring discriminant(x^2,x));
 ///
 end
 loadPackage "Elimination"
