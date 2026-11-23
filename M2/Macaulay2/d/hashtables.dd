@@ -317,7 +317,7 @@ export copy(o:HashTable,newClass:HashTable,newParent:HashTable,newMutable:bool):
 	  newClass,
 	  newParent, o.numEntries, hash_t(0), newMutable, false, newThreadRWLock());
      if newMutable then (
-	  if newClass != cacheTableClass 
+	  if !ancestor(newClass, cacheTableClass)
 	  then x.hash = nextHash(); -- cache tables are mutable and have hash code 0
 	  )
      else x.hash = hash(x);
