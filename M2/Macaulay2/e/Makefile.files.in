@@ -129,6 +129,7 @@ INTERFACE = \
 	mem \
 	memory-status \
 	monoid \
+	monomials/monordering \
 	monomials/ExponentList \
 	monomials/monideal \
 	monomials/monideal-minprimes \

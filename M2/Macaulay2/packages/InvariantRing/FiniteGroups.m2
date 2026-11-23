@@ -12,13 +12,23 @@ FiniteGroupAction = new Type of GroupAction
 finiteAction = method()
 
 finiteAction (List, PolynomialRing) := FiniteGroupAction => (G, R) -> (
+    -- check at least one generator is provided
+    if G === {} then (
+        error "finiteAction: Expected at least one generator."
+        );
+    -- check coefficient ring is a field
     if not isField coefficientRing R then (
 	error "finiteAction: Expected the second argument to be a polynomial ring over a field."
 	);
+    -- check all generators are square matrices
     if any (G, g -> not instance(g, Matrix) or numRows g =!= numColumns g) then (
 	error "finiteAction: Expected the first argument to be a list of square matrices."
 	);
-    if (numRows first G) =!= dim R then (error "finiteAction: Expected the number of rows of each matrix to equal the number of variables in the polynomial ring."); 
+    -- check all generators have the right size to act on ring
+    if any(G, g -> (numRows g) =!= numgens R) then (
+        error "finiteAction: Expected the number of rows of each matrix to equal the number of variables in the polynomial ring."
+        );
+    -- check all generators are matrices defined over the coefficient ring
     try (
 	gensG := apply(G, g -> sub(g, coefficientRing R))
 	)
@@ -164,49 +174,213 @@ addHook((relations, FiniteGroupAction), G -> (
 
 
 -------------------------------------------
+-- new permutationMatrix code
+-------------------------------------------
 
-permutationMatrix = method(Options => {EntryMode => "one-line"})
+permutationMatrix = method()
 
-permutationMatrix Array := Matrix => opts -> p -> (
-    if opts.EntryMode == "cycle" then permutationMatrix(max p, p)
-    else (
-    	n := max p;
-    	if #p =!= n or set (1..n) =!= set p then (
-	    error "permutationMatrix: Expected a sequence of positive integers
-	    representing a permutation."
-	    );
-    	matrix apply(n, i -> apply(n, j -> if p#j - 1 == i then 1 else 0) )
-	)
+-- permutation from one-line notation
+permutationMatrix Array := Matrix => p -> (
+    n := max p;
+    if #p =!= n or set (1..n) =!= set p then (
+        error "permutationMatrix: Expected an array of positive integers
+        representing a permutation in one-line notation."
+        );
+    -- shuffle columns of identity matrix
+    (id_(ZZ^n))_(apply(toList p,i->i-1))
     )
 
-permutationMatrix (ZZ, Array) := Matrix => opts -> (n, c) -> (
+-- convert single cycle to one-line notation
+cycleToOneLine = (n,c) -> (
+    new Array from for i from 1 to n list (
+        pos := position(c, x -> x == i);
+        if pos =!= null then (
+            c_( (pos+1) % #c)
+            )
+        else i
+        )
+    )
+
+-- multiply permutations in one-line notation
+multiplyOneLine = L -> fold(L, (P,Q) -> P_(toList apply(Q, i -> i-1)))
+
+permutationMatrix (ZZ,List) := Matrix => (n,L) -> (
     if n <= 0 then error "permutationMatrix: Expected a positive integer.";
-    if #c == 0 then error "permutationMatrix: Expected a nonempty array,";
-    if #(set c) =!= #c or not isSubset(set c, set(1..n)) then (
-	error "permutationMatrix: Expected an array of distinct integers 
-	between 1 and the first input."
-	 );
-     permutationMatrix new Array from apply(n, i ->
-	 if (set c)#?(i + 1) then (
-	     k := position(c, j -> j == i + 1);
-	     if k == #c - 1 then c#0 else c#(k + 1)
-	     )
-	 else i + 1
-	 )
-     )
-
-permutationMatrix (ZZ, List) := Matrix => opts -> (n, p) -> product apply(p, c -> permutationMatrix(n, c) )
-
-permutationMatrix List := Matrix => opts -> p -> permutationMatrix(max (p/max), p)
-	     
-	 
-	
+    if #L == 0 or any(L, c -> not instance(c,Array)) then (
+        error "permutationMatrix: Expected a nonempty list of arrays
+        representing the cycles of a permutation."
+        );
+    if any(L, c -> #(set c) =!= #c or not isSubset(c, toList(1..n))) then (
+        error ("permutationMatrix: Expected cycles to be arrays of distinct
+            integers between 1 and " | toString(n) | "."
+            );
+        );
+    -- convert cycles to one-line notation
+    C := apply(L, c -> cycleToOneLine(n,c));
+    -- multiply cycles in one-line notation
+    p := multiplyOneLine C;
+    -- return matrix from one-line notation
+    (id_(ZZ^n))_(apply(toList p,i->i-1))
+    )
 
 
 
+-- Permutation action is finite group action whose generators are
+-- permutations of the variables
 
+PermutationAction = new Type of FiniteGroupAction
 
+-- constructor for PermutationAction
+permutationAction = method(Options => {
+        CoefficientRing => QQ,
+        Variable => "x",
+        }
+    )
 
+-- general case use list of generating permutations and polynomial ring
+-- does not call permutationMatrix to avoid duplicating checks, but uses auxiliary functions
+permutationAction (List, PolynomialRing) := PermutationAction => opts -> (P,R) -> (
+    -- check we have at least one generator
+    if P === {} then (
+        error "permutationAction: Expected at least one permutation."
+        );
+    if not isField coefficientRing R then ( --check if field
+        error "permutationAction: Expected a polynomial ring over a field."
+        );
+    K := coefficientRing R;
+    n := numgens R;
+    if n < 1 then (
+        error "permutationAction: Expected at least one variable."
+        );
+    -- check permutations are well-defined and convert to one-line notation
+    P = apply(P, p -> (
+            if instance(p,Array) then (
+                if #p =!= n or set (1..n) =!= set p then (
+                    error "permutationAction: Expected an array of positive integers
+                    representing a permutation of the variables in one-line notation."
+                    );
+                p
+                )
+            else if instance(p,List) then (
+                if #p == 0 or any(p, c -> not instance(c,Array)) then (
+                    error "permutationAction: Expected a nonempty list of arrays
+                    representing a permutation of the variables in cycle notation."
+                    );
+                if any(p, c-> #(set c) =!= #c or not isSubset(c,toList(1..n))) then (
+                    error (
+                        "permutationAction: Expected cycles to be arrays of distinct
+                        integers between 1 and " | toString(n) | "."
+                        )
+                    );
+                -- convert cycles to one-line notation
+                C := apply(p, c -> cycleToOneLine(n,c));
+                -- multiply cycles in one-line notation
+                multiplyOneLine C
+                )
+            else (
+                error "permutationAction: Expected permutations as one-line notation
+                arrays or as lists of cycles."
+                )
+            )
+        );
+    new PermutationAction from {
+        cache => new CacheTable,
+        (symbol ring) => R,
+        -- Turn one-line notations arrays into matrices over field of definition
+        (symbol generators) => apply(P,
+            p -> sub((id_(ZZ^n))_(apply(toList p,i->i-1)), K)),
+        (symbol numgens) => #P,
+        -- In Marcus Cassell's code one-line notation was lists, not arrays
+        -- we convert to lists to use MC's code to compute invariants
+        (symbol permutations) => apply(P,toList)
+        }
+    )
 
+-- constructor overload with no ring, just number of variables
+-- gives F[x_1..x_n], where F is passed as an option
+-- note: F defaults to QQ
+permutationAction (ZZ, List) := PermutationAction => opts -> (n,P) -> (
+    --check if optional coefficient ring is a field
+    if not isField opts.CoefficientRing then (
+        error "permutationAction: Expected a field as coefficient ring."
+        );
+    F := opts.CoefficientRing;
+    x := getSymbol opts.Variable;
+    R := F(monoid[x_1..x_n]);
+    permutationAction(P, R)
+    )
 
+--net of PermutationAction object showing permutations not matrices
+-- turns one-line notation from lists to arrays for printing
+net PermutationAction := A -> (net A.ring)|" <- "|
+horizontalJoin( {"<"} | mingle(apply(apply(A.permutations, p -> new Array from p),
+            net), toList(A.numgens-1:", ")) | {">"})
 
+--tex of net of PermutationAction object
+-- turns one-line notation from lists to arrays for printing
+texMath PermutationAction := A -> (texMath A.ring) |"\\curvearrowleft" |
+"\\left\\langle" |
+(concatenate mingle(apply(apply(A.permutations, p -> new Array from p),
+            texMath), toList(A.numgens-1:","))) |
+"\\right\\rangle"
+
+-- find all special exponents, namely sorted ascending with first entry 0 and no jumps larger than 1
+-- FG: caching uses a lot of memory and does not speed this up much
+specialExponents = n -> (
+    L := {{0}}; -- list of exponent vectors
+    for i from 2 to n do (
+        -- either add 1 or repeat last entry, flatten removes the nesting
+        L = flatten apply(L, v ->  {v | {last v}, v | {last v + 1}}
+            )
+        );
+    L
+    )
+
+-- find the orbit of a vector v
+-- we do this by applying the generators to v and all new vectors until we get everything
+orbitExponents = (A, v) -> (
+    -- get permutations
+    P := A.permutations;
+    -- "found set": hash table gives quick membership checks
+    seen := new MutableHashTable from {v => true};
+    -- vectors found but we still need to apply generators to
+    toUpdate := {v};
+    local h;
+    while #toUpdate > 0 do (
+        h = first toUpdate;
+        toUpdate = drop(toUpdate, 1); -- drop h from toUpdate
+        scan(P, p -> (
+                w := apply(p, i -> h#(i-1)); -- apply the action
+                if not seen#?w then (
+                    seen#w = true;
+                    toUpdate = toUpdate | {w}
+                    )
+                ));
+        );
+    keys seen -- return the vectors in the hashtable
+    )
+
+-- FG: the next two methods are not exported
+-- they are also not used by invariants computations
+-- the were likely used for debugging and can still be
+-- exported by doing 'debug InvariantRing'
+
+specialMonomials = method()
+-- returns all special monomials in the ring
+specialMonomials PermutationAction := List => A -> (
+    R := ring A;
+    flatten apply(specialExponents numgens R, v -> 
+        if sum v == 0 then {} -- this would give 1 	
+        else apply(unique permutations v, i -> R_i)
+        )
+    )
+
+orbitSum = method()
+-- return the orbit sum of a monomial
+orbitSum (RingElement, PermutationAction) := RingElement => (r, A) -> (
+    R := ring A;
+    if not instance(r, R) then error "orbitSum: Expected an element of the ring being acted on.";
+    if #(terms r) =!= 1 then error "orbitSum: Expected a monomial.";
+    -- the orbit sum construction ignores coefficients
+    sum(orbitExponents(A, flatten exponents r), i-> R_i)
+    ) 

@@ -1,0 +1,2250 @@
+newPackage(
+    "CanonicalMaps",
+    Version => "0.3",
+    Date => "16 November 2026",
+    Authors => {
+        {   Name => "Gregory G. Smith", 
+            Email => "ggsmith@mast.queensu.ca", 
+            HomePage => "https://ggsmith.ca"
+            },
+        {   Name => "Mike Stillman", 
+            Email => "mike@math.cornell.edu", 
+            HomePage => "https://mikestillman.github.io"
+            }},
+    Headline => "implements canonical and standard maps for modules",
+    Keywords => {"Commutative Algebra"},
+    AuxiliaryFiles => false,
+    DebuggingMode => false
+    )
+
+-- TODO:
+--  1. move method declaration of tensorCommutativity to here (the module part)
+--  2. debug and reinstate: pruneMap, trimMap
+--  3. reinstate: superMap, cosuperMap, unitorMap, counitorMap
+--  4. implement swapMap, adjunctionMap (rounding out the "6 standard canonical maps")
+--  5. audit the tests, many are after the end--
+
+export {
+    "kernelMap",
+    "cokernelMap",
+    "coimageMap",
+    "imageMap",
+    "coimageImageMap",
+    "fiberProduct",
+    "fiberProductMap",
+    "fiberSum",
+    "fiberSumMap",
+    -- "superMap",
+    -- "cosuper",
+    -- "cosuperMap",
+    -- "trimMap",
+    -- "pruneMap",
+    -- "unitorMap",
+    -- "counitorMap",
+    -- "tensorCommutativity",
+    -- "tensorCommutativity" is exported by the Complexes package (Complexes.m2:120):
+    --   identical (Module,Module) body there, plus a (Complex,Complex) version
+    -- "tensorAssociativity" is currently in Core: modules2.m2, needs tests
+    -- "swapMap",
+    -- "adjunctionMap",
+    -- from Complexes, perhaps?
+    -- "randomMatrix"
+    }
+
+-- TODO:
+--  various "standard" canonical maps (adjoint maps)
+--  (in issues.m2)
+
+kernelMap = method()
+kernelMap Matrix := Matrix => f -> (
+    -- the kernelMap of `f : M --> N` is
+    -- the canonical inclusion `ker f --> M`.
+    M := source f;
+    K := kernel f;
+    map(M, K, generators K // generators M)
+    )
+
+-- Question: would we like to add this functionality?
+-- kernelMap Module := Matrix => K -> (
+--     if not K.cache.?kernel then
+--         error "expected module to be constructed as a kernel";
+--     kernelMap K.cache.kernel
+--     )
+
+kernelMap(Matrix, Matrix) := Matrix => (g, f) -> (
+    -- f : B --> C
+    -- g : A --> B
+    -- kermap f: ker f --> B
+    -- result should be A --> ker f.
+    -- assume f*g = 0.
+    -- returns ghat : A -> ker f s.t. (kermap f)*ghat == g
+    if source f != target g then error "expected target of first map to be the same as source of the second map";
+    if f*g != 0 then error "expected the composite map to be zero";
+    eta := kernelMap f;
+    quotient(g, eta)
+    )
+
+cokernelMap = method()
+cokernelMap Matrix := Matrix => (f) -> (
+    C := target f;
+    map(coker f, C, id_C)
+    )
+
+cokernelMap(Matrix, Matrix) := Matrix => (g, f) -> (
+    -- f : B --> C
+    -- g : C --> A
+    --  s.t. g*f = 0
+    -- if p : C --> coker f is the cokernel map of f
+    -- result should be coker f --> A.
+    -- return the map ghat : coker f --> A s.t. ghat * p = g,
+    if target f != source g then error "expected target of second map to be the same as source of the first map";
+    if g*f != 0 then error "expected the composite map to be zero";
+    p := cokernelMap f;
+    map(target g, target p, matrix g)
+    )
+
+imageMap = method()
+imageMap Matrix := Sequence => (f) -> (
+    -- this is categorically `kernelMap cokernelMap f`, but we want to create the map directly from f.
+    g := map(target f, image f, matrix f);
+    e := map(image f, source f, 1);
+    (g, e)
+    )
+
+imageMap(Matrix, Matrix, Matrix) := Matrix => (i, h, f) -> (
+    if f != i*h then error "expected first two maps to be a factorization of the third";
+    (g,e) := imageMap f;
+    map(source i, source g, g // i)
+    )
+
+coimageMap = method()
+coimageMap Matrix := Sequence => (f) -> (
+    -- this is categorically `cokernelMap kernelMap f`, but we want to create the map directly from f.
+    g := map(target f, coimage f, matrix f);
+    e := map(coimage f, source f, 1);
+    (g, e)
+    )
+
+coimageMap(Matrix, Matrix, Matrix) := Matrix => (i, h, f) -> (
+    if f != i*h then error "expected first two maps to be a factorization of the third";
+    (g,e) := coimageMap f;
+    map(source g, source i, i // g)
+    )
+
+coimageImageMap = method()
+coimageImageMap Matrix := Matrix => (f) -> (
+    -- f: M --> N
+    (g,e) := imageMap f; -- e: M --> I, g:I --> N
+    (h,i) := coimageMap f; -- i:M --> C, h:C --> N
+    map(source g, source h, h // g)
+    )
+
+fiberProduct = method()
+fiberProduct(Matrix, Matrix) := Module => (phi, phi') -> (
+    -- Given: phi : B --> C
+    -- Given: phi' : B' --> C
+    -- return: (B x_C B', p, p'), and stash the kernel map and map B ++ B' --> C
+    C := target phi;
+    if C =!= target phi' then error "expected maps to have the same target";
+    direct := map(C, source phi ++ source phi', (matrix phi) | (-matrix phi'));
+    eta := kernelMap direct;
+    E := source eta;
+    E.cache#fiberProduct = (eta, direct); -- note that phi == direct_[0], phi' == -direct_[1]
+    E
+    )
+fiberProductMap = method()
+fiberProductMap Module := Sequence => E -> (
+    if not E.cache#?fiberProduct then error "expected argument to be constructed as a fiber product";
+    (eta, direct) := E.cache#fiberProduct;
+    (eta^[0], eta^[1]) -- phi: B --> C, phi' : B' --> C, E = B xC B', eta^[0]: E --> B, eta^[1]: E --> B'
+    )
+    
+fiberProductMap(Module, Matrix, Matrix) := Matrix => (E, alpha, alpha') -> (
+    -- if alpha, alpha' are maps A --> B, A --> B', and
+    -- E is the fiber product of (f,f') : B ++ B' --> C
+    -- and if phi*alpha = phi'*alpha', then this function returns the unique map
+    -- h:A --> E such that alpha = p*h, alpha' = p'*h.
+    if not E.cache#?fiberProduct then error "expected first argument to be constructed as a fiber product";
+    if source alpha =!= source alpha' then error "expected maps to have the same source";
+    (gmap, direct) := E.cache#fiberProduct;
+    phi := direct_[0];
+    phi' := -direct_[1];
+    if phi*alpha != phi'*alpha' then error "expected maps to commute";
+    h := map(source direct, source alpha, (matrix alpha) || (matrix alpha'));
+    kernelMap(h, direct)
+    )
+
+fiberSum = method()
+fiberSum(Matrix, Matrix) := Module => (phi, phi') -> (
+    -- Given: phi : B --> C
+    -- Given: phi' : B --> C'
+    -- DESIRED RETURN: C ++_B C'.
+    -- get at the maps via (q, q') = fiberSumMap(phi, phi')
+    -- return: (C ++_B C', q, q'), and stash the cokernel map and map B --> C ++ C'
+    B := source phi;
+    if B =!= source phi' then error "expected maps to have the same source";
+    direct := map(target phi ++ target phi', B, (matrix phi) || (-matrix phi'));
+    rho := cokernelMap direct;
+    E := target rho;
+    E.cache#fiberSum = (rho, direct); -- note that phi == direct^[0], phi' == -direct^[1]
+    E
+    )
+fiberSumMap = method()
+fiberSumMap Module := Sequence => E -> (
+    if not E.cache#?fiberSum then error "expected argument to be constructed as a fiber sum";
+    (rho, direct) := E.cache#fiberSum;
+    (rho_[0], rho_[1]) -- phi: B --> C, phi' : B --> C', E = C ++_B C', rho_[0]: B --> E, rho_[1]: B' --> E
+    )
+    
+fiberSumMap(Module, Matrix, Matrix) := Matrix => (E, alpha, alpha') -> (
+    -- if alpha, alpha' are maps C --> D, C' --> D, and
+    -- E is the fiber sum of (phi,phi') : B --> C ++_B C' = E
+    -- and if alpha * phi = alpha' * phi', then this function returns the unique map
+    -- h:E --> D such that alpha = h * q, alpha' = h * q'.
+    if not E.cache#?fiberSum then error "expected first argument to be constructed as a fiber sum";
+    if target alpha =!= target alpha' then error "expected maps to have the same target";
+    (rho, direct) := E.cache#fiberSum;
+    phi := direct^[0];
+    phi' := -direct^[1];
+    if alpha * phi != alpha' * phi' then error "expected maps to commute";
+    h := map(target alpha, target direct, (matrix alpha) | (matrix alpha'));
+    cokernelMap(h, direct)
+    )
+
+superMap = method()
+superMap Module := Matrix => M -> map(super M, M, generators M)
+
+cosuper = method()
+cosuper Module := Module => M -> image generators M
+
+cosuperMap = method()
+cosuperMap Module := Matrix => M -> map(M, cosuper M, id_(cosuper M))
+
+pruneMap = method(Options => options prune)
+-- pruneMap M : M --> prune M (opposite of the current pruningMap)
+--  (pruneMap M)^-1 : prune M --> M
+pruneMap Module := opts -> M -> (
+    N := prune(M, opts);
+    g := N.cache.pruningMap;
+    map(N, M, g^-1)
+    )
+
+-- trimMap M : M --> trim M (basically the identity on generators)
+--  (trimMap M)^-1 : trim M --> M (what about for ideals?)
+trimMap = method(Options => options trim)
+trimMap Module := opts -> M -> (
+    M' := trim(M, opts);
+    f := (gens M) // ((gens M') | (relations M'));
+    map(M', M, f^{0..numcols gens M' - 1})
+    )
+
+-- coverMap, superMap
+-- given a subquotient module M = P/Q of F (Q \subset P \subset F), F free.
+-- ambient M := F (not functorial, i.e. cannot 
+-- cover M := G, the free module whose basis elements correspond
+--   to the given basis of M (equivalently, basis of P)
+-- coverMap M := cover M --> M --> 0 (already exists)
+-- super M := F/Q
+-- cosuper M := P/0
+-- superMap M := M --> F/Q
+-- cosuperMap M := P/0 --> P/Q = M (quotient by Q)
+-- internal info about these: (stored data)
+--   gens M := G --> F, image gens M == P
+--   relations M := cover Q --> F, image relations M == Q
+
+unitorMap = method()
+unitorMap Module := Matrix => M -> map(M, (ring M)^1 ** M, 1)
+
+counitorMap = method(Options => options Hom)
+counitorMap Module := Matrix => opts -> M -> (
+    if opts.DegreeLimit =!= null then error "no counitor map defined for truncated Hom's";
+    if opts.MinimalGenerators then
+        trimMap M
+    else
+        id_M
+    )
+
+-- TODO: once this is exported, make sure Complexes package is updated
+-- to use the method defined below, rather than making its own method.
+
+tensorCommutativity = method()
+tensorCommutativity(Module, Module) := Matrix => (M,N) -> (
+    -- implement the isomorphism M ** N --> N ** M
+    MN := M ** N;
+    NM := N ** M;
+    m := numgens source gens M;
+    n := numgens source gens N;
+    perm := flatten for i from 0 to m - 1 list
+      for j from 0 to n - 1 list (
+          -- (i,j) (in M**N) to m*i + j
+          -- map to column (j,i) <--> n*j + i
+          m*j+i
+          );
+    FMN := source gens MN;
+    f := ((id)_FMN)_perm;
+    map(NM, MN, f)
+    )
+
+homTensorAdjoint = method()
+homTensorAdjoint(Module, Module, Module) := (L, M, N) -> (
+    -- returns the natural map: Hom(L ** M, N) --> Hom(L, Hom(M, N))
+    -- phi -> (ell |-> (m |-> phi(ell ** m)))
+    )
+
+
+
+-- KNOWN BUG (branch complexes, tip ec9b1d76d6): "this version has degree bug in
+-- swapMap, or at least in checkSwapMap". swapMap, adjunctionMap and checkSwapMap
+-- are carried over unchanged.
+
+swapMap = method()
+-- swap map Hom_R(A, Hom_R(B, C)) --> Hom_R(B, Hom_R(A, C))
+-- where R is commutative and A, B, C are R-modules
+swapMap(Module, Module, Module) := Matrix => (A, B, C) -> (
+    BC := Hom(B, C);
+    AC := Hom(A, C);
+    ABC := Hom(A, BC);
+    BAC := Hom(B, AC);
+    -- want ABC --> BAC
+    error "need tensorCommutativity defined in this package";
+    -- perm := tensorCommutativity(dual cover A, dual cover B) ** cover C;
+    -- permLift := (perm * gens ABC) //  gens BAC;
+    -- map(BAC, ABC, permLift)
+    )
+
+adjunctionMap = method()
+-- adjunction: Hom_R(A ** B, C) --> Hom_R(B, Hom_R(A, C))
+-- where R is commutative and A, B, C are R-modules
+adjunctionMap(Module, Module, Module) := Matrix => (A, B, C) -> (
+    )
+
+checkSwapMap = method()
+checkSwapMap(Matrix, Module, Module) := Boolean => (sw, A, B) -> (
+    -- sw := swapMap(A, B, C);
+    -- checks that this is the canonical isomorphism
+    -- from Hom(A, Hom(B,C)) --> Hom(B, Hom(A,C))
+    -- We check the following, for all psi, a, b generators of their respective modules.
+    -- psi : A --> Hom(B, C)
+    -- a in A, b in B
+    -- sw = swapMap(A,B,C) : Hom(A, Hom(B,C)) --> Hom(B, Hom(A,C))
+    -- psi(a) : B --> C
+    -- sw(psi) : B --> Hom(A,C), (sw(psi)(b))(a) == (psi(a))(b)
+    ABC := source sw;
+    BAC := target sw;
+    all(numgens ABC, abc -> (
+        all(numgens A, a -> (
+            all(numgens B, b -> (
+                psi := homomorphism ABC_{abc};
+                f1 := psi * A_{a};
+                f2 := homomorphism f1;
+                f3 := B_{b}; -- so val1 is f2 * f3
+                val1 := (homomorphism(psi * A_{a})) * B_{b};
+                g1 := sw * ABC_{abc};
+                g2 := homomorphism g1;
+                g3 := g2 * B_{b};
+                g4 := homomorphism g3;
+                g5 := A_{a}; -- so val2 is g4 * g5.
+                val2 := (homomorphism(homomorphism(sw * ABC_{abc}) * B_{b})) * A_{a};
+                --val2 := ((homomorphism(sw * ABC_{abc}) * B_{b})) * A_{a};
+                result := (val1 == val2);
+                if debugLevel > 0 and not result then (
+                    << "swap map failed: abc=" << abc << " a=" << a << " b=" << b << endl;
+                    << "  val1 = " << val1 << endl;
+                    << "  val2 = " << val2 << endl;
+                    error "debug me";
+                    );
+                result
+    )))))))
+
+-- this routine should use modules directly, not complexes
+randomMatrix = method()
+randomMatrix(Module, Module) := Matrix => (N, M) -> (
+    error "need to implement this directly for module";
+    --g := randomComplexMap(complex N, complex M);
+    --g_0
+    )
+
+
+coimageToImageInverse = method()
+coimageToImageInverse Matrix := (f) -> (
+    g := coimageImageMap f;
+    g^(-1)
+    )
+
+
+beginDocumentation()
+
+doc ///
+    Key
+        CanonicalMaps
+    Headline
+        implements canonical and standard maps for modules
+    Description
+        Text
+            A canonical map is a morphism between mathematical objects
+            that arises from their definitions or constructions without
+            requiring arbitrary choices.  It typically preserves as
+            much of the underlying structure as possible.
+        Text
+            This package implements many of the basic canonical maps
+            for modules.
+    SeeAlso
+        "Complexes :: Complexes"
+///
+
+doc ///
+    Key
+        kernelMap
+        (kernelMap, Matrix)
+        (kernelMap, Matrix, Matrix)
+    Headline
+        canonical map associated to a kernel object
+    Usage
+        g = kernelMap f
+        u = kernelMap(h, f)
+    Inputs
+        f:Matrix
+            representing a map $M \to N$ of $R$-modules
+        h:Matrix
+            representing a map $L \to M$ of $R$-modules such that
+            $f \circ h = 0$
+    Outputs
+        g:Matrix
+            the canonical monomorphism $g \colon \operatorname{Ker}(f) \to M$
+        u:Matrix
+            the unique map $u \colon L \to \operatorname{Ker}(f)$
+            arising from the universal property
+    Description
+        Text
+            The kernel of a map $f \colon M \to N$ of $R$-modules is an object
+            $K := \operatorname{Ker}(f)$, together with a map
+            $g \colon K \to M$ such that the following two properties
+            hold: (1) $f \circ g = 0$, and (2) for any
+            map $h \colon L \to M$ such that $f \circ h = 0$, there
+            exists a unique map $u \colon L \to K$ such that $g \circ u = h$.
+        Text
+            We illustrate the kernel map using a homomorphism
+            of abelian groups.
+        Example
+            f = matrix{{2,0,1},{0,1,4}}
+            g = kernelMap f
+            assert(source g === kernel f and target g === source f)
+            assert(f * g == 0)
+            h = map(source f, ZZ^2, {{2,3},{16,24},{-4,-6}})
+            assert(f * h == 0)
+            u = kernelMap(h, f)
+            assert(h == g * u)
+        Text
+            For a second example,
+            we work over a quotient of a polynomial ring.
+        Example
+            R = QQ[a,b,c,d]/(a*d-b*c);
+            f = map(R^2,, matrix{{a,b},{c,d}})
+            assert(ker f != 0)
+            g = kernelMap f
+            assert(source g === kernel f and target g === source f)
+            assert(f * g == 0)
+            h = map(source f,, {{d*a^3},{-c*a^3}})
+            assert(f * h == 0)
+            u = kernelMap(h, f)
+            assert(h == g * u)
+        Text
+            Cokernels are dual to kernels in category theory.
+    SeeAlso
+        kernel
+        cokernelMap
+        imageMap
+///
+
+doc ///
+    Key
+        cokernelMap
+        (cokernelMap, Matrix)
+        (cokernelMap, Matrix, Matrix)
+    Headline
+        canonical map associated to a cokernel object
+    Usage
+        g = cokernelMap f
+        u = cokernelMap(h, f)
+    Inputs
+        f:Matrix
+            representing a map $M \to N$ of $R$-modules
+        h:Matrix
+            representing a map $N \to L$ of $R$-modules such that
+            $h \circ f = 0$
+    Outputs
+        g:Matrix
+            the canonical epimorphism $g \colon N \to \operatorname{Coker}(f)$
+        u:Matrix
+            the unique map $u \colon \operatorname{Coker}(f) \to L$
+            arising from the universal property
+    Description
+        Text
+            The cokernel of a map $f \colon M \to N$ of $R$-modules is an object
+            $Q := \operatorname{Coker}(f)$, together with a map
+            $g \colon N \to Q$ such that the following two properties
+            hold: (1) $g \circ f = 0$, and (2) for any
+            map $h \colon N \to L$ such that $h \circ f = 0$, there
+            exists a unique map $u \colon Q \to L$ such that $u \circ g = h$.
+        Text
+            We illustrate the cokernel map using a homomorphism
+            of abelian groups.
+        Example
+            f = matrix {{2, 0}, {0, 1}, {1, 4}}
+            g = cokernelMap f
+            assert(source g === target f and target g === coker f)
+            assert(g * f == 0)
+            h = map(ZZ^2, target f, {{2, 16, -4}, {3, 24, -6}})
+            assert(h * f == 0)
+            u = cokernelMap(h, f)
+            assert(h == u * g)
+        Text
+            For a second example,
+            we work over a quotient of a polynomial ring.
+        Example
+            R = QQ[a,b,c,d]/(a*d-b*c);
+            f = map(R^2,, matrix{{a,b},{c,d}})
+            assert(coker f != 0)
+            g = cokernelMap f
+            assert(source g === target f and target g === coker f)
+            assert(g * f == 0)
+            h = map(R^{4}, target f,  {{a^3*c, -a^4}})
+            assert isHomogeneous h
+            assert(h * f == 0)
+            u = cokernelMap(h, f)
+            assert(h == u * g)
+        Text
+            Kernels are dual to cokernels in category theory.
+    SeeAlso
+        cokernel
+        kernelMap
+        imageMap
+///
+
+doc ///
+    Key
+        imageMap
+        (imageMap, Matrix)
+        (imageMap, Matrix, Matrix, Matrix)
+    Headline
+        canonical map associated to an image object
+    Usage
+        (g,e) = imageMap f
+        u = imageMap(i, h, f)
+    Inputs
+        f:Matrix
+            representing a map $M \to N$ of $R$-modules
+        h:Matrix
+            representing a map $M \to L$ of $R$-modules
+        i:Matrix
+            representing a monomorphism $L \to N$ of $R$-modules
+            such that $f = i \circ h$
+    Outputs
+        g:Matrix
+            the canonical monomorphism $g \colon \operatorname{Image}(f) \to N$
+        e:Matrix
+            the map $M \to \operatorname{Image}(f)$ such that
+            $f = g \circ e$
+        u:Matrix
+            the unique map $u \colon \operatorname{Image}(f) \to L$
+            arising from the universal property
+    Description
+        Text
+            The image of a map $f \colon M \to N$ of $R$-modules is an object
+            $I := \operatorname{Image}(f)$, together with the map
+            $e \colon M \to I$ and the monomorphism $g \colon I \to N$,
+            such that the following two properties
+            hold: (1) $f = g \circ e$, and (2) for any
+            map $h \colon M \to L$ and any monomorphism $i \colon L \to N$
+            such that $f = i \circ h$, there
+            exists a unique map $u \colon I \to L$ such that $g = i \circ u$ and
+            $h = u \circ e$.
+        Text
+            We illustrate the image map using a homomorphism
+            of abelian groups.
+        Example
+            f = matrix {{2, 0}, {0, 1}, {1, 4}}
+            (g,e) = imageMap f
+            assert(isWellDefined g and isWellDefined e and f === g * e)
+            assert(ker g == 0)
+            assert(source g === image f)
+            assert(target g === target f)
+            assert(f // g === e)
+        Example
+            h = matrix {{0, 1}, {1, 4}}
+            i = matrix {{-8, 2}, {1, 0}, {0, 1}}
+            assert(f === i * h and kernel i == 0)
+            u = imageMap(i, h, f)
+            assert(g === i * u and h === u * e)
+            assert(source u === image f)
+            assert(target u === source i)
+        Text
+            The image of $f$ is isomorphic to the kernel of the cokernel map of $f$, but the
+            isomorphism is typically non-trivial, as the generators of a kernel are not canonically defined.
+            Moreover, the morphism $e$ arises from the universal property of the kernel
+            applied to the cokernel map of $f$.
+        Example
+            assert(image f == kernel cokernelMap f)
+            v = kernelMap(f, cokernelMap f)
+            assert(target v === kernel cokernelMap f)
+            j = map(source g, target v, ((generators target v) // (generators source g)))
+            assert(kernel j == 0 and coker j == 0)
+            assert(g * j * v === f)
+            assert(j * v === e)
+        Text
+            The non-trivial isomorphism between the kernel of the cokernel map and the image is given
+            here by $j$.
+        Text
+            For a second example,
+            we work over a quotient of a polynomial ring.
+        Example
+            R = QQ[a,b,c,d]/(a*d-b*c);
+            f = map(R^2,, matrix{{a,b},{c,d}})
+            (g,e) = imageMap f
+            assert(isWellDefined g and isWellDefined e and f === g * e)
+            assert(ker g == 0)
+            assert(source g === image f)
+            assert(target g === target f)
+            assert(f // g === e)
+        Example
+            h = matrix {{7*a-3*c, 7*b-3*d}, {-2*a+c, -2*b+d}}
+            i = matrix {{1_R, 3}, {2, 7}}
+            assert(f === i * h and kernel i == 0)
+            u = imageMap(i, h, f)
+            assert(g === i * u and h === u * e)
+            assert(source u === image f)
+            assert(target u === source i)
+        Example
+            assert(image f == kernel cokernelMap f)
+            v = kernelMap(f, cokernelMap f)
+            assert(target v === kernel cokernelMap f)
+            j = map(source g, target v, ((generators target v) // (generators source g)))
+            assert(kernel j == 0 and coker j == 0)
+            assert(g * j * v === f)
+        Text
+            Coimage is dual to image in category theory.
+    SeeAlso
+        image
+        kernelMap
+        cokernelMap
+        coimageMap
+///
+
+doc ///
+    Key
+        coimageMap
+        (coimageMap, Matrix)
+        (coimageMap, Matrix, Matrix, Matrix)
+    Headline
+        canonical map associated to a coimage object
+    Usage
+        (g,e) = coimageMap f
+        u = coimageMap(i, h, f)
+    Inputs
+        f:Matrix
+            representing a map $M \to N$ of $R$-modules
+        h:Matrix
+            representing an epimorphism $M \to L$ of $R$-modules
+        i:Matrix
+            representing a map $L \to N$ of $R$-modules
+            such that $f = i \circ h$
+    Outputs
+        g:Matrix
+            the canonical map $g \colon \operatorname{Coimage}(f) \to N$
+        e:Matrix
+            the canonical epimorphism $M \to \operatorname{Coimage}(f)$ such that
+            $f = g \circ e$
+        u:Matrix
+            the unique map $u \colon L \to \operatorname{Coimage}(f)$
+            arising from the universal property
+    Description
+        Text
+            The coimage of a map $f \colon M \to N$ of $R$-modules is an object
+            $C := \operatorname{Coimage}(f)$, together with the epimorphism
+            $e \colon M \to C$ and the map $g \colon C \to N$,
+            such that the following two properties
+            hold: (1) $f = g \circ e$, and (2) for any
+            epimorphism $h \colon M \to L$ and any map $i \colon L \to N$
+            such that $f = i \circ h$, there
+            exists a unique map $u \colon L \to C$ such that $e = u \circ h$ and
+            $i = g \circ u$.
+        Text
+            We illustrate the coimage map using a homomorphism
+            of abelian groups.
+        Example
+            f = matrix {{2, 0}, {0, 3}, {1, 4}}
+            (g,e) = coimageMap f
+            assert(isWellDefined g and isWellDefined e and f === g * e)
+            assert(coker e == 0)
+            assert(source e === source f)
+            assert(target e === coimage f)
+        Example
+            h = matrix {{0, 1}, {1, 4}}
+            i = matrix {{-8, 2}, {3, 0}, {0, 1}}
+            assert(f === i * h and cokernel h == 0)
+            u = coimageMap(i, h, f)
+            assert(e === u * h and i === g * u)
+            assert(source u === target h)
+            assert(target u === target e)
+        Text
+            The coimage of $f$ is isomorphic to the cokernel of the kernel map of $f$, but the
+            isomorphism is typically non-trivial, as the generators of a kernel are not canonically defined.
+            Moreover, the epimorphism $e$ arises from the universal property of the cokernel
+            applied to the kernel map of $f$.
+        Example
+            assert(coimage f == cokernel kernelMap f)
+            v = cokernelMap(f, kernelMap f)
+            assert(source v === cokernel kernelMap f)
+            j = map(source v, target e, ((generators target e) // (generators source v)))
+            assert(kernel j == 0 and coker j == 0)
+            assert(v * j * e === f)
+        Text
+            In this example, the isomorphism $j$ between the cokernel of the kernel map and the coimage
+            is the identity.
+        Text
+            For a second example,
+            we work over a quotient of a polynomial ring.
+        Example
+            R = QQ[a,b,c,d]/(a*d-b*c);
+            f = map(R^2,, matrix{{a,b},{c,d}})
+            (g,e) = coimageMap f
+            assert(isWellDefined g and isWellDefined e and f === g * e)
+            assert(coker e == 0)
+            assert(source e === source f)
+            assert(target e === coimage f)
+        Example
+            h = R^{{-1}} ** matrix {{1_R, 3}, {2, 7}}
+            assert(source h === source f)
+            i = matrix {{7*a-2*b, -3*a+b}, {7*c-2*d, -3*c+d}}
+            assert(f === i * h and cokernel h == 0)
+            u = coimageMap(i, h, f)
+            assert(e === u * h and i === g * u)
+            assert(source u === target h)
+            assert(target u === target e)
+        Text
+            In this example, the isomorphism $j$ between the cokernel of the kernel map and the coimage
+            is the identity.
+        Example
+            assert(coimage f == cokernel kernelMap f)
+            v = cokernelMap(f, kernelMap f)
+            assert(source v === cokernel kernelMap f)
+            j = map(source v, target e, ((generators target e) // (generators source v)))
+            assert(kernel j == 0 and coker j == 0)
+            assert(v * j * e === f)
+    SeeAlso
+        kernelMap
+        cokernelMap
+///
+
+doc ///
+    Key
+        coimageImageMap
+        (coimageImageMap, Matrix)
+    Headline
+        canonical isomorphism from coimage to image
+    Usage
+        g = coimageImageMap f
+    Inputs
+        f:Matrix
+            representing a map $M \to N$ of $R$-modules
+    Outputs
+        g:Matrix
+            the canonical isomorphism $g \colon \operatorname{Coimage}(f) \to \operatorname{Image}(f)$
+    Description
+        Text
+            As $R$-modules form an abelian category,
+            the canonical map $g \colon \operatorname{Coimage}(f) \to \operatorname{Image}(f)$,
+            is an isomorphism.
+        Text
+            As a first example, we consider a map between
+            free abelian groups.  In this case, the canonical map
+            from the coimage to the image is obviously the identity map.
+        Example
+            f = matrix {{2, 0}, {0, 3}, {1, 4}}
+            g = coimageImageMap f
+            assert(source g === coimage f and target g == image f)
+            assert(ker g == 0 and coker g == 0)
+        Text
+            Working over a quotient of a polynomial ring, we show that
+            the canonical map from the coimage to the image is not
+            obviously the identity map.  In fact, because of the way the
+            generators for the image and coimage are chosen in Macaulay2,
+            this will be induced by the identity map.
+        Example
+            R = QQ[a,b,c,d]/(a*d-b*c);
+            M = module ideal(a*d, -b*c) ++ module ideal(a^2, b^2)
+            N = prune M
+            f = map(N, M, matrix {{-1_R, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}})
+            assert isWellDefined f
+            g = coimageImageMap f
+            assert(source g === coimage f and target g == image f)
+            assert(coker g == 0 and ker g == 0)
+            assert(matrix g != 1)
+            assert(g === map(image f, coimage f, 1))
+    SeeAlso
+        image
+        coimage
+        imageMap
+        coimageMap
+///
+
+doc ///
+    Key
+        fiberProduct
+        (fiberProduct, Matrix, Matrix)
+    Headline
+        the pullback or fiber product associated to two maps
+    Usage
+        P = fiberProduct(f,g)
+    Inputs
+        f:Matrix
+            representing a map $L \to N$ of $R$-modules
+        g:Matrix
+            representing a map $M \to N$ of $R$-modules
+    Outputs
+        P:Module
+            the fiber product of $f$ and $g$
+    Description
+        Text
+            The fiber product of $f$ and $g$ is the kernel $P = L \times_N M$ of the induced map
+            $\begin{bmatrix} f & -g \end{bmatrix} \colon L \oplus M \to N$.  It has two canonical maps
+            $p \colon P \to L$ and $q \colon P \to M$ such that $g \circ q = f \circ p$.
+        Text
+            Moreover, the triple $(P, p, q)$ satisfies the following universal property.
+            For any triple $(P', p', q')$, where $p' \colon P' \to L$ and $q' \colon P' \to M$
+            with $g \circ q' = f \circ p'$, there exists a unique $u \colon P' \to P$ such that
+            $p \circ u = p'$ and $q \circ u = q'$.
+        Text
+            We illustrate the fiber product using abelian groups.
+        Example
+            f = matrix{{2,0,1},{0,1,4}}
+            g = matrix{{3,4},{1,7}}
+            P = fiberProduct(f,g)
+            (p,q) = fiberProductMap P
+            assert(g * q === f * p)
+        Example
+            p' = matrix {{0}, {11}, {-3}}
+            q' = matrix {{-1}, {0}}
+            assert(g * q' === f * p')
+            u = fiberProductMap(P, p', q')
+            assert(p' === p * u and q' === q * u)
+        Text
+            For a second example,
+            we work over a quotient of a polynomial ring.
+        Example
+            R = QQ[a,b,c,d]/(a*d-b*c);
+            f = map(R^2,, {{a,b},{c,d}})
+            g = map(R^2,, {{a,c,d},{b,d,c}})
+            P = fiberProduct(f,g)
+            (p,q) = fiberProductMap P
+            assert(g * q === f * p)
+        Example
+            p' = map(source f,, {{-c}, {d}})
+            q' = map(source g,, {{-c}, {d}, {b-c}})
+            assert(g * q' === f * p')
+            u = fiberProductMap(P, p', q')
+            assert(p' === p * u and q' === q * u)
+    SeeAlso
+        fiberProductMap
+        fiberSum
+        fiberSumMap
+        (symbol|, Matrix, Matrix)
+///
+
+doc ///
+    Key
+        fiberProductMap
+        (fiberProductMap, Module)
+        (fiberProductMap, Module, Matrix, Matrix)
+    Headline
+        the canonical maps associated to the pullback or fiber product
+    Usage
+        (p,q) = fiberProductMap P
+        u = fiberProductMap(P, p', q')
+    Inputs
+        P:Module
+            constructed as a fiber product $L \times_N M$ of two maps
+        p':Matrix
+            representing a map $P' \to L$ of $R$-modules
+        q':Matrix
+            representing a map $P' \to M$ of $R$-modules
+    Outputs
+        p:Matrix
+            representing a map $P \to L$ of $R$-modules
+        q:Matrix
+            representing a map $P \to M$ of $R$-modules
+        u:Matrix
+            representing a map $P' \to P$ of $R$-modules
+    Description
+        Text
+            The fiber product of the maps $f \colon L \to N$ and $g \colon M \to N$ is the kernel $P = L \times_N M$ of the induced map
+            $\begin{bmatrix} f & -g \end{bmatrix} \colon L \oplus M \to N$.  It has two canonical maps
+            $p \colon P \to L$ and $q \colon P \to M$ such that $g \circ q = f \circ p$.
+            These canonical maps are composites of the kernel map and projections from the direct sum $L \oplus M$.
+        Text
+            Moreover, the triple $(P, p, q)$ satisfies the following universal property.
+            For any triple $(P', p', q')$, where $p' \colon P' \to L$ and $q' \colon P' \to M$
+            with $g \circ q' = f \circ p'$, there exists a unique $u \colon P' \to P$ such that
+            $p \circ u = p'$ and $q \circ u = q'$.
+            The map $u$ arises from the universal property of the kernel. 
+        Text
+            We illustrate the fiber product maps using abelian groups.
+        Example
+            f = matrix{{2,0,1},{0,1,4}}
+            g = matrix{{3,4},{1,7}}
+            P = fiberProduct(f,g)
+            (p,q) = fiberProductMap P
+            assert(g * q === f * p)
+        Example
+            p' = matrix {{0}, {11}, {-3}}
+            q' = matrix {{-1}, {0}}
+            assert(g * q' === f * p')
+            u = fiberProductMap(P, p', q')
+            assert(p' === p * u and q' === q * u)
+        Text
+            For a second example,
+            we work over a quotient of a polynomial ring.
+        Example
+            R = QQ[a,b,c,d]/(a*d-b*c);
+            f = map(R^2,, {{a,b},{c,d}})
+            g = map(R^2,, {{a,c,d},{b,d,c}})
+            P = fiberProduct(f,g)
+            (p,q) = fiberProductMap P
+            assert(g * q === f * p)
+        Example
+            p' = map(source f,, {{-c}, {d}})
+            q' = map(source g,, {{-c}, {d}, {b-c}})
+            assert(g * q' === f * p')
+            u = fiberProductMap(P, p', q')
+            assert(p' === p * u and q' === q * u)
+        Text
+            The universal property implies that given
+            maps $f \colon K \to M$, $g \colon L \to M$, and
+            $h \colon N \to L$, there is a canonical isomorphism
+            $u \colon (K \times_M L) \times_L N \to 
+            K \times_M N$.
+        Example
+            K = source f
+            L = source g
+            M = target f
+            assert(M === target g)
+            assert(target q === L and source q === P)
+            h = map(L,, {{a^2,a*b,a*c,b^2,b*d},
+                         {a,b,c,0,d},
+                         {1,3,-2,0,1}})
+            N = source h
+            Q' = fiberProduct(q,h);
+            (p',q') = fiberProductMap Q';
+            assert(q * p' === h * q')
+            Q = fiberProduct(f, g*h);
+            assert(f*p*p' === g*h*q')
+            u = fiberProductMap(Q, p*p', q');
+            assert(ker u == 0 and coker u == 0)
+            assert(source u === Q' and target u === Q)
+            assert(Q' != Q)
+    SeeAlso
+        fiberProduct
+        fiberSum
+        fiberSumMap
+        kernelMap
+        (symbol|, Matrix, Matrix)
+///
+
+doc ///
+    Key
+        fiberSum
+        (fiberSum, Matrix, Matrix)
+    Headline
+        the pushout or fiber sum associated to two maps
+    Usage
+        P = fiberSum(f,g)
+    Inputs
+        f:Matrix
+            representing a map $L \to M$ of $R$-modules
+        g:Matrix
+            representing a map $L \to N$ of $R$-modules
+    Outputs
+        P:Module
+            the fiber sum of $f$ and $g$
+    Description
+        Text
+            The fiber sum of $f$ and $g$ is the cokernel $P = M \oplus_L N$ of the induced map
+            $\begin{bmatrix} f \\ -g \end{bmatrix} \colon L \to M \oplus N$.  It has two canonical maps
+            $p \colon M \to P$ and $q \colon N \to P$ such that $q \circ g = p \circ f$.
+        Text
+            Moreover, the triple $(P, p, q)$ satisfies the following universal property.
+            For any triple $(P', p', q')$, where $p' \colon M \to P'$ and $q' \colon N \to P'$
+            with $q' \circ g = p' \circ f$, there exists a unique $u \colon P \to P'$ such that
+            $u \circ p = p'$ and $u \circ q = q'$.
+        Text
+            We illustrate the fiber sum using abelian groups.
+        Example
+            f = matrix{{3,4}}
+            g = matrix {{2, 0}, {0, 13}, {1, 4}}
+            P = fiberSum(f,g)
+            (p,q) = fiberSumMap P
+            assert(q * g === p * f)
+        Example
+            p' = matrix{{26}}
+            q' = matrix{{39,8,0}}
+            assert(q' * g === p' * f)
+            u = fiberSumMap(P, p', q')
+            assert(p' === u * p and q' === u * q)
+        Text
+            For a second example,
+            we work over a quotient of a polynomial ring.
+        Example
+            R = QQ[a,b,c,d]/(a*d-b*c);
+            f = transpose map(R^2,, {{a,b},{c,d}})
+            g = transpose map(R^2,, {{a,b,d},{b,d,c}})
+            P = fiberSum(f,g)
+            (p,q) = fiberSumMap P
+            assert(q * g === p * f)
+        Example
+            p' = map(R^1, target f, {{b, 0}})
+            q' = map(R^1, target g, {{0, a, 0}})
+            assert(q' * g === p' * f)
+            u = fiberSumMap(P, p', q')
+            assert(p' === u * p and q' === u * q)
+    SeeAlso
+        fiberSumMap
+        fiberProduct
+        fiberProductMap
+        (symbol||, Matrix, Matrix)
+///
+
+doc ///
+    Key
+        fiberSumMap
+        (fiberSumMap, Module)
+        (fiberSumMap, Module, Matrix, Matrix)
+    Headline
+        the canonical maps associated to the pushout or fiber sum
+    Usage
+        (p,q) = fiberSumMap P
+        u = fiberSumMap(P, p', q')
+    Inputs
+        P:Module
+            constructed as a fiber sum $M \oplus_L N$ of two maps
+        p':Matrix
+            representing a map $M \to P'$ of $R$-modules
+        q':Matrix
+            representing a map $N \to P'$ of $R$-modules
+    Outputs
+        p:Matrix
+            representing a map $M \to P$ of $R$-modules
+        q:Matrix
+            representing a map $N \to P$ of $R$-modules
+        u:Matrix
+            representing a map $P \to P'$ of $R$-modules
+    Description
+        Text
+            The fiber sum of the maps $f \colon L \to M$ and $g \colon L \to N$ is the cokernel $P = M \oplus_L N$ of the induced map
+            $\begin{bmatrix} f \\ -g \end{bmatrix} \colon L \to M \oplus N$.  It has two canonical maps
+            $p \colon M \to P$ and $q \colon N \to P$ such that $q \circ g = p \circ f$.
+            These canonical maps are composites of the inclusions into the direct sum $M \oplus N$ followed by the cokernel map.
+        Text
+            Moreover, the triple $(P, p, q)$ satisfies the following universal property.
+            For any triple $(P', p', q')$, where $p' \colon M \to P'$ and $q' \colon N \to P'$
+            with $q' \circ g = p' \circ f$, there exists a unique $u \colon P \to P'$ such that
+            $u \circ p = p'$ and $u \circ q = q'$.
+            The map $u$ arises from the universal property of the cokernel. 
+        Text
+            We illustrate the fiber sum maps using abelian groups.
+        Example
+            f = matrix {{2, 0}, {0, 1}, {1, 4}}
+            g = matrix{{3,4},{1,7}}
+            P = fiberSum(f,g)
+            (p,q) = fiberSumMap P
+            assert(q * g === p * f)
+        Example
+            p' = matrix{{17, 17, 0}}
+            q' = matrix{{13, -5}}
+            assert(q' * g === p' * f)
+            u = fiberSumMap(P, p', q')
+            assert(p' === u * p and q' === u * q)
+        Text
+            For a second example,
+            we work over a quotient of a polynomial ring.
+        Example
+            R = QQ[a,b,c,d]/(a*d-b*c);
+            f = map(R^{1,1}, R^2, {{a, c}, {b, d}})
+            g = map(R^{1,1,1}, R^2, {{a, b}, {c, d}, {d, c}})
+            P = fiberSum(f,g)
+            (p,q) = fiberSumMap P
+            assert(q * g === p * f)
+        Example
+            p' = map(R^{2}, target f, {{-c,d}})
+            q' = map(R^{2}, target g, {{-c,d,b-c}})
+            assert(q' * g === p' * f)
+            u = fiberSumMap(P, p', q')
+            assert(p' === u * p and q' === u * q)
+        Text
+            The universal property implies that given
+            maps $f \colon K \to L$, $g \colon K \to M$, and
+            $h \colon M \to N$, there is a canonical isomorphism
+            $u \colon L \oplus_K N \to (L \oplus_K M) \oplus_M N$.
+        Example
+            K = source f
+            L = target f
+            M = target g
+            assert(K === source g)
+            assert(source p === L and source q === M)
+            h = map(R^{2,3,1,2}, M, {{a, b, c},
+                             {a^2,b^2, c^2},
+                             {3, 4, -5},
+                             {a+d, b+c, 0}})
+            N = target h
+            Q' = fiberSum(q,h);
+            (p',q') = fiberSumMap Q';
+            assert(p' * q === q' * h)
+            Q = fiberSum(f, h*g);
+            assert(p'*p*f === q'*h*g)
+            u = fiberSumMap(Q, p'*p, q');
+            assert(ker u == 0 and coker u == 0)
+            assert(source u === Q and target u === Q')
+            assert(Q' != Q)
+    SeeAlso
+        fiberSum
+        fiberProduct
+        fiberProductMap
+        cokernelMap
+        (symbol||, Matrix, Matrix)
+///
+
+"doc" -- TODO: reinstate pruneMap
+///
+    Key
+        pruneMap
+        (pruneMap, Module)
+    Headline
+        isomorphism associated to a minimal presentation
+    Usage
+        f = pruneMap N
+    Inputs
+        N:Module
+            a module constructed as a minimal
+            presentation of a module $M$
+    Outputs
+        f:Matrix
+            the isomorphism $f \colon M \to N$
+    Description
+        Text
+            By construction, a minimal presentation is isomorphic
+            to the original module.  This method returns this
+            isomorphism.
+        Text
+            We illustrate the prune map over the rationals.
+        Example
+            M = image transpose matrix(QQ, {{2,0,1},{0,1,4}, {2,-5,-19}})
+            N = prune M
+            f = pruneMap N -- TODO: fix this bug!
+            source f === M
+            target f === N
+        Text
+            For a second example,
+            we work over a quotient of a polynomial ring.
+        Example
+            R = QQ[a,b,c,d]/(a*d-b*c);
+            f = map(R^2,, matrix{{a,b},{c,d}})
+            assert(ker f != 0)
+            g = kernelMap f
+            assert(source g === kernel f and target g === source f)
+            assert(f * g == 0)
+            h = map(source f,, {{d*a^3},{-c*a^3}})
+            assert(f * h == 0)
+            u = kernelMap(h, f)
+            assert(h == g * u)
+        Text
+            Cokernels are dual to kernels in category theory.
+    SeeAlso
+        kernel
+        cokernelMap
+        imageMap
+///
+
+
+///
+    Key
+    Headline
+    Usage
+    Inputs
+    Outputs
+    Description
+        Text
+        Example
+    Caveat
+    SeeAlso
+///
+
+-*
+  restart
+  needsPackage "CanonicalMaps"
+*-
+TEST ///
+  R = ZZ/101[a..d]
+  f = vars R
+  eta = kernelMap f
+  assert isWellDefined eta
+  assert(source eta === kernel f)
+  assert(target eta === source f)
+  assert(f * eta == 0)
+  assert(kernelMap f === eta)
+  assert(ker eta == 0)
+///
+
+-*
+  restart
+  needsPackage "CanonicalMaps"
+*-
+TEST ///
+  R = ZZ/101[a..d]
+  f = inducedMap(R^1/ideal(a^3, b^3), ideal(a^2, a*b^2)/ideal(a^4, b^4))
+  assert isWellDefined f
+  eta = kernelMap f
+  assert isWellDefined eta
+
+  eta = kernelMap f
+  assert isWellDefined eta
+  assert(source eta === kernel f)
+  assert(target eta === source f)
+  assert(f * eta == 0)
+  assert(kernelMap f === eta)
+  assert(kernel eta == 0)
+
+  h = map(source f, R^1, matrix{{a},{0}})
+  assert isWellDefined h
+  assert(f*h == 0)
+  hlift = kernelMap(h, f)
+  assert isWellDefined hlift
+  assert(eta * hlift === h)
+///
+
+-*
+  restart
+  needsPackage "CanonicalMaps"
+*-
+TEST ///
+  R = ZZ/101[a..d]
+  f = vars R
+  p = cokernelMap f
+  assert isWellDefined p
+  assert(source p === target f)
+  assert(target p === cokernel f)
+  assert(p * f  == 0)
+  assert(cokernelMap f === p)
+  assert(coker p == 0)
+///
+
+
+-*
+  restart
+  needsPackage "CanonicalMaps"
+*-
+TEST ///
+  R = ZZ/101[a..d]
+  f = inducedMap(R^1/ideal(a^3, b^3), ideal(a^2, a*b^2)/ideal(a^4, b^4))
+  assert isWellDefined f
+  p = cokernelMap f
+  assert isWellDefined p
+  assert(cokernel p == 0)
+
+  assert(source p === target f)
+  assert(target p === cokernel f)
+  assert(p * f == 0)
+  assert(cokernelMap f === p)
+
+  D = coker matrix{{a^2, b^2}} ++ coker matrix{{a^2, a*b^2, b^3}}
+  h = map(D, target f, matrix{{1_R},{1_R}})
+  assert isWellDefined h
+  assert(h*f == 0)
+  hlift = cokernelMap(h, f)
+  assert isWellDefined hlift
+  assert(hlift * p === h)
+///
+
+-*
+  restart
+  needsPackage "CanonicalMaps"
+*-
+TEST ///
+  -- testing ker and coker universal maps
+  S = ZZ/11[x,y,z];
+  f = random(S^2, S^{-1,-1,-1})
+
+  (g,e) = imageMap f
+  assert(isWellDefined g and isWellDefined e and f === g * e)
+  assert(ker g == 0)
+  assert(source g === image f)
+  assert(target g === target f)
+  assert(f // g === e)
+  kcf = kernelMap(f, cokernelMap f)
+  iota = map(source g, target kcf, ((generators target kcf) // (generators source g)))
+  assert(g * iota * kcf === f)
+
+  (h,i) = coimageMap f
+  assert isWellDefined h
+  assert isWellDefined i
+  assert(coker i == 0 and f === h*i)
+  assert(source i === source f and target i === coimage f)
+  assert(source h === coimage f and target h === target f)
+
+  assert(cokernelMap(f, kernelMap f) === h)
+
+  -- two ways to construct coimage f --> image f.
+  eta = kernelMap f
+  p = cokernelMap f
+  choice1 = cokernelMap(kernelMap(f, p), eta)
+  assert(source choice1 === target i)
+  assert(target choice1 == image f)
+  -- 
+  choice2 = kernelMap(cokernelMap(f, eta), p)
+  assert(choice1 === choice2)
+  assert(kernel choice1 == 0)
+  assert(cokernel choice1 == 0)
+
+  u = coimageImageMap f
+  assert(choice1 == u)
+  assert(target choice1 =!= target u) -- not true, as they have different sets of generators
+  assert(target choice1 == target u) -- true, as they are the same submodule
+  assert(source choice1 === source u) -- true on the nose
+  assert(u == 1) -- u is induced by the identity map on generators.
+///
+
+-*
+  restart
+  needsPackage "CanonicalMaps"
+*-
+TEST /// -- fiberProduct
+  -- given: phi : B --> C
+  --        gamma : C --> D
+  -- Check if (ker gamma) x_C phi = kernelMap(gamma * phi).
+  -- There is a natural map between them, mu.
+  -- Is it an isomorphism, by using universal property
+  --  of kernel, and fiber product.
+  R = ZZ/101[a..d]
+  phi = random(R^2, R^{3:-1})
+  gamma = random(R^{2}, R^2)
+
+  g = gamma*phi
+  eta = kernelMap gamma
+  h2 = kernelMap g
+  h1 = kernelMap(phi * h2, gamma) -- induced map from ker g --> ker gamma.
+  assert(eta * h1 === phi * h2)
+
+  P = fiberProduct(eta, phi)
+  --assert isWellDefined P -- isWellDefined does not yet apply to Module
+  (p, p') = fiberProductMap P
+  assert isWellDefined p
+  assert isWellDefined p'
+  assert(source p === P)
+  assert(source p' === P)
+  assert(target p === source eta)
+  assert(target p' === source phi)
+  assert(eta * p === phi * p')
+
+  mu = fiberProductMap(P, h1, h2)
+  assert isWellDefined mu
+  assert isIsomorphism mu
+  assert(target mu === P)
+  assert(source mu === source h2)
+  assert(p * mu === h1)
+  assert(p' * mu === h2)
+
+  -- let's construct the inverse of mu using the univ property of kernels
+  nu = kernelMap(p', g)
+  assert isWellDefined nu
+  assert isIsomorphism nu
+  assert(target nu === source h2)
+  assert(source nu === P)
+  assert(nu * mu == 1)
+  assert(mu * nu == 1)
+  assert(h2 * nu === p')
+  assert(h1 * nu === p)
+
+///
+
+TEST /// -- fiberSum
+  -- the dual of the previous test.
+  -- given: phi : B --> C
+  --        gamma : C --> D
+  -- Check if (coker phi) ++_C gamma = cokernelMap(gamma * phi).
+  -- There is a natural map between them, mu.
+  -- Is it an isomorphism, by using universal property
+  --  of cokernel, and fiber sum.
+  R = ZZ/101[a..d]
+  phi = random(R^2, R^{3:-1})
+  gamma = random(R^{2}, R^2)
+
+  g = gamma*phi
+  pC = cokernelMap phi
+  pD = cokernelMap g
+  h = cokernelMap(pD * gamma, phi) -- induced map from coker phi --> coker g.
+  assert(h * pC === pD * gamma)
+
+  P = fiberSum(pC, gamma)
+  --assert isWellDefined P -- isWellDefined does not yet apply to Module
+  (q, q') = fiberSumMap P
+  assert isWellDefined q
+  assert isWellDefined q'
+  assert(target q === P)
+  assert(target q' === P)
+  assert(source q === target pC)
+  assert(source q' === target gamma)
+  assert(q * pC === q' * gamma)
+
+  mu = fiberSumMap(P, h, pD)
+  assert isWellDefined mu
+  assert isIsomorphism mu
+  assert(target mu === target pD)
+  assert(source mu === P)
+  assert(pD === mu * q')
+  assert(h === mu * q)
+
+  -- let's construct the inverse of mu using the univ property of cokernels
+  nu = cokernelMap(q', g)
+  assert isWellDefined nu
+  assert isIsomorphism nu
+  assert(source nu === target h)
+  assert(target nu === P)
+  assert(nu * mu == 1)
+  assert(mu * nu == 1)
+  assert(nu * pD === q')
+  assert(nu * h === q)
+///
+
+TEST ///
+  -- given phi : B --> C,
+  -- construct the canonical isomorphism mu from image phi to
+  --   C *_(C ++_B C) C
+  -- TODO: construct the 
+  R = ZZ/101[a..d]
+  phi = random(R^2, R^{3:-1})
+  imap = kernelMap cokernelMap phi -- image phi --> C
+  assert(source imap == image phi)
+  assert(target imap === target phi)
+  S = fiberSum(phi, phi)
+  (q, q') = fiberSumMap S
+  P = fiberProduct(q, q')
+  assert(q * imap === q' * imap)
+  mu = fiberProductMap(P, imap, imap)
+  assert(source mu === source imap)
+  assert(target mu === P)
+  assert isIsomorphism mu -- Exercise: show that this is an isomorphism (probably is true...!)
+
+  jmap = cokernelMap kernelMap phi -- B --> coimage phi
+  assert(source jmap == source phi)
+  assert(target jmap === coimage phi)
+  P = fiberProduct(phi, phi)
+  (p, p') = fiberProductMap P
+  S = fiberSum(p, p')
+  assert(jmap * p === jmap * p')
+  mu = fiberSumMap(S, jmap, jmap) -- isom S --> coimage phi
+  assert(source mu === S)
+  assert(target mu === target jmap)
+  assert isIsomorphism mu
+///
+
+-*
+  restart
+  needsPackage "CanonicalMaps"
+*-
+"TEST" -- TODO: reinstate these functions, doc, and tests.
+///
+  -- super, superMap, cosuper, cosuperMap, cover, coverMap
+  a = matrix{{6,0,0},{0,3,0},{0,0,0},{0,0,0}}
+  b = matrix{{12,0,0},{0,3,0},{0,0,2},{0,0,0}}
+  M = subquotient(a,b)
+  assert(super M == coker relations M) -- or === should work too
+  f = superMap M
+  assert(source f === M)
+  assert(target f === super M)
+  assert(ker f == 0)
+  g = cosuperMap M
+  assert(source g === cosuper M)
+  assert(target g === M)
+  assert(coker g == 0)
+  assert(cosuper M === image generators M) -- or === should work too
+  h = coverMap M
+  assert(cover M === source generators M)
+  assert(source h === cover M)
+  assert(target h === M)
+  assert(coker h == 0)
+
+  f === superMap M
+  j = map(M, ZZ^1, transpose matrix{{1,0,1}})
+  assert(super j === (superMap target j) * j)
+
+  h === coverMap M
+  j = map(M, ZZ^1, transpose matrix{{1,0,1}})
+  assert(cover j === matrix j)
+  assert(coverMap M * cover j === j)
+
+
+  
+  
+  -- testing module with no relations
+  M = image a
+    
+  assert(super M == coker relations M) -- or === should work too
+  f = superMap M
+  assert(source f === M)
+  assert(target f === super M)
+  assert(ker f == 0)
+  g = cosuperMap M
+  assert(source g === cosuper M)
+  assert(target g === M)
+  assert(coker g == 0)
+  assert(cosuper M === image generators M) -- or === should work too
+  h = coverMap M
+  assert(cover M === source generators M)
+  assert(source h === cover M)
+  assert(target h === M)
+  assert(coker h == 0)
+
+  -- testing module with generators matrix not present (cokernels)
+  M = coker b
+    
+  assert(super M == coker relations M) -- or === should work too
+  f = superMap M
+  assert(source f === M)
+  assert(target f === super M)
+  assert(ker f == 0)
+  g = cosuperMap M
+  assert(source g === cosuper M)
+  assert(target g === M)
+  assert(coker g == 0)
+  assert(cosuper M === image generators M) -- or === should work too
+  h = coverMap M
+  assert(cover M === source generators M)
+  assert(source h === cover M)
+  assert(target h === M)
+  assert(coker h == 0)
+
+  -- testing free modules
+  M = ZZ^7
+  assert(super M == coker relations M) -- or === should work too
+  f = superMap M
+  assert(source f === M)
+  assert(target f === super M)
+  assert(ker f == 0)
+  g = cosuperMap M
+  assert(source g === cosuper M)
+  assert(target g === M)
+  assert(coker g == 0)
+  assert(cosuper M === image generators M) -- or === should work too
+  h = coverMap M
+  assert(cover M === source generators M)
+  assert(source h === cover M)
+  assert(target h === M)
+  assert(coker h == 0)
+
+  f === superMap M
+  j = map(M, ZZ^1, transpose matrix{{1,0,1,2,3,4,5}})
+  assert(super j === (superMap target j) * j)
+
+  h === coverMap M
+  assert(cover j === matrix j)
+  assert(coverMap M * cover j === j)
+///
+
+"TEST" -- TODO: reinstate this test.
+///
+  R = ZZ/101[x,y,z]
+  a = matrix{{x^3, x*z, y^2, y*z^2}}
+  b = matrix{{x^3, y^3}}
+
+  M = subquotient(a,b)
+  prune M
+  assert(super M === coker relations M) -- or === should work too
+  f = superMap M
+  assert(source f === M)
+  assert(target f === super M)
+  assert(ker f == 0)
+  g = cosuperMap M
+  assert(source g === cosuper M)
+  assert(target g === M)
+  assert(coker g == 0)
+  assert(cosuper M === image generators M) -- or === should work too
+  h = coverMap M
+  assert(cover M === source generators M)
+  assert(source h === cover M)
+  assert(target h === M)
+  assert(coker h == 0)
+
+  f === superMap M
+  j = map(M, R^1, transpose matrix{{x,y,z,x-y}})
+  assert(super j === (superMap target j) * j)
+
+  h === coverMap M
+  assert(cover j === matrix j)
+  assert(coverMap M * cover j === j)
+  
+  -- testing module with no relations
+  M = image a
+    
+  assert(super M == coker relations M) -- or === should work too
+  f = superMap M
+  assert(source f === M)
+  assert(target f === super M)
+  assert(ker f == 0)
+  g = cosuperMap M
+  assert(source g === cosuper M)
+  assert(target g === M)
+  assert(coker g == 0)
+  assert(cosuper M === image generators M) -- or === should work too
+  h = coverMap M
+  assert(cover M === source generators M)
+  assert(source h === cover M)
+  assert(target h === M)
+  assert(coker h == 0)
+
+  -- testing module with generators matrix not present (cokernels)
+  M = coker b
+    
+  assert(super M == coker relations M) -- or === should work too
+  f = superMap M
+  assert(source f === M)
+  assert(target f === super M)
+  assert(ker f == 0)
+  g = cosuperMap M
+  assert(source g === cosuper M)
+  assert(target g === M)
+  assert(coker g == 0)
+  assert(cosuper M === image generators M) -- or === should work too
+  h = coverMap M
+  assert(cover M === source generators M)
+  assert(source h === cover M)
+  assert(target h === M)
+  assert(coker h == 0)
+///
+
+-*
+  restart
+  needsPackage "CanonicalMaps"
+*-
+TEST ///
+  debug needsPackage "CanonicalMaps"
+  a = matrix{{6,0,0},{0,3,0},{0,0,0},{0,0,0}}
+  b = matrix{{12,0,0},{0,3,0},{0,0,2},{0,0,0}}
+  M = subquotient(a,b)
+  prune M
+  phi = pruneMap M
+  assert isWellDefined phi
+  assert(source phi === M)
+  assert(target phi === prune M)
+  assert(kernel phi == 0 and cokernel phi == 0)
+  assert((prune M).cache.pruningMap^-1 === phi)
+  assert(phi^-1 === (prune M).cache.pruningMap)
+
+  phi = trimMap M
+  assert isWellDefined phi
+  assert(source phi === M)
+  assert(target phi === trim M)
+  assert(kernel phi == 0 and cokernel phi == 0)
+
+  R = ZZ/101[x,y,z]
+  a = matrix{{x^3, x*z, y^2, y*z^2}}
+  b = matrix{{x^3, y^3, x^4, y^4}}
+  M = subquotient(a,b)
+
+  prune M
+  phi = pruneMap M
+  assert isWellDefined phi
+  assert(source phi === M)
+  assert(target phi === prune M)
+  assert(kernel phi == 0 and cokernel phi == 0)
+  assert((prune M).cache.pruningMap^-1 === phi)
+  assert(phi^-1 === (prune M).cache.pruningMap)
+
+  phi = trimMap M
+  assert isWellDefined phi
+  assert(source phi === M)
+  assert(target phi === trim M)
+  assert(kernel phi == 0 and cokernel phi == 0)
+  
+  M = R^{-1,2,3}
+  phi = pruneMap M
+  assert isWellDefined phi
+  assert(source phi === M)
+  assert(target phi === prune M)
+  assert(kernel phi == 0 and cokernel phi == 0)
+  assert((prune M).cache.pruningMap^-1 === phi)
+  assert(phi^-1 === (prune M).cache.pruningMap)
+
+  phi = trimMap M
+  assert isWellDefined phi
+  assert(source phi === M)
+  assert(target phi === trim M)
+  assert(kernel phi == 0 and cokernel phi == 0)
+///
+
+
+-*
+  restart
+  needsPackage "CanonicalMaps"
+*-
+"TEST" -- TODO: reinstate unitor, counitor
+/// -- unitor
+  M = coker matrix{{3,0,0},{2,1,0},{0,0,0}}
+  f = unitorMap M
+  assert isWellDefined f
+  assert(source f === (ring M)^1 ** M)
+  assert(target f === M)
+  assert(ker f == 0)
+  assert(coker f == 0)
+  assert(f == 1)
+
+  g = counitorMap M
+  assert isWellDefined g
+  assert(source g === M)
+  assert(target g === Hom((ring M)^1, M))
+  assert(ker g == 0)
+  assert(coker g == 0)
+
+  M = prune coker matrix{{3,0,0},{2,1,0},{0,0,0}}
+  f = unitorMap M
+  assert(f == 1)
+  assert isWellDefined f
+  assert(ker f == 0)
+  assert(coker f == 0)
+
+  R = ZZ/101[x,y,z]/(x^2, y^2, z^2)
+  M = module ideal(x*y, x*z-y*z)
+  f = unitorMap M
+  assert isWellDefined f
+  assert(source f === (ring M)^1 ** M)
+  assert(target f === M)
+  assert(ker f == 0)
+  assert(coker f == 0)
+  assert(f == 1)
+
+  g = counitorMap M
+  assert isWellDefined g
+  assert(source g === M)
+  assert(target g === Hom((ring M)^1, M))
+  assert(ker g == 0)
+  assert(coker g == 0)
+
+  R = ZZ/101[x,y,z]/(x^2, y^2, z^2)
+  M = module ideal(x*y, x*z-y*z) ++ R^1/(x*y*z)
+  f = unitorMap M
+  assert isWellDefined f
+  assert(source f === (ring M)^1 ** M)
+  assert(target f === M)
+  assert(ker f == 0)
+  assert(coker f == 0)
+  assert(f == 1)
+
+  g = counitorMap M
+  assert isWellDefined g
+  assert(source g === M)
+  assert(target g === Hom((ring M)^1, M))
+  assert(ker g == 0)
+  assert(coker g == 0)
+
+  R = ZZ/101[x,y,z]
+  M = module ideal(x^2, y^5, z^10, z^9)
+  g = counitorMap(M, MinimalGenerators => false)
+  assert isWellDefined g
+  assert(source g === M)
+  assert(target g === Hom((ring M)^1, M, MinimalGenerators => false))
+  assert(ker g == 0)
+  assert(coker g == 0)
+///
+
+"TEST"
+///
+  -- this test is trying to find `trimMap`, but there is a M2 bug we need to make an issue on
+  -- BUG, git issue #
+  R = ZZ/101[x,y,z]
+  M = subquotient(matrix{{x^2, x^2-y^2, y^2}}, matrix{{x^3-y^3, y^3 - x^3}})
+  M' = trim M
+  f = (gens M) // ((gens M') | (relations M'))
+  g = map(M', M, f^{0..numcols gens M' - 1})
+
+  assert(ker g == 0)
+  assert(coker g == 0)
+  assert isWellDefined g
+
+  f' = (gens M') // ((gens M) | (relations M))
+  g' = map(M, M', f'^{0..numcols gens M - 1})
+
+  assert(ker g' == 0)
+  assert(coker g' == 0)
+  assert isWellDefined g'
+
+  assert(g * g' == 1) -- so g, g' are inverses of each other.
+  assert(g' * g == 1)
+  
+  assert(g' == g^(-1)) -- FAILS: Macaulay2/m2/matrix.m2:110:20-119:5 has an incorrect check: raw f === raw g.
+  assert(g'^(-1) == g) -- ok 
+  
+  ///
+
+"TEST" -- this one is not yet working
+///
+  debug needsPackage "CanonicalMaps"
+  C = ZZ^3 ++ ZZ^1/ideal(32)
+  B = ZZ^2 ++ ZZ^1/ideal(16)
+  A = ZZ^1/ideal(8) ++ ZZ^1/ideal(4) ++ ZZ^2
+  debugLevel = 1
+  sw = swapMap(A, B, C)
+  assert isWellDefined sw
+  assert isHomogeneous sw
+  assert(ker sw == 0)
+  assert(coker sw == 0)
+  -- note: this doesn't show that we have the correct map yet!
+  assert checkSwapMap(sw, A, B)
+
+  R = ZZ/101[a..d]
+  A = R^{0,1,2,3}
+  B = R^{0,10,20}
+  C = R^{0,100,200,300,400}
+  sw = swapMap(A, B, C)
+  assert isWellDefined sw
+  assert isHomogeneous sw
+  assert(ker sw == 0)
+  assert(coker sw == 0)
+  -- note: this doesn't show that we have the correct map yet!
+  debugLevel = 1
+  assert checkSwapMap(sw, A, B)
+
+  BC = Hom(B, C)
+  AC = Hom(A, C)
+  ABC = Hom(A, BC)
+  BAC = Hom(B, AC)
+  gens ABC
+  gens BAC
+
+  phi1 = map(BAC, ABC, 1)
+  isWellDefined phi1
+  isHomogeneous phi1 -- false
+  ker phi1 == 0
+  coker phi1 == 0
+  
+  perm = tensorCommutativity(dual cover A, dual cover B) ** cover C
+  permLift = (perm * gens ABC) //  gens BAC
+  phi = map(BAC, ABC, permLift)
+  isHomogeneous phi
+
+
+  target gens ABC
+  target gens BAC
+  permAB = tensorCommutativity(dual cover A, dual cover B)
+  permABC = (permAB) ** (cover C)
+  netList{degrees source permABC, degrees target gens ABC}
+  degrees source permABC === degrees target gens ABC -- true
+  source permABC === target gens ABC
+  target permABC === target gens BAC
+  phi = map(BAC, ABC, permABC)
+  isWellDefined phi
+  ker phi == 0
+  coker phi == 0
+  isHomogeneous phi
+  /// 
+
+end--
+
+-* Development section *-
+restart
+needsPackage "CanonicalMaps"
+check "CanonicalMaps"
+
+uninstallPackage "CanonicalMaps"
+restart
+installPackage "CanonicalMaps"
+viewHelp "CanonicalMaps"
+
+-------------------------------------------------------------------------
+-- Tests from Complexes/Modules.m2, unchanged.  Needs work.
+-------------------------------------------------------------------------
+TEST ///
+  restart
+  needs "./Modules.m2"
+  R = ZZ/101[a..d]
+  I = ideal (a^2, b^2, c^2, d^2, a*b*c*d)
+  J = ideal (a^3, b^3, c^3, d^3, a*b*c*d)
+  M = module I
+  N = module J
+  f = inducedMap(M, N)
+  source f === N
+  target f === M
+  M1 = M ++ comodule I
+  N1 = N ++ comodule J
+  f = randomMatrix(M1, N1)
+  isWellDefined f
+  prune ker f
+  prune coker f
+
+  eta = kernelMap f
+  assert(source eta === ker f)
+  assert(target eta === source f)
+  assert(ker eta == 0)
+  assert(f.cache.kernel === ker f) -- make sure value is acrtually cached
+
+  p = cokernelMap f
+  assert(source p === target f)
+  assert(target p === coker f)
+  assert(coker p == 0)
+  assert(f.cache.cokernel === coker f) -- make sure value is acrtually cached
+
+  eta2 = kernelMap(kernelMap f, f)
+  assert isWellDefined eta2
+  assert(kernelMap f * eta2 == kernelMap f)
+
+  f = randomComplexMap(complex M1, complex N1, Cycle => true)
+  assert isWellDefined f
+  assert isComplexMorphism f
+  g = f_0
+  assert(source g === N1)
+  assert(target g === M1)
+  ker g
+  eta = inducedMap(complex N1, ker f)
+  eta0 = eta_0
+  assert(source eta0 === ker g)
+  assert(target eta0 === N1)
+  
+  -- kernelMap universal property
+  R = ZZ/101[a..d]
+  I = monomialCurveIdeal(R, {1,3,4})
+  C = freeResolution I
+  D = dual C
+  f = D.dd_-2
+  g = D.dd_-1
+  ghat = kernelMap(g, f)
+  -- check the kernel map result (for modules, not complexes) 
+  assert(target ghat === ker f)
+  assert(source ghat === source g)
+  assert(g === (kernelMap f) * ghat)
+
+  D = Hom(C, R^1/I)
+  f = D.dd_-2
+  g = D.dd_-1
+  ghat = kernelMap(g, f)
+  -- check the kernel map result (for modules, not complexes)
+  assert(target ghat === ker f)
+  assert(source ghat === source g)
+  assert(g == (kernelMap f) * ghat)
+
+  D = Hom(C, R^1/I_0 ++ R^1/I_1)
+  f = D.dd_-2
+  g = D.dd_-1
+  ghat = kernelMap(g, f)
+  -- check the kernel map result (for modules, not complexes)
+  assert(target ghat === ker f)
+  assert(source ghat === source g)
+  assert(g === (kernelMap f) * ghat)
+
+  -- cokermap universal property (for modules)
+  R = ZZ/101[a..d]
+  I = monomialCurveIdeal(R, {1,3,4})
+  C = freeResolution I
+  D = dual C
+  f = D.dd_-1
+  g = D.dd_-2
+  g * f == 0
+  cokernel f
+  cokernelMap f
+  ghat = cokernelMap(g, f)
+  -- check the cokernel map result (for modules, not complexes)
+  assert(target ghat === target g)
+  assert(source ghat === cokernel f)
+  assert(g === ghat * cokernelMap f)
+
+  D = Hom(C, R^1/I_0 ++ R^1/I_1)
+  f = D.dd_-1
+  g = D.dd_-2
+  g * f == 0
+  cokernel f
+  cokernelMap f
+  ghat = cokernelMap(g, f)
+  -- check the cokernel map result (for modules, not complexes)
+  assert(target ghat === target g)
+  assert(source ghat === cokernel f)
+  assert(g === ghat * cokernelMap f)
+  ///
+
+TEST ///
+-*
+  restart
+  needs "./Modules.m2"
+*-
+  -- testing ker and coker universal maps, for complexes
+  S = ZZ/11[x,y,z];
+  K2 = koszulComplex matrix{{x,y}}
+  K3 = koszulComplex matrix{{x,y,z}}
+  psi = randomComplexMap(K3,K2, Cycle => true, InternalDegree => 1)
+  assert isComplexMorphism psi
+  ker psi == 0 -- this map is a monmorphism
+
+  eta = kernelMap psi -- 0 map
+  cokernelMap eta === id_(source psi) -- false... why?
+  assert(cokernelMap eta == id_(source psi)) -- true
+
+  p = cokernelMap psi
+  source imageMap psi == image psi -- but not ===, why?
+  target coimageMap psi == coimage psi -- but not ===, why?
+  image psi  
+  coimage psi
+  imageMap psi
+  coimageMap psi
+  coimageToImage psi * coimageToImageInverse psi === id_(coimage psi)
+  g = coimageToImage psi
+  h = coimageToImageInverse psi
+  g*h === id_(image g) -- this is false
+  g*h == id_(image g) -- this is true
+
+-- an example which is not injective nor surjective
+  S = ZZ/11[x,y,z];
+  K2 = koszulComplex matrix{{x,y}}
+  K3 = koszulComplex matrix{{x,y,z}}
+  f1 = randomComplexMap(K3,K2, Cycle => true, InternalDegree => 1)
+  f2 = randomComplexMap(K2, K3, Cycle => true, InternalDegree => 1)
+  g = f1*f2
+  isWellDefined g
+  source g === K3
+  target g === K3
+  degree g_0 == {2} -- degrees are inside the maps
+  assert isComplexMorphism g
+  eta = kernelMap g
+  assert(ker eta == 0)
+  p = cokernelMap g
+  assert(coker p == 0)
+  kernelMap p
+  mu = coimageToImage g
+  mu1 = coimageToImageInverse g
+  assert(mu * mu1 == 1)
+  assert(mu1 * mu == 1)
+  assert(mu^(-1) == mu1)
+///
+
+TEST ///
+-*
+  restart
+  needs "./Modules.m2"
+*-
+  -- coimage to image map for complexes
+  S = ZZ/11[x,y,z];
+  K2 = koszulComplex matrix{{x,y}}
+  K3 = koszulComplex matrix{{x,y,z}}
+  psi = randomComplexMap(K3,K2, Cycle => true, InternalDegree => 1)
+  assert isComplexMorphism psi
+  ker psi == 0 -- this map is a monmorphism
+  
+  source imageMap psi == image psi -- but not ===, why?
+  target coimageMap psi == coimage psi -- but not ===, why?
+  image psi  
+  coimage psi
+  imageMap psi
+  coimageMap psi
+  coimageToImage psi * coimageToImageInverse psi === id_(coimage psi)
+  g = coimageToImage psi
+  h = coimageToImageInverse psi
+  g*h === id_(image g) -- this is false, why?
+  assert(g*h == id_(image g)) -- this is true
+///
+
+TEST ///
+  -- images and coimages
+  -- and the 2 universal properties (or is it 4?)
+
+  R = ZZ/101[a..d]
+  I = monomialCurveIdeal(R, {1,3,4})
+  C = freeResolution I
+  D = dual C
+  f = D.dd_-1
+  g = D.dd_-2
+  image f
+  cokernelMap kernelMap f
+  kernelMap cokernelMap f
+  image f
+  coimage f
+  imf = imageMap f
+  target imf === target f
+  coimf = coimageMap f
+  image f 
+  target coimf
+  coimageToImage f
+  coimageToImageInverse f
+
+    eta = kernelMap f; -- eta: ker f --> B
+      source eta === ker f
+      target eta === source f
+    p = cokernelMap f; -- p: C --> coker f
+      source p === target f
+      target p === cokernel f
+      f * eta == 0
+      p * f == 0
+    theta' = cokernelMap eta; -- theta' : B --> coker eta
+      source theta' === source f
+      target theta' === coker eta
+    theta = kernelMap(f, p); -- theta:  target p --> target f
+      source theta === source f
+      target theta === kernel p
+    mu = cokernelMap(theta, eta)
+      source mu === coker eta
+      target mu === target theta
+      source mu == prune image f
+      target mu 
+
+  -- want the induced maps (given f : B --> C)
+  -- First we have these two:
+  -- p : C --> coker f, p = cokernelMap f
+  -- eta : ker f --> B, eta = kernelMap f
+  -- kernelMap p : image f --> C
+  -- cokernelMap eta : B --> 
+  eta = kernelMap f
+    assert(target eta === source f)
+    assert(source eta == ker f)
+  p = cokernelMap f
+    assert(source p === target f)
+    assert(target p === coker f)
+  rho = kernelMap p
+    assert(source rho === ker p)
+    assert(target rho === target f)
+  theta' = cokernelMap eta
+    assert(source theta' === source f)
+    assert(target theta' === coker eta)
+
+  theta = kernelMap(f, p)
+    assert(source theta === source f)
+    assert(target theta === kernel p)
+    assert(rho * theta == f)
+  rho' = cokernelMap(f, eta) -- seems ok
+    assert(f * eta == 0) -- so this lifting should be ok
+    assert(source rho' === target theta')
+    assert(target rho' === target f)
+    assert(rho' * theta' == f)
+  mu = kernelMap(rho', p)
+    source mu === target theta'
+    target mu === kernel p
+    isIsomorphism mu -- this is a natural isomorphism
+    -- BUT: in an arbitrary category with Ker, Coker's, this is not always an isom.
+    -- Hence it is an axiom: we must be given this isomorphism.
+    -- It is easy to compute/invert for modules, complexes.
+
+  coimf = target theta'
+  imf = target theta
+  
+  ///
+
+TEST ///
+-*
+  restart
+  needs "./Modules.m2"
+*-
+  -- testing fiber products
+  S = ZZ/11[x,y,z];
+  K2 = koszulComplex matrix{{x,y}}
+  K3 = koszulComplex matrix{{x,y,z}}
+  f1 = randomComplexMap(K3,K2, Cycle => true, InternalDegree => 1)
+  f2 = randomComplexMap(K3,K2, Cycle => true, InternalDegree => 1)
+  (D, g1, g2) = fiberProduct(f1, f2)
+  prune D
+  assert(source g1 == D) -- want === here !! and on next few lines too...!
+  assert(source g2 == D)
+  assert(target g1 == source f1)
+  assert(target g2 == source f2)
+  assert(f1*g1 === f2*g2)
+  h = fiberProduct(D, g1, g2)
+  -- XXX
+///
+
+TEST ///
+-*
+  restart
+  needs "./Modules.m2"
+*-
+  -- testing fiber sums
+  S = ZZ/11[x,y,z];
+  K2 = koszulComplex matrix{{x,y}}
+  K3 = koszulComplex matrix{{x,y,z}}
+  f1 = randomComplexMap(K3,K2, Cycle => true, InternalDegree => 1)
+  f2 = randomComplexMap(K3,K2, Cycle => true, InternalDegree => 1)
+  (D, g1, g2) = fiberSum(f1, f2)
+  prune D
+  assert(target g1 == D)  -- want === here !! and on next few lines too...!
+  assert(target g2 == D)
+  assert(source g1 == target f1)
+  assert(source g2 == target f2)
+  assert(g1*f1 === g2*f2)
+  fiberSum(D, g1, g2)
+///
+
+TEST ///
+  -- Exercise:
+  -- Given a R-linear map (of modules or complexes)
+  -- f : B --> C,
+  -- suppose that ker f = 0, coker f = 0.  We know that then f is an isomorphism.
+  -- Find the (unique) inverse map g : C --> B.
+  -- Use kernelMap, cokernelMap functions to find g.
+///
+
+TEST ///
+  -- Exercise:
+  --  Write the following function(s):
+  --  Given a R-map or R-complex map, f : B --> C
+  -- (a) implement the imageMap universal property. (Is this a thing?)
+  -- (b) implement the coimageMap universal property.
+///
+
+TEST ///
+-*
+  restart
+  needs "./Modules.m2"
+*-
+  -- exercise: given phi : B --> C,
+  -- show that Im(phi) --> C x_D C, where X = C ++_B C is an isomorphism
+  S = ZZ/11[x,y,z];
+  K2 = koszulComplex matrix{{x,y}}
+  K3 = koszulComplex matrix{{x,y,z}}
+  f1 = randomComplexMap(K3,K2, Cycle => true, InternalDegree => 1)
+  f2 = randomComplexMap(K2,K3, Cycle => true, InternalDegree => 1)
+  phi = f1*f2
+  prune image phi
+  (D, g1, g2) = fiberSum(phi, phi)
+  (E, h1, h2) = fiberProduct(g1, g2)
+  
+  -- Next, we need to exhibit a natural map (which is an isomorphism) from image phi to E.
+///
+
+
+Some goals for CanonicalMaps (for Modules, and also Complexes)
+
+List of desired canonical maps
+  - kernelMap f : ker f --> source f
+  - cokernelMap f : target f --> cokernel f
+  - imageMap f : image f --> target f
+  - coimageMap f : source f --> coimage f
+  - coverMap M : cover M --> M
+  - superMap M : M --> super M
+  - fiberProductMap
+  - fiberSumMap
+  - pruneMap
+  - trimMap
+  - unitorMap: R ** M --> M
+  - counitorMap: M --> Hom(R, M)
+
+  -- need tests for the following (for free, coker, image, subquotients)
+  - tensorCommutativity: M ** N --> N ** M
+  - tensorAssociativity: A ** (B ** C) --> (A ** B) ** C (this one is in Core, any tests? doc is bad)
+  
+- standard maps first for modules, then for complexes
+  - doubleDualMap M : M --> M**
+  - swap map Hom_R(A, Hom_S(B, C)) --> Hom_S(B, Hom_R(A, C)) (C is an R-S bimodule).
+    (even case R == S is interesting)
+  - adjunction: Hom_R(A **_S B, C) --> Hom_S(B, Hom_R(A, C))  (A is an R-S bimodule).
+    (even case R == S is interesting)
+  - biduality (not isom): M --> Hom_S(Hom_R(M, N), N), where N is an R-S bimodule.
+  - tensor eval: Hom_R(A, B) **_S C --> Hom_R(A, B **_S C) (B is R-S bimodule)
+  - hom eval: A **_S Hom_R(B, C) --> Hom_R(Hom_S(A, B), C)
+
+  -- f : S --> R ring map
+  -- Hom_S(B, C) is an S-module
+  -- Hom_S(B, C) ** f is an R-module.
+  - ones related to cycles and homology.
+    Z(C) --> C --> B(C)[1]
+    B(C) --> Z(C) --> H(C)
+    H(C) --> C/B(C) --> B(C)[1]
+    H(C) -> C/B(C) -> Z(C)[1] -> H(C)[1]
