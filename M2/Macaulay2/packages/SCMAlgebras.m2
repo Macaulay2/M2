@@ -2,7 +2,7 @@
 newPackage(
   "SCMAlgebras",
   Version => "1.2",
-  Date => "June 08, 2026",
+  Date => "November 23, 2026",
   Authors => {{
     Name => "Ernesto Lax",
     Email => "erlax@unime.it",
@@ -53,7 +53,7 @@ Node
   Key
     PrimaryDataList
   Headline
-    Type created to store data of the primary decomposition of an ideal $I$.
+    type created to store data of the primary decomposition of an ideal $I$.
 ///);
 -------------------------------------------------------------------------
 PrimaryDataList = new Type of List
@@ -72,7 +72,7 @@ Node
     getPrimaryData
     (getPrimaryData,Ideal)
   Headline
-    Creates the PrimaryDataList of the ideal $I$.
+    creates the PrimaryDataList of the ideal $I$.
   Usage
     getPrimaryData(I)
   Inputs
@@ -111,7 +111,7 @@ Node
     (deficiencyModule,Module,ZZ)
     (deficiencyModule,Ideal,ZZ)
   Headline
-    Computes the $i$-th module of deficiency of a module $M$ or an ideal $I$.
+    computes the $i$-th module of deficiency of a module $M$ or an ideal $I$.
   Usage
     deficiencyModule(M,i)
     deficiencyModule(I,i)
@@ -167,7 +167,7 @@ Node
     (canonicalModule,Module)
     (canonicalModule,Ideal)
   Headline
-    Computes the canonical module of a module $M$ or an ideal $I$.
+    computes the canonical module of a module $M$ or an ideal $I$.
   Usage
     canonicalModule M
     canonicalModule I
@@ -217,7 +217,7 @@ Node
     minimumDimension
     (minimumDimension,Ideal)
   Headline
-    Computes the minimum dimension of $I$.
+    computes the minimum dimension of $I$.
   Usage
     minimumDimension I
   Inputs
@@ -241,10 +241,14 @@ Node
 ///);
 -------------------------------------------------------------------------
 minimumDimension = method(TypicalValue=>ZZ);
+-------------------------------------------------------------------------
+minimumDimension(PrimaryDataList) := L -> (
+    min(apply(L,last))
+)
+-------------------------------------------------------------------------
 minimumDimension(Ideal) := I -> (
-  T:=decompose I;
-  D:=for Q in T list dim(radical Q);
-  min(D)
+  L:=getPrimaryData I;
+  minimumDimension(L)
 )
 --=======================================================================
 
@@ -259,7 +263,7 @@ Node
     (filterIdeal,Ideal,ZZ)
     (filterIdeal,Ideal,ZZ,PrimaryDataList)
   Headline
-    Computes the $i$th filter ideal of $I$.
+    computes the $i$th filter ideal of $I$.
   Usage
     filterIdeal(I,i)
   Inputs
@@ -291,25 +295,6 @@ Node
 -------------------------------------------------------------------------
 filterIdeal = method(TypicalValue=>Ideal);
 -------------------------------------------------------------------------
-filterIdeal(Ideal,ZZ) := Ideal => (I,i) -> (
-  S := ring I;
-  d := dim I;
-  d0 := minimumDimension I;
-
-  if i < -1 or i > d then (
-    error("Expected an integer greater than -2 and at most " | toString(d));
-  );
-
-  if i < d0 then return I;
-  if i == d then return ideal(S^1);
-
-	L := getPrimaryData(I);
-  
-	Pi := for c in select(L, l -> l#1 > i) list c#0;
-
-  intersect(Pi)
-)
--------------------------------------------------------------------------
 filterIdeal(Ideal,ZZ,PrimaryDataList) := Ideal => (I,i,L) -> (
   S := ring I;
   d := dim I;
@@ -322,10 +307,14 @@ filterIdeal(Ideal,ZZ,PrimaryDataList) := Ideal => (I,i,L) -> (
   if i < d0 then return I;
   if i == d then return ideal(S^1);
 
-
   Pi := for c in select(L, l -> l#1 > i) list c#0;
 
   intersect(Pi)
+)
+-------------------------------------------------------------------------
+filterIdeal(Ideal,ZZ) := Ideal => (I,i) -> (
+  L:=getPrimaryData I;
+  filterIdeal(I,i,L)
 )
 --=======================================================================
 
@@ -339,7 +328,7 @@ Node
     unmixedLayer
     (unmixedLayer,Ideal,ZZ)
   Headline
-    Computes the $i$th unmixed layer of $I$.
+    computes the $i$th unmixed layer of $I$.
   Usage
     unmixedLayer(I,i)
   Inputs
@@ -376,7 +365,7 @@ unmixedLayer(Ideal,ZZ) := Ideal => (I,i) -> (
   d := dim I;
   d0 := minimumDimension I;
 
-	L := getPrimaryData(I);
+  L := getPrimaryData(I);
 
   if i < 0 or i > d then (
     error("Expected an integer greater than 0 and at most " | toString(d));
@@ -403,7 +392,7 @@ Node
     isUnmixed
     (isUnmixed,Ideal)
   Headline
-    Checks whether an ideal is unmixed
+    checks whether an ideal is unmixed
   Usage
     isUnmixed I
   Inputs
@@ -454,7 +443,7 @@ Node
     (isSCM,Module)
     (isSCM,Ideal)
   Headline
-    Checks whether a module or an ideal is sequentially Cohen-Macaulay
+    checks whether a module or an ideal is sequentially Cohen-Macaulay
   Usage
     isSCM M
     isSCM I
@@ -525,7 +514,7 @@ Node
     (isCCM,Module)
     (isCCM,Ideal)
   Headline
-    Checks whether a module or an ideal is canonically Cohen-Macaulay
+    checks whether a module or an ideal is canonically Cohen-Macaulay
   Usage
     isCCM M
     isCCM I
@@ -678,6 +667,59 @@ S = QQ[x_1..x_4,y_1..y_4]
 E = {{1, 2}, {1, 3}, {1, 4}, {2, 3}, {3, 4}}
 J = ideal(for e in E list x_(e#0)*y_(e#1)-x_(e#1)*y_(e#0));
 assert(isCCM(J))
+///
+
+
+--========================
+-- boundary cases on the predicates: zero and unit ideals
+--========================
+TEST ///
+S = QQ[a,b,c];
+-- zero ideal (the whole ring S) is Cohen-Macaulay, hence SCM and CCM
+assert(isSCM ideal(0_S));
+assert(isCCM ideal(0_S));
+-- unit ideal (the zero module) is vacuously SCM and CCM
+assert(isSCM ideal(1_S));
+assert(isCCM ideal(1_S));
+///
+
+--========================
+-- deficiencyModule out-of-range returns the zero module
+--========================
+TEST ///
+S = QQ[a,b,c];
+M = S^1/ideal(a*b, b*c);
+-- below depth M and above dim M -> zero module
+assert(deficiencyModule(M, -1) == 0);
+assert(deficiencyModule(M, dim M + 1) == 0);
+assert(deficiencyModule(M, 100) == 0);
+///
+
+--========================
+-- filterIdeal boundary behavior at -1, 0, and dim I
+--========================
+TEST ///
+S = QQ[x_1..x_4, y_1..y_4];
+E = {{1, 2}, {1, 3}, {1, 4}, {2, 3}, {3, 4}};
+J = ideal(for e in E list x_(e#0)*y_(e#1)-x_(e#1)*y_(e#0));
+-- I^<i> = I for i < minimumDimension I (so in particular at i = -1 and i = 0)
+assert(filterIdeal(J, -1) == J);
+assert(filterIdeal(J, 0) == J);
+-- I^<dim I> is the unit ideal (S itself)
+assert(filterIdeal(J, dim J) == ideal(1_S));
+///
+
+--========================
+-- Ideal and Module dispatches agree for canonicalModule, deficiencyModule, and isCCM
+-- (NB: isSCM(I) vs isSCM(S^1/I) can disagree on some inputs -- flagged as a known issue)
+--========================
+TEST ///
+S = QQ[x_1..x_5];
+I = ideal(x_1^2*x_3, x_2*x_3^2*x_4, x_1*x_3^3*x_5);
+M = S^1/I;
+assert(canonicalModule I == canonicalModule M);
+assert(deficiencyModule(I, 2) == deficiencyModule(M, 2));
+assert(isCCM I == isCCM M);
 ///
 
 -------------------------------------------------------------------------........................
