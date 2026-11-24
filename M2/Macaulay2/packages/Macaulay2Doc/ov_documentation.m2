@@ -249,17 +249,17 @@ Node
     check
 ///
 
-document {
-    Key => "handling hypertext",
-    Subnodes => {
-	"Creating hypertext objects:",
-	TO hypertext,
-	"Printing hypertext objects:",
-	TOH "html",
-	TOH "mathML",
-	TOH "tex",
-	TOH "texMath",
-	TOH "info",
-	TOH "net"
-    }
-}
+doc ///
+  Key
+    "handling hypertext"
+  Subnodes
+    :Creating hypertext objects:
+    hypertext
+    :Printing hypertext objects:
+    "html"
+    "mathML"
+    "tex"
+    "texMath"
+    "info"
+    "net"
+///

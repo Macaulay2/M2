@@ -131,19 +131,20 @@ Node
     multidegree
 ///
 
-document {
-     Key => "A first course in commutative algebra",
-     "This section includes tutorials showing how to do
-     basic commutative algebra constructions in Macaulay2.
-     This section is being written by Mike Stillman, for use
-     with his Fall 2005 course: Math 634, Commutative algebra,
-     at Cornell University.  This course covers basic commutative
-     algebra, at the level of Atiyah-Macdonald, and Greuel-Pfister.",
-     PARA{},
-     "Macaulay2 examples corresponding to the Singular examples in the
-     book by Greuel-Pfister may also be found here.",
-     Subnodes => {
-	  TO "Elementary uses of Groebner bases I. Math 634 Fall 2005",
-	  TO "M2SingularBook"
-	  }
-     }
+doc ///
+  Key
+    "A first course in commutative algebra"
+  Description
+    Text
+      This section includes tutorials showing how to do basic commutative
+      algebra constructions in Macaulay2. This section is being written by Mike
+      Stillman, for use with his Fall 2005 course: Math 634, Commutative
+      algebra, at Cornell University. This course covers basic commutative
+      algebra, at the level of Atiyah-Macdonald, and Greuel-Pfister.
+
+      Macaulay2 examples corresponding to the Singular examples in the book by
+      Greuel-Pfister may also be found here.
+  Subnodes
+    "Elementary uses of Groebner bases I. Math 634 Fall 2005"
+    "M2SingularBook"
+///
