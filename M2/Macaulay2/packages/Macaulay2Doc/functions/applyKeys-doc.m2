@@ -25,6 +25,12 @@ doc ///
   It is an error for the function {\tt f} to return two pairs with the same key.
   When this is a possibility, use the function {\tt g} to specify how the two
   pairs should be reconciled.
+
+  When applied to @ofClass MutableHashTable@, this function does not lock it
+  like most functions. The function argument should not modify the hash table
+  as a side effect.  If it does, results may be incorrect or unpredictable. If
+  such side effects are unavoidable, acquire your own @TO Mutex@ before
+  calling this function.
  Description
   Example
    H = new HashTable from {1 => 10, 2 => 15, 3 => 20}
