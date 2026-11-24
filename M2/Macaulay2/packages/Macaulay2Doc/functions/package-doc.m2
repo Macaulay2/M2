@@ -687,7 +687,10 @@ Node
     "packages"
 ///
 
-document { Key => (options, Package),
-    EXAMPLE lines ///
-    options Core
-    ///}
+doc ///
+  Key
+    (options, Package)
+  Description
+    Example
+      options Core
+///

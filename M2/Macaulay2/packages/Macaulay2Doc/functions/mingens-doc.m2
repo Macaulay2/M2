@@ -45,93 +45,124 @@ document {
      }
 ///
 
-document { 
-     Key => mingens,
-     Headline => "minimal generator matrix",
-     "Every ideal and module in Macaulay2 comes equipped with
-     a generating set, which is sometimes a larger 
-     generating set than is required.  This routine returns a matrix
-     whose columns generate the given ideal or module.",
-     SeeAlso => {trim, prune, minimalPresentation},
-     Subnodes => { TO [mingens, Strategy] },
-     }
+doc ///
+  Key
+    mingens
+  Headline
+    minimal generator matrix
+  Description
+    Text
+      Every ideal and module in Macaulay2 comes equipped with a generating set,
+      which is sometimes a larger generating set than is required. This routine
+      returns a matrix whose columns generate the given ideal or module.
+  SeeAlso
+    trim
+    prune
+    minimalPresentation
+  Subnodes
+    [mingens, Strategy]
+///
 
-document {
-     Key => {Complement, [mingens, Strategy], [trim, Strategy]},
-     Headline => "a Strategy option value",
-     "The standard (default) strategy for ", TO "mingens", " or ", TO "trim", " is ", TO "Complement", ", at least in the case where the module (or
-     ideal) is homogeneous, and the ring is (quotient ring of) a polynomial ring over a field.  The other strategy, ", TO "Inhomogeneous", ", is experimental."
-     }
+doc ///
+  Key
+    Complement
+    [mingens, Strategy]
+    [trim, Strategy]
+  Headline
+    a Strategy option value
+  Description
+    Text
+      The standard (default) strategy for @TO "mingens"@ or @TO "trim"@ is
+      @TO "Complement"@, at least in the case where the module (or ideal) is
+      homogeneous, and the ring is (quotient ring of) a polynomial ring over a
+      field. The other strategy, @TO "Inhomogeneous"@, is experimental.
+///
 
-document { 
-     Key => {(mingens,Module),(mingens,Ideal),(mingens,MonomialIdeal)},
-     Usage => "mingens I",
-     Inputs => {
-	  "I" => "or an ideal"
-	  },
-     Outputs => {
-	  Matrix => {"a matrix, whose columns generate I."}
-	  },
-     "If I is homogeneous, then a matrix, whose columns
-     minimally generate I, is returned.",
-     EXAMPLE {
-	  "R = QQ[a..f]",
-	  "I = ideal(a,b,c) * ideal(a,b,c)",
-	  "mingens I"
-	  },
-     "If I is not homogeneous, then an attempt is made to find
-     a more efficient generating matrix, one which is better than a 
-     Gröbner basis.  There is no guarantee that the generating set is small,
-     or that no subset also generates.  The only thing known is that the entries
-     do generate the ideal.",
-     EXAMPLE {
-	  "J = ideal(a-1, b-2, c-3)",
-	  "I = J*J",
-	  "mingens I"
-	  },
-     "Every module I in Macaulay2 is a submodule of a quotient of some ambient
-     free module F.  This routine returns a minimal, or improved generating set 
-     for the same module I.  If you want to minimize the generators and the relations of a 
-     subquotient module, use ", TO trim, ".  If you want a minimal presentation, then use ", TO minimalPresentation, ".",
-     EXAMPLE {
-	  "M = matrix{{a^2*b*c-d*e*f,a^3*c-d^2*f,a*d*f-b*c*e-1}}",
-	  "I = kernel M",
-	  "J = image mingens I",
-	  "I == J",
-	  "trim I"
-	  },
-     PARA{},
-     "If the base ring is a polynomial ring (or quotient of one), then a Gröbner
-     basis computation is started, and continued until all generators have been 
-     considered.",
-     SeeAlso => {trim, minimalPresentation,kernel,image}
-     }
-document { 
-     Key => (mingens,GroebnerBasis),
-     Headline => "(partially constructed) minimal generator matrix",
-     Usage => "mingens G",
-     Inputs => {
-	  "G"
-	  },
-     Outputs => {
-	  Matrix => "whose columns form a (partially computed) minimal generating set"
-	  },
-     "Every GroebnerBasis computation in Macaulay2 computes a generator matrix, in the process
-     of constructing the Gröbner basis.  If the
-     original ideal or module is homogeneous, then the columns of this matrix form a
-     minimal set of generators.  In the inhomogeneous case, the columns generate, and an attempt 
-     is made to keep the size of the generating set small.",
-     PARA{},
-     "If the Gröbner basis is only partially constructed,
-     the returned result will be a partial answer.  In the graded case this set can be 
-     extended to a minimal set of generators for the ideal or module.",
-     EXAMPLE {
-	  "R = QQ[a..f]",
-	  "M = genericSymmetricMatrix(R,a,3)",
-	  "I = minors(2,M)",
-	  "G = gb(I, PairLimit=>5)",
-	  "mingens G",
-	  "mingens I"
-	  },
-     SeeAlso => {GroebnerBasis, gb,  genericSymmetricMatrix, minors}
-     }
+doc ///
+  Key
+    (mingens,Module)
+    (mingens,Ideal)
+    (mingens,MonomialIdeal)
+  Usage
+    mingens I
+  Inputs
+    I:
+      or an ideal
+  Outputs
+    :Matrix
+      a matrix, whose columns generate I.
+  Description
+    Text
+      If I is homogeneous, then a matrix, whose columns minimally generate I,
+      is returned.
+    Example
+      R = QQ[a..f]
+      I = ideal(a,b,c) * ideal(a,b,c)
+      mingens I
+    Text
+      If I is not homogeneous, then an attempt is made to find a more efficient
+      generating matrix, one which is better than a Gröbner basis. There is no
+      guarantee that the generating set is small, or that no subset also
+      generates. The only thing known is that the entries do generate the
+      ideal.
+    Example
+      J = ideal(a-1, b-2, c-3)
+      I = J*J
+      mingens I
+    Text
+      Every module I in Macaulay2 is a submodule of a quotient of some ambient
+      free module F. This routine returns a minimal, or improved generating set
+      for the same module I. If you want to minimize the generators and the
+      relations of a subquotient module, use @TO trim@. If you want a minimal
+      presentation, then use @TO minimalPresentation@.
+    Example
+      M = matrix{{a^2*b*c-d*e*f,a^3*c-d^2*f,a*d*f-b*c*e-1}}
+      I = kernel M
+      J = image mingens I
+      I == J
+      trim I
+    Text
+      If the base ring is a polynomial ring (or quotient of one), then a
+      Gröbner basis computation is started, and continued until all generators
+      have been considered.
+  SeeAlso
+    trim
+    minimalPresentation
+    kernel
+    image
+///
+doc ///
+  Key
+    (mingens,GroebnerBasis)
+  Headline
+    (partially constructed) minimal generator matrix
+  Usage
+    mingens G
+  Inputs
+    G:
+  Outputs
+    whose columns form a (partially computed) minimal generating set:Matrix
+  Description
+    Text
+      Every GroebnerBasis computation in Macaulay2 computes a generator matrix,
+      in the process of constructing the Gröbner basis. If the original ideal
+      or module is homogeneous, then the columns of this matrix form a minimal
+      set of generators. In the inhomogeneous case, the columns generate, and
+      an attempt is made to keep the size of the generating set small.
+
+      If the Gröbner basis is only partially constructed, the returned result
+      will be a partial answer. In the graded case this set can be extended to
+      a minimal set of generators for the ideal or module.
+    Example
+      R = QQ[a..f]
+      M = genericSymmetricMatrix(R,a,3)
+      I = minors(2,M)
+      G = gb(I, PairLimit=>5)
+      mingens G
+      mingens I
+  SeeAlso
+    GroebnerBasis
+    gb
+    genericSymmetricMatrix
+    minors
+///
