@@ -115,6 +115,11 @@ ENDFUNCTION (_ADD_STEP_DEPENDENCY)
 # _found_condition: add dependency only if ${_found_condition} evaluates to false
 FUNCTION (_ADD_COMPONENT_DEPENDENCY _component _name _dependencies _found_condition)
   if(NOT ${_found_condition})
+    if(NOT TARGET build-${_name}-install)
+      message(FATAL_ERROR
+        "Cannot build ${_name}: no usable external library was found and its submodule sources are absent. "
+        "Install ${_name} (set CMAKE_PREFIX_PATH or PKG_CONFIG_PATH for a custom prefix), or initialize its submodule.")
+    endif()
     add_dependencies(build-${_component} build-${_name}-install)
     foreach(_dependency IN LISTS _dependencies)
       _ADD_STEP_DEPENDENCY(${_name} ${_dependency})
@@ -180,6 +185,7 @@ ExternalProject_Add(build-eigen
 _ADD_COMPONENT_DEPENDENCY(libraries eigen "" EIGEN3_FOUND)
 
 
+if(EXISTS ${CMAKE_SOURCE_DIR}/submodules/bdwgc/CMakeLists.txt)
 # https://github.com/ivmai/bdwgc/
 # TODO: add environment variables GC_LARGE_ALLOC_WARN_INTERVAL and GC_ABORT_ON_LEAK
 # Note: Starting with 8.0, libatomic_ops is not necessary for C11 or C++14.
@@ -214,6 +220,7 @@ ExternalProject_Add(build-bdwgc
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
+endif()
 _ADD_COMPONENT_DEPENDENCY(libraries bdwgc "" BDWGC_FOUND)
 
 
@@ -348,6 +355,7 @@ endif()
 _ADD_COMPONENT_DEPENDENCY(libraries ntl gmp NTL_FOUND)
 
 
+if(EXISTS ${CMAKE_SOURCE_DIR}/submodules/flint/configure.ac)
 # https://github.com/Macaulay2/flint2
 ExternalProject_Add(build-flint
   PREFIX            libraries/flint
@@ -378,6 +386,7 @@ ExternalProject_Add(build-flint
   )
 if(NOT FLINT_FOUND)
   set(FLINT_ROOT ${M2_HOST_PREFIX})
+endif()
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries flint "gmp;mpfr;ntl" FLINT_FOUND)
 
@@ -439,6 +448,7 @@ endif()
 _ADD_COMPONENT_DEPENDENCY(libraries factory "gmp;ntl;flint" FACTORY_FOUND)
 
 
+if(EXISTS ${CMAKE_SOURCE_DIR}/submodules/frobby/CMakeLists.txt)
 # https://github.com/Macaulay2/frobby (previously https://www.broune.com/frobby)
 ExternalProject_Add(build-frobby
   PREFIX            libraries/frobby
@@ -457,6 +467,7 @@ ExternalProject_Add(build-frobby
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
+endif()
 _ADD_COMPONENT_DEPENDENCY(libraries frobby gmp FROBBY_FOUND)
 
 
@@ -575,6 +586,7 @@ ExternalProject_Add(build-mpsolve
 _ADD_COMPONENT_DEPENDENCY(libraries mpsolve "gmp;mpfr" MPSOLVE_FOUND)
 
 
+if(EXISTS ${CMAKE_SOURCE_DIR}/submodules/givaro/autogen.sh)
 # https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro/
 string(REGEX REPLACE
   "./configure$" "${CMAKE_SOURCE_DIR}/submodules/givaro/autogen.sh" givaro_AUTOGEN "${CONFIGURE}")
@@ -609,9 +621,11 @@ ExternalProject_Add(build-givaro
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
+endif()
 _ADD_COMPONENT_DEPENDENCY(libraries givaro gmp GIVARO_FOUND)
 
 
+if(EXISTS ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/autogen.sh)
 # https://linbox-team.github.io/fflas-ffpack/
 # NOTE: fflas_ffpack is just header files, so we don't build it
 # instead we add an extra autotune target for generating fflas-ffpack-thresholds.h
@@ -666,6 +680,7 @@ if(NOT FFLAS_FFPACK_FOUND AND (NOT GIVARO_FOUND OR GIVARO_VERSION VERSION_LESS 4
   # FIXME: the requirement on Givaro version is for fflas_ffpack 2.3.2
   _ADD_STEP_DEPENDENCY(fflas_ffpack givaro)
 endif()
+endif()
 _ADD_COMPONENT_DEPENDENCY(libraries fflas_ffpack gmp FFLAS_FFPACK_FOUND)
 
 
@@ -699,6 +714,7 @@ endif()
 _ADD_COMPONENT_DEPENDENCY(libraries glpk gmp GLPK_FOUND)
 
 
+if(EXISTS ${CMAKE_SOURCE_DIR}/submodules/googletest/CMakeLists.txt)
 # https://github.com/google/googletest
 ExternalProject_Add(build-googletest
   PREFIX            libraries/googletest
@@ -710,12 +726,14 @@ ExternalProject_Add(build-googletest
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
+endif()
 set(GOOGLETEST_FOUND ${GTEST_FOUND})
 if(BUILD_TESTING)
   _ADD_COMPONENT_DEPENDENCY(libraries googletest "" GOOGLETEST_FOUND)
 endif()
 
 
+if(EXISTS ${CMAKE_SOURCE_DIR}/submodules/memtailor/CMakeLists.txt)
 # https://github.com/Macaulay2/memtailor
 ExternalProject_Add(build-memtailor
   PREFIX            libraries/memtailor
@@ -733,8 +751,10 @@ ExternalProject_Add(build-memtailor
   STEP_TARGETS      install test
   )
 #_ADD_COMPONENT_DEPENDENCY(libraries memtailor googletest MEMTAILOR_FOUND)
+endif()
 
 
+if(EXISTS ${CMAKE_SOURCE_DIR}/submodules/mathic/CMakeLists.txt)
 # https://github.com/Macaulay2/mathic
 ExternalProject_Add(build-mathic
   PREFIX            libraries/mathic
@@ -753,8 +773,10 @@ ExternalProject_Add(build-mathic
   STEP_TARGETS      install test
   )
 #_ADD_COMPONENT_DEPENDENCY(libraries mathic memtailor MATHIC_FOUND)
+endif()
 
 
+if(EXISTS ${CMAKE_SOURCE_DIR}/submodules/mathicgb/CMakeLists.txt)
 # https://github.com/Macaulay2/mathicgb
 # TODO: g++ warning: tbb.h contains deprecated functionality.
 # https://www.threadingbuildingblocks.org/docs/help/reference/appendices/deprecated_features.html
@@ -780,6 +802,7 @@ if(EXISTS ${M2_HOST_PREFIX}/bin/mgb)
   execute_process(COMMAND mv ${M2_HOST_PREFIX}/bin/mgb ${M2_INSTALL_PROGRAMSDIR}/)
 endif()
 #_ADD_COMPONENT_DEPENDENCY(libraries mathicgb mathic MATHICGB_FOUND)
+endif()
 
 
 #############################################################################
@@ -1255,6 +1278,12 @@ file(GLOB_RECURSE _install_stamp_list RELATIVE ${CMAKE_BINARY_DIR}/libraries
 string(REGEX REPLACE "[a-z0-9_]+/src/build-[a-z0-9_]+-stamp/(build-[a-z0-9_]+-install)" "\\1"
   _installed_list "${_install_stamp_list}")
 string(REGEX REPLACE "-install" "-test" TEST_TARGET_LIST  "${_installed_list}")
+
+foreach(_test IN LISTS TEST_TARGET_LIST)
+  if(NOT TARGET ${_test})
+    list(REMOVE_ITEM TEST_TARGET_LIST ${_test})
+  endif()
+endforeach()
 
 # Remove broken tests or those we skip
 foreach(_test IN LISTS SKIP_TESTS)

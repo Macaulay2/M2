@@ -7,7 +7,7 @@ Node
     setup()
   Consequences
     Item
-      Initialization files for Emacs and the standard command shells will
+      Initialization files for the standard command shells will
       have lines added to them to allow the Macaulay2 files to be found.
       A missing initialization file will be created only if doing so will not
       prevent the command shell from reading further initialization files.
@@ -50,18 +50,25 @@ Node
     1:setupEmacs
   Usage
     setupEmacs()
-  Consequences
-    Item
-      The initialization file for Emacs (@TT ".emacs"@ in your home directory) will have lines
-      added to allow the Macaulay2 Emacs mode to operate. The user is prompted before the file
-      is modified and offered the opportunity to review or reject the change.
   Description
     Text
-      A backup files is made carefully, and if a mangled initialization file is detected,
-      it will not be modified. The lines added are bracketed by comment lines containing
-      the phrases @TT "Macaulay 2 start"@ and @TT "Macaulay 2 end"@.
-
-      The function @TO setup@ does all this and more.
+      Adds a block to @TT "~/.emacs"@ that uses Emacs' built-in package manager
+      to install the separate Emacs interface from its GitHub repository using
+      @TT "package-vc-install"@. Automatic installation requires Emacs 29 or later,
+      Git, and network access. On later Emacs startups, it updates a VC-installed
+      package after Emacs becomes idle. Packages installed from a tarball or by a
+      distribution are left to their existing package manager. Update errors are
+      reported without aborting Emacs startup. The user is prompted before
+      @TT "~/.emacs"@ is modified, and an existing file is backed up.
+      For older Emacs versions, build a tarball with @TT "make dist"@ in the
+      @HREF {"https://github.com/Macaulay2/M2-emacs", "M2-emacs repository"}@ and
+      install it with @TT "M-x package-install-file"@. See the repository's
+      @HREF {"https://github.com/Macaulay2/M2-emacs#installation", "installation instructions"}@.
+      When migrating from the bundled interface, remove obsolete explicit
+      @TT "load-path"@ entries and loads of @TT "M2-init"@ that would mask the
+      independently installed package. The marked block replaces the old load of
+      @TT "~/.emacs-Macaulay2"@; that old file is no longer used by this block.
+      The block also binds @TT "F12"@ to start M2. @TO setup@ configures command shells.
   SeeAlso
     setup
 ///
