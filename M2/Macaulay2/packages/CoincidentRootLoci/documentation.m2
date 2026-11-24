@@ -10,13 +10,14 @@ Headline => "the class of all coincident root loci",
 PARA{"The coincident root locus associated with a partition ",TEX///$\lambda=(\lambda_1,\ldots,\lambda_d)$///," of a number ",TEX///$n$///," is the closed subvariety of the projective space ",TEX///$\mathbb{P}^n = \mathbb{P}(Sym^n(K^2))$///," given by binary forms that factor as ",TEX///${L_1}^{\lambda_1}\cdots{L_d}^{\lambda_d}$///, " for some linear forms ",TEX///$L_1,\ldots,L_d$///," over ",TEX///$\bar{K}$///,". For instance, if ",TEX///$\lambda=(2,1,\ldots,1)$///,", then we have the classical discriminant hypersurface; in the opposite case, if ",TEX///$\lambda=(n)$///," we have the rational normal curve of degree ",TEX///$n$///,"."}, 
 SeeAlso => {coincidentRootLocus}}
 document { 
-Key => {coincidentRootLocus,(coincidentRootLocus,VisibleList,Ring),(coincidentRootLocus,List)},
+Key => {coincidentRootLocus,(coincidentRootLocus,VisibleList,Ring),(coincidentRootLocus,List),symbol CRL},
 Headline => "makes a coincident root locus", 
 Usage => "coincidentRootLocus(l,K) 
 coincidentRootLocus l", 
 Inputs => {"l" => VisibleList => {"a partition of a number ",TEX///$n$///,", i.e., a list of ",TEX///$d$///," positive integers ",TEX///$l_1,\ldots,l_d$///," satisfying ",TEX///${\sum}_{i} l_i = n$///}, "K" => Ring => {"the coefficient ring (optional with default value ",TO QQ,")"}}, 
 Outputs => {CoincidentRootLocus => {"the coincident root locus associated with the partition ",TEX///$l$///," over ",TEX///$K$///,", i.e., the subvariety of the projective ",TEX///$n$///,"-space ",TEX///$\mathbb{P}(Sym^n(K^2))$///," of all binary forms whose linear factors are distributed according to ",TEX///$l$///}}, 
-EXAMPLE {"X = coincidentRootLocus {6,4,3,3,2}","describe X","describe dual X"}}
+EXAMPLE {"X = coincidentRootLocus {6,4,3,3,2}","describe X","describe dual X"},
+PARA{"The function ",TT "CRL"," is a shorter name for ",TT "coincidentRootLocus","."}}
 undocumented {(coincidentRootLocus,Thing)}
 document { 
 Key => {(dim, CoincidentRootLocus)},
@@ -49,7 +50,7 @@ Key => {(map, CoincidentRootLocus)},
 Headline => "the map associated to a coincident root locus", 
 Usage => "map X", 
 Inputs => {"X" => CoincidentRootLocus},
-Outputs => {RationalMap => {"a unirational parameterization of ",TT"X"}},
+Outputs => {LegacyRationalMap => {"a unirational parameterization of ",TT"X"}},
 PARA{"If ",TEX///$X\subset\mathbb{P}^n$///," is the coincident root locus associated with the partition ",TEX///$(\lambda_1,\ldots,\lambda_d)$///,", then we have a map ",TEX///$\mathbb{P}^1\times\cdots\times\mathbb{P}^1\to\mathbb{P}^n$///," which sends a ",TEX///$d$///,"-tuple of linear forms ",TEX///$(L_1,\ldots,L_d)$///," to ",TEX///${L_1}^{\lambda_1}\cdots{L_d}^{\lambda_d}$///,". It is this map that is returned."},
 EXAMPLE {"X = coincidentRootLocus {3,2,2}","f = map X","describe f"},
 SeeAlso => {(ideal,CoincidentRootLocus)}}
@@ -77,7 +78,7 @@ Usage => "ring X",
 Inputs => {"X" => CoincidentRootLocus},
 Outputs => {Ring => {"the coordinate ring of the target of the map of ",TT"X"}},
 EXAMPLE {"X = coincidentRootLocus {3,2}","ring X","X' = coincidentRootLocus({3,2},ZZ/3331,Variable=>x)","ring X'"},
-SeeAlso => {(coefficientRing,CoincidentRootLocus),(map,CoincidentRootLocus),(target,RationalMap)}}
+SeeAlso => {(coefficientRing,CoincidentRootLocus),(map,CoincidentRootLocus),(target,LegacyRationalMap)}}
 document { 
 Key => {(partition, CoincidentRootLocus)},
 Headline => "the partition associated to a coincident root locus", 
@@ -185,7 +186,7 @@ Headline => "the apolar map",
 Usage => "apolar(n,s,K) 
 apolar(n,s)", 
 Inputs => {"n" => ZZ,"s" => ZZ,"K" => Ring => {"the coefficient ring (optional with default value ",TO QQ,")"}},
-Outputs => {RationalMap => {"the map from ",TEX///$\mathbb{P}^n$///," to ",TEX///$Grass(2s-n-1,s)$///," that sends a generic binary form ",TEX///$F\in K[x,y]$///," of degree ",TEX///$n$///," to the set of binary forms of degree ",TEX///$s$///," that annihilate ",TEX///$F$///,", which can be identified with a ",TEX///$(2s-n-1)$///,"-dimensional linear subspace of ",TEX///$\mathbb{P}^s$///,"."}},
+Outputs => {LegacyRationalMap => {"the map from ",TEX///$\mathbb{P}^n$///," to ",TEX///$Grass(2s-n-1,s)$///," that sends a generic binary form ",TEX///$F\in K[x,y]$///," of degree ",TEX///$n$///," to the set of binary forms of degree ",TEX///$s$///," that annihilate ",TEX///$F$///,", which can be identified with a ",TEX///$(2s-n-1)$///,"-dimensional linear subspace of ",TEX///$\mathbb{P}^s$///,"."}},
 PARA{"We illustrate two ways of using this method."},
 PARA{"1. Given a binary form ",TEX///$F$///," of degree ",TEX///$n$///," we can obtain a basis for the space of forms of degree ",TEX///$s$///," that annihilate ",TEX///$F$///,", say for example ",TEX///$(n,s)=(6,4)$///,"."},
 EXAMPLE {"(n,s) = (6,4)","F = randomBinaryForm n","phi = apolar(n,s)","P = switch plucker phi switch switch F","diff(gens P,F) == 0"},
@@ -386,4 +387,3 @@ Outputs => {List => {"the polar degrees of ",TT"X"}},
 PARA{"This method is based on a conjecture given in ",HREF{"https://arxiv.org/abs/1911.01958","Algebraic boundaries among typical ranks for real binary forms of arbitrary degree"},", which has been verified for all the coincident root loci ",TEX///$X\subset\mathbb{P}^r$///," with ",TEX///$r\leq 7$///,"."}, 
 EXAMPLE {"X = coincidentRootLocus(3,2,2)","polarDegrees X"},
 SeeAlso => {conormalVariety, multidegree}}
-

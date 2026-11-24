@@ -9,7 +9,7 @@ fanoMap HodgeSpecialFourfold := o -> X -> (
     if (surface X).cache#?("fanoMap",ambientFivefold X) then return (surface X).cache#("fanoMap",ambientFivefold X);
     if (surface X).cache#?("fanoMap",ambient X) and dim ambient X >= 5 then (
         Mu := (surface X).cache#("fanoMap",ambient X);
-        mu := toRationalMap(Mu|(ambientFivefold X));
+        mu := toLegacyRationalMap(Mu|(ambientFivefold X));
         (mu#"map").cache#"multiplicityFanoMap" = (Mu#"map").cache#"multiplicityFanoMap";
         if mu#"idealImage" === null then forceImage(mu,ideal(0_(target mu))); --
         (surface X).cache#("fanoMap",ambientFivefold X) = mu;
@@ -41,7 +41,7 @@ fanoMap (HodgeSpecialFourfold,ZZ) := o -> (X,e) -> (
 );
 
 imageOfFanoMap = method(Options => {RaiseError => true, Verbose => false});
-imageOfFanoMap (HodgeSpecialFourfold,RationalMap) := o -> (X,mu) -> (
+imageOfFanoMap (HodgeSpecialFourfold,LegacyRationalMap) := o -> (X,mu) -> (
     M := mu#"dimAmbientSource";
     if M =!= mu#"dimSource" then error "expected target of map to be a projective space";
     if M <= 3 then error "Fano map not valid";
@@ -97,11 +97,11 @@ fanoMap (HodgeSpecialFourfold,ZZ,ZZ) := o -> (X,e,sat) -> (
             if o.Verbose then <<"-- computing colon ideal"<<endl;
             I = I : ideal first gens ring I;
         );
-        mu = rationalMap gens trim ideal select(flatten entries gens I,i -> degree i <= {a*e-1});
+        mu = legacyRationalMap gens trim ideal select(flatten entries gens I,i -> degree i <= {a*e-1});
     );
     W := imageOfFanoMap(X,mu,RaiseError=>o.RaiseError,Verbose=>o.Verbose);
     if W =!= null then (
-        mu = rationalMap(mu,Dominant=>true);
+        mu = legacyRationalMap(mu,Dominant=>true);
         (mu#"map").cache#"multiplicityFanoMap" = e;
         (surface X).cache#("fanoMap",ambientFivefold X) = mu;
     ) else (
@@ -160,7 +160,7 @@ fanoMapUsingSingular (HodgeSpecialFourfold,ZZ,ZZ) := o -> (X,e,sat) -> (
     Out := "x := local x; x = gens Grass(0,"|toString(dim ambient X)|","|(toExternalString K)|",Variable=>x);" | newline | get(dir|"output.singular") | newline | "OUTPUTVALUE" | newline;
     D := value Out;
     D = if ring D === ZZ then sub(D,ring V) else sub(D,vars ring V);
-    rationalMap gens trim D
+    legacyRationalMap gens trim D
 );
 
 ------------------------------------------------------------------------
@@ -238,12 +238,10 @@ fanoMapDSCFstandard DoublySpecialCubicFourfold := o -> X -> (
     found := false;
     linSys := null;
     if isPlaneInP5 T then (
-        quadricFibration X;
-        assert X.cache#?"quadricFibrationCubicFourfoldInC8";
-        if o.Verbose and (not X.cache#"quadricFibrationCubicFourfoldInC8"_1) then (
-            <<"-- warning: fanoMap: possible infinite loop. " << X.cache#"quadricFibrationCubicFourfoldInC8"_2 << endl;
+        if o.Verbose and (not hasRationalSection X) then (
+            <<"-- warning: fanoMap: possible infinite loop. " << (genericQuadricFiberDescription X) << endl;
         );
-        if X.cache#"quadricFibrationCubicFourfoldInC8"_1 then (
+        if hasRationalSection X then (
             for d from startingDegreeFanoMapDSCFstandard X do (
                 if o.Verbose then << "-- fanoMap: attempting map μ with linear system of degree " << d << "..." << endl << flush;
                 try mu = fanoMapDSCFstandard(X,d,1,d-1,Verify=>true,Verbose=>o.Verbose);
@@ -329,7 +327,7 @@ fanoMapDSCFstandard DoublySpecialCubicFourfold := o -> X -> (
     Mu.cache#"FanoMapType" = "Standard";
     S.cache#("FanoMapDSCFstandard",T) = Mu;
     if linSys_1 == linSys_2 and linSys_0 == 3 * linSys_1 - 1 and (not (surface fuse X).cache#?("fanoMap",ambientFivefold fuse X)) then (
-        mu2 := toRationalMap Mu;
+        mu2 := toLegacyRationalMap Mu;
         (mu2#"map").cache#"multiplicityFanoMap" = linSys_1;
         (surface fuse X).cache#("fanoMap",ambientFivefold fuse X) = mu2;
     );
@@ -465,4 +463,4 @@ getCachedFanoMapIfCompatible (DoublySpecialCubicFourfold,Thing) := (X,FanoMapTyp
     );
 );
 
-fanoMap DoublySpecialCubicFourfold := o -> X -> toRationalMap fanoMapDSCF(X,Verify=>o.RaiseError,Verbose=>o.Verbose); -- for compatibility
+fanoMap DoublySpecialCubicFourfold := o -> X -> toLegacyRationalMap fanoMapDSCF(X,Verify=>o.RaiseError,Verbose=>o.Verbose); -- for compatibility

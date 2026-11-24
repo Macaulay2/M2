@@ -1,27 +1,33 @@
 -- -*- coding: utf-8 -*-
-
 newPackage(
-    "SCMAlgebras",
-    Version => "1.1",
-    Date => "May 31, 2025",
-    Authors => {{Name => "Ernesto Lax", Email => "erlax@unime.it", HomePage => "https://www.researchgate.net/profile/Ernesto-Lax"}},
-    Headline => "sequentially Cohen-Macaulay modules or ideals",
-    Keywords => {"Commutative Algebra"},
-    PackageExports => {"Depth","MinimalPrimes"},
-    DebuggingMode => false
+  "SCMAlgebras",
+  Version => "1.2",
+  Date => "November 23, 2026",
+  Authors => {{
+    Name => "Ernesto Lax",
+    Email => "erlax@unime.it",
+    HomePage => "https://sites.google.com/view/ernestolax"
+  }},
+  Headline => "sequentially Cohen-Macaulay modules or ideals",
+  Keywords => {"Commutative Algebra"},
+  PackageExports => {"Depth","PrimaryDecomposition"},
+  DebuggingMode => false
 )
 
 export{
-    -- Methods
-    "deficiencyModule",
-    "canonicalModule",
-    "filterIdeal",
-    "unmixedLayer",
-    "isUnmixed",
-    "isSCM",
-    "isCCM",
-    -- Service
-    "minimumDimension"
+  -- New type and constructor
+  "PrimaryDataList",
+  "getPrimaryData",
+  -- Methods
+  "deficiencyModule",
+  "canonicalModule",
+  "filterIdeal",
+  "unmixedLayer",
+  "isUnmixed",
+  "isSCM",
+  "isCCM",
+  -- Service
+  "minimumDimension"
 };
 
 
@@ -34,15 +40,63 @@ Node
     sequentially Cohen-Macaulay modules or ideals
   Description
     Text
-      SCMAlgebras is a package to check whether a module or an ideal is sequentially Cohen-Macaulay,
-      by computing the modules of deficiency and the filter ideals.
+      SCMAlgebras is a package to check whether a module or an ideal is sequentially Cohen-Macaulay, by computing the modules of deficiency and the filter ideals.
 ///);
 
 
+-------------------------------------------------------------------------------------------- CODE
+--=======================================================================
+-- defines a new type PrimaryDataList
+--=======================================================================
+MyDoc=concatenate(MyDoc,///
+Node
+  Key
+    PrimaryDataList
+  Headline
+    type created to store data of the primary decomposition of an ideal $I$.
+///);
+-------------------------------------------------------------------------
+PrimaryDataList = new Type of List
+--=======================================================================
 
--------------
--- FUNCTIONS |
----------------------------------------------------------------------------------------------
+
+--=======================================================================
+-- constructor of a PrimaryDataList for a given ideal I
+-- gives a list containing all pairs {Q, dim Q}
+-- for every primary component Q of a given ideal I
+--=======================================================================
+MyDoc=concatenate(MyDoc,///
+Node
+  Key
+    getPrimaryData
+    (getPrimaryData,Ideal)
+  Headline
+    creates the PrimaryDataList of the ideal $I$.
+  Usage
+    getPrimaryData(I)
+  Inputs
+    I:Ideal
+      a homogeneous ideal of the polynomial ring $S=K[x_1,\ldots,x_n]$, with $K$ a field
+  Outputs
+    L:PrimaryDataList
+  Description
+    Text
+      Let $S=K[x_1,\ldots,x_n]$ be the polynomial ring. Given a homogeneous ideal $I$, {\tt getPrimaryData(I)} returns a special list, containing all pairs $\{Q,\dim Q\}$ where $Q$ is a primary component of $I$.
+    Example
+      S=QQ[x,y,z];
+      I=monomialIdeal(x*z,y*z);
+      getPrimaryData(I)
+///);
+-------------------------------------------------------------------------
+getPrimaryData = method(TypicalValue => PrimaryDataList)
+-------------------------------------------------------------------------
+getPrimaryData(Ideal) := I -> (
+  D := primaryDecomposition I;
+  new PrimaryDataList from apply(D, Q -> {Q, dim Q})
+)
+--=======================================================================
+
+
 --=======================================================================
 -- computes the ith module of deficiency of an ideal/module
 --=======================================================================
@@ -53,7 +107,7 @@ Node
     (deficiencyModule,Module,ZZ)
     (deficiencyModule,Ideal,ZZ)
   Headline
-    computes the $i$th module of deficiency of a module $M$ or an ideal $I$.
+    computes the $i$-th module of deficiency of a module $M$ or an ideal $I$.
   Usage
     deficiencyModule(M,i)
     deficiencyModule(I,i)
@@ -61,7 +115,6 @@ Node
     M:Module
       module over the polynomial ring $S=K[x_1,\ldots,x_n]$, with $K$ a field or an ideal $I\subset S$
     i:ZZ
-      an integer
   Outputs
     D:Module
       the ith module of deficiency of $M$
@@ -77,24 +130,25 @@ Node
   SeeAlso
     canonicalModule
     isSCM
+    isCCM
 ///);
 -------------------------------------------------------------------------
 deficiencyModule = method(TypicalValue=>Module);
 -------------------------------------------------------------------------
 deficiencyModule(Module,ZZ) := (M,i) -> (
-    S:=ring M;
-    n:=dim S;
-    t:=depth M;
-    d:=dim M;
-    if i<t or i>d then (
-        return Ext^(n+1)(M,S^{-n}); --zero module
-    ) else Di:=Ext^(n-i)(M,S^{-n});
-    Di
+  S:=ring M;
+  n:=dim S;
+  t:=depth M;
+  d:=dim M;
+  if i<t or i>d then (
+    return module(ideal(0_S)); --zero module
+  ) else Di:=Ext^(n-i)(M,S^{-n});
+  Di
 )
 -------------------------------------------------------------------------
 deficiencyModule(Ideal,ZZ) := (I,i) -> (
-    S:=ring I;
-    deficiencyModule((S^1/I),i)
+  S:=ring I;
+  deficiencyModule((S^1/I),i)
 )
 --=======================================================================
 
@@ -135,16 +189,16 @@ Node
 canonicalModule = method(TypicalValue=>Module);
 -------------------------------------------------------------------------
 canonicalModule(Module) := M -> (
-    S:=ring M;
-    d:=dim M;
-    r:=dim S;
-    K:=Ext^(r-d)(M,S^{-r});
-    K
+  S:=ring M;
+  d:=dim M;
+  r:=dim S;
+  K:=Ext^(r-d)(M,S^{-r});
+  K
 )
 -------------------------------------------------------------------------
 canonicalModule(Ideal) := I -> (
-    S:=ring I;
-    canonicalModule(S^1/I)
+  S:=ring I;
+  canonicalModule(S^1/I)
 )
 --=======================================================================
 
@@ -155,7 +209,7 @@ canonicalModule(Ideal) := I -> (
 --=======================================================================
 MyDoc=concatenate(MyDoc,///
 Node
-  Key
+  Key 
     minimumDimension
     (minimumDimension,Ideal)
   Headline
@@ -183,10 +237,14 @@ Node
 ///);
 -------------------------------------------------------------------------
 minimumDimension = method(TypicalValue=>ZZ);
+-------------------------------------------------------------------------
+minimumDimension(PrimaryDataList) := L -> (
+    min(apply(L,last))
+)
+-------------------------------------------------------------------------
 minimumDimension(Ideal) := I -> (
-    T:=decompose I;
-    D:=for Q in T list dim(radical Q);
-    min(D)
+  L:=getPrimaryData I;
+  minimumDimension(L)
 )
 --=======================================================================
 
@@ -199,6 +257,7 @@ Node
   Key
     filterIdeal
     (filterIdeal,Ideal,ZZ)
+    (filterIdeal,Ideal,ZZ,PrimaryDataList)
   Headline
     computes the $i$th filter ideal of $I$.
   Usage
@@ -216,12 +275,15 @@ Node
       Let $I\subset S$ be a homogeneous ideal, with $d=\dim S/I$, and let $I=\displaystyle\bigcap_{j=1}^r Q_j$ be the minimal primary decomposition of $I$.
       For all $1\leq j\leq r$, let $P_j = \sqrt{Q_j}$ be the radical of $Q_j$. For all $-1\leq i\leq d$, the $i$th filter ideal of $I$ is $$I^{<i>} = \bigcap_{\dim S/{P_j}>i} Q_{j},$$
       where $I^{<-1>}=I$ and $I^{<d>}=S$.
+      
+      In case a @TO PrimaryDataList@ $L$ is given as optional input, the function uses the information stored in $L$ to avoid computing the primary decomposition of $I$ every time, useful when dealing with multiple calls. This type of optimization is used in @TO isSCM@ and @TO isUnmixed@.
     Example
       S = QQ[x_1..x_10,y_1..y_10];
       E = {{1,2},{1,3},{1,4},{1,5},{1,6},{1,7},{1,8},{1,9},{1,10},{6,7},{8,9},{8,10},{9,10}};
       J=ideal(for e in E list x_(e#0)*y_(e#1)-x_(e#1)*y_(e#0));
       filterIdeal(J,5)
   SeeAlso
+    getPrimaryData
     unmixedLayer
     minimumDimension
     isSCM
@@ -229,20 +291,26 @@ Node
 -------------------------------------------------------------------------
 filterIdeal = method(TypicalValue=>Ideal);
 -------------------------------------------------------------------------
+filterIdeal(Ideal,ZZ,PrimaryDataList) := Ideal => (I,i,L) -> (
+  S := ring I;
+  d := dim I;
+  d0 := minimumDimension L;
+
+  if i < -1 or i > d then (
+    error("Expected an integer greater than -2 and at most " | toString(d));
+  );
+
+  if i < d0 then return I;
+  if i == d then return ideal(S^1);
+
+  Qi := for c in select(L, l -> l#1 > i) list c#0;
+
+  intersect(Qi)
+)
+-------------------------------------------------------------------------
 filterIdeal(Ideal,ZZ) := Ideal => (I,i) -> (
-    S:=ring I;
-    d:=dim I;
-    d0:=minimumDimension I;
-    if i>-2 and i<d0 then (
-        Ii:=I;
-    ) else if i>=d0 and i<d then (
-        L:=apply(decompose I, Q -> {P := radical Q, dim P});
-        Pi:=for l in L when (l#1)>i list (l#0);
-        Ii=intersect(Pi);
-    ) else if i==d then (
-        Ii=ideal(S^1);
-    ) else error("Expected an integer greater than -2 and at most " | toString(d) | ".");
-    Ii
+  L:=getPrimaryData I;
+  filterIdeal(I,i,L)
 )
 --=======================================================================
 
@@ -270,35 +338,46 @@ Node
   Description
     Text
       Let $I\subset S$ be a homogeneous ideal, with $d=\dim S/I$, and let $I=\displaystyle\bigcap_{j=1}^r Q_j$ be the minimal primary decomposition of $I$.
-      For all $1\leq j\leq r$, let $P_j = \sqrt{Q_j}$ be the radical of $Q_j$. For all $-1\leq i\leq d$, the $i$th filter ideal of $I$ is $$I^{<i>} = \bigcap_{\dim S/{P_j}>i} Q_{j},$$
-      where $I^{<-1>}=I$ and $I^{<d>}=S$. The $i$th unmixed layer of $I$ is defined as $U_i(I)=I^{<i>}/I^{<i>}$.
+      For all $1\leq j\leq r$, let $P_j = \sqrt{Q_j}$ be the radical of $Q_j$. For all $-1\leq i\leq d$, the $i$th @TO filterIdeal@ of $I$ is
+      $$I^{<i>} = \bigcap_{\dim S/{P_j}>i} Q_{j},$$
+      where $I^{<-1>}=I$ and $I^{<d>}=S$. The $i$th unmixed layer of $I$ is defined as $U_i(I)=I^{<i>}/I^{<i-1>}$ for all $i=0,\ldots,d$.
     Example
       S = QQ[x_1..x_10,y_1..y_10];
       E = {{1,2},{1,3},{1,4},{1,5},{1,6},{1,7},{1,8},{1,9},{1,10},{6,7},{8,9},{8,10},{9,10}};
       J=ideal(for e in E list x_(e#0)*y_(e#1)-x_(e#1)*y_(e#0));
-      unmixedLayer(J,7)
+      unmixedLayer(J,7)==0
   SeeAlso
+		getPrimaryData
     filterIdeal
     minimumDimension
+		isUnmixed
     isSCM
 ///);
 -------------------------------------------------------------------------
 unmixedLayer = method();
 -------------------------------------------------------------------------
 unmixedLayer(Ideal,ZZ) := Ideal => (I,i) -> (
-    S:=ring I;
-    d:=dim I;
-    d0:=minimumDimension I;
-    if i>0 and i<d0 then (
-        Ui:=(I/I);
-    ) else if i>=d0 and i<d then (
-        Ui=filterIdeal(I,i)/filterIdeal(I,i-1);
-    ) else if i==d then (
-        Ui=S^1/filterIdeal(I,d-1);
-    ) else error("Expected an integer greater than 0 and at most " | toString(d) | ".");
-    Ui
+  S := ring I;
+  d := dim I;
+  d0 := minimumDimension I;
+
+  L := getPrimaryData(I);
+
+  if i < 0 or i > d then (
+    error("Expected an integer greater than 0 and at most " | toString(d));
+  );
+
+  if i < d0 then return module(ideal(0_S));
+
+  if i == d then return (S^1/filterIdeal(I,d-1,L));
+
+  J := filterIdeal(I,i,L);
+  K := filterIdeal(I,i-1,L);
+   
+  J/K
 )
 --=======================================================================
+
 
 --=======================================================================
 -- checks whether an ideal/module is unmixed
@@ -320,7 +399,7 @@ Node
       whether the ideal $I$ is unmixed
   Description
     Text
-      For a homogeneous ideal $I\subset S$, the function checks if the $i$th unmixed layer of $I$, $U_i(I)$ is zero for all $1\leq i < d$, where $d=\dim S/I$ and if $U_d(I)=S/I$.
+      For a homogeneous ideal $I\subset S$, the function checks if the $i$th @TO unmixedLayer@ of $I$, $U_i(I)$ is zero for all $1\leq i < d$, where $d=\dim S/I$ and if $U_d(I)=S/I$.
     Example
       S = QQ[x_1..x_10,y_1..y_10];
       E = {{1,2},{1,3},{1,4},{1,5},{1,6},{1,7},{1,8},{1,9},{1,10},{6,7},{8,9},{8,10},{9,10}};
@@ -335,14 +414,15 @@ Node
 isUnmixed = method(TypicalValue=>Boolean);
 -------------------------------------------------------------------------
 isUnmixed(Ideal) := I -> (
-    S:=ring I;
-    d:=dim I;
-    Ud:=unmixedLayer(I,d);
-    for i from 1 to d-1 do (
-        Ui:=unmixedLayer(I,i);
-        if ((Ui!=0) or (Ud!=(S^1/I))) then return false;
-    );
-    true
+  S := ring I;
+  d := dim I;
+  Ud := unmixedLayer(I,d);
+  for i from 1 to d-1 do (
+    Ui := unmixedLayer(I,i);
+    if ((Ui != 0) or (Ud != (S^1/I))) then return false;
+  );
+
+  true
 )
 --=======================================================================
 
@@ -371,8 +451,8 @@ Node
       whether the module $M$ or the graded algebra $S/I$ is sequentially Cohen-Macaulay
   Description
     Text
-      Given a finitely generated graded $S$-module $M$, this method checks if the $i$th module of deficiency of $M$, $\omega^{i}(M)$, if non-zero, is Cohen-Macaulay of dimension $i$.
-      For a homogeneous ideal $I\subset S$, the function checks if $\mathrm{depth} S/{I^{<i>}} \geq i+1$, where $I^{<i>}$ is the $i$th filter ideal.
+      Given a finitely generated graded $S$-module $M$, this method checks if the $i$th @TO deficiencyModule@ of $M$, $\omega^{i}(M)$, if non-zero, is Cohen-Macaulay of dimension $i$.
+      For a homogeneous ideal $I\subset S$, the function checks if $\mathrm{depth} S/{I^{<i>}} \geq i+1$, where $I^{<i>}$ is the $i$th @TO filterIdeal@.
     Example
       S=QQ[x_1..x_5];
       M=coker matrix{{x_1*x_2,x_3*x_4,0,0},{0,x_1*x_5,x_2*x_4,0}};
@@ -383,6 +463,7 @@ Node
       J=ideal(for e in E list x_(e#0)*y_(e#1)-x_(e#1)*y_(e#0));
       isSCM J
   SeeAlso
+		getPrimaryData
     filterIdeal
     deficiencyModule
     isUnmixed
@@ -392,33 +473,29 @@ Node
 isSCM = method(TypicalValue=>Boolean);
 -------------------------------------------------------------------------
 isSCM(Module) := M -> (
-    d:=dim M;
-    for i from 0 to d-1 do ( 
-        Oi:=deficiencyModule(M,i);
-        if  Oi != 0 then (
-            if (not isCM(Oi)) or (dim(Oi)!=i) then return false;
-        );
+  d := dim M;
+	for i from 0 to d-1 do ( 
+    Oi := deficiencyModule(M,i);
+    if  Oi != 0 then (
+      if (not isCM(Oi)) or (dim(Oi)!=i) then return false;
     );
-    true
+  );
+  true
 )
 ------------------------------------------------------------------------- 
 isSCM(Ideal) := I -> (
-    S:=ring I;
-    d:=dim I;
-    d0:=minimumDimension I;
-    -- TODO: suspected bug -- this dispatch disagrees with the Module dispatch (Schenzel,
-    -- above) on at least one input. Example: I = ideal(x_1^2*x_3, x_2*x_3^2*x_4,
-    -- x_1*x_3^3*x_5) in QQ[x_1..x_5]: isSCM(I) returns false here, but isSCM(S^1/I) and
-    -- the deficiency-module trace (each omega^i is zero or CM of dim i) both say true.
-    -- For i < d0, filterIdeal(I,i) returns I itself, so the depth-vs-(i+1) check becomes
-    -- restrictive at i = d0-1; whether Goodarzi (2011)'s characterization actually
-    -- requires the depth check for i < d0 should be verified against the paper.
-    for i from 0 to d-1 do (
-        Ii:=filterIdeal(I,i);
-        Si:=(S^1/Ii);
-        if depth Si < i+1 then return false;
-    );
-    true
+  S := ring I;
+  d := dim I;
+  d0 := minimumDimension I;
+  L := getPrimaryData I;
+
+  for i from 0 to d-1 do (
+    Ii := filterIdeal(I,i,L);
+    Si := (S^1/Ii);
+    if depth Si < i+1 then return false;
+  );
+
+  true
 )
 --=======================================================================
 
@@ -465,34 +542,42 @@ Node
 isCCM = method(TypicalValue=>Boolean);
 -------------------------------------------------------------------------
 isCCM(Module) := M -> (
-    d:=dim M;
-    for i from 0 to d-1 do ( 
-        K:=canonicalModule(M);
-          if (not isCM(K)) then return false;
-        );
-    true
+  d := dim M;
+  for i from 0 to d-1 do ( 
+    K := canonicalModule(M);
+      if (not isCM(K)) then return false;
+    );
+  true
 )
 ------------------------------------------------------------------------- 
 isCCM(Ideal) := I -> (
-    S:=ring I;
-    isCCM(S^1/I)
+  S:=ring I;
+  isCCM(S^1/I)
 )
 --=======================================================================
+------------------------------------------------------------------------------------------------
 
 
 
------------------
--- DOCUMENTATION |
---------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------- DOCUMENTATION
 beginDocumentation();
 multidoc(MyDoc);
--------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------
 
 
 
----------
--- TESTS |
---------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------- TESTS
+--========================
+-- getPrimaryData test
+--========================
+TEST ///
+S = QQ[x_1..x_4,y_1..y_4]
+E = {{1, 2}, {1, 3}, {1, 4}, {2, 3}, {3, 4}}
+J = ideal(for e in E list x_(e#0)*y_(e#1)-x_(e#1)*y_(e#0));
+assert(#getPrimaryData(J) > 0)
+///
+
+
 --========================
 -- deficiencyModule test
 --========================
@@ -509,7 +594,7 @@ assert(deficiencyModule(M,3)==0)
 TEST ///
 S = QQ[x_1..x_5]
 M = coker matrix {{x_1*x_2,0,0},{x_1*x_4,0,x_3*x_5}}
-assert(isCM canonicalModule(M))
+assert(isCM(canonicalModule(M)))
 ///
 
 
@@ -555,7 +640,7 @@ TEST ///
 S = QQ[x_1..x_4,y_1..y_4]
 E = {{1, 2}, {1, 3}, {1, 4}, {2, 3}, {2,4}, {3, 4}}
 J = ideal(for e in E list x_(e#0)*y_(e#1)-x_(e#1)*y_(e#0));
-assert(isUnmixed(J)==true)
+assert(isUnmixed(J))
 ///
 
 
@@ -566,7 +651,7 @@ TEST ///
 S = QQ[x_1..x_4,y_1..y_4]
 E = {{1, 2}, {1, 3}, {1, 4}, {2, 3}, {3, 4}}
 J = ideal(for e in E list x_(e#0)*y_(e#1)-x_(e#1)*y_(e#0));
-assert(isSCM(J)==true)
+assert(isSCM(J))
 ///
 
 
@@ -577,8 +662,9 @@ TEST ///
 S = QQ[x_1..x_4,y_1..y_4]
 E = {{1, 2}, {1, 3}, {1, 4}, {2, 3}, {3, 4}}
 J = ideal(for e in E list x_(e#0)*y_(e#1)-x_(e#1)*y_(e#0));
-assert(isCCM(J)==true)
+assert(isCCM(J))
 ///
+
 
 --========================
 -- boundary cases on the predicates: zero and unit ideals
@@ -632,5 +718,4 @@ assert(deficiencyModule(I, 2) == deficiencyModule(M, 2));
 assert(isCCM I == isCCM M);
 ///
 
--------------------------------------------------------------------------
-
+-------------------------------------------------------------------------........................

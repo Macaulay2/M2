@@ -88,15 +88,15 @@ cubicFourfold (String,Ring) := o -> (str,K) -> (
     );
     if str === "3-nodal septic scroll" or str === "Farkas-Verra C26" then (
         t := gens ring PP_K^2;
-        f := multirationalMap rationalMap(ring PP_K^2,ring PP_K^8,{t_0^5, t_0^4*t_1, t_0^3*t_1^2, t_0^2*t_1^3, t_0^4*t_2, t_0^3*t_1*t_2, t_0^2*t_1^2*t_2, t_0*t_1^3*t_2, t_1^4*t_2});
+        f := rationalMap legacyRationalMap(ring PP_K^2,ring PP_K^8,{t_0^5, t_0^4*t_1, t_0^3*t_1^2, t_0^2*t_1^3, t_0^4*t_2, t_0^3*t_1*t_2, t_0^2*t_1^2*t_2, t_0*t_1^3*t_2, t_1^4*t_2});
         f = f * rationalMap linearSpan apply(3,i -> point linearSpan {f point source f,f point source f});
         X = cubicFourfold(image f,NumNodes=>3,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#(surface X,"label") = "FarkasVerra";
         return X;
     );
    if str === "one-nodal septic del Pezzo surface" then (
-       g := multirationalMap rationalMap(ring PP_K^2,{3,2});
-       g = g * rationalMap(ring target g,ring PP_K^5,gens ideal linearSpan {point target g,point linearSpan {g point source g,g point source g}});
+       g := rationalMap legacyRationalMap(ring PP_K^2,{3,2});
+       g = g * legacyRationalMap(ring target g,ring PP_K^5,gens ideal linearSpan {point target g,point linearSpan {g point source g,g point source g}});
        X = cubicFourfold(image g,NumNodes=>1,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
        X.cache#(surface X,"label") = "oneNodalSepticDelPezzoSurfaceC26";
        return X;
@@ -128,7 +128,7 @@ cubicFourfold (String,Ring) := o -> (str,K) -> (
        (surface X).cache#"euler" = -44;
        return X;
    );
-   error(///not valid string, permitted strings are:
+   error(///input string not recognized; permitted strings are:
 "quintic del Pezzo surface",
 "quartic scroll",
 "3-nodal septic scroll",
@@ -142,20 +142,79 @@ cubicFourfold (String,Ring) := o -> (str,K) -> (
 "cubic 4-fold of discriminant 48"///);
 );
 
-cubicFourfold String := o -> str -> cubicFourfold(str,ZZ/65521,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+cubicFourfold String := o -> str -> cubicFourfold(str,if PP.ring === null then ZZ/65521 else PP.ring,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
-expression CubicFourfold := X -> expression("cubic fourfold containing a surface of degree "|toString(degree surface X)|" and sectional genus "|toString(sectionalGenus surface X));
-
-describe CubicFourfold := X -> (
-    descr:="Special cubic fourfold of discriminant "|(toString discriminant X)|newline|"containing a "|surfaceDescription(0,surface X,true);
-    if recognize X === "LaiFarkasVerraC42" then descr = descr|newline|"(the surface is the 8-nodal nonic scroll studied by K.-W. Lai, G. Farkas and A. Verra,"|newline|"this implementation is due to M. Hoff)";
-    if computationStatus X >= 0 then descr = descr|newline|(computationStatusLog X)|newline|toString(describeMirrorFourfoldAndK3 X);
-    net expression descr
+netTexDescription CubicFourfold := o -> X -> (
+    if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (
+        toString getAttribute(X,ReverseDictionary),
+        texMath getAttribute(X,ReverseDictionary)
+    );
+    if o#"Short" then (
+        if compStatusLatticeDisc X > 0 then return (
+            shortDescriptionFourfold(X,false),
+            texMath shortDescriptionFourfoldTeX(X,false)
+        ) else return (
+            "cubic fourfold",
+            "\\text{cubic fourfold}"
+        );
+    );
+    S := surface X;
+    (netX,texX) := netTexDescription projectiveVariety ring X;
+    netS := surfaceDescription(9,S);
+    texS := last netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
+    netStr := net("cubic fourfold: " | netX);
+    netStr = netStr || net("surface: " | netS);
+    texStr := "\\begin{aligned}&\\text{cubic fourfold: }" | texX;
+    texStr = texStr | newline | "\\\\&\\text{surface: }" | texS;
+    if compStatusLatticeDisc X > 0 then (
+        d := discriminant X;
+        A := X.cache#(S,"LatticeIntersectionMatrix");
+        (q,r) := quotientRemainder(d,6);
+        netStr = netStr || net("lattice discriminant:");
+        netStr = netStr || ((net "det(") | (net A) | net(") = " | (toString d) | " = " | (toString q) | "*6 + " | (toString r)));
+        texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
+        texStr = texStr | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath d) | " = " | (texMath q) | "\\cdot 6 + " | (texMath r);
+    );
+    (netStr,texStr | "\\end{aligned}")
 );
 
 shortDescriptionFourfold (CubicFourfold,Boolean) := (X,UseAttribute) -> (
     if UseAttribute and hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
     "cubic fourfold in C_"|(toString discriminant X)
+);
+
+shortDescriptionFourfoldTeX (CubicFourfold,Boolean) := (X,UseAttribute) -> (
+    if UseAttribute and hasAttribute(X,ReverseDictionary) then return shortTeX texMath getAttribute(X,ReverseDictionary);
+    shortTeX("\\text{cubic fourfold in }\\mathcal{C}_{" | (texMath discriminant X) | "}")
+);
+
+describe CubicFourfold := X -> (
+    S := surface X;
+    d := discriminant X;
+    (netS,texS) := netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true,"Indent"=>0);
+    netDescr := ("Special cubic fourfold of discriminant " | toString d) || ("containing a " | netS);
+    texDescr := "\\begin{aligned}&\\text{Special cubic fourfold of discriminant }" | (texMath d) | newline | "\\\\&\\text{containing a }" | texS;
+    if recognize X === "LaiFarkasVerraC42" then (
+        netDescr = netDescr || "(the surface is the 8-nodal nonic scroll studied by K.-W. Lai, G. Farkas and A. Verra,";
+        netDescr = netDescr || "this implementation is due to M. Hoff)";
+        texDescr = texDescr | newline | "\\\\&\\text{(the surface is the 8-nodal nonic scroll studied by K.-W. Lai, G. Farkas and A. Verra,}";
+        texDescr = texDescr | newline | "\\\\&\\text{this implementation is due to M. Hoff)}";
+    );
+    if computationStatus X >= 0 then (
+        (netMirror,texMirror) := describeMirrorFourfoldAndK3 X;
+        netDescr = netDescr || computationStatusLog X || netMirror;
+        texDescr = texDescr | newline | "\\\\&\\text{" | computationStatusLog X | "}";
+        texDescr = texDescr | newline | "\\\\" | texMirror;
+    );
+    if X.cache#?(S,"parameterCount") then (
+        (w,xyz) := X.cache#(S,"parameterCount");
+        (x,y,z) := xyz;
+        if w =!= 55 - (y+(x-1)-z) then error "internal error encountered";
+        netDescr = netDescr || ("Parameter count: " | toString w | " = 55 - (" | toString y | " + " | toString(x-1) | " - " | toString z | ")");
+        texDescr = texDescr | newline | "\\\\&\\text{Parameter count: }" | (texMath w) | " = 55 - (" | (texMath y) | " + " | (texMath(x-1)) | " - " | (texMath z) | ")";
+    );
+    if X.cache#?"CustomData" then netDescr = netDescr || (toString X.cache#"CustomData");
+    netTexMath(netDescr,texDescr | "\\end{aligned}")
 );
 
 -- discriminant CubicFourfold := o -> X -> (
@@ -238,7 +297,7 @@ unirationalParametrization (CubicFourfold,EmbeddedProjectiveVariety) := (X,L) ->
     if not(isSubset(L,X) and dim L == 1 and degree L == 1) then error "expected a line in the cubic fourfold";
     ringP5 := ring ambient X;
     K := coefficientRing X;
-    l := toRationalMap parametrize L;
+    l := toLegacyRationalMap parametrize L;
     K' := frac(source l);
     ringP5' := K'[gens ringP5];
     p' := trim minors(2,(vars ringP5')||(matrix l));
@@ -246,7 +305,7 @@ unirationalParametrization (CubicFourfold,EmbeddedProjectiveVariety) := (X,L) ->
     TpX' := trim ideal((vars ringP5') * sub(jacobian X',apply(gens ringP5',flatten entries coefficients parametrize p',(x,s) -> x => s)));
     U := TpX' + ideal(last gens ringP5');
     u := parametrize U;
-    u = rationalMap(Grass(0,3,K',Variable=>"s"),source u) * u;
+    u = legacyRationalMap(Grass(0,3,K',Variable=>"s"),source u) * u;
     e := lcm apply(flatten entries sub(last coefficients matrix u,K'),denominator);
     M := transpose((matrix l)||(e * matrix u));
     ringP1xP3 := (source l) ** K[gens source u];
@@ -254,8 +313,8 @@ unirationalParametrization (CubicFourfold,EmbeddedProjectiveVariety) := (X,L) ->
     r := local r;
     Kr := ringP1xP3[r];
     P := first first entries gens sub(ideal X,apply(gens ringP5,flatten entries(submatrix(sub(M,Kr),{0}) + r*submatrix(sub(M,Kr),{1})),(v,v') -> v => v'));
-    psi := rationalMap(ringP1xP3,ringP5,transpose(coefficient(r^3,P) * submatrix(M,{0}) - coefficient(r^2,P) * submatrix(M,{1})));
-    Psi := multirationalMap({parametrize psi},X);
+    psi := legacyRationalMap(ringP1xP3,ringP5,transpose(coefficient(r^3,P) * submatrix(M,{0}) - coefficient(r^2,P) * submatrix(M,{1})));
+    Psi := rationalMap({parametrize psi},X);
     if not isSubset(Psi point source Psi,X) then error "internal error encountered";
     Psi
 );
@@ -266,26 +325,26 @@ randomS42data = method();
 randomS42data Ring := K -> (
     p := apply(5,i -> point PP_K^2);
     f := (rationalMap(p_0 + p_2 + p_3 + p_4,2)) | (rationalMap(p_0 + p_1,2));
-    s := multirationalMap segre target f;
-    f = multirationalMap segre f;
+    s := rationalMap segre target f;
+    f = rationalMap segre f;
     L := linearSpan {f point source f,f point source f};
     j := parametrize random(1,L);
     pr := rationalMap point (j^^ L);
     B := pr(j^^ (image s));
     C := pr(j^^ (image f));
-    phi := toRationalMap rationalMap(C,Dominant=>true);
+    phi := toLegacyRationalMap rationalMap(C,Dominant=>true);
     forceInverseMap(phi,inverseMap phi);
     Bs := baseLocus inverse phi;
     Q := 0_Bs;
     while select(degrees ideal Q,d -> d <= {2}) =!= {{1},{1},{1},{2}} do (
         u := parametrize random({{1},{1}},0_Bs);
-        v := (rationalMap {random(1,ring source u),random(1,ring source u)})|(u^^ Bs);
+        v := (legacyRationalMap {random(1,ring source u),random(1,ring source u)})|(u^^ Bs);
         Q = Q + u support v^*((v (u^^ Bs))\support(v (u^^ Bs)));
     );
     Q = Var trim ideal select(flatten entries gens ideal Q,d -> degree d <= {2});
     if not (dim Q == 2 and degree Q == 2 and dim singularLocus Q == -1) then error "internal error encountered";
     P1xP2 := phi^* Q;
-    w := Var trim lift(phi (rationalMap flatten entries syz gens ideal P1xP2)^-1 (ideal submatrix'(vars ring ambient P1xP2,{0})),ambient target phi);
+    w := Var trim lift(phi (legacyRationalMap flatten entries syz gens ideal P1xP2)^-1 (ideal submatrix'(vars ring ambient P1xP2,{0})),ambient target phi);
     e := super inverse(rationalMap(w%Q),Verify=>false);
     w = e point source e;
     (L1,L2) := toSequence decompose(Q * tangentSpace(w,Q));
