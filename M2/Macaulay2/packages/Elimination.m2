@@ -349,6 +349,11 @@ S = ZZ/3[x,y];
 d = discriminant(x^3+y,x);
 assert(d==0);
 assert(ring d === ring discriminant(x^2,x));
+
+-- Check univariate discriminants work as expected
+S = ZZ[x];
+d = discriminant(x^4+x^2+1,x);
+assert(d == 114);
 ///
 end
 loadPackage "Elimination"
