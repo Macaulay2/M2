@@ -495,26 +495,26 @@ doc ///
       Jacobian matrix can be computed as follows.
     Example
       diff(matrix {{x},{y}}, matrix {{x^2, x*y, y^2}})
+    Code
+      HR{}
     Text
-      @HR{}@
-
       We can also compute the Hessian matrix of a quadratic form using
       @TO "diff"@, as follows.
     Example
       v = matrix {{x,y}}
       diff(v ** transpose v, 3*x^2 + 5*x*y + 11*y^2)
+    Code
+      HR{}
     Text
-      @HR{}@
-
       As another example, we show how to compute the Wronskian of a polynomial
       @TT "f"@.
     Example
       f = x^3 + y^3 + z^3 - t*x*y*z
       v = matrix {{x,y,z}}
       det diff(transpose v * v, f)
+    Code
+      HR{}
     Text
-      @HR{}@
-
       The function @TO "contract"@ is the same as @TO "diff"@, except the
       multiplication by integers that occurs during differentiation is omitted.
     Example
@@ -528,9 +528,9 @@ doc ///
       f
       v3 = symmetricPower(3,matrix{{x,y,z}})
       contract(v3, f)
+    Code
+      HR{}
     Text
-      @HR{}@
-
       As an example, the Sylvester resultant between homogeneous polynomials
       @TT "f(x,y)"@ and @TT "g(x,y)"@ can be found in the following way.
     Example
@@ -552,9 +552,9 @@ doc ///
     Example
       M = contract(transpose symmetricPower(5,matrix {{x,y}}), n)
       det M
+    Code
+      HR{}
     Text
-      @HR{}@
-
       The function @TO "diff'"@ is the same as @TO "diff"@, except that the
       first argument is differentiated by the second; the shape of the first
       argument still plays the major role.
@@ -568,9 +568,9 @@ doc ///
     Example
       contract'(m, matrix {{x,x^2,x^3,x^4}})
       contract'(m, matrix {{x,x^2},{x^3,x^4}})
+    Code
+      HR{}
     Text
-      @HR{}@
-
       All four of these operators are engineered so that the result is a
       homogeneous matrix if the arguments are. The operations @TO "diff"@ and
       @TO "contract"@ are essentially partially defined division operations, so
