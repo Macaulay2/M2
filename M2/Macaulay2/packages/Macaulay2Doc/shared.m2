@@ -52,101 +52,141 @@ document { Key => normalCone,   Headline => "normal cone of an object", methodst
 	"ReesAlgebra::normalCone(Ideal)",
     } }
 
-document { Key => { isEmpty, (isEmpty, Thing) },
-    Headline => "whether an object is empty",
-    SeeAlso => { "Polyhedra::Polyhedra" } }
+doc ///
+  Key
+    isEmpty
+    (isEmpty, Thing)
+  Headline
+    whether an object is empty
+  SeeAlso
+    "Polyhedra::Polyhedra"
+///
 
-document { Key => { isIsomorphism, (isIsomorphism, Matrix) },
-    Headline => "whether a map is an isomorphism",
-    Usage => "isIsomorphism f",
-    "Whether the map $f$ is an isomorphism.",
-    SeeAlso => {
-	"Cremona::isIsomorphism(RationalMap)",
-	"GradedLieAlgebras::isIsomorphism(LieAlgebraMap)",
-	"MultiprojectiveVarieties::isIsomorphism(MultirationalMap)",
-	"Varieties::isIsomorphism(SheafMap)",
-    } }
+doc ///
+  Key
+    isIsomorphism
+    (isIsomorphism, Matrix)
+  Headline
+    whether a map is an isomorphism
+  Usage
+    isIsomorphism f
+  Description
+    Text
+      Whether the map $f$ is an isomorphism.
+  SeeAlso
+    "Cremona::isIsomorphism(RationalMap)"
+    "GradedLieAlgebras::isIsomorphism(LieAlgebraMap)"
+    "MultiprojectiveVarieties::isIsomorphism(MultirationalMap)"
+    "Varieties::isIsomorphism(SheafMap)"
+///
 
-document { Key => cone,
-    Headline => "mapping cone or polyhedral cone",
-    SeeAlso => {
-	"Complexes::cone(ComplexMap)",
-	"Polyhedra::cone(Polyhedron)",
-	}
-    }
-document { Key => rays,
-    Headline => "1-dimensional cones of a fan or polyhedral object",
-    SeeAlso => {
-	"FourTiTwo::rays(Matrix)",
-	"NormalToricVarieties::rays(NormalToricVariety)",
-	"Polyhedra::rays(PolyhedralObject)",
-	}
-    }
+doc ///
+  Key
+    cone
+  Headline
+    mapping cone or polyhedral cone
+  SeeAlso
+    "Complexes::cone(ComplexMap)"
+    "Polyhedra::cone(Polyhedron)"
+///
+doc ///
+  Key
+    rays
+  Headline
+    1-dimensional cones of a fan or polyhedral object
+  SeeAlso
+    "FourTiTwo::rays(Matrix)"
+    "NormalToricVarieties::rays(NormalToricVariety)"
+    "Polyhedra::rays(PolyhedralObject)"
+///
 
-document {
-     Key => pullback,
-     Headline => "compute the pullback morphism",
-     SeeAlso => { pushout }
-     }
+doc ///
+  Key
+    pullback
+  Headline
+    compute the pullback morphism
+  SeeAlso
+    pushout
+///
 
-document {
-     Key => pushout,
-     Headline => "compute the pushout morphism",
-     SeeAlso => { pullback }
-     }
+doc ///
+  Key
+    pushout
+  Headline
+    compute the pushout morphism
+  SeeAlso
+    pullback
+///
 
 -- also see functions/intersect-doc.m2
-document {
-    Key => { intersect, (intersect, List), (intersect, Sequence) },
-    Headline => "compute an intersection",
-    PARA {     
-	"This function calculates the intersection of a list or sequence of compatible objects."
-	},
-    PARA{
-	"When a more efficient algorithm is available for computing the intersection of all inputs
-	simultaneously rather than iteratively, for instance for intersecting ", TO Module, "s,
-	a specialized function that takes a list or sequence may be installed on ", TT "(symbol intersect, Type)", "."
-	},
-    EXAMPLE ///code lookup(symbol intersect, Module)///,
-    PARA {
-	"This function may also be called using the synonym ", M2CODE "intersection", "."},
-    SeeAlso => {
-	-- add references to intersect methods installed in packages _other than Core_ here
-	"M0nbar::intersect",
-	"NAGtypes::intersect(PolySpace,PolySpace)",
-	"Polyhedra::intersect"
-	}
-    }
+doc ///
+  Key
+    intersect
+    (intersect, List)
+    (intersect, Sequence)
+  Headline
+    compute an intersection
+  Description
+    Text
+      This function calculates the intersection of a list or sequence of
+      compatible objects.
+
+      When a more efficient algorithm is available for computing the
+      intersection of all inputs simultaneously rather than iteratively, for
+      instance for intersecting @TO Module@s, a specialized function that takes
+      a list or sequence may be installed on @TT "(symbol intersect, Type)"@.
+    Example
+      code lookup(symbol intersect, Module)
+    Text
+      This function may also be called using the synonym
+      @M2CODE "intersection"@.
+  SeeAlso
+    -- add references to intersect methods installed in packages _other than Core_ here
+    "M0nbar::intersect"
+    "NAGtypes::intersect(PolySpace,PolySpace)"
+    "Polyhedra::intersect"
+///
 
 undocumented { 1:union }
-document {
-    Key => { union, (union, List), (union, Sequence) },
-    Headline => "compute the union",
-    PARA { "This function returns the union of a list or sequence of compatible sets or varieties." },
-    SeeAlso => {
-	"NumericalAlgebraicGeometry::union(NumericalVariety,NumericalVariety)",
-	"Posets::union(Poset,Poset)",
-	}
-    }
+doc ///
+  Key
+    union
+    (union, List)
+    (union, Sequence)
+  Headline
+    compute the union
+  Description
+    Text
+      This function returns the union of a list or sequence of compatible sets
+      or varieties.
+  SeeAlso
+    "NumericalAlgebraicGeometry::union(NumericalVariety,NumericalVariety)"
+    "Posets::union(Poset,Poset)"
+///
 
 -- also see functions/tensor-doc.m2
-document {
-    Key => { tensor, (tensor, List), (tensor, Sequence) },
-    Headline => "tensor product",
-    PARA {
-	"This function calculates the tensor product of a list or sequence of compatible objects."
-	},
-    PARA{
-	"This method is declared as a ", TO MethodFunctionBinary, ", so for two or more argument
-	the product is computed iteratively from the binary tensor products, working from left to right.
-	For two arguments, this is the same as ", TT "A ** B", " except that options are allowed."
-	},
-    EXAMPLE ///tensor(ZZ^2, ZZ^3, ZZ^4)///,
-    SeeAlso => {
-	symbol**
-	-- add references to tensor methods installed in packages _other than Core_ here
-	}
-    }
+doc ///
+  Key
+    tensor
+    (tensor, List)
+    (tensor, Sequence)
+  Headline
+    tensor product
+  Description
+    Text
+      This function calculates the tensor product of a list or sequence of
+      compatible objects.
+
+      This method is declared as a @TO MethodFunctionBinary@, so for two or
+      more argument the product is computed iteratively from the binary tensor
+      products, working from left to right. For two arguments, this is the same
+      as @TT "A ** B"@ except that options are allowed.
+    Example
+      tensor(ZZ^2, ZZ^3, ZZ^4)
+  SeeAlso
+    -- add references to tensor methods installed in packages _other than Core_ here
+    symbol**
+///
 
 doc ///
   Key
@@ -171,15 +211,16 @@ doc ///
     "Graphs::directProduct(Graph,Graph)"
 ///
 
-document {
-    Key => status,
-    Headline => "get the status of a computation",
-    SeeAlso => {
-	(status, GroebnerBasis),
-	"OldChainComplexes :: status(ChainComplex)",
-	"SubalgebraBases :: status(SAGBIBasis)",
-	"SumsOfSquares :: status(SDPResult)",
-	-- this one is used in a different sense
-	-- "NAGtypes :: status(AbstractPoint)",
-    },
-}
+doc ///
+  Key
+    status
+  Headline
+    get the status of a computation
+  SeeAlso
+    (status, GroebnerBasis)
+    "OldChainComplexes :: status(ChainComplex)"
+    "SubalgebraBases :: status(SAGBIBasis)"
+    "SumsOfSquares :: status(SDPResult)"
+    -- this one is used in a different sense
+    -- "NAGtypes :: status(AbstractPoint)",
+///
