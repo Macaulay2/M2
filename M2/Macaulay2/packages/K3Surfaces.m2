@@ -283,7 +283,7 @@ trigonalK3 ZZ := o -> g -> (
     S := if n == 2 then random({2,3},0_P) else 
          if n == 3 then random({{1,1},{1,3}},0_P) else 
          if n == 4 then random({{0,3},{1,1},{1,1}},0_P);
-    f := rationalMap((0_P)%S,{a,1});
+    f := rationalMap((0_S)%S,{a,1});
     T := image f;  
     assert(dim ambient T == g and dim T == 2 and degree T == 2*g-2 and sectionalGenus T == g);
     pr1 := rationalMap first projections S;
