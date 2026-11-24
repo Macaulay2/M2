@@ -35,13 +35,13 @@ doc ///
     Cofactor
     Dynamic
 ///
--- strategyFunction and strategySeeAlso are global variables, so that SimpleDoc can see them
+-- strategyNode is a global variable, so that SimpleDoc can see it; it holds a sequence
+-- (rather than the function itself, as reassigning a function triggers a warning)
 scan({det,minors,exteriorPower}, fn -> (
-	strategyFunction = fn;
-	strategySeeAlso = select({det, exteriorPower, minors}, g -> g =!= fn);
+	strategyNode = (fn, select({det, exteriorPower, minors}, g -> g =!= fn));
 	doc concatenate(///
   Key
-    [strategyFunction, Strategy]
+    [strategyNode#0, Strategy]
   Headline
     choose between Bareiss, Cofactor and Dynamic algorithms
   Usage
@@ -71,10 +71,10 @@ scan({det,minors,exteriorPower}, fn -> (
     actual determinant by a zero divisor in the ring. Thus, an @EM "incorrect"@
     answer may be computed if the ring contains zero divisors.
   SeeAlso
-    strategySeeAlso#0
-    strategySeeAlso#1
+    strategyNode#1#0
+    strategyNode#1#1
 ///)))
-erase \ {symbol strategyFunction, symbol strategySeeAlso}
+erase symbol strategyNode
 
 doc ///
   Key
