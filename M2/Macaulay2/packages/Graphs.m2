@@ -165,6 +165,7 @@ export {
     "sinks",
     "sources",
     "spectrum",
+    "stronglyConnectedComponents",
     "vertexCoverNumber",
     "vertexCovers",
     --
@@ -1211,6 +1212,59 @@ vertexCovers Graph := List => G -> (
     J := coverIdeal G;
     factoredIdealList := apply(J_*, indices);
     apply(factoredIdealList, i -> (vertexSet G)_i)
+    )
+
+stronglyConnectedComponents = method()
+stronglyConnectedComponents Digraph := List => D -> (
+    discovery := new MutableHashTable;
+    lowLink := new MutableHashTable;
+    onStack := new MutableHashTable;
+    -- S holds discovered vertices until their component is complete.
+    S := new MutableList from #vertexSet D;
+    s := 0;
+    -- Each DFS frame contains a vertex, its children, and the next child index.
+    frames := new MutableList from #vertexSet D;
+    depth := 0;
+    C := new MutableHashTable;
+    discover := v -> (
+        lowLink#v = discovery#v = #discovery;
+        S#s = v;
+        s = s + 1;
+        onStack#v = true;
+        frames#depth = new MutableList from {v, keys children(D, v), 0};
+        depth = depth + 1;
+        );
+    scan(vertexSet D, root -> if not discovery#?root then (
+        discover root;
+        while depth > 0 do (
+            frame := frames#(depth-1);
+            v := frame#0;
+            i := frame#2;
+            if i < #(frame#1) then (
+                child := frame#1#i;
+                frame#2 = i + 1;
+                if not discovery#?child then discover child
+                else if onStack#child then lowLink#v = min(lowLink#v, discovery#child);
+                )
+            else (
+                if lowLink#v == discovery#v then
+                    C#(#C) = while onStack#v list (
+                        s = s - 1;
+                        w := S#s;
+                        onStack#w = false;
+                        w
+                        );
+                depth = depth - 1;
+                frames#depth = null;
+                -- Return the completed child's low link to its DFS parent.
+                if depth > 0 then (
+                    parent := frames#(depth-1)#0;
+                    lowLink#parent = min(lowLink#parent, lowLink#v);
+                    );
+                );
+            );
+        ));
+    values C
     )
 
 weaklyConnectedComponents = method()
@@ -4696,6 +4750,33 @@ doc ///
         isReachable
 ///
 
+doc ///
+    Key
+        stronglyConnectedComponents
+        (stronglyConnectedComponents, Digraph)
+    Headline
+        finds the strongly connected components of a digraph
+    Usage
+        C = stronglyConnectedComponents D
+    Inputs
+        D:Digraph
+    Outputs
+        C:List
+            lists of vertices, one for each strongly connected component
+    Description
+        Text
+            Two vertices belong to the same component when each is reachable
+            from the other. The order of the components and their vertices is
+            unspecified. The implementation uses Tarjan's algorithm with an
+            explicit depth-first search stack.
+        Example
+            D = digraph({1,2,3,4}, {{1,2},{2,1},{2,3},{3,4},{4,3}}, EntryMode => "edges");
+            stronglyConnectedComponents D
+    SeeAlso
+        isStronglyConnected
+        weaklyConnectedComponents
+///
+
 --isTree
 doc ///
     Key
@@ -5611,6 +5692,19 @@ assert isSource(D, 1)
 assert not isSource(D, 3)
 assert isStronglyConnected digraph{{1,2},{2,3},{3,1}}
 assert not isStronglyConnected D
+assert(sort apply(stronglyConnectedComponents D, sort) === {{1},{2},{3}})
+assert(sort apply(stronglyConnectedComponents digraph({1,2,3,4},
+    {{1,2},{2,1},{2,3},{3,4},{4,3}}, EntryMode => "edges"), sort)
+    === {{1,2},{3,4}})
+assert(stronglyConnectedComponents digraph({}, {}, EntryMode => "edges") === {})
+assert(sort apply(stronglyConnectedComponents digraph({"a","b","isolated","loop"},
+    {{"a","b"},{"b","a"},{"b","loop"},{"loop","loop"}}, EntryMode => "edges"), sort)
+    === {{"a","b"},{"isolated"},{"loop"}})
+-- A directed cycle deep enough to exceed the recursive DFS limit.
+n = 75
+V = toList(0..<n)
+Dcycle = digraph(V, apply(n, i -> {i, (i+1)%n}), EntryMode => "edges")
+assert(apply(stronglyConnectedComponents Dcycle, sort) === {V})
 assert isWeaklyConnected D
 assert not isWeaklyConnected digraph({1,2,3,4},{{1,2}})
 assert isReachable(D, 3, 1)
