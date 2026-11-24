@@ -1755,12 +1755,12 @@ LegacyRationalMap == RationalMap := (Phi,Psi) -> multirationalMap {Phi} == Psi;
 
 ZZ _ MultiprojectiveVariety := (n,X) -> (
     if n == 0 then (
-        if not (ambient X).cache#?"emptySubscheme" then (
+        if not X.cache#?"emptySubscheme" then (
             O := projectiveVariety(ideal(1_(ring ambient X)),MinimalGenerators=>true,Saturate=>false);
             O#"dimVariety" = -1;
-            (ambient X).cache#"emptySubscheme" = O;
+            X.cache#"emptySubscheme" = O;
         );
-        return (ambient X).cache#"emptySubscheme";
+        return X.cache#"emptySubscheme";
     );
     if n =!= 1 then error "expected integer to be 0 or 1";
     I := multirationalMap(projections X,X);
