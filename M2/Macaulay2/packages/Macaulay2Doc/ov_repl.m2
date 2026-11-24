@@ -440,6 +440,12 @@ document {
      }
 
 document {
+    Key => "guard",
+    Headline => "guard a piece of internal code from the debugger and profiler",
+    TT "guard x", " -- prevent the debugger and profiler from interacting with the code."
+    }
+
+document {
      Key => symbol lineNumber,
      Headline => "current line number",
      TT "lineNumber", " -- the current line number.",
@@ -1005,8 +1011,8 @@ document { Key => pseudocode,
 	  "One can look at specific part of the code by using ", TT "_",":"
 	  },
      EXAMPLE lines ///
-	  pseudocode resolution
-          oo_4_1_1_0
+	  pseudocode lookup(syz, Matrix)
+	  oo_4_4_0_0_0
 	  value oo
      ///,
      PARA {

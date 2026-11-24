@@ -91,7 +91,10 @@ export setupconst(name:string,value:Expr):Symbol := (
      s);
 setup(commaS,dummyBinaryFun);
 
+-- by default, profile packages (2), but not the Core (1)
+threadLocal export profileDepth := ushort(2);
 threadLocal export errorDepth := ushort(0);
+
 export printErrorMessage0(c:Code,message:string):Error := (
      p := codePosition(c);
      e := Error(p,message,nullE,false,dummyFrame);

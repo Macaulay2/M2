@@ -59,6 +59,7 @@ document {
 	TO "peek'",
 	TO "profile",
 	TO "shield",
+	TO "guard",
 	TO "showStructure",
 	TO "showClassStructure",
 	TO "showUserStructure",
@@ -152,18 +153,21 @@ doc ///
 Node
   Key
    "profile"
+   "profileDepth"
     profileSummary
    (profileSummary, Thing)
    (profileSummary, String)
     coverageSummary
    (coverageSummary, Thing)
    (coverageSummary, String)
+    resetProfileTable
   Headline
     profile a computation
   Usage
     profile f()
-    profileSummary f
-    coverageSummary f
+    profileSummary
+    coverageSummary
+    resetProfileTable
   Consequences
     Item
       The hash table @TT "ProfileTable"@ is updated with the profiling measurement data.
@@ -174,11 +178,73 @@ Node
       analyzing and optimizing the computation.
     Example
       profile matrix table(4, 5, (i,j) -> i^j)
-    Text
-      Afterwards, running @TT "profileSummary"@ and @TT "coverageSummary"@ produces
-      easy to read tables summarizing the accumulated data so far in different ways.
-    Example
       profileSummary
+    Text
+      By default, only computations outside the @TO Core@ are profiled, but setting
+      @TT "profileDepth = 1"@ enables profiling function calls inside Core.
+    Example
+      profileDepth = 1
+      profile matrix table(4, 5, (i,j) -> i^j)
+      profileSummary
+    Text
+      Running @TT "profileSummary"@ and @TT "coverageSummary"@ produces
+      easy to read tables summarizing the accumulated data so far in different ways.
+      The "#run" column counts how many times the profiler entered that source location,
+      and the "position" column records the location itself; the "cost" column reports
+      how much of the profiled run's CPU time was spent there, computed as
+    Text
+      @TT "cost = 100 * (wall time accumulated at that location) / (CPU time of the whole profiled expression)"@.
+    Text
+      A few timing terms appear here and in related documentation; the distinction matters
+      because the per-entry numerator and the total-row denominator above are not measured
+      the same way:
+    Code
+      UL {
+          LI { BOLD "Wall time (a.k.a. elapsed time)",
+              " -- clock-on-the-wall time, what a stopwatch held next to the computer would show. ",
+              "Precisely: the difference between two readings of a monotonic real-time clock
+	      (", TT "std::chrono::steady_clock", "), measured in seconds.
+	      This is what ", TO "elapsedTime", " and ", TO "elapsedTiming", " report,
+	      and what the profiler records for every individual entry." },
+          LI { BOLD "CPU time",
+              " -- how busy the processor was on this process, summed across cores. ",
+              "Precisely: total user + system processor time charged to the Macaulay2 process ",
+              "by the operating system, in seconds, as reported by ", TO "cpuTime", ".
+	      This is what ", TO "time", " and ", TO "timing", " report. ",
+              TT "profileSummary", "'s \"total time\" row reports the CPU time consumed ",
+              "by the whole ", TT "profile <expr>", " call." }
+      }
+    Text
+      Note that a multi-threaded computation can accumulate CPU time faster than wall-clock
+      time advances, while a computation that mostly waits on I/O or sleeps accumulates
+      very little CPU time even while wall time keeps ticking. Because of this mismatch,
+      individual "cost" percentages can exceed 100% (e.g. when an entry waits on I/O
+      so its wall time outruns the total CPU time) and they need not sum to 100% across rows.
+    Text
+      If desired one can reset the @TT "profileSummary"@ table so
+      that multiple bits of code can be profiled separately.
+    Example
+      resetProfileTable
+      profileSummary
+    Text
+      The user can now profile a different function. For example:
+    Example
+      R = ZZ/31[x]
+      f = (x^110+1)*(x^13+1)
+      time factor f
+      time profile factor f
+      profileSummary
+    Text
+      One can pass a string to @TT "profileSummary"@ to filter runs of certain parts of the code.
+    Example
+      profile matrix table(4, 5, (i,j) -> i^j)
+      profileSummary
+      profileSummary "apply"
+    Text
+      Finally, @TT "coverageSummary"@ reports which source locations the profiler
+      observed at least once during the profiled run. The output is not very
+      informative yet and is expected to be improved in the future.
+    Example
       coverageSummary
 ///
 
