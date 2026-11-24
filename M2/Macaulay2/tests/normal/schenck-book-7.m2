@@ -16,7 +16,7 @@ chi'=(X,F)->(sum((dim X)+1,i->((-1)^i)*(rank HH^i(X,F))))
 assert( (chi'(H2, L)) === 4 );
 needsPackage "BoijSoederberg"
 needsPackage "BGG"
-assert( (OM = cotangentSheaf H2) === new CoherentSheaf from {symbol variety => H2, symbol module => cokernel map((C)^{{-2,0},{1,-2},{1,-2}},(C)^{{0,-2}},{{2*x_1*x_3}, {x_0}, {-x_2}}), symbol cache => new CacheTable} );
+assert( (OM = cotangentSheaf H2) === new CoherentSheaf from {symbol variety => H2, symbol module => cokernel map((C)^{{-2,0},{1,-2},{1,-2}},(C)^{{0,-2}},{{2*C_1*C_3}, {C_0}, {-C_2}}), symbol cache => new CacheTable} );
 cohomologyTable(ZZ,CoherentSheaf,List,List):=(k,F,lo,hi)->(
     degRange := toList(lo#0..hi#0);
     new CohomologyTally from select(flatten apply(degRange,
