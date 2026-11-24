@@ -20,18 +20,42 @@ buildPythonErrorPacket():Expr := (
     else if e == -1 then StopIterationE
     else nullE);
 
+import DecRef(o:pythonObject):void;
+import ProcessPendingDecRefs():void;
+pythonObjectFinalizer(obj:voidPointer, po:voidPointer):void := (
+    Ccode(void, "(void)", obj);
+    DecRef(Ccode(pythonObject, "(PyObject *)", po)));
+
+-- steals a reference to r
 pythonObjectOrNull := pythonObject or null;
 toExpr(r:pythonObjectOrNull):Expr := (
+    ProcessPendingDecRefs();
     when r
     is null do buildPythonErrorPacket()
     is po:pythonObject do (
 	x := pythonObjectCell(po, hash_t(0));
+	Ccode(void, "GC_REGISTER_FINALIZER(", x, ", ",
+	    pythonObjectFinalizer, ", ", po, ", 0, 0)");
 	h := Ccode(hash_t, "PyObject_Hash(", po, ")");
 	if h == hash_t(-1) then ( -- unhashable object (e.g., a list)
 	    Ccode(void, "PyErr_Clear()");
 	    h = hashFromAddress(Expr(x)));
 	x.hash = h;
 	Expr(x)));
+
+incref(r:pythonObjectOrNull):pythonObjectOrNull := (
+    Ccode(void, "Py_XINCREF(", r, ")");
+    r);
+incref(r:pythonObject):pythonObject := (
+    Ccode(void, "Py_INCREF(", r, ")");
+    r);
+-- the returned pointer may be dangling, so only use it for null checks
+decref(r:pythonObjectOrNull):pythonObjectOrNull := (
+    Ccode(void, "Py_XDECREF(", r, ")");
+    r);
+decref(r:pythonObject):pythonObject := (
+    Ccode(void, "Py_DECREF(", r, ")");
+    r);
 
 import Initialize(exec:charstar):constcharstarOrNull;
 PyInitialize(e:Expr):Expr := (
@@ -45,6 +69,18 @@ PyInitialize(e:Expr):Expr := (
     else WrongArgString());
 setupfun("pythonInitialize", PyInitialize);
 
+import DefaultExecutable():constcharstarOrNull;
+PyDefaultExecutable(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 0 then (
+	    when DefaultExecutable()
+	    is s:constcharstar do toExpr(tostring(s))
+	    is null do nullE)
+	else WrongNumArgs(0))
+    else WrongNumArgs(0));
+setupfun("pythonDefaultExecutable", PyDefaultExecutable);
+
 PyRunSimpleString(e:Expr):Expr := (
      when e is s:stringCell do (
 	 if Ccode(int, "PyRun_SimpleString(", tocharstar(s.v), ")") == 0
@@ -53,11 +89,11 @@ PyRunSimpleString(e:Expr):Expr := (
      else WrongArgString());
 setupfun("runSimpleString",PyRunSimpleString);
 
+import GetBuiltins():pythonObjectOrNull;
 PyEvalGetBuiltins(e:Expr):Expr := (
     when e
     is a:Sequence do (
-	if length(a) == 0 then toExpr(Ccode(pythonObjectOrNull,
-		"PyEval_GetBuiltins()"))
+	if length(a) == 0 then toExpr(GetBuiltins())
 	else WrongNumArgs(0))
     else WrongNumArgs(0));
 setupfun("pythonEvalGetBuiltins", PyEvalGetBuiltins);
@@ -87,11 +123,10 @@ PyRunStringFile(e:Expr):Expr := (
 	    is s:stringCell do (
 		when a.1
 		is o:pythonObjectCell do (
-		    r := Ccode(pythonObjectOrNull,
-			"PyRun_String(", tocharstar(s.v), ", Py_file_input, ",
-			o.v, ", NULL)");
-		    when r
-		    is null do return buildPythonErrorPacket()
+		    when decref(Ccode(pythonObjectOrNull,
+			    "PyRun_String(", tocharstar(s.v),
+			    ", Py_file_input, ", o.v, ", NULL)"))
+		    is null do buildPythonErrorPacket()
 		    else Expr(o))
 		else WrongArgPythonObject(2))
 	    else WrongArgString(1))
@@ -302,7 +337,7 @@ setupfun("pythonUnicodeFromString",PyUnicodeFromString);
 PyTupleSetItem(t:pythonObject, i:int, y:Expr):int := (
     when y
     is x:pythonObjectCell do Ccode(int,
-	"PyTuple_SetItem(", t, ", ", i, ", ", x.v, ")")
+	"PyTuple_SetItem(", t, ", ", i, ", ", incref(x.v), ")")
     is x:SpecialExpr do PyTupleSetItem(t, i, x.e)
     else -2);
 
@@ -315,8 +350,13 @@ PyTupleNew(e:Expr):Expr := (
 	is null do return buildPythonErrorPacket()
 	is t:pythonObject do foreach y at i in a do (
 	    r := PyTupleSetItem(t, i, y);
-	    if r == -1 then return buildPythonErrorPacket()
-	    else if r == -2 then return WrongArgPythonObject(i + 1));
+	    if r == -1 then (
+		errorPacket := buildPythonErrorPacket();
+		decref(t);
+		return errorPacket)
+	    else if r == -2 then (
+		decref(t);
+		return WrongArgPythonObject(i + 1)));
 	toExpr(x))
     else WrongArg("a sequence"));
 setupfun("pythonTupleNew", PyTupleNew);
@@ -340,7 +380,7 @@ PyListSetItem(e1:Expr,e2:Expr,e3:Expr):Expr :=
 	    when e3
 	    is z:pythonObjectCell do (
 		if Ccode(int, "PyList_SetItem(",
-		    x.v, ", ", toInt(y), ", ", z.v, ")") == -1
+		    x.v, ", ", toInt(y), ", ", incref(z.v), ")") == -1
 		then buildPythonErrorPacket()
 		else nullE)
 	    is s:SpecialExpr do PyListSetItem(e1, e2, s.e)
@@ -426,44 +466,31 @@ PyObjectCall(e:Expr):Expr :=
     else WrongNumArgs(3);
 setupfun("pythonObjectCall",PyObjectCall);
 
-wrappedM2Function(self:pythonObject, args:pythonObject):pythonObjectOrNull := (
-    ptr := Ccode(voidPointer, "PyCapsule_GetPointer(", self, ", NULL)");
+import WrappedM2FunctionClosure(self:pythonObject):voidPointer;
+export wrappedM2Function(self:pythonObject, args:pythonObject):pythonObjectOrNull := (
+    ptr := WrappedM2FunctionClosure(self);
     if ptr == nullPointer() then return pythonObjectOrNull(null());
     f := Ccode(FunctionClosure, "(", FunctionClosure, ")", ptr);
-    r := applyEE(Expr(f), toExpr(pythonObjectOrNull(args)));
+    r := applyEE(Expr(f), toExpr(incref(pythonObjectOrNull(args))));
     when r
     is e:Error do (
 	Ccode(void, "PyErr_SetString(PyExc_RuntimeError, ",
 	    tocharstar(e.message), ")");
 	pythonObjectOrNull(null()))
-    is o:pythonObjectCell do pythonObjectOrNull(o.v)
+    is o:pythonObjectCell do pythonObjectOrNull(incref(o.v))
     else (
 	Ccode(void, "PyErr_SetString(PyExc_TypeError, ",
 	    "\"expected return value to be a python object\")");
 	pythonObjectOrNull(null())));
 
+import WrapM2Function(name:charstar, f:FunctionClosure):pythonObjectOrNull;
 PyWrapM2Function(e:Expr):Expr := (
     when e
     is a:Sequence do (
 	if length(a) == 2 then (
 	    when a.0 is name:stringCell do
-	    when a.1 is f:FunctionClosure do (
-		ml := Ccode(voidPointer, "PyMem_Malloc(sizeof(PyMethodDef))");
-		Ccode(void, "((PyMethodDef *)", ml, ")->ml_name = ",
-		    tocharstar(name.v));
-		Ccode(void, "((PyMethodDef *)", ml,
-		    ")->ml_meth = (PyCFunction)", wrappedM2Function);
-		Ccode(void, "((PyMethodDef *)", ml,
-		    ")->ml_flags = METH_VARARGS");
-		Ccode(void, "((PyMethodDef *)", ml,
-		    ")->ml_doc = \"wrapped Macaulay2 function\"");
-		capsule := Ccode(pythonObjectOrNull,
-		    "PyCapsule_New(", f, ", NULL, NULL)");
-		when capsule
-		is null do return buildPythonErrorPacket()
-		else toExpr(Ccode(pythonObjectOrNull,
-			"(PyObject *)PyCFunction_New(", ml,
-			", (PyObject *)", capsule, ")")))
+	    when a.1 is f:FunctionClosure do toExpr(
+		WrapM2Function(tocharstar(name.v), f))
 	    else WrongArg(2, "a function closure")
 	    else WrongArgString(1))
 	else WrongNumArgs(2))

@@ -8,7 +8,14 @@
 #include "pythoncapi_compat.h"
 #pragma GCC diagnostic pop
 
+#include <dlfcn.h>
 #include <gmp.h>
+#include <libgen.h>
+#include <limits.h>
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 const char * python_Initialize(char *executable)
 {
@@ -36,6 +43,39 @@ exception:
   Py_Initialize();
   return NULL;
 #endif
+}
+
+/* Look for the Python executable belonging to the same installation as the
+ * library we're linked against, relative to the directory containing the
+ * library.  We check, in order:
+ *   bin       (macOS frameworks, e.g., .../Versions/3.x/Python)
+ *   ../bin    (most installations, e.g., PREFIX/lib/libpython3.x.so)
+ *   ../../bin (Debian multiarch, e.g., /usr/lib/<triplet>/libpython3.x.so)
+ * Returns NULL if we can't find it, e.g., if libpython is linked statically. */
+const char *python_DefaultExecutable(void)
+{
+  static const char *subdirs[] = {"bin", "../bin", "../../bin"};
+  static char executable[PATH_MAX];
+  char libpath[PATH_MAX];
+  const char *libdir;
+  Dl_info info;
+  size_t i;
+
+  if (dladdr((void *)Py_Initialize, &info) == 0 || info.dli_fname == NULL)
+    return NULL;
+
+  /* dirname may modify its argument */
+  snprintf(libpath, sizeof(libpath), "%s", info.dli_fname);
+  libdir = dirname(libpath);
+
+  for (i = 0; i < sizeof(subdirs) / sizeof(subdirs[0]); i++) {
+    snprintf(executable, sizeof(executable), "%s/%s/python%d.%d", libdir,
+             subdirs[i], PY_MAJOR_VERSION, PY_MINOR_VERSION);
+    if (access(executable, X_OK) == 0)
+      return executable;
+  }
+
+  return NULL;
 }
 
 /**************
@@ -88,6 +128,121 @@ void python_initspam() {
   SpamError = PyErr_NewException(name, NULL, NULL);
   Py_INCREF(SpamError);
   PyModule_AddObject(m, "error", SpamError);
+  Py_DECREF(m);
+}
+
+/**********************
+ * reference counting *
+ **********************/
+
+/* Python objects wrapped by Macaulay2 are released by a garbage collector
+ * finalizer, which may run in any thread.  If the current thread doesn't
+ * hold the GIL, then we queue the object up and release it later. */
+
+static pthread_mutex_t pending_decrefs_mutex = PTHREAD_MUTEX_INITIALIZER;
+static PyObject **pending_decrefs = NULL;
+static size_t pending_decrefs_len = 0, pending_decrefs_cap = 0;
+
+void python_ProcessPendingDecRefs(void)
+{
+  PyObject **objs;
+  size_t len, i;
+
+  pthread_mutex_lock(&pending_decrefs_mutex);
+  objs = pending_decrefs;
+  len = pending_decrefs_len;
+  pending_decrefs = NULL;
+  pending_decrefs_len = pending_decrefs_cap = 0;
+  pthread_mutex_unlock(&pending_decrefs_mutex);
+
+  /* Py_DECREF may run arbitrary Python code (and trigger more finalizers),
+   * so we do it with the lock released */
+  for (i = 0; i < len; i++)
+    Py_DECREF(objs[i]);
+  free(objs);
+}
+
+void python_DecRef(PyObject *obj)
+{
+  if (!Py_IsInitialized())
+    return;
+
+  if (PyGILState_Check()) {
+    Py_DECREF(obj);
+    python_ProcessPendingDecRefs();
+    return;
+  }
+
+  pthread_mutex_lock(&pending_decrefs_mutex);
+  if (pending_decrefs_len == pending_decrefs_cap) {
+    size_t cap = pending_decrefs_cap ? 2 * pending_decrefs_cap : 16;
+    PyObject **objs = realloc(pending_decrefs, cap * sizeof(PyObject *));
+    if (objs == NULL) { /* leak rather than crash */
+      pthread_mutex_unlock(&pending_decrefs_mutex);
+      return;
+    }
+    pending_decrefs = objs;
+    pending_decrefs_cap = cap;
+  }
+  pending_decrefs[pending_decrefs_len++] = obj;
+  pthread_mutex_unlock(&pending_decrefs_mutex);
+}
+
+/*******************************
+ * wrapped Macaulay2 functions *
+ *******************************/
+
+/* Python's memory isn't scanned by the garbage collector, so we keep the
+ * method definition (which points to the name) and the function closure in
+ * uncollectable memory, which is scanned but never freed by the collector.
+ * We free it ourselves when Python releases the capsule. */
+
+struct wrapped_m2_function {
+  PyMethodDef def;
+  parse_FunctionClosure f;
+};
+
+static void wrapped_m2_function_destructor(PyObject *capsule)
+{
+  GC_FREE(PyCapsule_GetPointer(capsule, NULL));
+}
+
+PyObject *python_WrapM2Function(char *name, parse_FunctionClosure f)
+{
+  struct wrapped_m2_function *w;
+  PyObject *capsule, *r;
+
+  w = GC_MALLOC_UNCOLLECTABLE(sizeof(struct wrapped_m2_function));
+  if (w == NULL)
+    return PyErr_NoMemory();
+  w->def.ml_name = name;
+  w->def.ml_meth = (PyCFunction)python_wrappedM2Function;
+  w->def.ml_flags = METH_VARARGS;
+  w->def.ml_doc = "wrapped Macaulay2 function";
+  w->f = f;
+
+  capsule = PyCapsule_New(w, NULL, wrapped_m2_function_destructor);
+  if (capsule == NULL) {
+    GC_FREE(w);
+    return NULL;
+  }
+
+  /* PyCFunction_New takes its own reference to the capsule, so we release
+   * ours (which also frees w if PyCFunction_New failed) */
+  r = PyCFunction_New(&w->def, capsule);
+  Py_DECREF(capsule);
+  return r;
+}
+
+void *python_WrappedM2FunctionClosure(PyObject *self)
+{
+  struct wrapped_m2_function *w = PyCapsule_GetPointer(self, NULL);
+  return w == NULL ? NULL : w->f;
+}
+
+PyObject *python_GetBuiltins(void)
+{
+  return PyEval_GetFrameBuiltins();
 }
 
 /********

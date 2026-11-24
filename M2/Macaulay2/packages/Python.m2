@@ -3,8 +3,8 @@ this does not work unless M2 is compiled --with-python
 *-
 
 newPackage("Python",
-    Version => "1.1",
-    Date => "June 5, 2026",
+    Version => "1.2",
+    Date => "November 17, 2026",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -26,6 +26,18 @@ newPackage("Python",
 ---------------
 
 -*
+
+1.2 (2026-11-17, M2 1.26.11)
+* release Python objects when they are garbage collected, fixing a memory
+  leak (#4600)
+* fix crashes when calling Macaulay2 functions from Python after garbage
+  collection
+* default to the Python executable belonging to the same installation as the
+  linked Python library rather than the first python3 in the PATH (fixes
+  "No module named 'math'" errors, e.g., with Homebrew on Ubuntu 26.04)
+* convert numpy.bool (NumPy 2) to Boolean
+* skip NumPy tests for scalar types that aren't available
+* stop using PyEval_GetBuiltins, which was deprecated in Python 3.13
 
 1.1 (2026-06-05, M2 1.26.06)
 * update my contact info
@@ -92,6 +104,7 @@ exportFrom_Core {
 
 importFrom_Core {
     "pythonComplexFromDoubles",
+    "pythonDefaultExecutable",
     "pythonDictNew",
     "pythonDictSetItem",
     "pythonEvalGetBuiltins",
@@ -140,7 +153,7 @@ export {
 }
 
 executable = ((options currentPackage).Configuration#"executable" ??
-    get "!command -v python3 | tr -d '\n'")
+    pythonDefaultExecutable() ?? get "!command -v python3 | tr -d '\n'")
 
 -- raise an error if we try initializing with a new Python executable
 -- store the information in ZZ since it will persist when reloading
@@ -289,7 +302,7 @@ addPyToM2Function(
     pythonLongAsLong,
     "numbers.Integral -> ZZ")
 addPyToM2Function(
-    {builtins@@"bool", "numpy.bool_"},
+    {builtins@@"bool", "numpy.bool_", "numpy.bool"},
     pythonObjectIsTrue,
     "bool -> Boolean")
 value PythonObject := x -> runHooks((value, PythonObject), x)
@@ -958,8 +971,9 @@ v = toPython vector {1, 2, 3}
 w = toPython vector {4, 5, 6}
 assert Equation(v @ w, 32)
 
--- scalar types
-checkNumPyIntDtype = T -> assert BinaryOperation(symbol ===, value np@@T 1, 1)
+-- scalar types (skip if not available on system)
+checkNumPyIntDtype = T -> if np@@?T then assert BinaryOperation(symbol ===,
+    value np@@T 1, 1)
 checkNumPyIntDtype "int8"
 checkNumPyIntDtype "uint8"
 checkNumPyIntDtype "int16"
@@ -976,17 +990,19 @@ checkNumPyIntDtype "intc"
 checkNumPyIntDtype "uintc"
 checkNumPyIntDtype "int_"
 checkNumPyIntDtype "uint"
+checkNumPyIntDtype "long"
+checkNumPyIntDtype "ulong"
 checkNumPyIntDtype "longlong"
 checkNumPyIntDtype "ulonglong"
 checkNumPyIntDtype "intp"
 checkNumPyIntDtype "uintp"
 
-checkNumPyRealDtype = T -> assert BinaryOperation(symbol ===,
+checkNumPyRealDtype = T -> if np@@?T then assert BinaryOperation(symbol ===,
     value np@@T 1, 1.0)
 checkNumPyRealDtype "float16"
 checkNumPyRealDtype "float32"
 checkNumPyRealDtype "float64"
--- checkNumPyRealDtype "float96"
+checkNumPyRealDtype "float96"
 checkNumPyRealDtype "float128"
 checkNumPyRealDtype "float_"
 checkNumPyRealDtype "half"
@@ -994,14 +1010,17 @@ checkNumPyRealDtype "single"
 checkNumPyRealDtype "double"
 checkNumPyRealDtype "longdouble"
 
-assert BinaryOperation(symbol ===, value np@@"bool_" true, true)
-assert BinaryOperation(symbol ===, value np@@"bool8" true, true)
+checkNumPyBoolDtype = T -> if np@@?T then assert BinaryOperation(symbol ===,
+    value np@@T true, true)
+checkNumPyBoolDtype "bool"
+checkNumPyBoolDtype "bool_"
+checkNumPyBoolDtype "bool8"
 
-checkNumPyComplexDtype = T -> assert BinaryOperation(symbol ===, value np@@T 1,
-    toCC(1.0, 0.0))
+checkNumPyComplexDtype = T -> if np@@?T then assert BinaryOperation(symbol ===,
+    value np@@T 1, toCC(1.0, 0.0))
 checkNumPyComplexDtype "complex64"
 checkNumPyComplexDtype "complex128"
--- checkNumPyComplexDtype "complex192"
+checkNumPyComplexDtype "complex192"
 checkNumPyComplexDtype "complex256"
 checkNumPyComplexDtype "complex_"
 checkNumPyComplexDtype "csingle"
@@ -1013,6 +1032,43 @@ TEST ///
 -- Python < 3.9 compatibility
 assert Equation(gcd toPython 200, 200)
 assert Equation(lcm(toPython 200, toPython 300), 600)
+///
+
+TEST ///
+-- wrapped python objects are released when garbage collected (#4600)
+-- (the gc is conservative, so don't insist that every one of them is)
+x = toPython {}
+y = toPython {x}
+main = import "__main__"
+main@@sys = import "sys"
+main@@keep = x
+main@@counts = toPython {}
+-- creating a wrapper releases any queued objects, so we measure using
+-- runSimpleString, which doesn't create any
+rc = () -> runSimpleString "counts.append(sys.getrefcount(keep))"
+rc()
+scan(100, i -> y_0) -- each y_0 is a new wrapper of x
+collectGarbage()
+rc()
+-- when the gc runs in a thread that doesn't hold the GIL, the objects are
+-- queued up and released the next time we create a wrapper
+scan(100, i -> y_0)
+t = schedule collectGarbage
+while not isReady t do nothing
+rc()
+toPython 1
+rc()
+c = value main@@counts
+assert(c#1 - c#0 < 50)
+assert(c#2 - c#0 > 50) -- still queued
+assert(c#3 - c#0 < 50)
+///
+
+TEST ///
+-- wrapped Macaulay2 functions aren't garbage collected while python has them
+fns = toPython apply(100, i -> x -> x + i)
+collectGarbage()
+assert all(100, i -> value (fns_i)(1) == i + 1)
 ///
 
 end --------------------------------------------------------
