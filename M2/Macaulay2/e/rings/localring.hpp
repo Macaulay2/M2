@@ -29,6 +29,7 @@ class LocalRing : public Ring
   local_elem *new_local_elem() const;
 
   bool is_in_prime(const ring_elem f) const;
+  bool simplify_unit_denominator(local_elem *f) const;
   void simplify(local_elem *f) const;
 
   // FIXME remove:
