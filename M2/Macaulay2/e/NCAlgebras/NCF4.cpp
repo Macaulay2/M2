@@ -9,7 +9,6 @@
 #include "interface/m2-types.h"                 // for M2_gbTrace
 #include "rings/ring.hpp"                         // for Ring
 #include "rings/ringelem.hpp"                     // for ring_elem
-#include "../system/supervisorinterface.h"  // for getAllowableThreads
 
 #include <cassert>                          // for assert
 #include <cstdlib>                          // for exit, size_t
@@ -974,8 +973,6 @@ void NCF4::parallelReduceF4Matrix()
     return NCF4Stats();
   });
 
-  // access the number of allowable threads this way.
-  //std::cout << "M2 Number of Threads: " << getAllowableThreads() << std::endl;
 
   // reduce each overlap row by mRows.
 

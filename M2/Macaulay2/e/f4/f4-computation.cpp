@@ -10,7 +10,6 @@
 #include "f4/moninfo.hpp"          // for MonomialInfo
 #include "matrices/matrix-con.hpp"          // for MatrixConstructor
 #include "matrices/matrix.hpp"              // for Matrix
-#include "mem.hpp"                 // for stash
 #include "monoid.hpp"              // for Monoid
 #include "rings/polyring.hpp"            // for PolynomialRing
 #include "rings/ring.hpp"                // for Ring
@@ -235,7 +234,6 @@ void F4Computation::text_out(buffer &o) const
 void F4Computation::show() const  // debug display
 {
   buffer o;
-  stash::stats(o);
   emit(o.str());
 
   // f4->show();

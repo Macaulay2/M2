@@ -6,7 +6,6 @@
 //#include "engine-exports.h"  // for M2_tostring, M2_string
 #include "error.h"           // for error_message
 #include "hash.hpp"          // for MutableEngineObject
-#include "mem.hpp"           // for doubles, doubling_stash
 #include "rings/poly.hpp"          // for PolyRing
 #include "style.hpp"         // for GEOHEAP_SIZE
 
@@ -42,8 +41,6 @@ void IM2_initialize()
 {
   if (initialized) return;
   initialized = true;
-  doubles = new doubling_stash;
-
   // This next routine initializes: globalZZ, trivial_monoid, trivial_poly_ring,
   // and makes sure their degree rings are interconnected.
   PolyRing::get_trivial_poly_ring();

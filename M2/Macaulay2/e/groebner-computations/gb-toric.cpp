@@ -36,7 +36,6 @@ binomial_ring::binomial_ring(const PolynomialRing *RR, int *wts, bool revlex0)
       for (i = 0; i < nvars; i++) weights[i] = -wts[i];
     }
 
-  monstash = new stash("monomials", sizeof(int) * nslots);
 }
 
 binomial_ring::binomial_ring(const PolynomialRing * /* RR */)
@@ -48,19 +47,18 @@ binomial_ring::~binomial_ring()
 {
   freemem(degrees);
   freemem(weights);
-  freemem(monstash);
 }
 
 void binomial_ring::remove_monomial(monomial &m) const
 {
   if (m == nullptr) return;
-  monstash->delete_elem(m);
+  freemem(m);
   m = nullptr;
 }
 
 monomial binomial_ring::new_monomial() const
 {
-  return (monomial)((const binomial_ring *)this)->monstash->new_elem();
+  return newarray_clear(int, nslots);
 }
 
 monomial binomial_ring::copy_monomial(monomial m) const
