@@ -2,26 +2,39 @@
 --- author(s): Gregory G. Smith
 --- notes: 
 
-document { 
-     Key => {det,(det,Matrix),(determinant,MutableMatrix)},
-     Headline => "determinant of a matrix",     
-     Usage => "det M",
-     Inputs => {
-	  "M" => {"a square ", TO2("Matrix","matrix")}
-	  },
-     Outputs => {
-	  RingElement => {"which is the determinant of ", TT "M"} 
-	  },
-     EXAMPLE {
-	  "R = QQ[vars(0..8)]",
-	  "M = genericMatrix(R,2,2)",
-	  "det M",
-	  "N = genericMatrix(R,3,3)",
-	  "det N"
-	  },
-     SeeAlso => {exteriorPower, minors, permanents, pfaffians},
-     Subnodes => { TO [determinant, Strategy], TO Bareiss, TO Cofactor, TO Dynamic },
-     }
+doc ///
+  Key
+    det
+    (det,Matrix)
+    (determinant,MutableMatrix)
+  Headline
+    determinant of a matrix
+  Usage
+    det M
+  Inputs
+    M:
+      a square @TO2("Matrix", "matrix")@
+  Outputs
+    :RingElement
+      which is the determinant of @TT "M"@
+  Description
+    Example
+      R = QQ[vars(0..8)]
+      M = genericMatrix(R,2,2)
+      det M
+      N = genericMatrix(R,3,3)
+      det N
+  SeeAlso
+    exteriorPower
+    minors
+    permanents
+    pfaffians
+  Subnodes
+    [determinant, Strategy]
+    Bareiss
+    Cofactor
+    Dynamic
+///
 scan({det,minors,exteriorPower}, fn -> document { 
      Key => [fn, Strategy],
      Headline => "choose between Bareiss, Cofactor and Dynamic algorithms",
@@ -50,15 +63,39 @@ scan({det,minors,exteriorPower}, fn -> document {
      SeeAlso => select({det, exteriorPower, minors}, g -> g =!= fn)
      })
 
-document { Key => Bareiss,
-     "This symbol is used as one of the permissible values for the strategy option in function dealing with determinants.",
-     SeeAlso => {[exteriorPower,Strategy], [minors,Strategy], [det,Strategy]}
-     }
-document { Key => Cofactor,
-     "This symbol is used as one of the permissible values for the strategy option in function dealing with determinants.",
-     SeeAlso => {[exteriorPower,Strategy], [minors,Strategy], [det,Strategy]}
-     }
-document { Key => Dynamic,
-     "This symbol is used as one of the permissible values for the strategy option in function dealing with determinants.",
-     SeeAlso => {[exteriorPower,Strategy], [minors,Strategy], [det,Strategy]}
-     }
+doc ///
+  Key
+    Bareiss
+  Description
+    Text
+      This symbol is used as one of the permissible values for the strategy
+      option in function dealing with determinants.
+  SeeAlso
+    [exteriorPower,Strategy]
+    [minors,Strategy]
+    [det,Strategy]
+///
+doc ///
+  Key
+    Cofactor
+  Description
+    Text
+      This symbol is used as one of the permissible values for the strategy
+      option in function dealing with determinants.
+  SeeAlso
+    [exteriorPower,Strategy]
+    [minors,Strategy]
+    [det,Strategy]
+///
+doc ///
+  Key
+    Dynamic
+  Description
+    Text
+      This symbol is used as one of the permissible values for the strategy
+      option in function dealing with determinants.
+  SeeAlso
+    [exteriorPower,Strategy]
+    [minors,Strategy]
+    [det,Strategy]
+///
