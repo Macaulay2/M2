@@ -16,17 +16,17 @@ export {
 
 -- From classes.m2
 export {
-    "Subring",
+    -- "Subring",
     "SAGBIBasis",
-    "subring",
+    -- "subring",
     "Compute",
     "sagbiBasis",
-    "GeneratorSymbol",
-    "presentationRing",
+    -- "GeneratorSymbol",
+    -- "presentationRing",
     "sagbiStatus",
     "sagbiLimit",
     "sagbiDegree",
-    "flattenedRing"
+    -- "flattenedRing"
 }
 
 -- From sagbi-functions.m2
