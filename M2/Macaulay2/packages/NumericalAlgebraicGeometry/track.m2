@@ -663,16 +663,7 @@ extractM2engineOutput (MutableMatrix,MutableMatrix) := (out,statusOut) -> (
     apply(nSols, sN->(
 	    s'status := solutionStatusLIST#(statusOut_(0,sN));
 	    count := statusOut_(1,sN);
-	    if DBG > 0 then << (if s'status == Regular then "."
-		else if s'status == Singular then "S"
-		else if s'status == MinStepFailure then "M"
-		else if s'status == Infinity then "I"
-		else if s'status == Origin then "O"
-		else if s'status == IncreasePrecision then "P"
-		else if s'status == DecreasePrecision then "p"
-		else error "unknown solution status"
-		) << if (sN+1)%100 == 0 or sN==nSols-1 then endl else flush;
-	    -- create a solution record 
+	    -- create a solution record
 	    x0 := submatrix(out,toList(0..n-1),{sN});
 	    point {flatten entries x0,
 		SolutionStatus => s'status, 
@@ -686,20 +677,23 @@ extractM2engineOutput (MutableMatrix,MutableMatrix) := (out,statusOut) -> (
 minimalStepSize = method() 
 minimalStepSize ZZ := prec -> 2.^(15-prec) 
 
+-- precision ladder for Precision => infinity: hardware doubles, then MPFR
+-- precisions aligned to 64-bit limbs (256 bits costs the same as 200, etc.);
+-- the engine's DecreasePrecision rule assumes this doubling with floor 53
 higherPrecision = new HashTable from {
-    53 => 100,
-    100 => 200,
-    200 => 400,
-    400 => 800,
-    800 => 1600,
-    1600 => null
+    53 => 128,
+    128 => 256,
+    256 => 512,
+    512 => 1024,
+    1024 => 2048,
+    2048 => null
     }
 lowerPrecision = new HashTable from {
-    1600 => 800,
-    800 => 400,
-    400 => 200,
-    200 => 100,
-    100 => 53,
+    2048 => 1024,
+    1024 => 512,
+    512 => 256,
+    256 => 128,
+    128 => 53,
     53 => null
     }
 
@@ -855,65 +849,61 @@ trackHomotopy(Homotopy,List) := List => o -> (H,solsS) -> (
 	     tempInpMatrix := memoize (F->mutableMatrix(F,n+1,1));
 	     tempOutMatrix := memoize (F->mutableMatrix(F,n+2,1));
 	     statusOut = mutableMatrix(ZZ,2,1);
+	     maxResumes := 40; -- safety cap on precision changes per path (e.g. a path heading into a singularity keeps asking for more)
+	     maxDecreases := 3; -- after this many decreases, finish the path without further precision changes
 	     for nS to #sols-1 do (
 		 s := sols#nS;
 		 currentPrec := prec;
+		 maxPrec := prec; -- highest precision this path was tracked in (recorded in the cache)
+		 nResumes := 0; nDecreases := 0;
+		 checkPrecisionNow := checkPrecision;
+		 history := {}; -- (status, t, precision) at each precision change, recorded in the cache
 	     	 while not ( 
 		     member(status s, {Regular,Infinity,Origin}) 
 		     or realPart(1-s.cache.LastT) < o.EndZoneFactor
 		     or currentPrec === null 
+		     or nResumes >= maxResumes
 		     ) do ( 
+		     nResumes = nResumes + 1; -- the path is resumed from LastT at the new precision
+		     history = append(history, (status s, s.cache.LastT, currentPrec));
 		     if status s === DecreasePrecision then (
-			 -- decrease precision increase minimal step size
-			 currentPrec = lowerPrecision#currentPrec;
-			 if currentPrec === null then error "precision can not be lowered (this is a bug)";
+			 if nDecreases < maxDecreases then (
+			     nDecreases = nDecreases + 1;
+			     currentPrec = lowerPrecision#currentPrec;
+			     if currentPrec === null then error "precision can not be lowered (this is a bug)";
+			     )
+			 else checkPrecisionNow = false -- stop adapting: continue at the current precision
+			 )
+		     else currentPrec = higherPrecision#currentPrec; -- IncreasePrecision, MinStepFailure, ...
+		     if currentPrec =!= null then (
 			 F := o.Field_currentPrec;
 			 inp = tempInpMatrix F;
 			 scan(n, i->inp_(i,0) = (coordinates s)#i);
 			 inp_(n,0) = s.cache.LastT;
 			 out = tempOutMatrix F; 
 			 out_(n,0) = 1;
-			 ti'out := timing trackHomotopyM2engine(H, inp, 
+			 ti'out = timing trackHomotopyM2engine(H, inp, 
 			     out, statusOut,
 			     abs s.cache.LastIncrement, minimalStepSize currentPrec, 
 			     o.CorrectorTolerance, o.maxCorrSteps, 
 			     toRR o.InfinityThreshold,
-			     checkPrecision);
+			     checkPrecisionNow);
 			 if DBG>3 then 
-			 << "-- trackHomotopyM2engine (at decreased prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
+			 << status s << "-- trackHomotopyM2engine (at prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
 			 sols#nS = first extractM2engineOutput(out,statusOut);
-			 (sols#nS).NumberOfSteps = (sols#nS).NumberOfSteps+s.cache.NumberOfSteps;
+			 (sols#nS).cache.NumberOfSteps = (sols#nS).cache.NumberOfSteps+s.cache.NumberOfSteps;
 			 s = sols#nS;
-			 )
-		     else ( -- status s === IncreasePrecision... or other reason
-		     	 -- increase precision decrease minimal step size
-			 currentPrec = higherPrecision#currentPrec;
-			 if currentPrec =!= null then (
-			     F = o.Field_currentPrec;
-			     inp = tempInpMatrix F;
-			     scan(n, i->inp_(i,0) = (coordinates s)#i);
-			     inp_(n,0) = s.cache.LastT;
-			     out = tempOutMatrix F; 
-			     out_(n,0) = 1;
-			     ti'out = timing trackHomotopyM2engine(H, inp, 
-	     			 out, statusOut,
-	     			 abs s.cache.LastIncrement, minimalStepSize currentPrec, 
-	     			 o.CorrectorTolerance, o.maxCorrSteps, 
-	     			 toRR o.InfinityThreshold,
-				 checkPrecision);
-	 		     if DBG>3 then 
-	 		     << status s << "-- trackHomotopyM2engine (at increased prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
-			     sols#nS = first extractM2engineOutput(out,statusOut);
-			     (sols#nS).cache.NumberOfSteps = (sols#nS).cache.NumberOfSteps+s.cache.NumberOfSteps;
-			     s = sols#nS;
-    	 		     )			 
-		  	 )
+			 maxPrec = max(maxPrec, currentPrec);
+			 );
 		     ); -- while ... 
-		     if status s =!= Regular then -- change status to Regular if at t=1 
-		     if abs(realPart s.cache.LastT) < theSmallestNumber then s.cache.SolutionStatus = Regular;   
-		 ) -- for nS ... 
-	     );	      
-	 toList sols 
+		     s.cache#"MaxPrecision" = maxPrec;
+		     s.cache#"PrecisionHistory" = history;
+		 ) -- for nS ...
+	     );
+	 if DBG > 0 then << "-- " << demark(", ",
+	     apply(sort pairs tally apply(toList sols, status), (st, k) -> toString k | " " | toString st))
+	 << endl;
+	 toList sols
 	 )
      ---------------- M2 (top-level) -------------------------------------------------------------------------------------
      else if o.Software===M2 
@@ -1121,7 +1111,7 @@ T = apply(n, i->if i==0 then x_i^d-eps^d else (x_i-i)^d-eps^(d-1)*x_i)
 H = segmentHomotopy(S,T,gamma=>1+pi*ii)
 sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 53,CorrectorTolerance=>1e-15,Precision=>infinity,EndZoneFactor=>0)
 peek sols 
-assert all(sols, s->status s === Regular and s.cache.NumberOfSteps > 100)
+assert all(sols, s->status s === Regular and precision ring matrix s > 53) -- adaptive precision had to go up
 
 sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 53,CorrectorTolerance=>1e-15,Precision=>53,EndZoneFactor=>0)
 peek sols 
@@ -1130,4 +1120,35 @@ assert all(sols, s->status s === MinStepFailure)
 sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 100,CorrectorTolerance=>1e-15,Precision=>100,EndZoneFactor=>0)
 peek sols 
 assert all(sols, s->status s === Regular)
+///
+
+TEST /// -- adaptive precision: near-singular in the middle, regular at both ends
+-- The two roots 1 +- sqrt((t-c)^12 + delta^2) come within delta of each other
+-- at t = c but are well separated at t = 0 and t = 1. With Precision => infinity
+-- the tracker starts in double precision, goes up to 128 bits approaching t = c,
+-- and comes back down to 53 bits once the roots separate again (NAGtrace 4 shows
+-- the decisions). The roots stay distinguishable throughout since delta is
+-- well above CorrectorTolerance.
+needsPackage "NumericalAlgebraicGeometry"
+R = CC[x,t]
+c = 1/4; delta = 2^-20
+H = matrix{{(x-1)^2 - (t-c)^12 - delta^2}}
+f0 = sqrt(c^12 + delta^2); f1 = sqrt((1-c)^12 + delta^2)
+solsS = {point{{1+f0}}, point{{1-f0}}}
+sols = trackHomotopy(H,solsS,Precision=>infinity,CorrectorTolerance=>1e-8)
+assert all(sols, s -> status s === Regular)
+assert all(sols, s -> precision ring matrix s == 53) -- came back down to double precision
+assert areEqual(sols#0, point{{1+f1}}, Tolerance=>1e-7)
+assert areEqual(sols#1, point{{1-f1}}, Tolerance=>1e-7)
+///
+
+TEST /// -- example with speedup from tbb_for loop 
+needsPackage "ExampleSystems"                                                                                     
+T = katsura(10,CC_53)                                                                                             
+(S,solsS) = totalDegreeStartSystem T;                                                                             
+H = segmentHomotopy(ii*S,T)                                                                                       
+NAGtrace 2                                                                                                        
+numTBBThreads = 4                                                                                                 
+elapsedTime sols = trackHomotopy(H,solsS);                                                                        
+assert(#solsS == #sols)
 ///
