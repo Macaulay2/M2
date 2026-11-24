@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*- this has to be on the first line
 newPackage(
 	"Parametrization",
-    	Version => "0.6", 
-    	Date => "August 25, 2010",
+    	Version => "0.7",
+    	Date => "September 30, 2026",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "https://agag-jboehm.math.rptu.de/~boehm/"}},
