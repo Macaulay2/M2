@@ -745,8 +745,54 @@ doc ///
     a unary postfix operator
 ///
 
-apply({symbol ^>, symbol ^>=, symbol ^<, symbol ^<=, symbol _>, symbol _>=, symbol _<, symbol _<=},
-    symb -> document { Key => symb, Headline => "a binary operator, used for truncation" })
+doc ///
+  Key
+    symbol ^>
+  Headline
+    a binary operator, used for truncation
+///
+doc ///
+  Key
+    symbol ^>=
+  Headline
+    a binary operator, used for truncation
+///
+doc ///
+  Key
+    symbol ^<
+  Headline
+    a binary operator, used for truncation
+///
+doc ///
+  Key
+    symbol ^<=
+  Headline
+    a binary operator, used for truncation
+///
+doc ///
+  Key
+    symbol _>
+  Headline
+    a binary operator, used for truncation
+///
+doc ///
+  Key
+    symbol _>=
+  Headline
+    a binary operator, used for truncation
+///
+doc ///
+  Key
+    symbol _<
+  Headline
+    a binary operator, used for truncation
+///
+doc ///
+  Key
+    symbol _<=
+  Headline
+    a binary operator, used for truncation
+///
 
 doc ///
   Key

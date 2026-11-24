@@ -22,22 +22,50 @@ optionalValues = select(optionalValues, s -> instance(s, Symbol) and isGlobalSym
     not isUndocumented(d := makeDocumentTag s) and (isMissingDoc d or headline d === "value of an optional argument"))
 
 -- Create generic documentation nodes for undocumented optional arguments and values
-scan(optionalNames,
-    o -> document { Key => o, Headline => "an optional argument", -- if the headline is changed, change it above as well
-	"A symbol used as the name of an optional argument." })
+-- (optionalSymbol and optionalSymbols are global variables, so that SimpleDoc can see them)
+scan(optionalNames, o -> (
+	optionalSymbol = o;
+	doc ///
+  Key
+    optionalSymbol
+  Headline
+    -- if the headline is changed, change it above as well
+    an optional argument
+  Description
+    Text
+      A symbol used as the name of an optional argument.
+///))
 
 both := set optionalNames * set optionalValues
-scan(optionalValues - both,
-    v -> document { Key => v, Headline => "value of an optional argument", -- if the headline is changed, change it above as well
-	"A symbol used as the value of an optional argument or strategy, for some function(s)." })
+scan(optionalValues - both, v -> (
+	optionalSymbol = v;
+	doc ///
+  Key
+    optionalSymbol
+  Headline
+    -- if the headline is changed, change it above as well
+    value of an optional argument
+  Description
+    Text
+      A symbol used as the value of an optional argument or strategy, for some
+      function(s).
+///))
 
 -- Add a few special cases with individual documentation
 optionalNames  |= { }
 optionalValues |= { MinimalGenerators }
 
 -- Make sure orphan nodes above have a parent
-document { Key => "symbols used as the name or value of an optional argument",
-    Subnodes => flatten {
-	"Symbols used as an option name or value",  TO \ sort toList both,
-	"Symbols used as an option name",  TO \ sort (optionalNames - both),
-	"Symbols used as an option value", TO \ sort (optionalValues - both)}}
+optionalSymbols = (sort toList both, sort (optionalNames - both), sort (optionalValues - both))
+doc ///
+  Key
+    "symbols used as the name or value of an optional argument"
+  Subnodes
+    :Symbols used as an option name or value
+    @TO \ optionalSymbols#0@
+    :Symbols used as an option name
+    @TO \ optionalSymbols#1@
+    :Symbols used as an option value
+    @TO \ optionalSymbols#2@
+///
+erase \ {symbol optionalSymbol, symbol optionalSymbols}

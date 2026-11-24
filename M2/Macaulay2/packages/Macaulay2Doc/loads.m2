@@ -68,29 +68,45 @@ load "./undocumented.m2"
 
 load "./M2-Singular-Book.m2"
 
-ld := fn -> tutorial get concatenate(currentFileDirectory,fn)
-
-document {
-     Key => "Tutorial: Modules in Macaulay2",
-     ld "tu_modules.m2"
-     }
-document {
-     Key => "Tutorial: Elementary uses of Gröbner bases",
-     ld "tu_elementary.m2"
-     }
-document {
-     Key => "Tutorial: Canonical Embeddings of Plane Curves and Gonality",
-     ld "tu_canEmbed.m2"
-     }
-document {
-     Key => "Tutorial: Divisors",
-     ld "tu_divisors.m2"
-     }
-document {
-     Key => "Elementary uses of Groebner bases I. Math 634 Fall 2005",
-     ld "tu_elementary1.m2"
-     }
-document {
-     Key => "Tutorial: Fano varieties",
-     ld "tu_Fano.m2"
-     }
+doc ///
+  Key
+    "Tutorial: Modules in Macaulay2"
+  Description
+    Code
+      tutorial get(currentPackage#"source directory" | "Macaulay2Doc/tu_modules.m2")
+///
+doc ///
+  Key
+    "Tutorial: Elementary uses of Gröbner bases"
+  Description
+    Code
+      tutorial get(currentPackage#"source directory" | "Macaulay2Doc/tu_elementary.m2")
+///
+doc ///
+  Key
+    "Tutorial: Canonical Embeddings of Plane Curves and Gonality"
+  Description
+    Code
+      tutorial get(currentPackage#"source directory" | "Macaulay2Doc/tu_canEmbed.m2")
+///
+doc ///
+  Key
+    "Tutorial: Divisors"
+  Description
+    Code
+      tutorial get(currentPackage#"source directory" | "Macaulay2Doc/tu_divisors.m2")
+///
+doc ///
+  Key
+    "Elementary uses of Groebner bases I. Math 634 Fall 2005"
+  Description
+    Code
+      tutorial get(currentPackage#"source directory" | "Macaulay2Doc/tu_elementary1.m2")
+///
+doc ///
+  Key
+    "Tutorial: Fano varieties"
+  Description
+    Code
+      tutorial get(currentPackage#"source directory" | "Macaulay2Doc/tu_Fano.m2")
+///

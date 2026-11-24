@@ -28,20 +28,28 @@ doc ///
     "installing augmented assignment methods"
 ///
 
+-- augmentedOperator and augmentedBinop are global variables, so that SimpleDoc can see them
 scan(core "augmentedAssignmentOperators", op -> (
-	binop := concatenate drop(toSequence toString op, -1);
-	document {
-	    Key => op,
-	    Headline => "augmented assignment for " | binop,
-	    Usage => "x " | toString op | " y",
-	    "In most cases, ", SAMP ("x " | toString op | " y"),
-	    " is equivalent to ", SAMP("x = x " | binop | " y"),
-	    ", unless a method is installed for the class of ",
-	    SAMP "x", ".",
-	    SeeAlso => {
-		binop,
-		"augmented assignment",
-		"installing augmented assignment methods"}}))
+	augmentedOperator = op;
+	augmentedBinop = concatenate drop(toSequence toString op, -1);
+	doc concatenate(///
+  Key
+    augmentedOperator
+  Headline
+    augmented assignment for ///, augmentedBinop, ///
+  Usage
+    x ///, toString op, /// y
+  Description
+    Text
+      In most cases, @SAMP ("x " | toString augmentedOperator | " y")@ is
+      equivalent to @SAMP("x = x " | augmentedBinop | " y")@, unless a method is
+      installed for the class of @SAMP "x"@.
+  SeeAlso
+    augmentedBinop
+    "augmented assignment"
+    "installing augmented assignment methods"
+///)))
+erase \ {symbol augmentedOperator, symbol augmentedBinop}
 
 doc ///
   Key
