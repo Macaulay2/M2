@@ -153,7 +153,7 @@ W := weylModuleZ(A, {1, 0})
 assert(dim W == 3)
 assert(# weights W == 3)
 -- Highest weight has multiplicity 1.
-assert((character W)#{1, 0} == 1)
+assert((rawCharacter W)#{1, 0} == 1)
 -- Verma quotient relation: f_1^{(2)} v_lambda = 0 in V(lambda).
 -- We check this indirectly: weight (1, 0) - 2 alpha_1 should not be a V-weight.
 twoAlpha1Drop := for k from 0 to 1 list ({1, 0})#k - 2 * A_(0, k);   -- (1, 0) - 2*(2, -1) = (-3, 2)
@@ -166,7 +166,7 @@ A := cartanA 3
 W := weylModuleZ(A, {2, 0})
 assert(dim W == 6)
 -- Six weights, all with multiplicity 1 (Sym^2 of std rep).
-ch := character W;
+ch := rawCharacter W;
 assert(all(values ch, x -> x == 1))
 assert(# weights W == 6)
 ///
@@ -177,7 +177,7 @@ A := cartanA 3
 W := weylModuleZ(A, {1, 1})
 assert(dim W == 8)
 -- The zero weight has multiplicity 2 (dim of Cartan in sl_3).
-assert((character W)#{0, 0} == 2)
+assert((rawCharacter W)#{0, 0} == 2)
 ///
 
 TEST ///
@@ -186,7 +186,7 @@ A := cartanA 4
 W := weylModuleZ(A, {1, 0, 0})
 assert(dim W == 4)
 -- All four weights have multiplicity 1.
-ch := character W;
+ch := rawCharacter W;
 assert(all(values ch, x -> x == 1))
 -- f-actions form the chain v_lambda -> f_1 v_lambda -> f_2 f_1 v_lambda -> f_3 f_2 f_1 v_lambda
 F1 := actionF(W, {-1, 1, 0}, 1);
@@ -210,7 +210,7 @@ A := cartanD 4
 W := weylModuleZ(A, {1, 0, 0, 0})
 assert(dim W == 8)
 -- All eight weights have multiplicity 1.
-ch := character W;
+ch := rawCharacter W;
 assert(all(values ch, x -> x == 1))
 ///
 
@@ -1013,7 +1013,7 @@ TEST ///
 -- construction reaches the length-two PBW root-string correction.
 W := weylModuleZ(cartanB 3, {0, 1, 0});
 assert(dim W == 21);
-assert(characterDim character W == 21);
+assert(characterDim rawCharacter W == 21);
 ///
 
 TEST ///
@@ -1300,11 +1300,11 @@ assert(highestWeight Wstd == {1, 0})
 ///
 
 TEST ///
--- character with WeightFormat: keys come back in user format.
+-- Raw character with WeightFormat: keys come back in user format.
 A := cartanA 3
 W := weylModuleZ(A, {2, 0})
-chD := character W                          -- Dynkin keys
-chP := character(W, WeightFormat => "Partition")
+chD := rawCharacter W                          -- Dynkin keys
+chP := rawCharacter(W, WeightFormat => "Partition")
 -- Both report the same total dimension.
 assert(characterDim chD == characterDim chP)
 -- The highest weight key is at the top of both.
@@ -1472,7 +1472,7 @@ assert(equalSubmodules(submoduleIntersection(S, S), S))
 assert(submoduleCodimension S == dim W - dim S)
 M := subquotientWeylModule(Z, S)
 assert(dim M == dim S)
-assert(sort pairs(character M) == sort pairs(character S))
+assert(sort pairs(rawCharacter M) == sort pairs(rawCharacter S))
 assert(subquotientProjection(M, {0, 1}) * subquotientSection(M, {0, 1}) ==
        id_((ZZ/2)^1))
 assert(compositionFactors M == compositionFactors S)
@@ -1499,7 +1499,7 @@ C := weylCharacter W
 assert(ambientCartan C == A)
 assert(characteristic C == 0)
 assert(dim C == 3)
-assert(sort pairs(rawCharacter C) == sort pairs(character W))
+assert(sort pairs(rawCharacter C) == sort pairs(rawCharacter W))
 assert(first characterTerms C == ({1, 0}, 1))
 assert(dim(C * dualCharacter C) == 9)
 assert(isVirtualCharacter(C - C) == false)
@@ -1612,7 +1612,7 @@ TEST ///
 W := schurAlgebraWeylModule {2, 1}
 Wp := schurAlgebraWeylModule(2, {2, 1})
 assert(dim W == dim Wp)
-assert(sort pairs(character W) == sort pairs(character Wp))
+assert(sort pairs(rawCharacter W) == sort pairs(rawCharacter Wp))
 ///
 
 ----------------------------------------------------------------------
@@ -1916,7 +1916,7 @@ for data in cases do (
     Q := reduction(W, data#2);
     assert(isValid verifyRepresentation W);
     assert(isValid verifyRepresentation Q);
-    assert(sum values character Q == dim Q);
+    assert(sum values rawCharacter Q == dim Q);
     assert(sum apply(graphVertices weightGraph Q, v -> v#"multiplicity") == dim Q);
 )
 
@@ -2031,7 +2031,7 @@ A := cartanA 3
 W := weylModuleZ(A, {2, 1})
 Q := weylModule(A, 2, {2, 1})
 assert(dim Q == dim W)
-assert(sort pairs character Q == sort pairs character W)
+assert(sort pairs rawCharacter Q == sort pairs rawCharacter W)
 Z := subWeylModule(W, 2, {})
 Full := subWeylModule(W, 2, highestWeight W, {1})
 Q0 := quotientWeylModule Full
@@ -2151,9 +2151,8 @@ auditGraph := M -> (
     r := numrows A;
     G := weightGraph M;
     assert(sort apply(graphVertices G,
-        v -> (v#"weight", v#"multiplicity")) == sort pairs character M);
-    predicted := {};
-    for mu in weights M do for i from 1 to r do (
+        v -> (v#"weight", v#"multiplicity")) == sort pairs rawCharacter M);
+    predicted := flatten for mu in weights M list for i from 1 to r list (
         nu := for j from 0 to r - 1 list mu#j - A_(j, i - 1);
         if weightMultiplicity(M, nu) == 0 then continue;
         B := actionF(W, nu, i);
@@ -2171,7 +2170,7 @@ auditGraph := M -> (
         );
         if low === null then low = matrix mutableMatrix(R, dnu, 0);
         rk := rank(low | F * upper) - rank low;
-        if rk > 0 then predicted = append(predicted, (mu, nu, i, rk));
+        if rk > 0 then (mu, nu, i, rk) else continue
     );
     assert(sort predicted == sort apply(graphEdges G,
         e -> (e#"from", e#"to", e#"simpleRoot", e#"rank")));
@@ -2359,4 +2358,194 @@ svg := toSVG D
 assert(match("Socle search may be incomplete", svg))
 assert(not match("Layer 1 is the socle[.]", svg))
 assert(not match("<path ", svg))
+///
+
+TEST ///
+-- Simple-character caches distinguish primes and normalized weights without
+-- changing equality of Cartan matrices or exposing mutable character tables.
+sameTerms := (C, D) -> sort pairs C == sort pairs D
+A := matrix(ZZ, {{2}})
+B := matrix(ZZ, {{2}})
+assert(A == B)
+C2 := simpleCharacter(A, 2, {8})
+assert(sameTerms(C2, new HashTable from {{8} => 1, {-8} => 1}))
+assert(C2 === simpleCharacter(A, 2, {8}))
+assert(not instance(C2, MutableHashTable))
+C3 := simpleCharacter(A, 3, {8})
+assert(sum values C3 == 9 and #keys C3 == 9)
+assert(A == B)
+assert(sameTerms(simpleCharacter(B, 2, {8}), C2))
+assert(sameTerms(simpleCharacter(A, 2, {8,0}, WeightFormat => "Partition"),
+    characterAsPartition(A, C2)))
+assert(try (simpleCharacter(matrix(ZZ, {{1}}), 2, {0}); false) else true)
+///
+
+TEST ///
+-- Empty collections remain Lists after loop collection and one-level joins.
+A := matrix(ZZ, {{2}})
+assert(ambiguousMaxVecs(weylModuleZ(A, {1}), 2) === {})
+W := weylModuleZ(A, {2})
+Q := quotientWeylModule subWeylModule(W, 2, {2}, {1})
+assert(maximalVectors Q === {})
+assert(boundedPartitions(2, 5, 1) === {})
+///
+
+TEST ///
+-- Characters live in the same integral Laurent ring as characters from
+-- LieAlgebraRepresentations, even when the module has characteristic two.
+sameTerms := (C, D) -> sort pairs C == sort pairs D
+A := matrix(ZZ, {{2}})
+W := weylModuleZ(A, {2})
+R := characterRing W
+x := R_0
+C := character W
+assert(instance(C, RingElement))
+assert(coefficientRing R === ZZ)
+assert(C == x^2 + 1_R + x^(-2))
+assert(characterRing W === characterRing(reduction(W, 2)))
+assert(character(reduction(W, 2)) == C)
+assert(characterDim C == 3)
+assert(sameTerms(rawCharacter(A, C), rawCharacter W))
+assert(character(weylCharacter W) == C)
+assert(characterRing(weylCharacter W) === R)
+assert(sameTerms(rawCharacter(A, C*C), productCharacter(rawCharacter W, rawCharacter W)))
+assert(#keys rawCharacter(A, C-C) == 0)
+assert(characterDim(-C) == -3)
+
+-- The character identity comes from a nonsplit exact sequence; it is not
+-- an assertion that V(2) is a direct sum of its two simple factors.
+S := socleWeyl(W, 2, RequireComplete => true)
+Q := quotientWeylModule S
+assert(character W == character S + character Q)
+assert(character S == 1_R)
+assert(character Q == x^2 + x^(-2))
+Z := subWeylModule(W, 2, {})
+Full := subWeylModule(W, 2, {2}, {1})
+assert(character Z == 0_R)
+assert(character(quotientWeylModule Full) == 0_R)
+assert(character(subquotientWeylModule(Z, S)) == character S)
+assert(sameTerms(decomposeCharacter(A, 2, C), decompositionNumbers(W, 2)))
+assert(try (decomposeCharacter(A, 2, -C); false) else true)
+///
+
+TEST ///
+-- Round trips include B/C orientations, G2, and modular quotients.
+sameTerms := (C, D) -> sort pairs C == sort pairs D
+for A in {cartanA 3, cartanB 2, cartanC 2, cartanG2()} do (
+    W := weylModuleZ(A, {1,0});
+    S := socleWeyl(W, 2, RequireComplete => true);
+    for M in {W, reduction(W,2), S, quotientWeylModule S} do (
+        C := character M;
+        assert(ring C === characterRing M);
+        assert(characterDim C == dim M);
+        assert(sameTerms(rawCharacter(A, C), rawCharacter M));
+        if member(lieType M, {"A", "B", "C", "D"}) then
+            assert(sameTerms(rawCharacter(A, C, WeightFormat => "Partition"),
+                rawCharacter(M, WeightFormat => "Partition")));
+        assert(sameTerms(rawCharacter(A, C*C),
+            productCharacter(rawCharacter M, rawCharacter M)));
+        assert(sameTerms(decomposeCharacter(A, 2, C),
+            decomposeCharacter(A, 2, rawCharacter M)));
+    );
+    -- Relabel formal characters independently of the integral constructor,
+    -- which requires standard Cartan ordering in non-simply-laced types.
+    for nodeOrder in {{0,1}, {1,0}} do (
+        B := submatrix(A, nodeOrder, nodeOrder);
+        T := new HashTable from for entry in pairs rawCharacter W list
+            apply(nodeOrder, i -> (entry#0)#i) => entry#1;
+        U := weylCharacter(B, T);
+        C := character U;
+        assert(ring C === characterRing U);
+        assert(sameTerms(rawCharacter(B, C), T));
+        assert(sameTerms(rawCharacter(B, C*C), productCharacter(T, T)));
+        assert(characterDim C == dim W);
+    );
+)
+A := cartanA 4
+B := submatrix(A, {1,0,2}, {1,0,2})
+W := weylModuleZ(B, {1,0,0})
+assert(sameTerms(rawCharacter(B, character W), rawCharacter W))
+assert(try (rawCharacter(cartanA 2, character W); false) else true)
+///
+
+TEST ///
+-- Adding Weyl-module methods must preserve the companion packages' method
+-- functions and their existing characteristic-zero and typed-weight inputs.
+sameTerms := (C, D) -> sort pairs C == sort pairs D
+larSymbol := name -> value(LieAlgebraRepresentations#"private dictionary"#name)
+assert(character === larSymbol "character")
+assert(characterRing === larSymbol "characterRing")
+assert(characterTerms === KacMoody$characterTerms)
+assert(dualCharacter === KacMoody$dualCharacter)
+assert(decomposeCharacter === KacMoody$decomposeCharacter)
+A := cartanA 2
+W := weylModuleZ(A, {2})
+g := toLieAlgebra A
+assert(character W == character(g, {2}))
+L := (larSymbol "irreducibleLieAlgebraModule")(g, {2})
+assert(character L == character W)
+assert(isIrreducible L)
+F := finiteCharacter(A, {2})
+assert(sum values characterTerms F == 3)
+assert(dualCharacter F == F)
+assert(sum values decomposeCharacter F == 1)
+C := weylCharacter W
+T := characterTerms(C, WeightFormat => "Dynkin", WeightOrder => "Lex")
+assert(characterTerms(WeightOrder => "Lex", C, WeightFormat => "Dynkin") == T)
+assert(characterTerms(C, WeightOrder => "Lex") == T)
+assert(sameTerms(decomposeCharacter(WeightFormat => "Dynkin", A, 2, rawCharacter W),
+    decompositionNumbers(W, 2)))
+assert(sameTerms(rawCharacter(W, WeightFormat => "Partition"),
+    characterAsPartition(A, rawCharacter W)))
+///
+
+TEST ///
+-- The coordinate map of the zero subspace of k^d has size 0 by d,
+-- including when d is positive.
+leftCoordinates := value(WeylModules#"private dictionary"#"qolLeftCoordinates")
+for R in {QQ, ZZ/7} do for d in {0, 4} do (
+    B := matrix mutableMatrix(R, d, 0);
+    L := leftCoordinates B;
+    assert(numrows L == 0 and numcols L == d);
+    assert(L * B == id_(R^0));
+)
+///
+
+TEST ///
+-- Package-owned helpers support standard option forwarding and overrides,
+-- without replacing KacMoody's shared method functions.
+sameTerms := (C, D) -> sort pairs C == sort pairs D
+A := cartanA 2
+W := weylModuleZ(A, {2})
+C := weylCharacter W
+T := new OptionTable from {WeightFormat => "Dynkin", WeightOrder => "RootDepth"}
+reference := sortedCharacter(C, WeightFormat => "Partition", WeightOrder => "Lex")
+assert(sortedCharacter(C, T, WeightOrder => "Lex", WeightFormat => "Partition") == reference)
+assert(sortedCharacter(WeightFormat => "Partition", C, T) == sortedCharacter C)
+assert(sortedCharacter(C, WeightOrder => "RootDepth", WeightOrder => "Lex",
+    WeightFormat => "Partition", WeightFormat => "Dynkin") ==
+    sortedCharacter(C, WeightOrder => "Lex"))
+assert(sortedCharacter(A, rawCharacter W, T, WeightOrder => "Lex") ==
+    sortedCharacter(C, WeightOrder => "Lex"))
+assert(try (sortedCharacter(C, Strategy => "other"); false) else true)
+
+O := new OptionTable from {WeightFormat => "Dynkin"}
+referenceFactors := decompositionNumbers(W, 2, WeightFormat => "Partition")
+for f in {rawCharacter W, character W} do (
+    partitionInput := if instance(f, HashTable) then characterAsPartition(A, f) else f;
+    assert(sameTerms(decompositionNumbers(A, 2, partitionInput, O, WeightFormat => "Partition"),
+        referenceFactors));
+    assert(sameTerms(decompositionNumbers(WeightFormat => "Partition", A, 2, f, O),
+        decompositionNumbers(W, 2)));
+    assert(sameTerms(decompositionNumbers(A, 2, f,
+        WeightFormat => "Partition", WeightFormat => "Dynkin"),
+        decompositionNumbers(W, 2)));
+)
+assert(sameTerms(decompositionNumbers(C, 2, O, WeightFormat => "Partition"),
+    referenceFactors))
+assert(sameTerms(decompositionNumbers(WeightFormat => "Partition", C, 2, O),
+    decompositionNumbers(W, 2)))
+assert(try (decompositionNumbers(A, 4, character W); false) else true)
+assert(characterTerms === KacMoody$characterTerms)
+assert(decomposeCharacter === KacMoody$decomposeCharacter)
 ///

@@ -10,9 +10,15 @@ newPackage("WeylModules",
     HomePage => "https://sites.google.com/view/kellervandebogert/home",
     Keywords => {"Lie Groups and Lie Algebras", "Representation Theory"},
     PackageExports => {"KacMoody"},
+    PackageImports => {"LieAlgebraRepresentations"},
     AuxiliaryFiles => true,
     DebuggingMode => false
 )
+
+-- Extend the companion packages' methods on our disjoint input types.
+exportFrom(LieAlgebraRepresentations, {"character", "characterRing", "isIrreducible"});
+exportFrom(KacMoody, {"characterTerms", "decomposeCharacter", "dualCharacter"});
+larCartanMatrix := LieAlgebraRepresentations$cartanMatrix;
 
 ----------------------------------------------------------------------
 -- WeylModules: a Macaulay2 implementation inspired by S.R. Doty's GAP
@@ -52,7 +58,6 @@ export {
     "weightSpaces",
     "weightSpace",
     "basisVecs",
-    "character",
     "actionF",
     "actionE",
     "actionH",
@@ -72,7 +77,6 @@ export {
     "simpleCharacter",
     "simpleDimension",
     "socleWeyl",
-    "decomposeCharacter",
     "decompositionNumbers",
     "maximalSubmodule",
     "isAmbiguous",
@@ -155,11 +159,9 @@ export {
     "isVirtualCharacter",
     "characterMetadata",
     "rawCharacter",
-    "characterTerms",
     "WeightOrder",
     "tensorProductCharacter",
     "tensorProductFactors",
-    "dualCharacter",
     "frobeniusTwistCharacter",
     "DecompositionTable",
     "decompositionTable",
@@ -178,7 +180,6 @@ export {
     "IncludeStructure",
     "IncludeSocle",
     "compositionFactors",
-    "isIrreducible",
     "socleAnalysis",
     "socleLayerFactors",
     "socleLayerGenerators",
@@ -234,11 +235,6 @@ export {
     "socleDiagram",
     "diagramLayers"
 }
-
--- Resolve this package's definitions before names also exported by KacMoody.
-use currentPackage;
-dictionaryPath = prepend(currentPackage#"private dictionary",
-    delete(currentPackage#"private dictionary", dictionaryPath));
 
 ----------------------------------------------------------------------
 -- Internal helpers (not exported)
@@ -1056,13 +1052,8 @@ chevalleyConstantsNonADE = (Akm, typeStr, n) -> (
 
     -- sigma-orbit of an ambient root.
     orbitOf := r -> (
-        orb := {r};
-        cur := sigmaApplyVec(sigmaPerm, r);
-        while cur != r do (
-            orb = append(orb, cur);
-            cur = sigmaApplyVec(sigmaPerm, cur);
-        );
-        orb
+        cur := r;
+        prepend(r, while (cur = sigmaApplyVec(sigmaPerm, cur); cur != r) list cur)
     );
 
     -- Group ambient positive roots into sigma-orbits.  GAP's convention:
@@ -1070,21 +1061,20 @@ chevalleyConstantsNonADE = (Akm, typeStr, n) -> (
     -- orbits are the simple non-ADE orbits, in GAP's standard ordering);
     -- then process non-simple positive roots.
     seenAmbient := new MutableHashTable;
-    orbitsList := {};
-    for i from 1 to rA do (
+    orbitsList := for i from 1 to rA list (
         s := for j from 0 to rA - 1 list (if j == i - 1 then 1 else 0);
         if seenAmbient#?s then continue;
         orb := orbitOf s;
         for v in orb do seenAmbient#v = true;
-        orbitsList = append(orbitsList, orb);
+        orb
     );
     -- Then non-simple ambient positive roots.
-    for r in posAmbient do (
+    orbitsList = join(orbitsList, for r in posAmbient list (
         if seenAmbient#?r then continue;
         orb := orbitOf r;
         for s in orb do seenAmbient#s = true;
-        orbitsList = append(orbitsList, orb);
-    );
+        orb
+    ));
 
     -- For each orbit, the corresponding non-ADE root (in ambient coords) is
     -- (1/d) * sum of orbit elements.
@@ -1387,13 +1377,10 @@ pbwTuples (List, List) := (positiveRoots, delta) -> (
         );
         if maxC === infinity then maxC = 0;     -- beta is zero (shouldn't happen for a root)
         if maxC < 0 then return {};
-        result := {};
-        for c from 0 to maxC do (
+        flatten for c from 0 to maxC list (
             newRem := for k from 0 to r - 1 list remaining#k - c * beta#k;
-            sub := helper(idx + 1, newRem, append(partial, c));
-            result = result | sub;
-        );
-        result
+            helper(idx + 1, newRem, append(partial, c))
+        )
     );
     helper(0, delta, {})
 )
@@ -1658,11 +1645,12 @@ vermaKernel = (W) -> (
     -- are independent kernel vectors found so far, indexed by PBW tuples
     -- at mu.
     kernelAtWeight := new MutableHashTable;
-    for mu in weightsList do kernelAtWeight#mu = matrix(QQ, table(#(pbwAt#mu), 0, (i, j) -> 0));
+    kernelColumnsAt := new MutableHashTable;
+    for mu in weightsList do kernelColumnsAt#mu = new MutableHashTable;
 
     -- Per-weight column-echelon state for fast linear-independence testing.
-    --   echelonAt#mu = list of column matrices in row-echelon form (one per pivot)
-    --   pivotsAt#mu = list of pivot row indices (one per echelon column)
+    --   echelonAt#mu = indexed columns in row-echelon form (one per pivot)
+    --   pivotsAt#mu = corresponding pivot row indices
     -- An incoming vector v is reduced against the echelon in O(rows * #cols);
     -- if zero after reduction it is dependent, otherwise we record a new
     -- pivot.  This replaces a much more expensive per-call `solve` (which
@@ -1692,8 +1680,8 @@ vermaKernel = (W) -> (
     -- (List, pivotRow, pivotVal) triple to skip repeated indexing.
     tryAdd := (mu, vL, isVWeight) -> (
         nT := #vL;
-        cols := if echelonAt#?mu then echelonAt#mu else {};
-        pivs := if pivotsAt#?mu then pivotsAt#mu else {};
+        cols := echelonAt#mu ??= new MutableHashTable;
+        pivs := pivotsAt#mu ??= new MutableHashTable;
         nCols := #cols;
 
         -- Reduce against existing pivots.
@@ -1717,15 +1705,13 @@ vermaKernel = (W) -> (
         if newP < 0 then return false;     -- dependent
 
         newPivotVal := vL#newP;
-        echelonAt#mu = append(cols, (vL, newP, newPivotVal));
-        pivotsAt#mu = append(pivs, newP);
+        cols#nCols = (vL, newP, newPivotVal);
+        pivs#nCols = newP;
         seenRankAt#mu = nCols + 1;
 
         -- For V-weights, record the (reduced) vector as a kernel column.
         if isVWeight then (
-            kernelMat := mutableMatrix(QQ, nT, 1);
-            for r from 0 to nT - 1 do kernelMat_(r, 0) = vL#r;
-            kernelAtWeight#mu = (kernelAtWeight#mu) | matrix kernelMat;
+            (kernelColumnsAt#mu)#(kernelRankAt#mu) = vL;
             kernelRankAt#mu = kernelRankAt#mu + 1;
             totalKernelRank = totalKernelRank + 1;
         );
@@ -1859,6 +1845,10 @@ vermaKernel = (W) -> (
             error("vermaKernel: incorrect kernel rank at weight " | toString mu |
                   "; got " | toString(kernelRankAt#mu) |
                   ", expected " | toString(targetKernelRankAt#mu));
+        kernelAtWeight#mu = if kernelRankAt#mu == 0 then
+            matrix(QQ, table(#(pbwAt#mu), 0, (i, j) -> 0))
+        else transpose matrix(QQ,
+            for i from 0 to kernelRankAt#mu - 1 list (kernelColumnsAt#mu)#i);
     );
 
     kernelAtWeight
@@ -1902,17 +1892,16 @@ chooseVBasis = (W, kernelAtWeight) -> (
         -- of the current accumulated matrix [kernel | already-chosen e's].
         currentMat := kernelMat;
         currentRank := rank currentMat;
-        chosen := {};
-        for j from 0 to nTotal - 1 do (
-            if #chosen >= target then break;
+        chosen := for j from 0 to nTotal - 1 list (
+            if currentRank >= nTotal then break;
             ej := mutableMatrix(QQ, nTotal, 1);
             ej_(j, 0) = 1;
             candidate := currentMat | matrix ej;
             if rank candidate > currentRank then (
-                chosen = append(chosen, j);
                 currentMat = candidate;
                 currentRank = currentRank + 1;
-            );
+                j
+            ) else continue
         );
         if #chosen != target then
             error("chooseVBasis: rank mismatch at weight " | toString mu |
@@ -1995,10 +1984,10 @@ weylModuleZ (Matrix, List) := opts -> (A, lambdaUser) -> (
     pTimer "PBW enumerate";
 
     -- Pre-build the WeylModuleZ object enough for the Verma routines.
-    -- The applyChevalleyCache is a MutableHashTable shared across
+    -- The applyChevalleyCache is a CacheTable shared across
     -- vermaKernel and buildFAction; both call applyChevalley with the
     -- same (cSrc, simpleIdx) tuples many times.
-    applyChevalleyCache := new MutableHashTable;
+    applyChevalleyCache := new CacheTable;
     Wpre := new HashTable from {
         "cartan" => A,
         "highestWeight" => lambdaDynkin,
@@ -2182,8 +2171,7 @@ weylModuleZ (Matrix, List) := opts -> (A, lambdaUser) -> (
             M := actF#(mu, j);
             matrix(QQ, applyTable(entries M, x -> x_QQ))
         );
-        FStack := FStackBlocks#0;
-        for k from 1 to #FStackBlocks - 1 do FStack = FStack | FStackBlocks#k;
+        FStack := matrix {FStackBlocks};
 
         for i from 1 to rOver do (
             alphaID := for k from 0 to rOver - 1 list A_(k, i - 1);
@@ -2347,8 +2335,8 @@ basisVecs WeylModuleZ := opts -> W -> (
     )
 )
 
-character = method(Options => {WeightFormat => "Dynkin"})
-character WeylModuleZ := opts -> W -> (
+rawCharacter = method(Options => {WeightFormat => "Dynkin"})
+rawCharacter WeylModuleZ := opts -> W -> (
     A := W#"cartan";
     chDynkin := new HashTable from
         for mu in W#"weightsList" list mu => (W#"weightMultAt")#mu;
@@ -2465,10 +2453,8 @@ maximalVectors(WeylModuleZ, List, ZZ) := opts -> (W, muUser, p) -> (
     height := dividedPowerHeight(W, p);
 
     Fp := ZZ/p;
-    blocks := {};
-
-    for j from 1 to rO do (
-        for k from 0 to height do (
+    blocks := flatten for j from 1 to rO list (
+        for k from 0 to height list (
             pk := p^k;
 
             -- Compute the matrix of e_{alpha_j}^{(p^k)} : V_mu -> V_{mu + p^k alpha_j}
@@ -2508,8 +2494,8 @@ maximalVectors(WeylModuleZ, List, ZZ) := opts -> (W, muUser, p) -> (
             -- Skip zero blocks (they contribute no constraints).
             if all(flatten entries currentMatFp, x -> x == 0) then continue;
 
-            blocks = append(blocks, currentMatFp);
-        );
+            currentMatFp
+        )
     );
 
     if #blocks == 0 then (
@@ -2520,8 +2506,7 @@ maximalVectors(WeylModuleZ, List, ZZ) := opts -> (W, muUser, p) -> (
         );
     );
 
-    bigMat := blocks#0;
-    for k from 1 to #blocks - 1 do bigMat = bigMat || blocks#k;
+    bigMat := matrix apply(blocks, block -> {block});
 
     K := mingens kernel bigMat;
     if K == 0 or numcols K == 0 then return {};
@@ -2537,14 +2522,12 @@ maximalVectors(WeylModuleZ, ZZ) := opts -> (W, p) -> (
     -- over F_p.
     if not isPrime p then error "maximalVectors: second argument must be a prime";
     A := W#"cartan";
-    out := {};
-    for mu in weights W do (
+    flatten for mu in weights W list (
         if not all(mu, x -> x >= 0) then continue;     -- skip non-dominant
         mvecs := maximalVectors(W, mu, p);             -- internal: Dynkin
         muOut := fromDynkin(A, mu, opts.WeightFormat);
-        for v in mvecs do out = append(out, (muOut, v));
-    );
-    out
+        for v in mvecs list (muOut, v)
+    )
 )
 
 ----------------------------------------------------------------------
@@ -2764,8 +2747,7 @@ subWeylModule(WeylModuleZ, ZZ, List) := opts -> (W, p, gens) -> (
 
     basisAt := new MutableHashTable;
     rankAt := new MutableHashTable;
-    storedGens := {};
-    for g in gens do (
+    storedGens := for g in gens list (
         (muUser, vec) := g;
         mu := toDynkin(A, muUser, opts.WeightFormat);
         if not weightSet#?mu or weightMultAt#mu == 0 then
@@ -2773,7 +2755,7 @@ subWeylModule(WeylModuleZ, ZZ, List) := opts -> (W, p, gens) -> (
         vCol := listToColFp(Fp, weightMultAt#mu, vec);
         if all(flatten entries vCol, x -> x == 0) then continue;
         extendSubmoduleBFS(W, p, basisAt, rankAt, mu, vCol);
-        storedGens = append(storedGens, (mu, vCol));
+        (mu, vCol)
     );
     makeSubWeylModuleFp(W, p, basisAt, rankAt, storedGens)
 )
@@ -2867,9 +2849,9 @@ weightSpaces SubWeylModuleFp := opts -> S -> (
         fromDynkin(A, w, opts.WeightFormat) => (S#"basisAt")#w
 )
 
-character SubWeylModuleFp := opts -> S -> (
+rawCharacter SubWeylModuleFp := opts -> S -> (
     A := (S#"ambient")#"cartan";
-    validateWeightFormat(A, opts.WeightFormat, "character");
+    validateWeightFormat(A, opts.WeightFormat, "rawCharacter");
     new HashTable from for w in keys (S#"basisAt") list
         fromDynkin(A, w, opts.WeightFormat) => (S#"rankAt")#w
 )
@@ -2968,19 +2950,18 @@ quotientWeylModule SubWeylModuleFp := S -> (
         sRank := if sBasis === null then 0 else (S#"rankAt")#mu;
         currentMat := sBasis;
         currentRank := sRank;
-        chosen := {};
-        for j from 0 to dV - 1 do (
-            if #chosen >= dV - sRank then break;
+        chosen := for j from 0 to dV - 1 list (
+            if currentRank >= dV then break;
             ej := mutableMatrix(Fp, dV, 1);
             ej_(j, 0) = 1_Fp;
             ej = matrix ej;
             cand := if currentMat === null then ej else (currentMat | ej);
             rk := rank cand;
             if rk > currentRank then (
-                chosen = append(chosen, j);
                 currentMat = cand;
                 currentRank = rk;
-            );
+                j
+            ) else continue
         );
         complementIdxAt#mu = chosen;
         quotientDimAt#mu = #chosen;
@@ -3004,9 +2985,9 @@ quotientWeylModule SubWeylModuleFp := S -> (
             matrix ej
         );
         bigM := if sBasis === null and #cmpVecs == 0 then null
-                else if sBasis === null then fold((a, b) -> a | b, cmpVecs)
+                else if sBasis === null then matrix {cmpVecs}
                 else if #cmpVecs == 0 then sBasis
-                else sBasis | fold((a, b) -> a | b, cmpVecs);
+                else matrix {prepend(sBasis, cmpVecs)};
         if bigM === null then (
             bigMatInvAt#mu = null;
         ) else if numrows bigM == numcols bigM then (
@@ -3139,7 +3120,7 @@ weights QuotientWeylModuleFp := opts -> Q -> (
         list fromDynkin(A, mu, opts.WeightFormat)
 )
 
-character QuotientWeylModuleFp := opts -> Q -> (
+rawCharacter QuotientWeylModuleFp := opts -> Q -> (
     A := (Q#"ambient")#"cartan";
     -- Internal weights remain in Dynkin coords; convert keys for the user.
     chDynkin := new HashTable from
@@ -3212,7 +3193,6 @@ maximalVectors(QuotientWeylModuleFp, List) := opts -> (Q, muUser) -> (
     if not qDimAt#?mu or qDimAt#mu == 0 then return {};
     dMu := qDimAt#mu;
     height := dividedPowerHeight(W, p);
-    blocks := {};
     -- For each (j, k): compute the matrix of e_{alpha_j}^{(p^k)} on Q_mu
     -- by composing actionE(Q, ., j) p^k times then dividing by (p^k)!.
     -- Since Q's action is mod p, divided powers must be implemented at
@@ -3224,19 +3204,11 @@ maximalVectors(QuotientWeylModuleFp, List) := opts -> (Q, muUser) -> (
     weightSet := W#"weightSet";
     weightMultAt := W#"weightMultAt";
     compIdx := (Q#"complementIdxAt")#mu;
-    for j from 1 to rO do (
-        for k from 0 to height do (
+    blocks := flatten for j from 1 to rO list (
+        for k from 0 to height list (
             pk := p^k;
-            tgtMuV := for kk from 0 to rO - 1 list mu#kk + pk * (
-                if kk == j - 1 then 2 else 0
-            ) - pk * (
-                -- actually, alpha_j in Dynkin = j-th row of A.
-                0
-            );
-            -- Above approach is tangled.  Simpler: tgtMuV = mu + p^k alpha_j via
-            -- alpha_j Dynkin coords:
             alphaJD := for kk from 0 to rO - 1 list A_(kk, j - 1);
-            tgtMuV = for kk from 0 to rO - 1 list mu#kk + pk * alphaJD#kk;
+            tgtMuV := for kk from 0 to rO - 1 list mu#kk + pk * alphaJD#kk;
             if not weightSet#?tgtMuV or weightMultAt#tgtMuV == 0 then continue;
             if not qDimAt#?tgtMuV or qDimAt#tgtMuV == 0 then continue;
             dpMat := computeDPMatrix(W, p, j, k, mu, true);
@@ -3260,8 +3232,8 @@ maximalVectors(QuotientWeylModuleFp, List) := opts -> (Q, muUser) -> (
                     blockMat_(tk, sk) = xFull_(tgtSRank + tk, 0);
             );
             if all(flatten entries matrix blockMat, x -> x == 0) then continue;
-            blocks = append(blocks, matrix blockMat);
-        );
+            matrix blockMat
+        )
     );
 
     if #blocks == 0 then (
@@ -3270,8 +3242,7 @@ maximalVectors(QuotientWeylModuleFp, List) := opts -> (Q, muUser) -> (
             for r from 0 to dMu - 1 list ident_(r, col)
         );
     );
-    bigMat := blocks#0;
-    for k from 1 to #blocks - 1 do bigMat = bigMat || blocks#k;
+    bigMat := matrix apply(blocks, block -> {block});
     K := mingens kernel bigMat;
     if K == 0 or numcols K == 0 then return {};
     for col from 0 to numcols K - 1 list (
@@ -3281,14 +3252,12 @@ maximalVectors(QuotientWeylModuleFp, List) := opts -> (Q, muUser) -> (
 
 maximalVectors QuotientWeylModuleFp := opts -> Q -> (
     A := (Q#"ambient")#"cartan";
-    out := {};
-    for mu in weights Q do (
+    flatten for mu in weights Q list (
         if not all(mu, x -> x >= 0) then continue;
         mvecs := maximalVectors(Q, mu);
         muOut := fromDynkin(A, mu, opts.WeightFormat);
-        for v in mvecs do out = append(out, (muOut, v));
-    );
-    out
+        for v in mvecs list (muOut, v)
+    )
 )
 
 ----------------------------------------------------------------------
@@ -3319,7 +3288,6 @@ isMaximalVector (WeylModuleZ, ZZ, List, List) := opts -> (W, p, muUser, vec) -> 
     -- Membership test: vCol lies in the F_p-span of `maximalVectors(W, mu, p)`.
     mvecs := maximalVectors(W, mu, p);
     if #mvecs == 0 then return false;
-    M := mvecs#0#0;       -- mvecs#0 is itself a column-list; convert to matrix
     -- Each entry of mvecs is a List-of-Fp-elements representing a column;
     -- assemble as a matrix.
     cols := for v in mvecs list (
@@ -3327,8 +3295,7 @@ isMaximalVector (WeylModuleZ, ZZ, List, List) := opts -> (W, p, muUser, vec) -> 
         for k from 0 to nMu - 1 do c_(k, 0) = v#k;
         matrix c
     );
-    bigM := cols#0;
-    for k from 1 to #cols - 1 do bigM = bigM | cols#k;
+    bigM := matrix {cols};
     -- Check vCol lies in column span of bigM.
     M2 := bigM | vCol;
     rank M2 == rank bigM
@@ -3491,55 +3458,45 @@ simpleQuotient(ZZ, List) := opts -> (p, lambda) -> (
 -- simpleCharacter: cached recursive Steinberg.
 ----------------------------------------------------------------------
 
--- Internal global cache for simple characters.  Keyed on (A, p, lambda).
-simpleCharacterCache = new MutableHashTable
-
 simpleCharacter = method(Options => {WeightFormat => "Dynkin"})
 
 simpleCharacter(Matrix, ZZ, List) := opts -> (A, p, lambdaUser) -> (
     if not isPrime p then error "simpleCharacter: prime expected";
+    if numrows A != numcols A or not isCartanMatrix A then
+        error "simpleCharacter: expected a Cartan matrix";
+    if cartanType A =!= "finite" then
+        error "simpleCharacter: the Cartan matrix must be of finite type";
     n := numrows A;
     lambda := toDynkin(A, lambdaUser, opts.WeightFormat);
     if #lambda != n then error "simpleCharacter: weight has wrong length";
     if not all(lambda, x -> x >= 0) then
         error "simpleCharacter: lambda must be dominant";
 
-    cacheKey := (A, p, lambda);
-    local result;
-    if simpleCharacterCache#?cacheKey then (
-        result = simpleCharacterCache#cacheKey;
-        return characterFromDynkin(A, result, opts.WeightFormat);
+    -- The Cartan matrix owns its simple-character computations.  CacheTable
+    -- entries do not affect equality and are collected with the matrix.
+    result := A.cache#(simpleCharacter, p, lambda) ??= (
+        if all(lambda, x -> x < p) then (
+            W := weylModuleZ(A, lambda);
+            Q := simpleQuotient(W, p);
+            new HashTable from for w in keys (Q#"quotientDimAt") list (
+                if (Q#"quotientDimAt")#w > 0
+                then w => (Q#"quotientDimAt")#w else continue
+            )
+        ) else (
+            -- Steinberg: lambda = lambda0 + p lambda1.
+            lambda0 := for x in lambda list x % p;
+            lambda1 := for x in lambda list x // p;
+            ch0 := simpleCharacter(A, p, lambda0);
+            ch1 := simpleCharacter(A, p, lambda1);
+            out := new MutableHashTable;
+            for w0 in keys ch0 do for w1 in keys ch1 do (
+                wSum := for k from 0 to n - 1 list w0#k + p * w1#k;
+                out#wSum = (if out#?wSum then out#wSum else 0)
+                    + ch0#w0 * ch1#w1;
+            );
+            new HashTable from out
+        )
     );
-
-    -- p-restricted base case.
-    if all(lambda, x -> x < p) then (
-        W := weylModuleZ(A, lambda);
-        Q := simpleQuotient(W, p);
-        result = new HashTable from for w in keys (Q#"quotientDimAt") list (
-            if (Q#"quotientDimAt")#w > 0 then w => (Q#"quotientDimAt")#w else continue
-        );
-        simpleCharacterCache#cacheKey = result;
-        return characterFromDynkin(A, result, opts.WeightFormat);
-    );
-
-    -- Steinberg: split lambda = lambda0 + p * lambda1.
-    lambda0 := for x in lambda list (x % p);
-    lambda1 := for x in lambda list (x // p);
-    ch0 := simpleCharacter(A, p, lambda0);   -- internally Dynkin
-    ch1 := simpleCharacter(A, p, lambda1);
-
-    -- Frobenius twist of ch1: each weight w becomes p * w.
-    out := new MutableHashTable;
-    for w0 in keys ch0 do (
-        for w1 in keys ch1 do (
-            wSum := for k from 0 to n - 1 list w0#k + p * w1#k;
-            mult := ch0#w0 * ch1#w1;
-            cur := if out#?wSum then out#wSum else 0;
-            out#wSum = cur + mult;
-        );
-    );
-    result = new HashTable from out;
-    simpleCharacterCache#cacheKey = result;
     characterFromDynkin(A, result, opts.WeightFormat)
 )
 
@@ -3574,13 +3531,12 @@ socleWeyl(WeylModuleZ, ZZ) := (W, p) -> (
         -- V is irreducible; socle = V.
         return subWeylModule(W, p, lambda, {1});
     );
-    components := {};
-    for x in mvecs do (
+    components := for x in mvecs list (
         (mu, v) := x;
         if mu == lambda then continue;
         s := subWeylModule(W, p, mu, v);
         dimSimple := simpleDimension(A, p, mu);
-        if dim s == dimSimple then components = append(components, s);
+        if dim s == dimSimple then s else continue
     );
     subWeylModuleDirectSum(W, p, components)
 )
@@ -3595,11 +3551,25 @@ socleWeyl(WeylModuleZ, ZZ) := (W, p) -> (
 -- maximal weight, subtract its multiplicity copies of the simple character.
 -- Returns a HashTable (highest weight -> multiplicity).
 --
--- decompositionNumbers(W, p): just decomposeCharacter(A, p, character W).
+-- decompositionNumbers(W, p): decompose the stored weight-multiplicity table.
 
-decomposeCharacter = method(Options => {WeightFormat => "Dynkin"})
+-- KacMoody's existing method has no method-wide options.  Typed positional
+-- options preserve our weight-format choices without replacing that method.
+qolCharacterOptionTable = (methodName, defaults, optionValues) -> (
+    out := new MutableHashTable from defaults;
+    for optionValue in optionValues do (
+        optionName := first optionValue;
+        if not out#?optionName then
+            error(methodName | ": unsupported option " | toString optionName);
+        out#optionName = last optionValue;
+    );
+    new OptionTable from out
+)
 
-decomposeCharacter(Matrix, ZZ, HashTable) := opts -> (A, p, chUser) -> (
+qolDecompositionOptions = optionValues ->
+    qolCharacterOptionTable("decomposeCharacter", {WeightFormat => "Dynkin"}, optionValues)
+
+qolDecomposeCharacter = (opts, A, p, chUser) -> (
     if not isPrime p then error "decomposeCharacter: prime expected";
     if numrows A != numcols A or not isCartanMatrix A then
         error "decomposeCharacter: expected a Cartan matrix";
@@ -3653,6 +3623,26 @@ decomposeCharacter(Matrix, ZZ, HashTable) := opts -> (A, p, chUser) -> (
     characterFromDynkin(A, new HashTable from out, opts.WeightFormat)
 )
 
+decomposeCharacter(Matrix, ZZ, HashTable) := (A, p, ch) ->
+    qolDecomposeCharacter(qolDecompositionOptions {}, A, p, ch)
+decomposeCharacter(Matrix, ZZ, HashTable, Option) := (A, p, ch, optionValue) ->
+    qolDecomposeCharacter(qolDecompositionOptions {optionValue}, A, p, ch)
+decomposeCharacter(Matrix, ZZ, HashTable, OptionTable) := (A, p, ch, optionValues) ->
+    qolDecomposeCharacter(qolDecompositionOptions(
+        for k in keys optionValues list k => optionValues#k), A, p, ch)
+decomposeCharacter(Option, Matrix, ZZ, HashTable) := (o, A, p, ch) ->
+    decomposeCharacter(A, p, ch, o)
+decomposeCharacter(Matrix, Option, ZZ, HashTable) := (A, o, p, ch) ->
+    decomposeCharacter(A, p, ch, o)
+decomposeCharacter(Matrix, ZZ, Option, HashTable) := (A, p, o, ch) ->
+    decomposeCharacter(A, p, ch, o)
+decomposeCharacter(OptionTable, Matrix, ZZ, HashTable) := (o, A, p, ch) ->
+    decomposeCharacter(A, p, ch, o)
+decomposeCharacter(Matrix, OptionTable, ZZ, HashTable) := (A, o, p, ch) ->
+    decomposeCharacter(A, p, ch, o)
+decomposeCharacter(Matrix, ZZ, OptionTable, HashTable) := (A, p, o, ch) ->
+    decomposeCharacter(A, p, ch, o)
+
 decompositionNumbers = method(Options => {WeightFormat => "Dynkin"})
 decompositionNumbers(WeylModuleZ, ZZ) := opts -> (W, p) -> (
     A := W#"cartan";
@@ -3689,17 +3679,15 @@ ambiguousMaxVecs(WeylModuleZ, ZZ) := opts -> (W, p) -> (
     byWeight := new MutableHashTable;
     for x in mvecs do (
         (mu, v) := x;
-        cur := if byWeight#?mu then byWeight#mu else {};
-        byWeight#mu = append(cur, v);
+        cur := byWeight#mu ??= new MutableHashTable;
+        cur#(#cur) = v;
     );
-    out := {};
-    for mu in keys byWeight do (
-        if #(byWeight#mu) > 1 then (
-            muOut := fromDynkin(A, mu, opts.WeightFormat);
-            for v in byWeight#mu do out = append(out, (muOut, v));
-        );
-    );
-    out
+    flatten for mu in keys byWeight list (
+        vecs := byWeight#mu;
+        if #vecs <= 1 then continue;
+        muOut := fromDynkin(A, mu, opts.WeightFormat);
+        for i from 0 to #vecs - 1 list (muOut, vecs#i)
+    )
 )
 
 isAmbiguous = method()
@@ -3838,8 +3826,7 @@ gensSocleOfQuotient = (Q, p) -> (
         vList := for k from 0 to numrows vV - 1 list vV_(k, 0);
         return {(mu, vList)};
     );
-    out := {};
-    for x in mvecs do (
+    for x in mvecs list (
         (mu, vQ) := x;
         if mu == lambda then continue;
         vQCol := transpose matrix(Fp, {vQ});
@@ -3848,10 +3835,9 @@ gensSocleOfQuotient = (Q, p) -> (
         if d == dimSimple then (
             vV := embedQ2V(mu, vQCol);
             vList := for k from 0 to numrows vV - 1 list vV_(k, 0);
-            out = append(out, (mu, vList));
-        );
-    );
-    out
+            (mu, vList)
+        ) else continue
+    )
 )
 
 gensNextSocle = method()
@@ -3875,16 +3861,16 @@ nextSocle SubWeylModuleFp := S -> (
 socleSeries = method()
 socleSeries(WeylModuleZ, ZZ) := (W, p) -> (
     soc := socleWeyl(W, p);
-    series := {soc};
-    while dim (last series) < dim W do (
-        nxt := nextSocle (last series);
+    cur := soc;
+    prepend(soc, while dim cur < dim W list (
+        nxt := nextSocle cur;
         if nxt === null then
             error "socleSeries: failed to find the next layer of a nonzero quotient";
-        if dim nxt <= dim(last series) then
+        if dim nxt <= dim cur then
             error "socleSeries: the next layer did not enlarge the filtration";
-        series = append(series, nxt);
-    );
-    series
+        cur = nxt;
+        cur
+    ))
 )
 
 gensSocleLayers = method()
@@ -3896,17 +3882,13 @@ gensSocleLayers(WeylModuleZ, ZZ) := (W, p) -> (
     -- First layer: generators of socleWeyl(W, p).
     -- We need to retrieve these.  They are stored in S_1#"generators".
     -- For subsequent layers: generators come from gensNextSocle.
-    layers := {};
     -- Layer 1: generators of socle as recorded.
     firstLayer := for g in (series#0)#"generators" list
         (g#0, coefficientList(g#1));
-    layers = append(layers, firstLayer);
-    for k from 1 to #series - 1 do (
+    prepend(firstLayer, for k from 1 to #series - 1 list (
         prevS := series#(k - 1);
-        gens := gensNextSocle prevS;
-        layers = append(layers, gens);
-    );
-    layers
+        gensNextSocle prevS
+    ))
 )
 
 printSocleLayers = method()
@@ -3959,19 +3941,17 @@ socleSeries QuotientWeylModuleFp := Q -> (
 )
 
 socleSeries SubWeylModuleFp := S -> (
-    series := {};
     curS := S;
     W := S#"ambient";
-    while dim curS < dim W do (
+    while dim curS < dim W list (
         nxt := nextSocle curS;
         if nxt === null then
             error "socleSeries: failed to find the next layer of a nonzero quotient";
         if dim nxt <= dim curS then
             error "socleSeries: the next layer did not enlarge the filtration";
-        series = append(series, nxt);
         curS = nxt;
-    );
-    series
+        curS
+    )
 )
 
 gensSocleLayers QuotientWeylModuleFp := Q -> (
@@ -3979,20 +3959,18 @@ gensSocleLayers QuotientWeylModuleFp := Q -> (
 )
 
 gensSocleLayers SubWeylModuleFp := S -> (
-    layers := {};
     curS := S;
     W := S#"ambient";
-    while dim curS < dim W do (
+    while dim curS < dim W list (
         gens := gensNextSocle curS;
         if #gens == 0 then
             error "gensSocleLayers: failed to find generators for a nonzero quotient";
-        layers = append(layers, gens);
         oldDim := dim curS;
         for g in gens do curS = subWeylModule(curS, g#0, g#1);
         if dim curS <= oldDim then
             error "gensSocleLayers: generators did not enlarge the filtration";
-    );
-    layers
+        gens
+    )
 )
 
 printSocleLayers QuotientWeylModuleFp := Q -> (
@@ -4059,23 +4037,18 @@ twoFactorQuotientsContaining SubWeylModuleFp := S -> (
     --     and append socleLengthTwoQuotient(U) (if it is a 2-factor).
     W := S#"ambient";
     p := S#"prime";
-    out := {};
     Q := socleLengthTwoQuotient S;
     g := gensSocleLayers Q;
-    if #g == 2 and #(g#0) == 1 then (
-        out = {Q};
-        return out;
-    );
+    if #g == 2 and #(g#0) == 1 then return {Q};
     if #g == 0 then return {};
     -- Iterate over generators of the first (bottom) layer.
     bottomGens := g#0;
-    for gen in bottomGens do (
+    for gen in bottomGens list (
         U := subWeylModule(S, gen#0, coefficientList(gen#1));
         QU := socleLengthTwoQuotient U;
         gU := gensSocleLayers QU;
-        if #gU == 2 and #(gU#0) == 1 then out = append(out, QU);
-    );
-    out
+        if #gU == 2 and #(gU#0) == 1 then QU else continue
+    )
 )
 
 ----------------------------------------------------------------------
@@ -4178,16 +4151,13 @@ boundedPartitions (ZZ, ZZ, ZZ) := (n, r, s) -> (
             if remaining == 0 then return {{}}
             else return {};
         );
-        results := {};
         upper := min(maxAllowed, remaining);
         lower := if remaining > (parts - 1) * maxAllowed then remaining - (parts - 1) * maxAllowed else 0;
         -- Descending first part gives dominance-compatible order, matching
         -- allPartitions and Doty's Schur/symmetric-group tables.
-        for x in reverse toList(lower..upper) do (
-            for sub in helper(parts - 1, remaining - x, x) do
-                results = append(results, prepend(x, sub));
-        );
-        results
+        flatten for x in reverse toList(lower..upper) list (
+            for sub in helper(parts - 1, remaining - x, x) list prepend(x, sub)
+        )
     );
     helper(n, r, s)
 )
@@ -4253,14 +4223,15 @@ differenceCharacter (HashTable, HashTable) := (ch1, ch2) -> (
     new HashTable from out
 )
 
--- sortedCharacter(ch): returns a list of (weight, mult) pairs sorted by
--- reverse-height order (high weights first).  Useful for display and
--- iteration order.
-sortedCharacter = method()
-sortedCharacter HashTable := ch -> (
+-- A bare table has no Cartan datum; its default is reverse lexicographic
+-- order.  When Cartan data are supplied, the default is root-depth order.
+sortedCharacter = method(Options => {WeightFormat => "Dynkin", WeightOrder => null})
+sortedCharacter HashTable := opts -> ch -> (
     -- A raw HashTable carries no Cartan datum, so root depth is not defined.
-    -- Use deterministic reverse lexicographic order.  For intrinsic root-depth
-    -- order, construct a WeylCharacter and call characterTerms.
+    if opts.WeightFormat =!= "Dynkin" then
+        error "sortedCharacter: supply a Cartan matrix to convert weight coordinates";
+    if opts.WeightOrder =!= null and opts.WeightOrder =!= "Lex" then
+        error "sortedCharacter: a bare hash table only supports Lex order; supply a Cartan matrix for RootDepth order";
     for w in rsort keys ch list (w, ch#w)
 )
 
@@ -5036,7 +5007,7 @@ qolProtocolLeftInverse = B -> (
     d := numrows B;
     t := numcols B;
     if t == 0 then return matrix mutableMatrix(R, 0, d);
-    selectedRows := {};
+    selectedRows := new MutableHashTable;
     rowBlock := null;
     rowRank := 0;
     for i from 0 to d - 1 do (
@@ -5044,7 +5015,7 @@ qolProtocolLeftInverse = B -> (
         candidate := if rowBlock === null then row else rowBlock || row;
         candidateRank := rank candidate;
         if candidateRank > rowRank then (
-            selectedRows = append(selectedRows, i);
+            selectedRows#(#selectedRows) = i;
             rowBlock = candidate;
             rowRank = candidateRank;
         );
@@ -5099,7 +5070,7 @@ subquotientWeylModule(SubWeylModuleFp, SubWeylModuleFp) :=
 
             currentBasis := lowerBasis;
             currentRank := lowerRank;
-            complementColumns := {};
+            complementColumns := new MutableHashTable;
             for j from 0 to upperRank - 1 do (
                 if #complementColumns == quotientDim then break;
                 column := submatrix(upperBasis, , {j});
@@ -5107,13 +5078,14 @@ subquotientWeylModule(SubWeylModuleFp, SubWeylModuleFp) :=
                              else currentBasis | column;
                 candidateRank := rank candidate;
                 if candidateRank > currentRank then (
-                    complementColumns = append(complementColumns, column);
+                    complementColumns#(#complementColumns) = column;
                     currentBasis = candidate;
                     currentRank = candidateRank;
                 );
             );
             if #complementColumns != quotientDim then
                 error "subquotientWeylModule: could not complement the lower weight space inside the upper weight space";
+            complementColumns = apply(#complementColumns, j -> complementColumns#j);
 
             section := if quotientDim == 0 then
                            matrix mutableMatrix(Fp, dAmbient, 0)
@@ -5271,7 +5243,7 @@ basisVecs SubquotientWeylModuleFp := opts -> M -> (
     )
 )
 
-character SubquotientWeylModuleFp := opts -> M -> (
+rawCharacter SubquotientWeylModuleFp := opts -> M -> (
     A := (M#"ambient")#"cartan";
     chDynkin := new HashTable from
         for mu in sort select(keys(M#"quotientDimAt"),
@@ -5551,8 +5523,7 @@ ExtensionData = new Type of HashTable
 -- maxima.  All input weights are in Dynkin coordinates.
 qolDominanceOrder = (A, weightList) -> (
     remaining := unique weightList;
-    ordered := {};
-    while #remaining > 0 do (
+    flatten while #remaining > 0 list (
         maxima := select(remaining, mu -> not any(remaining, nu ->
             nu != mu and dominanceGE(A, nu, mu)));
         -- A failure here would indicate inconsistent dominance data rather
@@ -5560,10 +5531,9 @@ qolDominanceOrder = (A, weightList) -> (
         if #maxima == 0 then
             error "compositionFactors: could not order dominant weights";
         maxima = reverse sort maxima;
-        ordered = ordered | maxima;
         remaining = select(remaining, mu -> not member(mu, maxima));
-    );
-    ordered
+        maxima
+    )
 )
 
 qolCompositionPairs = (A, factorTableDynkin, weightFormat) ->
@@ -5578,7 +5548,7 @@ qolCompositionPairs = (A, factorTableDynkin, weightFormat) ->
 decompositionNumbers SubWeylModuleFp := opts -> S -> (
     A := (S#"ambient")#"cartan";
     p := S#"prime";
-    ch := character(S, WeightFormat => "Dynkin");
+    ch := rawCharacter(S, WeightFormat => "Dynkin");
     result := decomposeCharacter(A, p, ch);
     characterFromDynkin(A, result, opts.WeightFormat)
 )
@@ -5586,7 +5556,7 @@ decompositionNumbers SubWeylModuleFp := opts -> S -> (
 decompositionNumbers QuotientWeylModuleFp := opts -> Q -> (
     A := (Q#"ambient")#"cartan";
     p := Q#"prime";
-    ch := character(Q, WeightFormat => "Dynkin");
+    ch := rawCharacter(Q, WeightFormat => "Dynkin");
     result := decomposeCharacter(A, p, ch);
     characterFromDynkin(A, result, opts.WeightFormat)
 )
@@ -5594,7 +5564,7 @@ decompositionNumbers QuotientWeylModuleFp := opts -> Q -> (
 decompositionNumbers SubquotientWeylModuleFp := opts -> M -> (
     A := (M#"ambient")#"cartan";
     p := M#"prime";
-    ch := character(M, WeightFormat => "Dynkin");
+    ch := rawCharacter(M, WeightFormat => "Dynkin");
     result := decomposeCharacter(A, p, ch);
     characterFromDynkin(A, result, opts.WeightFormat)
 )
@@ -5624,8 +5594,6 @@ compositionFactors SubquotientWeylModuleFp := opts -> M -> (
     factors := decompositionNumbers(M, WeightFormat => "Dynkin");
     qolCompositionPairs(A, factors, opts.WeightFormat)
 )
-
-isIrreducible = method()
 
 isIrreducible(WeylModuleZ, ZZ) := (W, p) -> (
     if not isPrime p then error "isIrreducible: prime expected";
@@ -5661,8 +5629,11 @@ qolAmbiguityData = Q -> (
     byWeight := new MutableHashTable;
     for x in mvecs do (
         mu := x#0;
-        byWeight#mu = (if byWeight#?mu then byWeight#mu else {}) | {x#1};
+        if not byWeight#?mu then byWeight#mu = new MutableHashTable;
+        byWeight#mu#(#(byWeight#mu)) = x#1;
     );
+    for mu in keys byWeight do
+        byWeight#mu = apply(#(byWeight#mu), i -> byWeight#mu#i);
     ambiguous := sort select(keys byWeight, mu -> #(byWeight#mu) > 1);
     (mvecs, byWeight, ambiguous)
 )
@@ -5697,36 +5668,35 @@ qolSocleAnalysisFromKernel = (sourceObject, initialKernel, requireComplete, weig
     targetDim := dim W - initialDim;
 
     curS := initialKernel;
-    cumulativeLayers := {};
-    layerGenerators := {};
-    layerFactorMultiplicities := {};
-    layerFactorMultiplicitiesDynkin := {};
-    layerDimensions := {};
-    cumulativeDimensions := {};
-    quotientDimensions := {};
-    ambiguousByLayer := {};
-    ambiguousDynkinByLayer := {};
-    allAmbiguousDynkin := {};
-    dimensionMismatches := {};
-    issues := {};
+    cumulativeLayers := new MutableHashTable;
+    layerGenerators := new MutableHashTable;
+    layerFactorMultiplicities := new MutableHashTable;
+    layerFactorMultiplicitiesDynkin := new MutableHashTable;
+    layerDimensions := new MutableHashTable;
+    cumulativeDimensions := new MutableHashTable;
+    quotientDimensions := new MutableHashTable;
+    ambiguousByLayer := new MutableHashTable;
+    ambiguousDynkinByLayer := new MutableHashTable;
+    allAmbiguousDynkin := new MutableHashTable;
+    dimensionMismatches := new MutableHashTable;
+    issues := new MutableHashTable;
     stalled := false;
 
     while dim curS < dim W do (
         Q := quotientWeylModule curS;
-        quotientDimensions = append(quotientDimensions, dim Q);
+        quotientDimensions#(#quotientDimensions) = dim Q;
         (mvecs, byWeight, ambiguousHereDynkin) := qolAmbiguityData Q;
         ambiguousHere := for mu in ambiguousHereDynkin list
             fromDynkin(A, mu, weightFormat);
-        ambiguousDynkinByLayer = append(
-            ambiguousDynkinByLayer, ambiguousHereDynkin);
-        ambiguousByLayer = append(ambiguousByLayer, ambiguousHere);
-        allAmbiguousDynkin = unique(allAmbiguousDynkin | ambiguousHereDynkin);
+        ambiguousDynkinByLayer#(#ambiguousDynkinByLayer) = ambiguousHereDynkin;
+        ambiguousByLayer#(#ambiguousByLayer) = ambiguousHere;
+        for mu in ambiguousHereDynkin do allAmbiguousDynkin#mu = true;
 
         if #ambiguousHereDynkin > 0 then (
             msg := "the maximal-vector space has dimension greater than one at weight(s) " |
                    toString ambiguousHere | " in successive quotient " |
                    toString(#cumulativeLayers + 1);
-            issues = append(issues, msg);
+            issues#(#issues) = msg;
             if requireComplete then error("socleAnalysis: " | msg);
         );
 
@@ -5734,7 +5704,7 @@ qolSocleAnalysisFromKernel = (sourceObject, initialKernel, requireComplete, weig
         if #gens == 0 then (
             msg = qolSocleFailure(requireComplete,
                 "no simple socle generator was found in a nonzero successive quotient");
-            issues = append(issues, msg);
+            issues#(#issues) = msg;
             stalled = true;
             break;
         );
@@ -5748,7 +5718,7 @@ qolSocleAnalysisFromKernel = (sourceObject, initialKernel, requireComplete, weig
         if increment <= 0 then (
             msg = qolSocleFailure(requireComplete,
                 "the proposed socle generators did not enlarge the filtration");
-            issues = append(issues, msg);
+            issues#(#issues) = msg;
             stalled = true;
             break;
         );
@@ -5761,26 +5731,38 @@ qolSocleAnalysisFromKernel = (sourceObject, initialKernel, requireComplete, weig
                 "actualDimension" => increment,
                 "factorDimension" => expectedIncrement
             };
-            dimensionMismatches = append(dimensionMismatches, mismatch);
+            dimensionMismatches#(#dimensionMismatches) = mismatch;
             msg = "the simple-factor dimensions in layer " |
                   toString(#cumulativeLayers + 1) |
                   " sum to " | toString expectedIncrement |
                   ", but the layer has dimension " | toString increment;
-            issues = append(issues, msg);
+            issues#(#issues) = msg;
             if requireComplete then error("socleAnalysis: " | msg);
         );
 
-        layerGenerators = append(layerGenerators, gens);
-        layerFactorMultiplicities = append(
-            layerFactorMultiplicities, factorTableOut);
-        layerFactorMultiplicitiesDynkin = append(
-            layerFactorMultiplicitiesDynkin, factorTableDynkin);
-        layerDimensions = append(layerDimensions, increment);
-        cumulativeDimensions = append(
-            cumulativeDimensions, dim nextS - initialDim);
-        cumulativeLayers = append(cumulativeLayers, nextS);
+        layerGenerators#(#layerGenerators) = gens;
+        layerFactorMultiplicities#(#layerFactorMultiplicities) = factorTableOut;
+        layerFactorMultiplicitiesDynkin#(#layerFactorMultiplicitiesDynkin) = factorTableDynkin;
+        layerDimensions#(#layerDimensions) = increment;
+        cumulativeDimensions#(#cumulativeDimensions) = dim nextS - initialDim;
+        cumulativeLayers#(#cumulativeLayers) = nextS;
         curS = nextS;
     );
+
+    -- Recover the iteration order once, without repeatedly copying the lists.
+    orderedValues := T -> apply(#T, i -> T#i);
+    cumulativeLayers = orderedValues cumulativeLayers;
+    layerGenerators = orderedValues layerGenerators;
+    layerFactorMultiplicities = orderedValues layerFactorMultiplicities;
+    layerFactorMultiplicitiesDynkin = orderedValues layerFactorMultiplicitiesDynkin;
+    layerDimensions = orderedValues layerDimensions;
+    cumulativeDimensions = orderedValues cumulativeDimensions;
+    quotientDimensions = orderedValues quotientDimensions;
+    ambiguousByLayer = orderedValues ambiguousByLayer;
+    ambiguousDynkinByLayer = orderedValues ambiguousDynkinByLayer;
+    allAmbiguousDynkin = keys allAmbiguousDynkin;
+    dimensionMismatches = orderedValues dimensionMismatches;
+    issues = orderedValues issues;
 
     complete := (not stalled) and dim curS == dim W;
     certified := complete and #allAmbiguousDynkin == 0 and
@@ -5974,22 +5956,19 @@ twoFactorQuotientsContaining(SubWeylModuleFp, Option) := (S, optionValue) -> (
         "twoFactorQuotientsContaining", optionValue);
     if not required then return twoFactorQuotientsContaining S;
 
-    out := {};
     Q := qolCertifiedSocleLengthTwoQuotient S;
     analysis := socleAnalysis(Q, RequireComplete => true);
     layerGens := analysis#"layerGenerators";
     if #layerGens == 2 and #(layerGens#0) == 1 then return {Q};
     if #layerGens == 0 then return {};
 
-    for gen in layerGens#0 do (
+    for gen in layerGens#0 list (
         U := subWeylModule(S, gen#0, coefficientList(gen#1));
         QU := qolCertifiedSocleLengthTwoQuotient U;
         analysisU := socleAnalysis(QU, RequireComplete => true);
         gensU := analysisU#"layerGenerators";
-        if #gensU == 2 and #(gensU#0) == 1 then
-            out = append(out, QU);
-    );
-    out
+        if #gensU == 2 and #(gensU#0) == 1 then QU else continue
+    )
 )
 
 ----------------------------------------------------------------------
@@ -6015,8 +5994,7 @@ reductionProfile(WeylModuleZ, List) := opts -> (W, primeList) -> (
 
     A := W#"cartan";
     primesUsed := unique primeList;
-    rows := {};
-    for p in primesUsed do (
+    rows := for p in primesUsed list (
         factorsDynkin := decompositionNumbers(W, p, WeightFormat => "Dynkin");
         factorsOut := qolCompositionPairs(A, factorsDynkin, opts.WeightFormat);
         simpleDim := simpleDimension(A, p, W#"highestWeight");
@@ -6050,7 +6028,7 @@ reductionProfile(WeylModuleZ, List) := opts -> (W, primeList) -> (
             allAmbiguity = ambiguousWeights analysis;
         );
 
-        rows = append(rows, new HashTable from {
+        new HashTable from {
             "prime" => p,
             "weylDimension" => dim W,
             "simpleDimension" => simpleDim,
@@ -6064,7 +6042,7 @@ reductionProfile(WeylModuleZ, List) := opts -> (W, primeList) -> (
             "socleLength" => socleLengthValue,
             "socleCertified" => socleCertified,
             "ambiguousWeights" => allAmbiguity
-        });
+        }
     );
     new ReductionProfile from {
         "weylModule" => W,
@@ -6131,8 +6109,8 @@ reducibleCharacteristics ReductionProfile := P ->
 
 net ReductionProfile := P -> (
     rows := P#"rows";
-    tableRows := {{"p", "dim L", "length", "radical", "socle", "socle determined"}};
-    for row in rows do tableRows = append(tableRows, {
+    tableRows := prepend({"p", "dim L", "length", "radical", "socle", "socle determined"},
+      for row in rows list {
         toString(row#"prime"),
         toString(row#"simpleDimension"),
         toString(row#"compositionLength"),
@@ -6260,13 +6238,13 @@ maximalCharacterWeights = (A, ch) -> (
 )
 
 characterRootDepth = (A, maxima, w) -> (
-    candidates := {};
-    for top in maxima do if dominanceGE(A, top, w) then (
+    candidates := for top in maxima list (
+        if not dominanceGE(A, top, w) then continue;
         delta := for i from 0 to #w - 1 list top#i - w#i;
         simpleDelta := toSimple(A, delta);
         if all(simpleDelta, x ->
             x >= 0 and (instance(x, ZZ) or (instance(x, QQ) and denominator x == 1)))
-        then candidates = append(candidates, sum simpleDelta);
+        then sum simpleDelta else continue
     );
     -- In a finite partially ordered support, w itself is a maximal element of
     -- its lower component if no different maximum dominates it.
@@ -6360,22 +6338,112 @@ characterMetadata WeylCharacter := C -> new HashTable from {
 
 -- Return an ordinary HashTable when interoperability with the original API
 -- is required.  The returned table is a fresh immutable table.
-rawCharacter = method(Options => {WeightFormat => "Dynkin"})
 rawCharacter WeylCharacter := opts -> C -> (
     A := C#"cartan";
     characterFromDynkin(A, new HashTable from C#"terms", opts.WeightFormat)
+)
+
+-- Identify the input nodes with the nodes of the companion character ring.
+-- Rows of a LieAlgebraRepresentations Cartan matrix are simple-root labels;
+-- our convention uses columns.  The companion constructor also normalizes
+-- the node order.  When a diagram has automorphisms, use the lexicographically
+-- first compatible order, retaining the input order whenever it already fits.
+qolCharacterNodeOrder = (C, target) -> (
+    r := numrows C;
+    identityOrder := toList(0 .. r-1);
+    if C == target then return identityOrder;
+    signature := (B, i) -> sort for j from 0 to r-1 list {B_(i,j), B_(j,i)};
+    targetSignatures := apply(r, i -> signature(target, i));
+    inputSignatures := apply(r, i -> signature(C, i));
+    candidates := apply(r, j -> select(identityOrder,
+        i -> inputSignatures#i == targetSignatures#j));
+    order := new MutableList from toList(r:null);
+    used := new MutableList from toList(r:false);
+    answer := null;
+    search := j -> (
+        if j == r then (answer = toList order; return null);
+        for i in candidates#j do (
+            if used#i then continue;
+            if not all(toList(0 .. j-1), k ->
+                C_(i,order#k) == target_(j,k) and
+                C_(order#k,i) == target_(k,j)) then continue;
+            order#j = i;
+            used#i = true;
+            search(j+1);
+            if answer =!= null then return null;
+            used#i = false;
+        );
+        null
+    );
+    search 0;
+    if answer === null or submatrix(C, answer, answer) != target then
+        error "characterRing: could not identify the Cartan nodes with the companion character ring";
+    answer
+)
+
+qolCharacterRingData = A -> (
+    if numrows A != numcols A or not isCartanMatrix A then
+        error "characterRing: expected a Cartan matrix";
+    if cartanType A =!= "finite" then
+        error "characterRing: the Cartan matrix must be of finite type";
+    A.cache#"WeylModules character ring" ??= (
+        g := toLieAlgebra A;
+        target := larCartanMatrix g;
+        C := matrix(ZZ, entries transpose A);
+        order := qolCharacterNodeOrder(C, target);
+        (characterRing g, order)
+    )
+)
+
+characterRing Matrix := A -> (qolCharacterRingData A)#0
+characterRing WeylModuleZ := W -> characterRing(W#"cartan")
+characterRing SubWeylModuleFp := S -> characterRing((S#"ambient")#"cartan")
+characterRing QuotientWeylModuleFp := Q -> characterRing((Q#"ambient")#"cartan")
+characterRing SubquotientWeylModuleFp := M -> characterRing((M#"ambient")#"cartan")
+characterRing WeylCharacter := C -> characterRing(C#"cartan")
+
+qolNativeCharacter = M -> (
+    A := ambientCartan M;
+    (R, order) := qolCharacterRingData A;
+    terms := rawCharacter M;
+    if #terms == 0 then return 0_R;
+    sum for mu in keys terms list terms#mu * R_(apply(order, i -> mu#i))
+)
+
+character WeylModuleZ := opts -> qolNativeCharacter
+character SubWeylModuleFp := opts -> qolNativeCharacter
+character QuotientWeylModuleFp := opts -> qolNativeCharacter
+character SubquotientWeylModuleFp := opts -> qolNativeCharacter
+character WeylCharacter := opts -> qolNativeCharacter
+
+-- The inverse conversion records weights in the original Cartan-node order.
+rawCharacter(Matrix, RingElement) := opts -> (A, c) -> (
+    (R, order) := qolCharacterRingData A;
+    if ring c =!= R then
+        error "rawCharacter: the polynomial must belong to characterRing of the Cartan matrix";
+    terms := new HashTable from for term in listForm c list (
+        mu := new MutableList from toList(numrows A:0);
+        for j from 0 to #order-1 do mu#(order#j) = term#0#j;
+        toList mu => term#1
+    );
+    characterFromDynkin(A, terms, opts.WeightFormat)
+)
+
+characterDim RingElement := c -> sum for term in listForm c list (
+    if not instance(term#1, ZZ) then
+        error "characterDim: character coefficients must be integers";
+    term#1
 )
 
 -- Intrinsic, deterministic term order.  RootDepth first orders weights by
 -- the height of the positive-root drop from a maximal support weight, and
 -- then by descending lexicographic Dynkin coordinates.  Lex requests only
 -- the latter order.
-characterTerms = method(Options => {
-    WeightFormat => "Dynkin",
-    WeightOrder => "RootDepth"
-})
+qolCharacterTermsOptions = optionValues ->
+    qolCharacterOptionTable("characterTerms", {
+        WeightFormat => "Dynkin", WeightOrder => "RootDepth"}, optionValues)
 
-characterTerms WeylCharacter := opts -> C -> (
+qolCharacterTerms = (opts, C) -> (
     A := C#"cartan";
     validateWeightFormat(A, opts.WeightFormat, "characterTerms");
     ch := C#"terms";
@@ -6392,6 +6460,19 @@ characterTerms WeylCharacter := opts -> C -> (
     for w in ordered list
         (fromDynkin(A, w, opts.WeightFormat), ch#w)
 )
+
+characterTerms WeylCharacter := C -> qolCharacterTerms(qolCharacterTermsOptions {}, C)
+characterTerms(WeylCharacter, Option) := (C, optionValue) ->
+    qolCharacterTerms(qolCharacterTermsOptions {optionValue}, C)
+characterTerms(WeylCharacter, Option, Option) := (C, firstOption, secondOption) ->
+    qolCharacterTerms(qolCharacterTermsOptions {firstOption, secondOption}, C)
+characterTerms(WeylCharacter, OptionTable) := (C, optionValues) ->
+    qolCharacterTerms(qolCharacterTermsOptions(
+        for k in keys optionValues list k => optionValues#k), C)
+characterTerms(Option, WeylCharacter) := (o, C) -> characterTerms(C, o)
+characterTerms(Option, WeylCharacter, Option) := (o, C, p) -> characterTerms(C, o, p)
+characterTerms(Option, Option, WeylCharacter) := (o, p, C) -> characterTerms(C, o, p)
+characterTerms(OptionTable, WeylCharacter) := (o, C) -> characterTerms(C, o)
 
 -- Canonical support is returned in Dynkin coordinates.  Use `weights` when
 -- a formatted support is desired.
@@ -6411,12 +6492,15 @@ weightMultiplicity(WeylCharacter, List) := opts -> (C, muUser) -> (
     if (C#"terms")#?mu then (C#"terms")#mu else 0
 )
 
--- Return the coefficients as a hash table indexed by weights.
-character WeylCharacter := opts -> C ->
-    rawCharacter(C, WeightFormat => opts.WeightFormat)
+qolSortedCharacter = (opts, C) -> qolCharacterTerms(
+    qolCharacterTermsOptions {
+        WeightFormat => opts.WeightFormat,
+        WeightOrder => if opts.WeightOrder === null then "RootDepth" else opts.WeightOrder
+    }, C)
 
-sortedCharacter WeylCharacter := C -> characterTerms C
-sortedCharacter(Matrix, HashTable) := (A, ch) -> characterTerms weylCharacter(A, ch)
+sortedCharacter WeylCharacter := opts -> C -> qolSortedCharacter(opts, C)
+sortedCharacter(Matrix, HashTable) := opts -> (A, ch) ->
+    qolSortedCharacter(opts, weylCharacter(A, ch))
 
 compatibleCharacterPair = (C, D, who) -> (
     if not sameCharacterCartan(C#"cartan", D#"cartan") then
@@ -6490,7 +6574,6 @@ WeylCharacter * WeylCharacter := (C, D) -> tensorProductCharacter(C, D)
 productCharacter(WeylCharacter, WeylCharacter) := (C, D) ->
     tensorProductCharacter(C, D)
 
-dualCharacter = method()
 dualCharacter WeylCharacter := C -> (
     out := new MutableHashTable;
     for w in keys(C#"terms") do (
@@ -6528,7 +6611,7 @@ frobeniusTwistCharacter(WeylCharacter, ZZ) := (C, p) ->
 
 -- The Cartan matrix is part of the character, so decomposition requires
 -- only the characteristic in addition to the character.
-decomposeCharacter(WeylCharacter, ZZ) := opts -> (C, p) -> (
+qolDecomposeWeylCharacter = (opts, C, p) -> (
     if isVirtualCharacter C then
         error concatenate(
             "decomposeCharacter: a virtual character cannot be decomposed ",
@@ -6540,6 +6623,58 @@ decomposeCharacter(WeylCharacter, ZZ) := opts -> (C, p) -> (
                                         WeightFormat => "Dynkin");
     characterFromDynkin(C#"cartan", factorsDynkin, opts.WeightFormat)
 )
+
+decomposeCharacter(WeylCharacter, ZZ) := (C, p) ->
+    qolDecomposeWeylCharacter(qolDecompositionOptions {}, C, p)
+decomposeCharacter(WeylCharacter, ZZ, Option) := (C, p, optionValue) ->
+    qolDecomposeWeylCharacter(qolDecompositionOptions {optionValue}, C, p)
+decomposeCharacter(WeylCharacter, ZZ, OptionTable) := (C, p, optionValues) ->
+    qolDecomposeWeylCharacter(qolDecompositionOptions(
+        for k in keys optionValues list k => optionValues#k), C, p)
+decomposeCharacter(Option, WeylCharacter, ZZ) := (o, C, p) ->
+    decomposeCharacter(C, p, o)
+decomposeCharacter(WeylCharacter, Option, ZZ) := (C, o, p) ->
+    decomposeCharacter(C, p, o)
+decomposeCharacter(OptionTable, WeylCharacter, ZZ) := (o, C, p) ->
+    decomposeCharacter(C, p, o)
+decomposeCharacter(WeylCharacter, OptionTable, ZZ) := (C, o, p) ->
+    decomposeCharacter(C, p, o)
+
+qolDecomposeNativeCharacter = (opts, A, p, c) -> (
+    if not isPrime p then error "decomposeCharacter: prime expected";
+    validateWeightFormat(A, opts.WeightFormat, "decomposeCharacter");
+    factors := decomposeCharacter(A, p, rawCharacter(A, c));
+    characterFromDynkin(A, factors, opts.WeightFormat)
+)
+
+decomposeCharacter(Matrix, ZZ, RingElement) := (A, p, c) ->
+    qolDecomposeNativeCharacter(qolDecompositionOptions {}, A, p, c)
+decomposeCharacter(Matrix, ZZ, RingElement, Option) := (A, p, c, optionValue) ->
+    qolDecomposeNativeCharacter(qolDecompositionOptions {optionValue}, A, p, c)
+decomposeCharacter(Matrix, ZZ, RingElement, OptionTable) := (A, p, c, optionValues) ->
+    qolDecomposeNativeCharacter(qolDecompositionOptions(
+        for k in keys optionValues list k => optionValues#k), A, p, c)
+decomposeCharacter(Option, Matrix, ZZ, RingElement) := (o, A, p, c) ->
+    decomposeCharacter(A, p, c, o)
+decomposeCharacter(Matrix, Option, ZZ, RingElement) := (A, o, p, c) ->
+    decomposeCharacter(A, p, c, o)
+decomposeCharacter(Matrix, ZZ, Option, RingElement) := (A, p, o, c) ->
+    decomposeCharacter(A, p, c, o)
+decomposeCharacter(OptionTable, Matrix, ZZ, RingElement) := (o, A, p, c) ->
+    decomposeCharacter(A, p, c, o)
+decomposeCharacter(Matrix, OptionTable, ZZ, RingElement) := (A, o, p, c) ->
+    decomposeCharacter(A, p, c, o)
+decomposeCharacter(Matrix, ZZ, OptionTable, RingElement) := (A, p, o, c) ->
+    decomposeCharacter(A, p, c, o)
+
+-- These package-owned overloads provide ordinary M2 optional arguments,
+-- including option tables and repeated overrides, for modular decomposition.
+decompositionNumbers(Matrix, ZZ, HashTable) := opts -> (A, p, ch) ->
+    qolDecomposeCharacter(opts, A, p, ch)
+decompositionNumbers(Matrix, ZZ, RingElement) := opts -> (A, p, c) ->
+    qolDecomposeNativeCharacter(opts, A, p, c)
+decompositionNumbers(WeylCharacter, ZZ) := opts -> (C, p) ->
+    qolDecomposeWeylCharacter(opts, C, p)
 
 net WeylCharacter := C -> (
     kind := if C#"isVirtual" then "virtual, " else "";
@@ -6722,22 +6857,23 @@ qolLeftCoordinates = B -> (
     R := ring B;
     k := numcols B;
     d := numrows B;
-    if k == 0 then return matrix(R, {});
-    chosen := {};
+    if k == 0 then return matrix mutableMatrix(R, 0, d);
+    chosen := new MutableHashTable;
+    currentRows := null;
     currentRank := 0;
     for row from 0 to d - 1 do (
-        trial := append(chosen, row);
-        T := submatrix(B, trial, );
+        nextRow := submatrix(B, {row}, );
+        T := if currentRows === null then nextRow else currentRows || nextRow;
         newRank := rank T;
         if newRank > currentRank then (
-            chosen = trial;
+            chosen#(#chosen) = row;
+            currentRows = T;
             currentRank = newRank;
         );
         if #chosen == k then break;
     );
     if #chosen != k then error "left coordinates: basis matrix is not column-independent";
-    square := submatrix(B, chosen, );
-    squareInv := inverse square;
+    squareInv := inverse currentRows;
     Lm := mutableMatrix(R, k, d);
     for a from 0 to k - 1 do
         for b from 0 to k - 1 do Lm_(a, chosen#b) = squareInv_(a, b);
@@ -6832,10 +6968,7 @@ qolAmbientChevalleyMatrices = W -> (
     ws := coords#"weights";
     offsets := coords#"offsets";
     n := dim W;
-    Es := {};
-    Fs := {};
-    Hs := {};
-    for i from 1 to r do (
+    actions := for i from 1 to r list (
         Em := mutableMatrix(ZZ, n, n);
         Fm := mutableMatrix(ZZ, n, n);
         Hm := mutableMatrix(ZZ, n, n);
@@ -6865,14 +6998,12 @@ qolAmbientChevalleyMatrices = W -> (
                 );
             );
         );
-        Es = append(Es, matrix Em);
-        Fs = append(Fs, matrix Fm);
-        Hs = append(Hs, matrix Hm);
+        (matrix Em, matrix Fm, matrix Hm)
     );
     new HashTable from {
-        "E" => Es,
-        "F" => Fs,
-        "H" => Hs,
+        "E" => apply(actions, x -> x#0),
+        "F" => apply(actions, x -> x#1),
+        "H" => apply(actions, x -> x#2),
         "weights" => ws,
         "offsets" => offsets,
         "ring" => ZZ
@@ -7044,11 +7175,11 @@ qolCheckWeylModule = opts -> M -> (
             "residual" => residual
         };
 
-    checks#"dimension" = (sum values character M == n);
+    checks#"dimension" = (sum values rawCharacter M == n);
     if not checks#"dimension" then failures#(#failures) = new HashTable from {
         "check" => "dimension",
         "context" => "sum of weight multiplicities",
-        "residual" => sum values character M - n
+        "residual" => sum values rawCharacter M - n
     };
     checks#"matrixShapes" = all(Es | Fs | Hs, X -> numrows X == n and numcols X == n);
     if not checks#"matrixShapes" then failures#(#failures) = new HashTable from {
@@ -7421,8 +7552,7 @@ qolWeightGraph = M -> (
         "multiplicity" => qolModuleWeightDimension(M, mu),
         "label" => toString mu | " (mult " | toString(qolModuleWeightDimension(M, mu)) | ")"
     };
-    edges := {};
-    for mu in ws do for i from 1 to r do (
+    edges := flatten for mu in ws list for i from 1 to r list (
         alpha := for k from 0 to r - 1 list A_(k, i - 1);
         nu := for k from 0 to r - 1 list mu#k - alpha#k;
         if not member(nu, ws) then continue;
@@ -7435,13 +7565,13 @@ qolWeightGraph = M -> (
         cols := toList(srcOff .. srcOff + srcDim - 1);
         block := submatrix((D#"F")#(i - 1), rows, cols);
         edgeRank := rank block;
-        if edgeRank > 0 then edges = append(edges, new HashTable from {
+        if edgeRank > 0 then new HashTable from {
             "from" => mu,
             "to" => nu,
             "simpleRoot" => i,
             "rank" => edgeRank,
             "label" => "f_" | toString i | " (rank " | toString edgeRank | ")"
-        });
+        } else continue
     );
     new WeylGraph from {
         "module" => M,
@@ -7466,25 +7596,24 @@ toDot = method()
 toDot WeylGraph := G -> (
     vs := G#"vertices";
     es := G#"edges";
-    out := "digraph WeylWeightGraph {\n  rankdir=TB;\n";
-    for j from 0 to #vs - 1 do
-        out = out | "  v" | toString j | " [label=\"" | (vs#j)#"label" | "\"];\n";
+    vertexText := concatenate for j from 0 to #vs - 1 list
+        "  v" | toString j | " [label=\"" | (vs#j)#"label" | "\"];\n";
     indexAt := new MutableHashTable;
     for j from 0 to #vs - 1 do indexAt#((vs#j)#"weight") = j;
-    for e in es do out = out | "  v" | toString(indexAt#(e#"from")) |
+    edgeText := concatenate for e in es list "  v" | toString(indexAt#(e#"from")) |
         " -> v" | toString(indexAt#(e#"to")) | " [label=\"" | e#"label" | "\"];\n";
-    out | "}\n"
+    "digraph WeylWeightGraph {\n  rankdir=TB;\n" | vertexText | edgeText | "}\n"
 )
 
 net WeylGraph := G -> (
-    lines := {"Weyl weight graph: " | toString(#(G#"vertices")) | " vertices, " |
-        toString(#(G#"edges")) | " nonzero simple-root edges"};
-    for v in G#"vertices" do lines = append(lines,
+    heading := "Weyl weight graph: " | toString(#(G#"vertices")) | " vertices, " |
+        toString(#(G#"edges")) | " nonzero simple-root edges";
+    vertexLines := for v in G#"vertices" list
         "  weight " | toString(v#"weight") | ": multiplicity " |
-        toString(v#"multiplicity"));
-    for e in G#"edges" do lines = append(lines,
-        "  " | toString(e#"from") | " --" | e#"label" | "--> " | toString(e#"to"));
-    demark(newline, lines)
+        toString(v#"multiplicity");
+    edgeLines := for e in G#"edges" list
+        "  " | toString(e#"from") | " --" | e#"label" | "--> " | toString(e#"to");
+    demark(newline, join({heading}, vertexLines, edgeLines))
 )
 
 ----------------------------------------------------------------------
@@ -7535,47 +7664,46 @@ qolFactorTableText = T -> (
 
 net SocleDiagram := D -> (
     status := if D#"certified" then "complete socle filtration" else "socle search may be incomplete";
-    lines := {"Socle diagram (bottom to top; " | status | ")"};
-    for layer in D#"layers" do lines = append(lines,
+    layerLines := for layer in D#"layers" list
         "  layer " | toString(layer#"layer") | " [dim " |
         toString(layer#"dimension") | "]: " | qolFactorTableText(layer#"factors") |
         (if #(layer#"ambiguousWeights") == 0 then "" else
-            "  ambiguous at " | toString(layer#"ambiguousWeights")));
-    lines = append(lines,
-        "  Individual extension arrows are not determined by socle-layer data.");
-    demark(newline, lines)
+            "  ambiguous at " | toString(layer#"ambiguousWeights"));
+    demark(newline, join(
+        {"Socle diagram (bottom to top; " | status | ")"},
+        layerLines,
+        {"  Individual extension arrows are not determined by socle-layer data."}))
 )
 
 toDot SocleDiagram := D -> (
-    out := "digraph SocleDiagram {\n  rankdir=BT;\n";
-    if not D#"certified" then
-        out = out | "  status [shape=note,label=\"socle search may be incomplete\"];\n";
+    statusText := if D#"certified" then "" else
+        "  status [shape=note,label=\"socle search may be incomplete\"];\n";
     nodeIndex := 0;
     previousLayerNodes := {};
-    for layer in D#"layers" do (
-        currentLayerNodes := {};
-        out = out | "  subgraph cluster_" | toString(layer#"layer") |
+    layerText := concatenate for layer in D#"layers" list (
+        mus := sort keys(layer#"factors");
+        currentLayerNodes := apply(#mus, k -> "n" | toString(nodeIndex + k));
+        heading := "  subgraph cluster_" | toString(layer#"layer") |
             " { rank=same; label=\"socle layer " | toString(layer#"layer") |
             " (dim " | toString(layer#"dimension") | ")" |
             (if #(layer#"ambiguousWeights") == 0 then "" else
                 "\\nambiguous at " | toString(layer#"ambiguousWeights")) | "\";\n";
-        for mu in sort keys(layer#"factors") do (
+        nodes := concatenate for k from 0 to #mus - 1 list (
+            mu := mus#k;
             multiplicity := (layer#"factors")#mu;
-            nodeName := "n" | toString nodeIndex;
-            currentLayerNodes = append(currentLayerNodes, nodeName);
-            out = out | "    " | nodeName | " [label=\"" |
+            "    " | currentLayerNodes#k | " [label=\"" |
                 (if multiplicity == 1 then "" else toString multiplicity | " x ") |
-                "L(" | toString mu | ")\"];\n";
-            nodeIndex = nodeIndex + 1;
+                "L(" | toString mu | ")\"];\n"
         );
-        out = out | "  }\n";
+        nodeIndex = nodeIndex + #mus;
         -- Invisible layout edges communicate no mathematical incidence.
-        if #previousLayerNodes > 0 and #currentLayerNodes > 0 then
-            out = out | "  " | first previousLayerNodes | " -> " |
-                first currentLayerNodes | " [style=invis];\n";
+        layoutEdge := if #previousLayerNodes > 0 and #currentLayerNodes > 0 then
+            "  " | first previousLayerNodes | " -> " |
+                first currentLayerNodes | " [style=invis];\n" else "";
         previousLayerNodes = currentLayerNodes;
+        heading | nodes | "  }\n" | layoutEdge
     );
-    out | "}\n"
+    "digraph SocleDiagram {\n  rankdir=BT;\n" | statusText | layerText | "}\n"
 )
 
 ----------------------------------------------------------------------
@@ -7628,9 +7756,10 @@ toSVG WeylGraph := G -> (
         mu := v#"weight";
         depth := lift(qolWeightDepth(A, lambda, mu), ZZ);
         depthAt#mu = depth;
-        if not rows#?depth then rows#depth = {};
-        rows#depth = append(rows#depth, mu);
+        if not rows#?depth then rows#depth = new MutableHashTable;
+        rows#depth#(#(rows#depth)) = mu;
     );
+    for depth in keys rows do rows#depth = apply(#(rows#depth), i -> rows#depth#i);
     depths := sort keys rows;
     firstDepth := first depths;
     lastDepth := last depths;
@@ -7649,14 +7778,14 @@ toSVG WeylGraph := G -> (
             centerAt#(weights#j) = {left + boxWidth // 2 + j * (boxWidth + gapX),
                 110 + gapY * (d - firstDepth)};
     );
-    out := qolSVGStart(width, height, "Weight graph",
+    heading := qolSVGStart(width, height, "Weight graph",
         "Vertices are weights in fundamental-weight coordinates, with their multiplicities. An arrow labelled f_i goes from mu to mu minus alpha_i and gives the rank of the ordinary lowering map. Vertical position is the height below the ambient highest weight. Higher divided powers are not shown.");
     moduleLabel := if instance(M, WeylModuleZ) then "Over ZZ; rank " | toString dim M
         else "Characteristic " | toString(M#"prime") | "; dimension " | toString dim M;
-    out = out | qolSVGText(width // 2, 59, 14, moduleLabel,
+    subtitle := qolSVGText(width // 2, 59, 14, moduleLabel,
         "text-anchor=\"middle\" fill=\"#45576b\"");
     -- Edges precede the vertices, so their ends cannot cover weight labels.
-    for e in es do (
+    edgeText := concatenate for e in es list (
         source := centerAt#(e#"from");
         target := centerAt#(e#"to");
         x1 := source#0;
@@ -7672,7 +7801,7 @@ toSVG WeylGraph := G -> (
         labelX := (x1 + x2) // 2;
         labelY := (y1 + y2) // 2;
         labelWidth := 12 + 8 * #label;
-        out = out | "<g role=\"group\" aria-label=\"" | qolSVGXml explanation |
+        "<g role=\"group\" aria-label=\"" | qolSVGXml explanation |
             "\"><title>" | qolSVGXml explanation | "</title>\n" |
             "<path d=\"M " | toString x1 | " " | toString y1 | " L " |
             toString x2 | " " | toString y2 | "\" fill=\"none\" stroke=\"#435d7c\" stroke-width=\"1.8\"/>\n" |
@@ -7684,24 +7813,24 @@ toSVG WeylGraph := G -> (
             toString(labelY - 13) | "\" width=\"" | toString labelWidth |
             "\" height=\"23\" rx=\"4\" fill=\"#fff\"/>\n" |
             qolSVGText(labelX, labelY + 4, 14, label, "text-anchor=\"middle\"") |
-            "</g>\n";
+            "</g>\n"
     );
-    for v in vs do (
+    vertexText := concatenate for v in vs list (
         mu := v#"weight";
         center := centerAt#mu;
         description := "Weight " | qolSVGWeight mu | ", multiplicity " | toString(v#"multiplicity");
-        out = out | "<g role=\"group\" aria-label=\"" | qolSVGXml description |
+        "<g role=\"group\" aria-label=\"" | qolSVGXml description |
             "\"><title>" | qolSVGXml description | "</title>\n" |
             "<rect x=\"" | toString(center#0 - boxWidth // 2) | "\" y=\"" |
             toString(center#1 - 28) | "\" width=\"" | toString boxWidth |
             "\" height=\"56\" rx=\"7\" fill=\"#f5f8fc\" stroke=\"#435d7c\"/>\n" |
             qolSVGText(center#0, center#1 - 3, 18, qolSVGWeight mu, "text-anchor=\"middle\"") |
             qolSVGText(center#0, center#1 + 17, 13, "multiplicity " | toString(v#"multiplicity"),
-                "text-anchor=\"middle\" fill=\"#45576b\"") | "</g>\n";
+                "text-anchor=\"middle\" fill=\"#45576b\"") | "</g>\n"
     );
-    out = out | qolSVGText(width // 2, height - 16, 13,
+    footer := qolSVGText(width // 2, height - 16, 13,
         "Ordinary lowering maps; higher divided powers are not shown.", "text-anchor=\"middle\" fill=\"#45576b\"");
-    out | qolSVGEnd
+    heading | subtitle | edgeText | vertexText | footer | qolSVGEnd
 )
 
 toSVG SocleDiagram := D -> (
@@ -7726,17 +7855,17 @@ toSVG SocleDiagram := D -> (
     width = max(width, 52 + 8 * max apply(ambiguousLabels, s -> #s));
     layerHeight := 116;
     height := 128 + layerHeight * #layers;
-    out := qolSVGStart(width, height, "Socle layers",
+    heading := qolSVGStart(width, height, "Socle layers",
         "Recorded layer 1 is at the bottom. Each layer lists its simple factors with multiplicities and its dimension. No arrows between factors are asserted. " | status);
-    out = out | qolSVGText(width // 2, 60, 15, status,
+    subtitle := qolSVGText(width // 2, 60, 15, status,
         "text-anchor=\"middle\" fill=\"" | (if isCertified D then "#45576b" else "#8b3e00") | "\"");
-    for j from 0 to #layers - 1 do (
+    layerText := concatenate for j from 0 to #layers - 1 list (
         layer := layers#j;
         top := 78 + layerHeight * (#layers - 1 - j);
         label := "Layer " | toString(layer#"layer") | " — dimension " | toString(layer#"dimension");
         explanation := label | ". " | (if ambiguousLabels#j == "" then "" else ambiguousLabels#j | ". ") |
             "Simple factors in this layer form a direct sum; layers are not asserted to split off from the module.";
-        out = out | "<g role=\"group\" aria-label=\"" | qolSVGXml explanation |
+        layerHeading := "<g role=\"group\" aria-label=\"" | qolSVGXml explanation |
             "\"><title>" | qolSVGXml explanation | "</title>\n" |
             "<rect x=\"18\" y=\"" | toString top | "\" width=\"" | toString(width - 36) |
             "\" height=\"104\" rx=\"8\" fill=\"#f8fafc\" stroke=\"#aab7c7\"/>\n" |
@@ -7744,28 +7873,28 @@ toSVG SocleDiagram := D -> (
         mus := sort keys(layer#"factors");
         rowWidth := #mus * boxWidth + (#mus - 1) * gapX;
         left := (width - rowWidth) // 2;
-        for k from 0 to #mus - 1 do (
+        factorText := concatenate for k from 0 to #mus - 1 list (
             mu := mus#k;
             factor := factorLabel(mu, (layer#"factors")#mu);
             x := left + k * (boxWidth + gapX);
-            out = out | "<g role=\"group\" aria-label=\"" | qolSVGXml factor |
+            "<g role=\"group\" aria-label=\"" | qolSVGXml factor |
                 "\"><title>" | qolSVGXml factor | "</title>\n" |
                 "<rect x=\"" | toString x | "\" y=\"" | toString(top + 35) |
                 "\" width=\"" | toString boxWidth | "\" height=\"39\" rx=\"6\" fill=\"#fff\" stroke=\"#435d7c\"/>\n" |
                 qolSVGText(x + boxWidth // 2, top + 60, 18, factor, "text-anchor=\"middle\"") |
-                "</g>\n";
+                "</g>\n"
         );
-        if #mus == 0 then out = out | qolSVGText(width // 2, top + 60, 18, "0", "text-anchor=\"middle\"");
-        if ambiguousLabels#j != "" then out = out |
+        if #mus == 0 then factorText = qolSVGText(width // 2, top + 60, 18, "0", "text-anchor=\"middle\"");
+        ambiguityText := if ambiguousLabels#j != "" then
             qolSVGText(width // 2, top + 94, 13, ambiguousLabels#j,
-                "text-anchor=\"middle\" fill=\"#8b3e00\"");
-        out = out | "</g>\n";
+                "text-anchor=\"middle\" fill=\"#8b3e00\"") else "";
+        layerHeading | factorText | ambiguityText | "</g>\n"
     );
-    out = out | qolSVGText(width // 2, height - 22, 13,
+    footer := qolSVGText(width // 2, height - 22, 13,
         (if isCertified D then "Layer 1 is the socle. " else "Recorded layer 1 is at the bottom. ") |
         "Individual extension arrows are not determined.",
         "text-anchor=\"middle\" fill=\"#45576b\"");
-    out | qolSVGEnd
+    heading | subtitle | layerText | footer | qolSVGEnd
 )
 
 html WeylGraph := G -> toSVG G

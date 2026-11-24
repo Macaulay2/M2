@@ -13,7 +13,10 @@ Description
     @TT "WeylModulesNew"@.
   Text
     The Macaulay2 version also computes characters of tensor products,
-    duals, and Frobenius twists.  It gives explicit quotient maps and
+    duals, and Frobenius twists.  @TO "WeylModules :: character(WeylModuleZ)"@ expresses a formal
+    character as a Laurent polynomial in the weight-lattice ring of
+    @TO LieAlgebraRepresentations@; @TO rawCharacter@ gives its
+    weight-multiplicity table.  It gives explicit quotient maps and
     chosen linear sections for quotients and subquotients, and computes
     submodule sums and intersections.  @TO reductionProfile@ compares
     reductions of the same integral module in several characteristics, and
@@ -226,7 +229,7 @@ Description
     @TEX "$V(\\lambda) \\otimes \\mathbb{F}_p / S$"@, used for socle and
     radical computations.  @TO SubquotientWeylModuleFp@ represents the
     quotient @TT "T/S"@ for submodules @TT "S <= T <= V"@.
-    Functions such as @TO weights@ and @TO character@ apply to integral
+    Functions such as @TO weights@ and @TO "WeylModules :: character(WeylModuleZ)"@ apply to integral
     modules, modular submodules, quotients, and subquotients.
   Text
     @SUBSECTION "Principal operations"@
@@ -326,7 +329,7 @@ Description
   Text
     @SUBSECTION "Composition factors are not direct summands"@
   Text
-    @TO decompositionNumbers@ and @TO decomposeCharacter@ determine a
+    @TO decompositionNumbers@ and @TO "WeylModules :: decomposeCharacter(Matrix,ZZ,HashTable)"@ determine a
     Grothendieck-group class.  They do not determine a submodule lattice,
     a Loewy series, a splitting, or an extension class.  Structural
     information is provided by @TO maximalSubmodule@, @TO socleWeyl@,
@@ -376,6 +379,9 @@ Description
     Cartan constructor.  This restriction is separate from classical weight
     conversion: @TO weightAsPartition@ and @TO weightAsDynkin@ accept
     simultaneously permuted Cartan data in types B, C, and D.
+    The character-ring maps @TO "WeylModules :: character(WeylModuleZ)"@
+    and @TO rawCharacter@ likewise allow simultaneous row and column
+    permutations of a finite-type Cartan matrix for formal characters.
 SeeAlso
   WeylModules
   WeightFormat
@@ -415,7 +421,7 @@ Description
     dim W                                          -- 10
     highestWeight W                                -- Dynkin: (3, 0)
     highestWeight(W, WeightFormat => "Partition")  -- (3, 0, 0)
-    sortedCharacter character(W, WeightFormat => "Partition")
+    sortedCharacter rawCharacter(W, WeightFormat => "Partition")
   Text
     The output identifies the rank-ten lattice @TEX "$D^3(\\mathbb Z^3)$"@.  The two highest-weight lists represent the same weight: @TEX "$3\\omega_1$"@ in Dynkin coordinates and @TEX "$(3,0,0)$"@ in partition coordinates.  Each character entry gives the rank of the corresponding weight space.
   Text
@@ -631,7 +637,7 @@ Description
     @TEX "$A_n$"@ and length @TT "n"@ in types @TEX "$B_n,C_n,D_n$"@.
     Calculations use Dynkin coordinates.  The option selects input coordinates for
     @TO weylModuleZ@, @TO subWeylModule@, @TO maximalVectors@, and related
-    functions, and output coordinates for @TO character@, @TO weights@,
+    functions, and output coordinates for @TO rawCharacter@, @TO weights@,
     @TO decompositionNumbers@, and related functions.
     Half-integer (spin) weights are allowed in types B and D.  The
     @TO weylModule@ and @TO simpleQuotient@ constructors also
@@ -795,7 +801,7 @@ Description
 SeeAlso
   weylModuleZ
   weights
-  character
+  "WeylModules :: character(WeylModuleZ)"
   weightAsPartition
   weightAsDynkin
   characterAsPartition
@@ -1128,14 +1134,14 @@ Description
     @TO weylModuleZ@ constructs the module.  Its dimension, weights,
     character, bases, and actions are computed by @TO (dim, WeylModuleZ)@,
     @TO weights@, @TO weightSpaces@, @TO weightSpace@, @TO basisVecs@,
-    @TO character@, @TO actionF@, @TO actionE@, @TO actionH@,
+    @TO "WeylModules :: character(WeylModuleZ)"@, @TO actionF@, @TO actionE@, @TO actionH@,
     @TO highestWeight@, @TO ambientCartan@.  For a mod-@TEX "$p$"@
     reduction, see @TO weylModule@ or @TO quotientWeylModule@.
   Example
     -- The 8-dimensional adjoint of sl_3 (Dynkin highest weight (1,1)).
     W = weylModuleZ(cartanA 3, {1, 1})
     dim W
-    pairs character W
+    pairs rawCharacter W
     -- Rank of the action matrix F_alpha_1 from V_(1,1) to V_(-1,2):
     rank actionF(W, {-1, 2}, 1)
   Text
@@ -1164,6 +1170,10 @@ Inputs
     a finite-type Cartan matrix (any of A, B, C, D, E, F, G in @TT "KacMoody"@'s convention)
   lambda:List
     dominant integral highest weight, by default in Dynkin (fundamental-weight) coordinates
+  WeightFormat => String
+    the weight-coordinate convention
+  Verbose => Boolean
+    whether to report the stages of the integral construction
 Outputs
   W:WeylModuleZ
     the integral form @TEX "$V_{\\mathbb{Z}}(\\lambda)$"@ together with action matrices
@@ -1228,7 +1238,7 @@ Description
     with @TEX "$e_i v_\\lambda = 0$"@.
   Text
     The weights, character, maximal vectors, simple head, and socle series
-    are computed by @TO weights@, @TO character@, @TO maximalVectors@, @TO simpleQuotient@,
+    are computed by @TO weights@, @TO "WeylModules :: character(WeylModuleZ)"@, @TO maximalVectors@, @TO simpleQuotient@,
     and @TO socleSeries@, respectively.
   Text
     Explicit PBW spaces can grow quickly with rank and highest weight.
@@ -1249,7 +1259,7 @@ Description
     W = weylModuleZ(A, {1, 0})
     dim W                                          -- 3
     weights W                                       -- 3 weights, multiplicity 1 each
-    pairs character W
+    pairs rawCharacter W
     -- f_1 : V_(1,0) -> V_(-1,1), the lowering by alpha_1 = e_1 - e_2:
     actionF(W, {-1, 1}, 1)
   Text
@@ -1325,7 +1335,7 @@ SeeAlso
   actionF
   actionE
   basisVecs
-  character
+  "WeylModules :: character(WeylModuleZ)"
   weights
   WeightFormat
   weylModule
@@ -1355,6 +1365,10 @@ Inputs
     type-B spin weights can be half-integral, and signed or half-integral
     type-D weights need not be ordinary partitions)
     and in Dynkin coordinates for exceptional types
+  LieType => String
+    the finite Cartan family for a characteristic-and-weight constructor
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   :QuotientWeylModuleFp
     @TEX "$V(\\lambda) \\otimes \\mathbb{F}_p$"@, the Weyl module over the
@@ -1443,7 +1457,7 @@ Description
     The output is a @TO QuotientWeylModuleFp@ with empty defining
     kernel: it is the Weyl module realised as the quotient
     @TEX "$V(\\lambda) / 0$"@ over @TEX "$\\mathbb{F}_p$"@.  Functions
-    such as @TO character@, @TO weights@, and @TO maximalVectors@ apply to
+    such as @TO "WeylModules :: character(WeylModuleZ)"@, @TO weights@, and @TO maximalVectors@ apply to
     this quotient.  Functions whose documented input is @TO WeylModuleZ@,
     including @TO simpleQuotient@, are called on the integral module returned
     by @TO weylModuleZ@.  @TO decompositionNumbers@ also accepts a quotient
@@ -1504,6 +1518,8 @@ Inputs
   W:
     a @TO WeylModuleZ@, @TO SubWeylModuleFp@,
     @TO QuotientWeylModuleFp@, or @TO SubquotientWeylModuleFp@
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   :List
     the unique dominance-maximal support weight in the chosen format, or
@@ -1546,7 +1562,7 @@ Description
     The output @TEX "$(2,0)$"@ is the highest weight of the simple head @TEX "$L(2\\omega_1)$"@.  Quotienting by the radical removes lower weights but preserves the highest-weight line.
 SeeAlso
   weights
-  character
+  "WeylModules :: character(WeylModuleZ)"
   WeightFormat
   ambientCartan
 ///
@@ -1609,6 +1625,10 @@ Inputs
   M:
     a @TO WeylModuleZ@, @TO SubWeylModuleFp@,
     @TO QuotientWeylModuleFp@, @TO SubquotientWeylModuleFp@, or @TO WeylCharacter@
+  WeightFormat => String
+    the weight-coordinate convention
+  WeightOrder => String
+    the order of the returned weights
 Outputs
   wts:List
     the distinct support weights, without multiplicities
@@ -1618,7 +1638,7 @@ Description
     @TT "M"@ has non-zero weight space.  @TT "M"@ may be a
     @TO WeylModuleZ@, a @TO SubWeylModuleFp@, or a
     @TO QuotientWeylModuleFp@.  Each weight occurs once in this list;
-    @TO character@ gives its multiplicity.
+    @TO "WeylModules :: character(WeylModuleZ)"@ gives its multiplicity.
   Text
     @SUBSECTION "Coordinate convention"@
   Text
@@ -1655,7 +1675,7 @@ Description
     dim Wadj                                            -- 8
     weights Wadj
     -- The character records the multiplicity-2 zero weight:
-    pairs character Wadj
+    pairs rawCharacter Wadj
   Text
     There are seven distinct weights but dimension eight: the zero-weight entry of the character has multiplicity two.  The other six entries are the roots of @TEX "$\\mathfrak{sl}_3$"@, each of multiplicity one.
   Text
@@ -1668,7 +1688,7 @@ Description
   Example
     Wb = weylModuleZ(cartanB 2, {2, 0})
     dim Wb                                              -- 14
-    pairs character(Wb, WeightFormat => "Partition")
+    pairs rawCharacter(Wb, WeightFormat => "Partition")
   Text
     The displayed multiplicities sum to 14.  In particular @TEX "$(0,0)$"@ occurs with multiplicity two in the type-@TEX "$B_2$"@ epsilon-coordinate character.
   Text
@@ -1697,7 +1717,7 @@ Description
     three trivial characters. This support describes a virtual character,
     not the weight spaces of an actual module.
 SeeAlso
-  character
+  "WeylModules :: character(WeylModuleZ)"
   weightSpace
   weightSpaces
   WeightFormat
@@ -1707,100 +1727,138 @@ SeeAlso
 
 doc ///
 Key
-  character
   (character, WeylModuleZ)
   (character, SubWeylModuleFp)
   (character, QuotientWeylModuleFp)
   (character, SubquotientWeylModuleFp)
-  [character, WeightFormat]
   (character, WeylCharacter)
 Headline
-  Weight coefficients of a module or formal character
+  Formal character as a Laurent polynomial
 Usage
-  character M
-  character(M, WeightFormat => "Partition")
+  c = character M
 Inputs
   M:
-    a @TO WeylModuleZ@, @TO SubWeylModuleFp@,
-    @TO QuotientWeylModuleFp@, @TO SubquotientWeylModuleFp@, or @TO WeylCharacter@
+    an integral Weyl module, modular submodule, quotient, subquotient,
+    or @TO WeylCharacter@
 Outputs
-  ch:HashTable
-    support weights mapped to their weight-space ranks over
-    @TEX "$\\mathbb{Z}$"@ or dimensions over @TEX "$\\mathbb{F}_p$"@
+  c:RingElement
+    the formal character in @TO "WeylModules :: characterRing(WeylModuleZ)"@ of the ambient root system
 Description
   Text
-    For each weight @TEX "$\\mu$"@ of the module @TT "M"@ (a
-    @TO WeylModuleZ@, @TO SubWeylModuleFp@, or @TO QuotientWeylModuleFp@),
-    returns the formal character @TEX "$\\mathrm{ch}(M)(\\mu) = \\dim M_\\mu$"@
-    as a @TT "HashTable"@ keyed by weight.
+    The formal character of @TT "M"@ is the sum
+    @TEX "$\\operatorname{ch}M=\\sum_\\mu(\\dim M_\\mu)e^\\mu$"@,
+    with weight-space ranks in place of dimensions for an integral lattice.
+    It is returned as an element of the Laurent polynomial ring
+    @TO "WeylModules :: characterRing(WeylModuleZ)"@ from @TO LieAlgebraRepresentations@, using the
+    corresponding Lie algebra supplied by @TO KacMoody@.  The variables
+    represent fundamental weights in that ring's Cartan ordering; a
+    monomial represents a weight and its coefficient is its multiplicity.
   Text
-    @SUBSECTION "Coordinate convention"@
-  Text
-    As for @TO weights@, keys
-    are by default in Dynkin (fundamental-weight) coordinates: a tuple
-    @TEX "$(m_1, \\ldots, m_n)$"@ of length @TT "n"@ = rank, with
-    @TEX "$m_i = \\langle\\mu, \\alpha_i^\\vee\\rangle$"@.  Pass
-    @TT "WeightFormat => \"Partition\""@ for keys in the
-    @TEX "$\\varepsilon$"@-basis (a tuple of length @TT "n+1"@ for
-    type A with last coordinate set to @TEX "$0$"@; half-integers appear
-    for spin weights in types B/D).  See @TO WeightFormat@ for
-    the conversion formulas.
+    Addition is the character of a direct sum, and multiplication is the
+    character of a tensor product.  The coefficients are integers, even
+    when @TT "M"@ is defined over a prime field.  The Laurent polynomial
+    records the weight multiplicities of the supplied module; it does not
+    replace that module by a characteristic-zero irreducible representation
+    or assert a direct-sum decomposition in positive characteristic.
   Example
-    -- sl_3 V(2 omega_1) = Gamma^2 of the standard, dim 6.  Six distinct weights,
-    -- all multiplicity 1.
-    W = weylModuleZ(cartanA 3, {2, 0})
-    pairs character W
-    pairs character(W, WeightFormat => "Partition")
+    W = weylModuleZ(cartanA 2, {1})
+    c = character W
+    ring c === characterRing W
+    c * c
+    rawCharacter(ambientCartan W, c * c)
   Text
-    Each pair @TEX "$(\\mu,1)$"@ contributes the term @TEX "$e^\\mu$"@ to the formal character of @TEX "$D^2(\\mathbb Z^3)$"@.  There are six terms, giving rank six.  The two outputs differ only in their coordinate expressions for @TEX "$\\mu$"@.
+    Writing @TEX "$x=e^{\\omega_1}$"@, the natural
+    @TEX "$\\mathrm{SL}_2$"@-module has character
+    @TEX "$x+x^{-1}$"@.  Its square is
+    @TEX "$x^2+2+x^{-2}$"@: the tensor square has weights 2 and -2
+    once each and weight zero twice.  The last table gives the same
+    coefficients in Dynkin coordinates.
   Example
-    -- sl_3 adjoint = V(1,1), dim 8.  The zero weight has multiplicity 2.
-    Wadj = weylModuleZ(cartanA 3, {1, 1})
-    dim Wadj
-    pairs character Wadj
-    -- Note (0,0) -> 2 in the output.
+    W = weylModuleZ(cartanA 2, {2})
+    V = reduction(W, 2)
+    S = socleWeyl(W, 2)
+    Q = quotientWeylModule S
+    character V == character S + character Q
   Text
-    The entry @TEX "$((0,0),2)$"@ means that the zero-weight space has rank two.  The six root weights have rank one, so the multiplicities sum to eight.
-  Example
-    -- Over characteristic zero, type B_2 V(2 omega_1) is the traceless
-    -- symmetric-square representation of so(5).  This constructs its
-    -- 14-dimensional integral Weyl form; the zero weight has multiplicity 2.
-    Wb = weylModuleZ(cartanB 2, {2, 0})
-    pairs character(Wb, WeightFormat => "Partition")
+    The identity is
+    @TEX "$x^2+1+x^{-2}=1+(x^2+x^{-2})$"@.  It expresses the
+    additivity of characters in the nonsplit exact sequence
+    @TEX "$0\\to L(0)\\to V(2)\\to L(2)\\to0$"@ in characteristic 2;
+    it is not a splitting of that sequence.
   Text
-    The zero-weight multiplicity is two and the total multiplicity is 14.  This is the formal character of the integral type-@TEX "$B_2$"@ Weyl module of highest weight @TEX "$2\\omega_1$"@; its reduction has this same formal character in every characteristic.
-  Example
-    -- Character of a quotient in the same coordinates.
-    W = weylModuleZ(cartanA 3, {2, 0})
-    Q = simpleQuotient(W, 2)                            -- L(2,0) mod 2, dim 3
-    pairs character Q
-    pairs character(Q, WeightFormat => "Partition")
-  Text
-    The head @TEX "$L(2\\omega_1)$"@ has the three weights @TEX "$2\\varepsilon_1,2\\varepsilon_2,2\\varepsilon_3$"@, each of multiplicity one.  It is the Frobenius twist of the natural module in characteristic 2.  The tables express these three terms in Dynkin and canonical partition coordinates.
-  Text
-    The character is the natural input to @TO decomposeCharacter@,
-    @TO differenceCharacter@, @TO productCharacter@, and the family
-    of decomposition-matrix routines.
-  Text
-    For a @TO WeylCharacter@, return its coefficients as a weight-indexed
-    table. A virtual character may have negative coefficients. These are
-    signed formal coefficients, not dimensions of weight spaces.
-  Example
-    C = weylCharacter weylModuleZ(cartanA 2, {1})
-    T = weylCharacter weylModuleZ(cartanA 2, {0})
-    character(C - 3*T)
-  Text
-    The entries at weights 1 and -1 are 1, and the entry at weight zero is
-    -3. The formal sum is @TEX "$e^{\\omega_1}+e^{-\\omega_1}-3e^0$"@,
-    the natural character minus three trivial characters.
+    @TO rawCharacter@ returns weight-indexed coefficient tables, with a
+    @TO WeightFormat@ option.  In particular,
+    @TT "rawCharacter(A,c)"@ recovers the coefficients of a Laurent
+    character in the coordinates of the supplied Cartan matrix @TT "A"@.
+    @TO weylCharacter@ instead retains the package's Cartan and
+    characteristic information in a @TO WeylCharacter@.
 SeeAlso
+  "WeylModules :: characterRing(WeylModuleZ)"
+  rawCharacter
+  weylCharacter
   weights
-  decomposeCharacter
-  decompositionNumbers
-  characterDim
-  productCharacter
-  differenceCharacter
-  WeightFormat
+  compositionFactors
+///
+
+doc ///
+Key
+  (characterRing, WeylModuleZ)
+  (characterRing, SubWeylModuleFp)
+  (characterRing, QuotientWeylModuleFp)
+  (characterRing, SubquotientWeylModuleFp)
+  (characterRing, WeylCharacter)
+  (characterRing, Matrix)
+Headline
+  Laurent polynomial ring of the weight lattice
+Usage
+  R = characterRing M
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, subquotient,
+    @TO WeylCharacter@, or finite-type Cartan matrix
+Outputs
+  R:Ring
+    the Laurent polynomial ring over ZZ used for formal characters
+Description
+  Text
+    For a root system of rank @TEX "$r$"@, this is the group ring
+    @TEX "$\\mathbb Z[P]=\\mathbb Z[x_1^{\\pm1},\\ldots,x_r^{\\pm1}]$"@
+    of the weight lattice.  The variables represent the fundamental
+    weights in the Cartan ordering of @TO LieAlgebraRepresentations@.
+    A weight is represented by a Laurent monomial, and sums with integer
+    coefficients represent finite formal characters.  Negative exponents
+    are weight coordinates; negative coefficients give virtual characters.
+  Text
+    This is the existing character ring of the corresponding Lie algebra,
+    rather than a separate ring defined by @TT "WeylModules"@.  The result
+    depends on the ambient root system, not on the characteristic or the
+    highest weight.  Thus the characters of a modular submodule and its
+    ambient Weyl module lie in the same ring.
+  Text
+    The Laurent variables use the standard Cartan node order of
+    @TO LieAlgebraRepresentations@.  A supplied Cartan matrix may use a
+    different order: weights are relabeled before forming the Laurent
+    monomials.  If several permutations give the standard Cartan matrix,
+    the lexicographically first is used.  @TT "rawCharacter(A,c)"@
+    returns the coefficients in the node order of @TT "A"@.
+  Example
+    W = weylModuleZ(cartanA 2, {1})
+    R = characterRing W
+    gens R
+    c = character W
+    ring c === R
+    characterRing(ambientCartan W) === R
+    c^2
+  Text
+    There is one variable because @TEX "$A_1$"@ has rank one.
+    Both values @TT "true"@ identify the same Laurent ring from the
+    module, its character, and its Cartan matrix.
+    Its square is @TEX "$x^2+2+x^{-2}$"@, the formal character of
+    the tensor square of the natural two-dimensional module.
+SeeAlso
+  "WeylModules :: character(WeylModuleZ)"
+  rawCharacter
+  ambientCartan
 ///
 
 doc ///
@@ -1821,6 +1879,8 @@ Inputs
     an integral module, modular submodule, quotient, or subquotient
   mu:List
     the requested weight in the chosen coordinate format
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   data:
     for an integral module, a list of chosen PBW exponent tuples; for a
@@ -1884,6 +1944,8 @@ Usage
 Inputs
   M:
     an integral module, modular submodule, quotient, or subquotient
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   H:HashTable
     weights mapped to PBW-tuple lists for an integral module, ambient basis
@@ -1928,6 +1990,10 @@ Inputs
   M:
     a @TO WeylModuleZ@, @TO SubWeylModuleFp@,
     @TO QuotientWeylModuleFp@, or @TO SubquotientWeylModuleFp@
+  WeightFormat => String
+    the weight-coordinate convention
+  WeightOrder => String
+    the order of the returned weights
 Outputs
   B:List
     pairs consisting of a weight and a PBW tuple, a one-column submodule
@@ -1982,6 +2048,8 @@ Inputs
     the target weight, in the coordinates selected by @TT "WeightFormat"@
   i:ZZ
     1-based index of a simple root
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   M:Matrix
     the matrix of @TEX "$f_i : W_{\\mu+\\alpha_i} \\to W_\\mu$"@
@@ -2050,6 +2118,8 @@ Inputs
     the source weight, in the coordinates selected by @TT "WeightFormat"@
   i:ZZ
     1-based index of a simple root
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   M:Matrix
     the matrix of @TEX "$e_i : W_\\mu \\to W_{\\mu+\\alpha_i}$"@
@@ -2110,6 +2180,8 @@ Inputs
     1-based index of a simple root
   mu:List
     a weight (Dynkin coordinates) of @TEX "$V(\\lambda)$"@
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   c:ZZ
     the integer @TEX "$\\langle \\mu, \\alpha_i^\\vee \\rangle$"@
@@ -2211,6 +2283,8 @@ Inputs
     a list of @TT "(mu, vec)"@ pairs
   S0:SubWeylModuleFp
     an existing submodule, to be extended
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   S:SubWeylModuleFp
     the @TEX "$U_p$"@-stable submodule of
@@ -2253,7 +2327,7 @@ Description
     m01 = first select(mvecs, x -> x#0 == {0, 1})
     S = subWeylModule(W, 2, m01#0, m01#1)
     dim S                          -- 3
-    pairs character S              -- character of L(0,1) = std-dual of sl_3
+    pairs rawCharacter S              -- character of L(0,1) = std-dual of sl_3
   Text
     The selected maximal vector generates the three-dimensional simple submodule @TEX "$L(\\omega_2)$"@.  Its character has the three weights of @TEX "$\\Lambda^2\\mathbb F_2^3$"@, each with multiplicity one.
   Example
@@ -2294,6 +2368,8 @@ Inputs
   vec:List
     an @TEX "$\\mathbb{F}_p$"@-coefficient list of length
     @TEX "$\\dim V(\\lambda)_\\mu$"@ in the chosen Z-basis
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   :Boolean
     true iff the indicated weight vector lies in @TT "S"@
@@ -2379,6 +2455,8 @@ Usage
 Inputs
   S:SubWeylModuleFp
     or @TO QuotientWeylModuleFp@
+  Q:QuotientWeylModuleFp
+    a quotient of a reduced Weyl module
 Outputs
   W:WeylModuleZ
     the integral Weyl module @TEX "$V_{\\mathbb{Z}}(\\lambda)$"@ from
@@ -2438,7 +2516,7 @@ Description
     Q = quotientWeylModule S
     dim Q                        -- = dim V - dim S = 6 - 3 = 3
     weights Q
-    pairs character Q
+    pairs rawCharacter Q
   Text
     The quotient has dimension @TEX "$6-3=3$"@.  Its three weight spaces form the character of @TEX "$L(2\\omega_1)=(\\mathbb F_2^3)^{(1)}$"@, the Frobenius twist of the natural module.  The killed submodule is @TEX "$\\Lambda^2\\mathbb F_2^3$"@.
 SeeAlso
@@ -2557,6 +2635,8 @@ Usage
   gens = generators S
 Inputs
   S:SubWeylModuleFp
+  CoefficientRing => Ring
+    the inherited option; this method returns the stored generators over their defining prime field
 Outputs
   gens:List
     recorded pairs @TT "(mu, v)"@ of a Dynkin-coordinate weight and a
@@ -2612,7 +2692,7 @@ Description
     W = weylModuleZ(cartanA 3, {1, 0})
     net W
   Text
-    The display identifies an integral type-@TEX "$A_2$"@ module of highest weight @TEX "$(1,0)$"@ and rank 3 over @TEX "$\\mathbb Z$"@.  It is the natural @TEX "$\\mathrm{SL}_3$"@ Weyl lattice.  The display summarizes the module; @TO character@ and @TO weightSpaces@ give its individual weight spaces.
+    The display identifies an integral type-@TEX "$A_2$"@ module of highest weight @TEX "$(1,0)$"@ and rank 3 over @TEX "$\\mathbb Z$"@.  It is the natural @TEX "$\\mathrm{SL}_3$"@ Weyl lattice.  The display summarizes the module; @TO "WeylModules :: character(WeylModuleZ)"@ and @TO weightSpaces@ give its individual weight spaces.
 SeeAlso
   WeylModuleZ
   SubWeylModuleFp
@@ -2641,6 +2721,10 @@ Inputs
   lambda:List
     a dominant highest weight; the direct characteristic-weight form uses @TT "Auto"@
     coordinates as described below
+  LieType => String
+    the finite Cartan family for a characteristic-and-weight constructor
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   Q:QuotientWeylModuleFp
     the simple head @TEX "$L(\\lambda)$"@, represented as a quotient of
@@ -2683,7 +2767,7 @@ Description
     W = weylModuleZ(cartanA 3, {2, 0})
     Q = simpleQuotient(W, 2)
     dim Q
-    pairs character Q
+    pairs rawCharacter Q
   Text
     The dimension is 3, and the character consists of the three weights of the Frobenius twist of the natural @TEX "$\\mathrm{SL}_3$"@-module.  This is @TEX "$L(2\\omega_1)$"@, obtained by killing the simple socle @TEX "$L(\\omega_2)$"@ of the divided square.
   Example
@@ -2737,6 +2821,8 @@ Inputs
     a prime
   lambda:List
     a dominant highest weight in the chosen coordinate format
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   ch:HashTable
     the character, mapping weights in the chosen format to multiplicities
@@ -2830,6 +2916,8 @@ Inputs
     a prime
   lambda:List
     a dominant highest weight in the chosen coordinate format
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   d:ZZ
     the dimension of the simple rational module of highest weight lambda
@@ -2887,6 +2975,8 @@ Inputs
     a prime
   lambda:List
     a dominant highest weight in the chosen coordinate format
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   ch:HashTable
     the weights of the simple head, mapped to their multiplicities
@@ -2929,6 +3019,8 @@ Inputs
     a prime
   lambda:List
     a dominant highest weight in the chosen coordinate format
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   d:ZZ
     the dimension of V(lambda)/rad(V(lambda)) in characteristic p
@@ -2963,11 +3055,14 @@ Headline
   Search for the socle of V(lambda) tensor F_p by testing maximal-vector basis elements
 Usage
   s = socleWeyl(W, p)
-  s = socleWeyl(W, p, RequireComplete => true)
+  s = socleWeyl(W, p, optionValue)
 Inputs
   W:WeylModuleZ
   p:ZZ
     a prime
+  optionValue:Option
+    @TT "RequireComplete => true"@ to require the full socle filtration,
+    or @TT "RequireComplete => false"@ for the ordinary search
 Outputs
   s:SubWeylModuleFp
     the semisimple submodule found by the search; it is the full socle when
@@ -3016,7 +3111,7 @@ Description
     W = weylModuleZ(cartanA 3, {2, 0})
     soc = socleWeyl(W, 2, RequireComplete => true)
     dim soc
-    pairs character soc
+    pairs rawCharacter soc
   Text
     The answer has dimension three and the character of
     @TEX "$L(\\omega_2)=\\Lambda^2(k^3)$"@.  Thus the socle of the
@@ -3041,24 +3136,51 @@ SeeAlso
 
 doc ///
 Key
-  decomposeCharacter
+  (decomposeCharacter, Matrix, ZZ, HashTable, Option)
   (decomposeCharacter, Matrix, ZZ, HashTable)
+  (decomposeCharacter, Matrix, ZZ, HashTable, OptionTable)
+  (decomposeCharacter, Option, Matrix, ZZ, HashTable)
+  (decomposeCharacter, Matrix, Option, ZZ, HashTable)
+  (decomposeCharacter, Matrix, ZZ, Option, HashTable)
+  (decomposeCharacter, OptionTable, Matrix, ZZ, HashTable)
+  (decomposeCharacter, Matrix, OptionTable, ZZ, HashTable)
+  (decomposeCharacter, Matrix, ZZ, OptionTable, HashTable)
+  (decomposeCharacter, Matrix, ZZ, RingElement)
+  (decomposeCharacter, Matrix, ZZ, RingElement, Option)
+  (decomposeCharacter, Matrix, ZZ, RingElement, OptionTable)
+  (decomposeCharacter, Option, Matrix, ZZ, RingElement)
+  (decomposeCharacter, Matrix, Option, ZZ, RingElement)
+  (decomposeCharacter, Matrix, ZZ, Option, RingElement)
+  (decomposeCharacter, OptionTable, Matrix, ZZ, RingElement)
+  (decomposeCharacter, Matrix, OptionTable, ZZ, RingElement)
+  (decomposeCharacter, Matrix, ZZ, OptionTable, RingElement)
   (decomposeCharacter, WeylCharacter, ZZ)
-  [decomposeCharacter, WeightFormat]
+  (decomposeCharacter, WeylCharacter, ZZ, Option)
+  (decomposeCharacter, WeylCharacter, ZZ, OptionTable)
+  (decomposeCharacter, Option, WeylCharacter, ZZ)
+  (decomposeCharacter, WeylCharacter, Option, ZZ)
+  (decomposeCharacter, OptionTable, WeylCharacter, ZZ)
+  (decomposeCharacter, WeylCharacter, OptionTable, ZZ)
 Headline
   Express a formal character as a sum of simple characters
 Usage
   d = decomposeCharacter(A, p, ch)
-  d = decomposeCharacter(C, p)
+  d = decomposeCharacter(ch, p)
+  d = decomposeCharacter(A, p, ch, optionValue)
+  d = decomposeCharacter(ch, p, optionValue)
 Inputs
   A:Matrix
     a finite-type Cartan matrix
   p:ZZ
     a prime
-  ch:HashTable
-    a weight-to-multiplicity table in the nonnegative integral span of simple characters
-  C:WeylCharacter
-    such a formal character together with its Cartan matrix
+  ch:
+    a weight-to-multiplicity @TO HashTable@, a Laurent @TO RingElement@
+    in the character ring corresponding to A, or a @TO WeylCharacter@;
+    it must lie in the nonnegative integral span of simple characters
+  optionValue:
+    a @TO Option@ pair @TT "WeightFormat => \"Dynkin\""@ or
+    @TT "WeightFormat => \"Partition\""@, or the same convention
+    supplied as an @TO OptionTable@
 Outputs
   d:HashTable
     dominant highest weights mapped to the coefficients of their simple characters
@@ -3086,10 +3208,18 @@ Description
     hash-table input and of the output highest weights.  The terms of
     a @TO WeylCharacter@ are stored in Dynkin coordinates; for that
     form the option changes only the output highest-weight labels.
+    A Laurent polynomial returned by @TO "WeylModules :: character(WeylModuleZ)"@ is also accepted
+    together with its Cartan matrix; for that form the option likewise
+    changes only the output labels.
+  Text
+    The listed @TO Option@ and @TO OptionTable@ arguments are positional
+    conveniences on the shared @TO KacMoody@ function.  For ordinary M2
+    optional arguments, including option tables combined with overrides,
+    use @TO decompositionNumbers@ with the same character and Cartan data.
   Example
     A = cartanA 3
     W = weylModuleZ(A, {2, 0})
-    sort pairs decomposeCharacter(A, 2, character W)
+    sort pairs decomposeCharacter(A, 2, rawCharacter W)
   Text
     The two entries, @TT "{2,0} => 1"@ and @TT "{0,1} => 1"@,
     express @TEX "$\\mathrm{ch}(D^2(k^3))$"@ as
@@ -3107,8 +3237,8 @@ Description
     the only additional datum needed to determine the simple
     characters in this expansion.
   Example
-    ch = productCharacter(character weylModuleZ(cartanA 2, {1}),
-                          character weylModuleZ(cartanA 2, {1}));
+    ch = productCharacter(rawCharacter weylModuleZ(cartanA 2, {1}),
+                          rawCharacter weylModuleZ(cartanA 2, {1}));
     sort pairs decomposeCharacter(cartanA 2, 2, ch)
   Text
     For the tensor square of the natural @TEX "$\\mathrm{SL}_2$"@-module,
@@ -3132,12 +3262,17 @@ Key
   (decompositionNumbers, SubWeylModuleFp)
   (decompositionNumbers, QuotientWeylModuleFp)
   (decompositionNumbers, SubquotientWeylModuleFp)
+  (decompositionNumbers, Matrix, ZZ, HashTable)
+  (decompositionNumbers, Matrix, ZZ, RingElement)
+  (decompositionNumbers, WeylCharacter, ZZ)
   [decompositionNumbers, WeightFormat]
 Headline
-  Composition multiplicities of a module in characteristic p
+  Composition multiplicities in characteristic p
 Usage
   d = decompositionNumbers(W, p)
   d = decompositionNumbers M
+  d = decompositionNumbers(A, p, ch)
+  d = decompositionNumbers(C, p)
 Inputs
   W:WeylModuleZ
     an integral Weyl module
@@ -3145,6 +3280,16 @@ Inputs
     a prime, used to reduce W
   M:
     a submodule, quotient, or subquotient over a prime field
+  A:Matrix
+    a finite-type Cartan matrix
+  ch:
+    a weight-to-multiplicity @TO HashTable@ or Laurent @TO RingElement@
+    in the corresponding character ring
+  C:WeylCharacter
+    a formal character together with its Cartan matrix
+  WeightFormat => String
+    the output weight-coordinate convention; also the input convention
+    when ch is a hash table
 Outputs
   d:HashTable
     the nonzero composition multiplicities, indexed by highest weights
@@ -3159,6 +3304,13 @@ Description
     For @TT "(W,p)"@ it takes
     @TEX "$M=V_{\\mathbb Z}(\\lambda)\\otimes\\mathbb F_p$"@;
     a submodule, quotient, or subquotient already specifies the prime.
+  Text
+    A supplied character must lie in the nonnegative integral span of
+    simple characters.  The table and Laurent-polynomial forms use the
+    given Cartan matrix; a @TO WeylCharacter@ already records it.
+    A hash table is read in @TO WeightFormat@ coordinates.  For a module,
+    Laurent polynomial, or @TO WeylCharacter@, this option changes only
+    the labels of the simple constituents in the output.
   Text
     The result determines the Grothendieck-group equality
     @TEX "$[M]=\\sum_\\mu[M:L(\\mu)][L(\\mu)]$"@.
@@ -3212,8 +3364,19 @@ Description
     its label and multiplicity one, so the Weyl module is simple in
     characteristic two.  Changing coordinates leaves its composition
     multiplicities unchanged.
+  Example
+    A = cartanA 3
+    W = weylModuleZ(A, {2, 0})
+    opts = new OptionTable from {WeightFormat => "Partition"}
+    sort pairs decompositionNumbers(A, 2, character W, opts, WeightFormat => "Dynkin")
+  Text
+    The explicit option overrides the coordinate choice in the table.
+    The labels @TT "{2,0}"@ and @TT "{0,1}"@ again give the two
+    characteristic-two composition factors, each once.  The Laurent
+    character is unchanged; only the labels of its simple constituents
+    are chosen by the merged options.
 SeeAlso
-  decomposeCharacter
+  "WeylModules :: decomposeCharacter(Matrix,ZZ,HashTable)"
   compositionFactors
   simpleCharacter
   simpleQuotient
@@ -3245,6 +3408,10 @@ Inputs
     the per-weight forms
   p:ZZ
     a prime
+  Q:QuotientWeylModuleFp
+    a quotient over its defining prime field
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   :List
     in the per-weight form, a list of coefficient lists over
@@ -3350,13 +3517,16 @@ Headline
   Truncate lower socle layers to obtain a quotient of socle length at most 2
 Usage
   Q = socleLengthTwoQuotient S
-  Q = socleLengthTwoQuotient(S, RequireComplete => true)
+  Q = socleLengthTwoQuotient(S, optionValue)
 Inputs
   S:SubWeylModuleFp
     a submodule of @TEX "$V(\\lambda) \\otimes \\mathbb{F}_p$"@
   W:WeylModuleZ
     an integral module; the function raises an error because @TT "W"@
     does not specify a characteristic
+  optionValue:Option
+    @TT "RequireComplete => true"@ to require complete socle searches,
+    or @TT "RequireComplete => false"@ for the ordinary search
 Outputs
   Q:QuotientWeylModuleFp
     a quotient @TEX "$V/S'$"@ with @TEX "$S' \\supseteq S$"@ and
@@ -3437,10 +3607,13 @@ Headline
   Search for selected two-composition-factor quotients whose kernels contain S
 Usage
   Qs = twoFactorQuotientsContaining S
-  Qs = twoFactorQuotientsContaining(S, RequireComplete => true)
+  Qs = twoFactorQuotientsContaining(S, optionValue)
 Inputs
   S:SubWeylModuleFp
     a submodule of @TEX "$V(\\lambda) \\otimes \\mathbb{F}_p$"@
+  optionValue:Option
+    @TT "RequireComplete => true"@ to require complete socle searches,
+    or @TT "RequireComplete => false"@ for the ordinary search
 Outputs
   Qs:List
     a list of candidate @TO QuotientWeylModuleFp@'s, each a quotient
@@ -3513,7 +3686,7 @@ Usage
   series = socleSeries(W, p)
   series = socleSeries S
   series = socleSeries Q
-  series = socleSeries(W, p, RequireComplete => true)
+  series = socleSeries(W, p, optionValue)
 Inputs
   W:WeylModuleZ
     an integral Weyl module
@@ -3523,6 +3696,9 @@ Inputs
     a kernel inside an ambient Weyl module
   Q:QuotientWeylModuleFp
     a quotient with its defining kernel
+  optionValue:Option
+    @TT "RequireComplete => true"@ to require the full socle filtration,
+    or @TT "RequireComplete => false"@ for the ordinary search
 Outputs
   series:List
     cumulative submodule preimages in the ambient Weyl module
@@ -3772,6 +3948,8 @@ Inputs
   W:WeylModuleZ
   p:ZZ
     a prime
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   out:List
     a list of @TT "(mu, vec)"@ pairs giving the chosen basis vectors of
@@ -3873,6 +4051,8 @@ Inputs
   vec:List
     an @TEX "$\\mathbb{F}_p$"@-coefficient list of length
     @TEX "$\\dim V(\\lambda)_\\mu$"@
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   :Boolean
 Description
@@ -4020,6 +4200,9 @@ Inputs
     a prime
   Q:QuotientWeylModuleFp
     a quotient over a prime field
+Outputs
+  :Nothing
+    null; the layer labels are printed
 Description
   Text
     Prints the highest weights of the simple constituents found in each
@@ -4117,6 +4300,8 @@ Inputs
   M:
     a @TO WeylModuleZ@, @TO SubWeylModuleFp@, or
     @TO QuotientWeylModuleFp@
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   ws:List
     the weights @TEX "$\\mu$"@ of @TT "M"@ that are dominant
@@ -4159,6 +4344,8 @@ Inputs
   M:
     a @TO WeylModuleZ@, @TO SubWeylModuleFp@, or
     @TO QuotientWeylModuleFp@
+  WeightFormat => String
+    the weight-coordinate convention
 Outputs
   H:HashTable
     dominant weights mapped to PBW-tuple lists for an integral module,
@@ -4323,6 +4510,8 @@ Key
   (sortedCharacter, HashTable)
   (sortedCharacter, Matrix, HashTable)
   (sortedCharacter, WeylCharacter)
+  [sortedCharacter, WeightFormat]
+  [sortedCharacter, WeightOrder]
 Headline
   Order the weights of a character
 Usage
@@ -4334,6 +4523,11 @@ Inputs
   ch:
     a @TT "HashTable"@ or @TO WeylCharacter@
     a character (weight @TT "->"@ multiplicity)
+  WeightFormat => String
+    the output coordinates when Cartan data are supplied
+  WeightOrder => Thing
+    @TT "\"Lex\""@, @TT "\"RootDepth\""@, or @TT "null"@ to use
+    the default order for the supplied character
 Outputs
   pairs:List
     an ordered list of @TT "(weight, multiplicity)"@ pairs
@@ -4341,15 +4535,15 @@ Description
   Text
     A bare @TT "HashTable"@ contains no Cartan datum, so
     @TT "sortedCharacter ch"@ uses reverse lexicographic order.  Supplying
-    the Cartan matrix orders weights by their depth below the highest weight,
+    the Cartan matrix by default orders weights by their depth below the highest weight,
     with weights at the same depth ordered lexicographically.  This is
     the order used by @TO WeylCharacter@.  Both forms return the same
     weight multiplicities, arranged in the specified order.
   Example
     A = cartanA 3
     W = weylModuleZ(A, {2, 0})
-    sortedCharacter character W
-    sortedCharacter(A, character W)
+    sortedCharacter rawCharacter W
+    sortedCharacter(A, rawCharacter W)
   Text
     Both lists contain the same six weights of
     @TEX "$D^2(k^3)$"@, each with multiplicity one.
@@ -4361,6 +4555,10 @@ Description
   Text
     For a @TO WeylCharacter@, its Cartan matrix supplies the root-depth
     ordering, so no separate matrix argument is needed.
+    A table supplied with a Cartan matrix has Dynkin-coordinate keys;
+    @TO WeightFormat@ changes the returned labels.  A bare table is sorted
+    as stored and cannot be converted to another coordinate convention
+    or ordered by root depth without its Cartan matrix.
   Example
     C = weylCharacter weylModuleZ(cartanA 2, {1})
     sortedCharacter C
@@ -4369,8 +4567,17 @@ Description
     second is weight -1 with coefficient one. The latter lies one simple
     root below the former, since the simple root of type A1 is
     @TEX "$2\\omega_1$"@.
+  Example
+    C = weylCharacter weylModuleZ(cartanA 3, {2, 0})
+    opts = new OptionTable from {WeightFormat => "Partition", WeightOrder => "Lex"}
+    sortedCharacter(C, opts, WeightFormat => "Dynkin")
+  Text
+    The six weights of @TEX "$D^2(k^3)$"@ are returned in reverse
+    lexicographic order, each with multiplicity one.  The order comes
+    from the option table, while the explicit option replaces its
+    coordinate choice with Dynkin labels.
 SeeAlso
-  character
+  "WeylModules :: character(WeylModuleZ)"
   characterDim
   productCharacter
   differenceCharacter
@@ -4382,7 +4589,7 @@ Key
 Headline
   Expand a negative simple-root generator on a PBW monomial
 Usage
-  out = applyChevalley(W, "f", simpleIdx, c, lambdaDynkin)
+  out = applyChevalley(W, kind, simpleIdx, c, lambdaDynkin)
 Inputs
   W:WeylModuleZ
     an integral Weyl module with its root order and
@@ -4751,14 +4958,15 @@ Key
   characterDim
   (characterDim, HashTable)
   (characterDim, WeylCharacter)
+  (characterDim, RingElement)
 Headline
   Total dimension carried by a character
 Usage
   d = characterDim ch
 Inputs
   ch:
-    a @TT "HashTable"@ or @TO WeylCharacter@
-    a character (weight @TT "->"@ multiplicity)
+    a weight-multiplicity hash table, @TO WeylCharacter@, or Laurent
+    polynomial returned by @TO "WeylModules :: character(WeylModuleZ)"@
 Outputs
   d:ZZ
     @TEX "$\\sum_\\mu \\mathrm{ch}(\\mu)$"@, the total dimension
@@ -4773,14 +4981,17 @@ Description
   Example
     -- Adjoint of sl_3 is 8-dimensional; characterDim verifies this.
     W = weylModuleZ(cartanA 3, {1, 1})
+    characterDim rawCharacter W
     characterDim character W
   Text
-    The answer is eight: the adjoint module has six nonzero
+    Both answers are eight: the adjoint module has six nonzero
     root weights, each with multiplicity one, and a zero-weight
     space of dimension two.  Summing these multiplicities gives
     @TEX "$6+2=8$"@.
   Text
-    A @TO WeylCharacter@ is also accepted. For a virtual character this
+    For a Laurent polynomial, this is the augmentation obtained by
+    setting every character-ring variable equal to 1.
+    For a virtual character this
     specialization is a signed integer and need not be the dimension of
     an actual module.
   Example
@@ -4792,7 +5003,7 @@ Description
     This is the virtual dimension of the natural character minus three
     trivial characters, not a negative-dimensional module.
 SeeAlso
-  character
+  "WeylModules :: character(WeylModuleZ)"
   productCharacter
   differenceCharacter
   sortedCharacter
@@ -4829,7 +5040,7 @@ Description
     -- ch(V tensor V) = ch(Gamma^2 V) + ch(Lambda^2 V).
     -- This does not assert a direct-sum decomposition in characteristic 2.
     A = cartanA 3
-    chV = character weylModuleZ(A, {1, 0})
+    chV = rawCharacter weylModuleZ(A, {1, 0})
     chTensor = productCharacter(chV, chV)
     -- Total dimension is 9 (= 3 * 3):
     characterDim chTensor
@@ -4855,7 +5066,7 @@ Description
     zero with coefficient two. Its total dimension is 4, the dimension of
     the tensor square of the two-dimensional natural module.
 SeeAlso
-  character
+  "WeylModules :: character(WeylModuleZ)"
   differenceCharacter
   characterDim
 ///
@@ -4888,9 +5099,9 @@ Description
     -- For V(2,0) of sl_3: V has char ch_V; soc has char ch_socle;
     -- the head V/socle has char ch_V - ch_socle.
     W = weylModuleZ(cartanA 3, {2, 0})
-    chV = character W
+    chV = rawCharacter W
     soc = socleWeyl(W, 2)
-    chSoc = character soc
+    chSoc = rawCharacter soc
     chHead = differenceCharacter(chV, chSoc)
     characterDim chHead                     -- = 3 = dim L(2,0)
   Text
@@ -4902,7 +5113,7 @@ Description
     @TEX "$\\Lambda^2(k^3)$"@ was constructed as an actual
     submodule of @TEX "$D^2(k^3)$"@.
 SeeAlso
-  character
+  "WeylModules :: character(WeylModuleZ)"
   productCharacter
   characterDim
 ///
@@ -4944,7 +5155,7 @@ Description
   Example
     A = cartanA 3
     W = weylModuleZ(A, {2, 0})            -- = D^2 V for sl_3
-    ch = character W                       -- Dynkin keys
+    ch = rawCharacter W                       -- Dynkin keys
     pairs ch
     pairs characterAsPartition(W, ch)      -- partition keys
   Text
@@ -5596,102 +5807,223 @@ Description
   Text
     Each link leads to the function's own explanation, examples, and
     mathematical interpretation of the outputs.
-  Text
-    @SUBSECTION "Chevalley structure constants"@
-  Text
-    @UL {
-      {TO isSimplyLaced, ", ", TO classifyFiniteCartan, ", ", TO chevalleyEpsilonMatrix, ", ", TO chevalleyConstants},
-      {TO chevalleyN, ", ", TO verifyJacobi}
-    }@
-  Text
-    @SUBSECTION "Integral Weyl modules, weights, and actions"@
-  Text
-    @UL {
-      {TO weylModuleZ, ", ", TO weylModule, ", ", TO highestWeight, ", ", TO ambientCartan},
-      {TO weights, ", ", TO weightSpaces, ", ", TO weightSpace, ", ", TO basisVecs},
-      {TO character, ", ", TO actionF, ", ", TO actionE, ", ", TO actionH},
-      {TO applyChevalley, ", ", TO pbwTuples, ", ", TO maximalVectors}
-    }@
-  Text
-    @SUBSECTION "Modular submodules, quotients, and socle filtrations"@
-  Text
-    @UL {
-      {TO subWeylModule, ", ", TO subWeylModuleDirectSum, ", ", TO ambientWeylModule, ", ", TO isWithin},
-      {TO quotientWeylModule, ", ", TO definingKernel, ", ", TO simpleQuotient, ", ", TO simpleCharacter},
-      {TO simpleDimension, ", ", TO socleWeyl, ", ", TO decomposeCharacter, ", ", TO decompositionNumbers},
-      {TO maximalSubmodule, ", ", TO isAmbiguous, ", ", TO ambiguousMaxVecs, ", ", TO gensNextSocle},
-      {TO nextSocle, ", ", TO socleSeries, ", ", TO gensSocleLayers, ", ", TO printSocleLayers},
-      {TO socleLengthTwoQuotient, ", ", TO twoFactorQuotientsContaining}
-    }@
-  Text
-    @SUBSECTION "Characters and weight predicates"@
-  Text
-    @UL {
-      {TO characterDim, ", ", TO productCharacter, ", ", TO differenceCharacter, ", ", TO sortedCharacter},
-      {TO isDominantWeight, ", ", TO isRestrictedWeight, ", ", TO highestPrimePower, ", ", TO dominantWeights},
-      {TO dominantWeightSpaces, ", ", TO isMaximalVector, ", ", TO simpleTopFactorCharacter, ", ", TO simpleTopFactorDim},
-      {TO socleSeriesAndPrims}
-    }@
-  Text
-    @SUBSECTION "Weight-coordinate conversions"@
-  Text
-    @UL {
-      {TO weightAsPartition, ", ", TO weightAsDynkin, ", ", TO characterAsPartition, ", ", TO characterAsDynkin}
-    }@
-  Text
-    @SUBSECTION "Schur algebras, partitions, and symmetric groups"@
-  Text
-    @UL {
-      {TO compositionToWeight, ", ", TO weightToComposition, ", ", TO allPartitions, ", ", TO boundedPartitions},
-      {TO conjugatePartition, ", ", TO pRestrictedQ, ", ", TO pRegularQ, ", ", TO pRestrictedPartitions},
-      {TO pRegularPartitions, ", ", TO mullineux, ", ", TO schurAlgebraWeylModule, ", ", TO schurAlgebraDecompositionMatrix},
-      {TO symmetricGroupDecompositionMatrix, ", ", TO symmetricGroupDecompositionNumbers}
-    }@
-  Text
-    @SUBSECTION "Quotient maps, subquotients, and submodule operations"@
-  Text
-    @UL {
-      {TO quotientProjection, ", ", TO quotientSection, ", ", TO quotientBasis, ", ", TO projectToQuotient},
-      {TO liftFromQuotient, ", ", TO characteristic, ", ", TO rootSystemType, ", ", TO lieType},
-      {TO lieRank, ", ", TO moduleMetadata, ", ", TO constructionData, ", ", TO reduceWeylModule},
-      {TO reduction, ", ", TO isSubmoduleOf, ", ", TO containsSubmodule, ", ", TO equalSubmodules},
-      {TO submoduleCodimension, ", ", TO submoduleSum, ", ", TO submoduleIntersection, ", ", TO subquotientWeylModule},
-      {TO lowerSubmodule, ", ", TO upperSubmodule, ", ", TO subquotientProjection, ", ", TO subquotientSection},
-      {TO subquotientBasis, ", ", TO projectToSubquotient, ", ", TO liftFromSubquotient}
-    }@
-  Text
-    @SUBSECTION "Formal characters and labeled decomposition tables"@
-  Text
-    @UL {
-      {TO weylCharacter, ", ", TO coordinateConvention, ", ", TO sourceWeightFormat, ", ", TO isVirtualCharacter},
-      {TO characterMetadata, ", ", TO rawCharacter, ", ", TO characterTerms, ", ", TO tensorProductCharacter},
-      {TO tensorProductFactors, ", ", TO dualCharacter, ", ", TO frobeniusTwistCharacter, ", ", TO decompositionTable},
-      {TO rowLabels, ", ", TO columnLabels, ", ", TO prime, ", ", TO algebra},
-      {TO tableMetadata, ", ", TO schurAlgebraDecompositionTable, ", ", TO symmetricGroupDecompositionTable}
-    }@
-  Text
-    @SUBSECTION "Composition factors and socle analysis"@
-  Text
-    @UL {
-      {TO compositionFactors, ", ", TO isIrreducible, ", ", TO socleAnalysis, ", ", TO socleLayerFactors},
-      {TO socleLayerGenerators, ", ", TO cumulativeSocleLayers, ", ", TO socleLayerDimensions, ", ", TO cumulativeSocleDimensions},
-      {TO successiveQuotientDimensions, ", ", TO ambiguousWeights, ", ", TO ambiguousWeightsByLayer, ", ", TO analysisIssues},
-      {TO isCertified, ", ", TO socleAnalysisComplete, ", ", TO socleAnalysisPrime, ", ", TO socleAnalysisModuleDimension},
-      {TO socleLength, ", ", TO reductionProfile, ", ", TO reductionRows, ", ", TO reductionPrimes},
-      {TO reductionRow, ", ", TO reductionWeylModule, ", ", TO reductionHighestWeight, ", ", TO reducibleCharacteristics},
-      {TO extensionData, ", ", TO isTwoFactorExtension}
-    }@
-  Text
-    @SUBSECTION "Action matrices, divided powers, homomorphisms, and diagrams"@
-  Text
-    @UL {
-      {TO pbwRoots, ", ", TO chevalleyActionMatrices, ", ", TO raisingMatrices, ", ", TO loweringMatrices},
-      {TO cartanMatrices, ", ", TO globalBasis, ", ", TO dividedPowerActionE, ", ", TO dividedPowerActionF},
-      {TO binomialCartanAction, ", ", TO checkWeylModule, ", ", TO verifyRepresentation, ", ", TO isValid},
-      {TO verificationChecks, ", ", TO verificationFailures, ", ", TO weylHomDimension, ", ", TO weylHomGenerators},
-      {TO weightGraph, ", ", TO graphVertices, ", ", TO graphEdges, ", ", TO toDot},
-      {TO toSVG, ", ", TO viewGraph, ", ", TO socleDiagram, ", ", TO diagramLayers}
-    }@
+Subnodes
+  :Chevalley structure constants
+    isSimplyLaced
+    classifyFiniteCartan
+    chevalleyEpsilonMatrix
+    chevalleyConstants
+    chevalleyN
+    verifyJacobi
+  :Integral Weyl modules, weights, and actions
+    weylModuleZ
+    weylModule
+    highestWeight
+    ambientCartan
+    weights
+    weightSpaces
+    weightSpace
+    basisVecs
+    "WeylModules :: character(WeylModuleZ)"
+    "WeylModules :: characterRing(WeylModuleZ)"
+    actionF
+    actionE
+    actionH
+    applyChevalley
+    pbwTuples
+    maximalVectors
+  :Modular submodules, quotients, and socle filtrations
+    subWeylModule
+    subWeylModuleDirectSum
+    ambientWeylModule
+    isWithin
+    quotientWeylModule
+    definingKernel
+    simpleQuotient
+    simpleCharacter
+    simpleDimension
+    socleWeyl
+    "WeylModules :: decomposeCharacter(Matrix,ZZ,HashTable)"
+    decompositionNumbers
+    maximalSubmodule
+    isAmbiguous
+    ambiguousMaxVecs
+    gensNextSocle
+    nextSocle
+    socleSeries
+    gensSocleLayers
+    printSocleLayers
+    socleLengthTwoQuotient
+    twoFactorQuotientsContaining
+  :Characters and weight predicates
+    characterDim
+    productCharacter
+    differenceCharacter
+    sortedCharacter
+    isDominantWeight
+    isRestrictedWeight
+    highestPrimePower
+    dominantWeights
+    dominantWeightSpaces
+    isMaximalVector
+    simpleTopFactorCharacter
+    simpleTopFactorDim
+    socleSeriesAndPrims
+  :Weight-coordinate conversions
+    weightAsPartition
+    weightAsDynkin
+    characterAsPartition
+    characterAsDynkin
+  :Schur algebras, partitions, and symmetric groups
+    compositionToWeight
+    weightToComposition
+    allPartitions
+    boundedPartitions
+    conjugatePartition
+    pRestrictedQ
+    pRegularQ
+    pRestrictedPartitions
+    pRegularPartitions
+    mullineux
+    schurAlgebraWeylModule
+    schurAlgebraDecompositionMatrix
+    symmetricGroupDecompositionMatrix
+    symmetricGroupDecompositionNumbers
+  :Quotient maps, subquotients, and submodule operations
+    quotientProjection
+    quotientSection
+    quotientBasis
+    projectToQuotient
+    liftFromQuotient
+    characteristic
+    rootSystemType
+    lieType
+    lieRank
+    moduleMetadata
+    constructionData
+    reduceWeylModule
+    reduction
+    isSubmoduleOf
+    containsSubmodule
+    equalSubmodules
+    submoduleCodimension
+    submoduleSum
+    submoduleIntersection
+    subquotientWeylModule
+    lowerSubmodule
+    upperSubmodule
+    subquotientProjection
+    subquotientSection
+    subquotientBasis
+    projectToSubquotient
+    liftFromSubquotient
+  :Formal characters and labeled decomposition tables
+    weylCharacter
+    coordinateConvention
+    sourceWeightFormat
+    isVirtualCharacter
+    characterMetadata
+    rawCharacter
+    "WeylModules :: characterTerms(WeylCharacter)"
+    tensorProductCharacter
+    tensorProductFactors
+    "WeylModules :: dualCharacter(WeylCharacter)"
+    frobeniusTwistCharacter
+    decompositionTable
+    rowLabels
+    columnLabels
+    prime
+    algebra
+    tableMetadata
+    schurAlgebraDecompositionTable
+    symmetricGroupDecompositionTable
+  :Composition factors and socle analysis
+    compositionFactors
+    "WeylModules :: isIrreducible(WeylModuleZ,ZZ)"
+    socleAnalysis
+    socleLayerFactors
+    socleLayerGenerators
+    cumulativeSocleLayers
+    socleLayerDimensions
+    cumulativeSocleDimensions
+    successiveQuotientDimensions
+    ambiguousWeights
+    ambiguousWeightsByLayer
+    analysisIssues
+    isCertified
+    socleAnalysisComplete
+    socleAnalysisPrime
+    socleAnalysisModuleDimension
+    socleLength
+    reductionProfile
+    reductionRows
+    reductionPrimes
+    reductionRow
+    reductionWeylModule
+    reductionHighestWeight
+    reducibleCharacteristics
+    extensionData
+    isTwoFactorExtension
+  :Action matrices, divided powers, homomorphisms, and diagrams
+    pbwRoots
+    chevalleyActionMatrices
+    raisingMatrices
+    loweringMatrices
+    cartanMatrices
+    globalBasis
+    dividedPowerActionE
+    dividedPowerActionF
+    binomialCartanAction
+    checkWeylModule
+    verifyRepresentation
+    isValid
+    verificationChecks
+    verificationFailures
+    weylHomDimension
+    weylHomGenerators
+    weightGraph
+    graphVertices
+    graphEdges
+    toDot
+    toSVG
+    viewGraph
+    socleDiagram
+    diagramLayers
+  :Module and result types
+    WeylModuleZ
+    SubWeylModuleFp
+    QuotientWeylModuleFp
+    ReductionProfile
+    SubquotientWeylModuleFp
+    WeylCharacter
+    DecompositionTable
+    SocleAnalysis
+    ExtensionData
+    ChevalleyActionData
+    WeylModuleCheck
+    WeylGraph
+    SocleDiagram
+  :Options
+    LieType
+    WeightOrder
+    RequireComplete
+    CheckLevel
+    IncludeStructure
+    IncludeSocle
+  :Methods on modules, characters, and diagrams
+    (dim, WeylModuleZ)
+    (generators, SubWeylModuleFp)
+    (net, WeylModuleZ)
+    (coefficientRing, WeylModuleZ)
+    (weightMultiplicity, WeylModuleZ, List)
+    (support, WeylCharacter)
+    (matrix, DecompositionTable)
+    (show, WeylGraph)
+    (html, WeylGraph)
+    (symbol +, WeylCharacter, WeylCharacter)
+    (symbol -, WeylCharacter, WeylCharacter)
+    (symbol *, WeylCharacter, WeylCharacter)
+    (symbol ==, WeylCharacter, WeylCharacter)
 SeeAlso
   WeylModules
   "WeylModules: conventions and limitations"
@@ -5730,6 +6062,16 @@ Key
   (reduction, WeylModuleZ, ZZ)
 Headline
   Reduce an integral Weyl module modulo a prime
+Usage
+  V = reduction(W, p)
+Inputs
+  W:WeylModuleZ
+    an integral Weyl module
+  p:ZZ
+    a prime
+Outputs
+  V:QuotientWeylModuleFp
+    the reduction of W over the prime field
 Description
   Text
     For an integral Weyl module @TEX "$W=V_{\\mathbb Z}(\\lambda)$"@ and
@@ -5741,7 +6083,7 @@ Description
     W = weylModuleZ(cartanA 2, {2})
     V = reduction(W, 2)
     dim V
-    character V
+    rawCharacter V
   Text
     The reduction has the three weights 2, 0, and -2, each of multiplicity 1.
     These multiplicities agree with those of the integral module even though
@@ -5758,6 +6100,16 @@ Key
   (reduceWeylModule, WeylModuleZ, ZZ)
 Headline
   Form the prime-field reduction of an integral Weyl module
+Usage
+  V = reduceWeylModule(W, p)
+Inputs
+  W:WeylModuleZ
+    an integral Weyl module
+  p:ZZ
+    a prime
+Outputs
+  V:QuotientWeylModuleFp
+    the reduction of W over the prime field
 Description
   Text
     For a prime @TT "p"@, @TT "reduceWeylModule(W,p)"@ forms
@@ -5789,6 +6141,27 @@ Key
   [reductionProfile, WeightFormat]
 Headline
   Compare dimensions and composition factors across characteristics
+Usage
+  P = reductionProfile(W, primes)
+  P = reductionProfile(W, bound)
+Inputs
+  W:WeylModuleZ
+    an integral Weyl module
+  primes:List
+    a list of primes
+  bound:ZZ
+    an inclusive upper bound on the primes to test
+  IncludeStructure => Boolean
+    whether to include maximal-vector and initial ambiguity information
+  IncludeSocle => Boolean
+    whether to compute successive socle layers
+  RequireComplete => Boolean
+    whether to require the full socle filtration under the stated completeness conditions
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  P:ReductionProfile
+    the dimensions and composition factors in the requested characteristics
 Description
   Text
     For @TEX "$W=V_{\\mathbb Z}(\\lambda)$"@, @TT "reductionProfile(W,primes)"@
@@ -5823,6 +6196,14 @@ Key
   (reductionRows, ReductionProfile)
 Headline
   Return the rows of a reduction profile
+Usage
+  result = reductionRows P
+Inputs
+  P:ReductionProfile
+    a profile of reductions of one integral Weyl module
+Outputs
+  result:List
+    the row hash tables, in the recorded prime order
 Description
   Text
     This returns one hash table for each recorded prime, in the order used by
@@ -5849,6 +6230,14 @@ Key
   (reductionPrimes, ReductionProfile)
 Headline
   Return the characteristics recorded in a reduction profile
+Usage
+  result = reductionPrimes P
+Inputs
+  P:ReductionProfile
+    a profile of reductions of one integral Weyl module
+Outputs
+  result:List
+    the recorded primes, in order of first occurrence
 Description
   Text
     This returns the list of primes indexing the rows of a
@@ -5872,6 +6261,16 @@ Key
   (reductionRow, ReductionProfile, ZZ)
 Headline
   Return the data for one characteristic in a reduction profile
+Usage
+  row = reductionRow(P, p)
+Inputs
+  P:ReductionProfile
+    a profile of reductions of one integral Weyl module
+  p:ZZ
+    a prime
+Outputs
+  row:HashTable
+    the row for p, or null if p was not recorded
 Description
   Text
     For a prime @TT "p"@ recorded in @TT "P"@, @TT "reductionRow(P,p)"@
@@ -5898,6 +6297,14 @@ Key
   (reductionWeylModule, ReductionProfile)
 Headline
   Recover the integral module underlying a reduction profile
+Usage
+  result = reductionWeylModule P
+Inputs
+  P:ReductionProfile
+    a profile of reductions of one integral Weyl module
+Outputs
+  result:WeylModuleZ
+    the common integral Weyl module
 Description
   Text
     This returns the integral Weyl module from which all rows of the
@@ -5923,6 +6330,14 @@ Key
   (reductionHighestWeight, ReductionProfile)
 Headline
   Return the highest weight of a reduction profile
+Usage
+  result = reductionHighestWeight P
+Inputs
+  P:ReductionProfile
+    a profile of reductions of one integral Weyl module
+Outputs
+  result:List
+    the common highest weight in the profile's coordinate convention
 Description
   Text
     This returns the highest weight of the common integral Weyl module, in
@@ -5950,6 +6365,22 @@ Key
   (reducibleCharacteristics, ReductionProfile)
 Headline
   Find the requested characteristics in which a Weyl module is reducible
+Usage
+  primes = reducibleCharacteristics(W, candidates)
+  primes = reducibleCharacteristics(W, bound)
+  primes = reducibleCharacteristics P
+Inputs
+  W:WeylModuleZ
+    an integral Weyl module
+  candidates:List
+    the primes to test
+  bound:ZZ
+    an inclusive upper bound on the primes to test
+  P:ReductionProfile
+    a previously computed reduction profile
+Outputs
+  primes:List
+    the requested primes for which the reduced module is reducible
 Description
   Text
     This returns the primes among those supplied for which the reduction of
@@ -5968,7 +6399,7 @@ Description
     5.
 SeeAlso
   reductionProfile
-  isIrreducible
+  "WeylModules :: isIrreducible(WeylModuleZ,ZZ)"
 ///
 
 doc ///
@@ -5979,6 +6410,18 @@ Key
   [quotientProjection, WeightFormat]
 Headline
   Matrix of the quotient map on a weight space
+Usage
+  B = quotientProjection(Q, mu)
+Inputs
+  Q:
+    a modular quotient or subquotient
+  mu:List
+    a weight in the selected coordinate convention
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  B:Matrix
+    the projection in ambient and quotient weight-space coordinates, or null at an absent ambient weight
 Description
   Text
     For @TEX "$Q=V/S$"@, fix a weight @TEX "$\\mu$"@.
@@ -6019,6 +6462,18 @@ Key
   [quotientSection, WeightFormat]
 Headline
   Chosen linear section of a quotient weight space
+Usage
+  B = quotientSection(Q, mu)
+Inputs
+  Q:
+    a modular quotient or subquotient
+  mu:List
+    a weight in the selected coordinate convention
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  B:Matrix
+    the chosen ambient representatives of the quotient weight-space basis, or null at an absent ambient weight
 Description
   Text
     This gives a matrix @TEX "$J_\\mu:Q_\\mu\\longrightarrow V_\\mu$"@ whose
@@ -6052,6 +6507,18 @@ Key
   [quotientBasis, WeightFormat]
 Headline
   Representatives of a quotient weight-space basis
+Usage
+  B = quotientBasis(Q, mu)
+Inputs
+  Q:
+    a modular quotient or subquotient
+  mu:List
+    a weight in the selected coordinate convention
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  B:Matrix
+    the chosen ambient representatives of the quotient weight-space basis, or null at an absent ambient weight
 Description
   Text
     The columns are chosen ambient representatives of a basis of the
@@ -6087,6 +6554,20 @@ Key
   [projectToQuotient, WeightFormat]
 Headline
   Express ambient vectors in quotient coordinates
+Usage
+  v = projectToQuotient(Q, mu, u)
+Inputs
+  Q:
+    a modular quotient or subquotient
+  mu:List
+    a weight in the selected coordinate convention
+  u:
+    a coefficient list or a matrix of columns in ambient weight-space coordinates
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  v:Matrix
+    the corresponding columns in quotient coordinates
 Description
   Text
     This applies @TO quotientProjection@ to a vector in one weight space.
@@ -6120,6 +6601,20 @@ Key
   [liftFromQuotient, WeightFormat]
 Headline
   Choose ambient representatives of quotient vectors
+Usage
+  v = liftFromQuotient(Q, mu, u)
+Inputs
+  Q:
+    a modular quotient or subquotient
+  mu:List
+    a weight in the selected coordinate convention
+  u:
+    a coefficient list or a matrix of columns in quotient weight-space coordinates
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  v:Matrix
+    the corresponding columns in ambient coordinates
 Description
   Text
     This applies the linear section @TO quotientSection@ to a list of
@@ -6153,6 +6648,14 @@ Key
   (characteristic, WeylCharacter)
 Headline
   Characteristic attached to a module or formal character
+Usage
+  p = characteristic M
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, subquotient, or formal character
+Outputs
+  p:ZZ
+    the prime characteristic, 0 for an integral Weyl module, or null for a formal character with unspecified characteristic
 Description
   Text
     For an integral @TO WeylModuleZ@ the result is 0; for a modular
@@ -6184,6 +6687,14 @@ Key
   (coefficientRing, SubquotientWeylModuleFp)
 Headline
   Coefficient ring of a Weyl module, submodule, or quotient
+Usage
+  R = coefficientRing M
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, or subquotient
+Outputs
+  R:Ring
+    the integers for an integral Weyl module, or the defining prime field
 Description
   Text
     The coefficient ring is @TT "ZZ"@ for an integral Weyl module and the
@@ -6213,6 +6724,14 @@ Key
   (rootSystemType, SubquotientWeylModuleFp)
 Headline
   Finite Cartan type and rank of the ambient root system
+Usage
+  type = rootSystemType M
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, or subquotient
+Outputs
+  type:Sequence
+    the Cartan letter and rank of the ambient root system
 Description
   Text
     This returns the finite Cartan type and rank as a pair. For a modular
@@ -6240,6 +6759,14 @@ Key
   (lieType, SubquotientWeylModuleFp)
 Headline
   Cartan letter of the ambient root system
+Usage
+  type = lieType M
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, or subquotient
+Outputs
+  type:String
+    the Cartan letter of the ambient root system
 Description
   Text
     This returns the type letter of the finite root system, such as
@@ -6265,6 +6792,14 @@ Key
   (lieRank, SubquotientWeylModuleFp)
 Headline
   Rank of the ambient root system
+Usage
+  r = lieRank M
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, or subquotient
+Outputs
+  r:ZZ
+    the number of simple roots in the ambient root system
 Description
   Text
     This is the number of simple roots, equivalently the size of the
@@ -6294,6 +6829,16 @@ Key
   [moduleMetadata, WeightFormat]
 Headline
   Collect the defining data and dimensions of a module
+Usage
+  data = moduleMetadata M
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, or subquotient
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  data:HashTable
+    the defining Cartan data, characteristic, and module dimensions
 Description
   Text
     This returns a hash table containing the ambient Cartan type and matrix,
@@ -6329,6 +6874,14 @@ Key
   (constructionData, SubquotientWeylModuleFp)
 Headline
   Record the integral basis and quotient conventions
+Usage
+  data = constructionData M
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, or subquotient
+Outputs
+  data:HashTable
+    the integral construction data and basis conventions
 Description
   Text
     This gives the Cartan matrix, ambient Dynkin highest weight,
@@ -6363,6 +6916,14 @@ Key
   (pbwRoots, SubquotientWeylModuleFp)
 Headline
   Ordered positive roots indexing PBW exponents
+Usage
+  roots = pbwRoots M
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, or subquotient
+Outputs
+  roots:List
+    the ordered positive roots in simple-root coordinates
 Description
   Text
     This returns the positive roots in simple-root coordinates, in the
@@ -6392,6 +6953,18 @@ Key
   [weightMultiplicity, WeightFormat]
 Headline
   Multiplicity of one weight
+Usage
+  m = weightMultiplicity(M, mu)
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, subquotient, or formal character
+  mu:List
+    a weight in the selected coordinate convention
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  m:ZZ
+    the rank or dimension of the weight space, or the coefficient in a formal character
 Description
   Text
     For a module this returns the dimension of the specified weight space,
@@ -6412,7 +6985,7 @@ Description
 SeeAlso
   weightSpace
   weights
-  character
+  "WeylModules :: character(WeylModuleZ)"
 ///
 
 doc ///
@@ -6442,7 +7015,7 @@ Description
 SeeAlso
   weights
   basisVecs
-  characterTerms
+  "WeylModules :: characterTerms(WeylCharacter)"
 ///
 
 doc ///
@@ -6451,6 +7024,16 @@ Key
   (isSubmoduleOf, SubWeylModuleFp, SubWeylModuleFp)
 Headline
   Test containment of modular submodules
+Usage
+  isSubmoduleOf(S, T)
+Inputs
+  S:SubWeylModuleFp
+    a submodule of a reduced Weyl module
+  T:SubWeylModuleFp
+    a submodule of a reduced Weyl module
+Outputs
+  :Boolean
+    whether S is contained in T
 Description
   Text
     This tests @TEX "$S\\subseteq T$"@ by comparing their weight-space column
@@ -6479,6 +7062,16 @@ Key
   (containsSubmodule, SubWeylModuleFp, SubWeylModuleFp)
 Headline
   Test whether the first submodule contains the second
+Usage
+  containsSubmodule(S, T)
+Inputs
+  S:SubWeylModuleFp
+    a submodule of a reduced Weyl module
+  T:SubWeylModuleFp
+    a submodule of a reduced Weyl module
+Outputs
+  :Boolean
+    whether S contains T
 Description
   Text
     This tests @TEX "$S\\supseteq T$"@, equivalently
@@ -6506,6 +7099,16 @@ Key
   (equalSubmodules, SubWeylModuleFp, SubWeylModuleFp)
 Headline
   Compare two submodules as ambient subspaces
+Usage
+  equalSubmodules(S, T)
+Inputs
+  S:SubWeylModuleFp
+    a submodule of a reduced Weyl module
+  T:SubWeylModuleFp
+    a submodule of a reduced Weyl module
+Outputs
+  :Boolean
+    whether S and T are equal as ambient subspaces
 Description
   Text
     This tests equality of weight-space spans in the same integral ambient
@@ -6532,6 +7135,14 @@ Key
   (submoduleCodimension, SubWeylModuleFp)
 Headline
   Codimension in the full reduced Weyl module
+Usage
+  result = submoduleCodimension S
+Inputs
+  S:SubWeylModuleFp
+    a submodule of a reduced Weyl module
+Outputs
+  result:ZZ
+    the dimension of the full ambient reduction minus the dimension of S
 Description
   Text
     For @TEX "$S\\subseteq V_{\\mathbb F_p}(\\lambda)$"@ this returns
@@ -6557,6 +7168,19 @@ Key
   (submoduleSum, List)
 Headline
   Sum of modular submodules
+Usage
+  U = submoduleSum(S, T)
+  U = submoduleSum modules
+Inputs
+  S:SubWeylModuleFp
+    a submodule of a reduced Weyl module
+  T:SubWeylModuleFp
+    a submodule of a reduced Weyl module
+  modules:List
+    a nonempty list of submodules with the same ambient module and characteristic
+Outputs
+  U:SubWeylModuleFp
+    the sum of the supplied submodules
 Description
   Text
     This constructs the sum by taking the span of the input basis columns
@@ -6586,6 +7210,19 @@ Key
   (submoduleIntersection, List)
 Headline
   Intersection of modular submodules
+Usage
+  U = submoduleIntersection(S, T)
+  U = submoduleIntersection modules
+Inputs
+  S:SubWeylModuleFp
+    a submodule of a reduced Weyl module
+  T:SubWeylModuleFp
+    a submodule of a reduced Weyl module
+  modules:List
+    a nonempty list of submodules with the same ambient module and characteristic
+Outputs
+  U:SubWeylModuleFp
+    the intersection of the supplied submodules
 Description
   Text
     This intersects the input column spans weight by weight over the
@@ -6626,7 +7263,7 @@ Description
     T = subWeylModule(W, 2, {2}, {1})
     M = subquotientWeylModule(S, T)
     dim M
-    character M
+    rawCharacter M
   Text
     The result has dimension 2 with weights 2 and -2, each of multiplicity
     1. It is @TEX "$V(2)/L(0)\\cong L(2)$"@ in characteristic 2; the
@@ -6643,6 +7280,16 @@ Key
   (subquotientWeylModule, SubWeylModuleFp, SubWeylModuleFp)
 Headline
   Construct the subquotient T/S
+Usage
+  M = subquotientWeylModule(S, T)
+Inputs
+  S:SubWeylModuleFp
+    the denominator submodule
+  T:SubWeylModuleFp
+    the numerator submodule, containing S in the same ambient reduction
+Outputs
+  M:SubquotientWeylModuleFp
+    the quotient T/S with its induced action
 Description
   Text
     Given modular submodules @TEX "$S\\subseteq T$"@, this constructs
@@ -6673,6 +7320,14 @@ Key
   (lowerSubmodule, SubquotientWeylModuleFp)
 Headline
   Kernel submodule in the presentation T/S
+Usage
+  result = lowerSubmodule M
+Inputs
+  M:SubquotientWeylModuleFp
+    a subquotient T/S
+Outputs
+  result:SubWeylModuleFp
+    the denominator S, as a submodule of the ambient reduction
 Description
   Text
     For @TEX "$M=T/S$"@ this returns the stored lower submodule
@@ -6685,7 +7340,7 @@ Description
     M = subquotientWeylModule(S, T)
     L = lowerSubmodule M
     dim L
-    character L
+    rawCharacter L
   Text
     The lower submodule is the one-dimensional weight-zero socle
     @TEX "$L(0)$"@. These are exactly the vectors killed when forming the
@@ -6701,6 +7356,14 @@ Key
   (upperSubmodule, SubquotientWeylModuleFp)
 Headline
   Numerator submodule in the presentation T/S
+Usage
+  result = upperSubmodule M
+Inputs
+  M:SubquotientWeylModuleFp
+    a subquotient T/S
+Outputs
+  result:SubWeylModuleFp
+    the numerator T, as a submodule of the ambient reduction
 Description
   Text
     For @TEX "$M=T/S$"@ this returns the stored upper submodule
@@ -6731,6 +7394,18 @@ Key
   [subquotientProjection, WeightFormat]
 Headline
   Projection onto a subquotient weight space
+Usage
+  B = subquotientProjection(M, mu)
+Inputs
+  M:SubquotientWeylModuleFp
+    a subquotient T/S
+  mu:List
+    a weight in the selected coordinate convention
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  B:Matrix
+    the projection from ambient to subquotient weight-space coordinates, or null at an absent ambient weight
 Description
   Text
     For @TEX "$M=T/S$"@ the returned matrix uses ambient coordinates and
@@ -6763,6 +7438,18 @@ Key
   [subquotientSection, WeightFormat]
 Headline
   Choose representatives of subquotient weight-space vectors
+Usage
+  B = subquotientSection(M, mu)
+Inputs
+  M:SubquotientWeylModuleFp
+    a subquotient T/S
+  mu:List
+    a weight in the selected coordinate convention
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  B:Matrix
+    the chosen numerator representatives of the subquotient weight-space basis, or null at an absent ambient weight
 Description
   Text
     For @TEX "$M=T/S$"@ this returns the matrix of a chosen linear section
@@ -6793,6 +7480,18 @@ Key
   [subquotientBasis, WeightFormat]
 Headline
   Ambient representatives of a subquotient weight-space basis
+Usage
+  B = subquotientBasis(M, mu)
+Inputs
+  M:SubquotientWeylModuleFp
+    a subquotient T/S
+  mu:List
+    a weight in the selected coordinate convention
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  B:Matrix
+    the chosen numerator representatives of the subquotient weight-space basis, or null at an absent ambient weight
 Description
   Text
     The columns are chosen vectors of @TEX "$T_\\mu$"@ whose classes form
@@ -6823,6 +7522,20 @@ Key
   [projectToSubquotient, WeightFormat]
 Headline
   Take classes of numerator vectors in subquotient coordinates
+Usage
+  v = projectToSubquotient(M, mu, u)
+Inputs
+  M:SubquotientWeylModuleFp
+    a subquotient T/S
+  mu:List
+    a weight in the selected coordinate convention
+  u:
+    a coefficient list or a matrix of columns in ambient coordinates, lying in the numerator weight space
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  v:Matrix
+    the corresponding columns in subquotient coordinates
 Description
   Text
     This applies @TO subquotientProjection@ to a coefficient list or to
@@ -6853,6 +7566,20 @@ Key
   [liftFromSubquotient, WeightFormat]
 Headline
   Lift subquotient coordinates to chosen numerator representatives
+Usage
+  v = liftFromSubquotient(M, mu, u)
+Inputs
+  M:SubquotientWeylModuleFp
+    a subquotient T/S
+  mu:List
+    a weight in the selected coordinate convention
+  u:
+    a coefficient list or a matrix of columns in subquotient weight-space coordinates
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  v:Matrix
+    the corresponding columns in ambient numerator coordinates
 Description
   Text
     This applies the chosen linear section to a coefficient list or a
@@ -6892,6 +7619,11 @@ Description
     Cartan matrices and all coefficients, independently of the recorded
     characteristic or construction. A directly supplied sum need not be
     Weyl invariant or the character of a representation.
+  Text
+    @TO "WeylModules :: character(WeylModuleZ)"@ gives the corresponding Laurent polynomial in
+    @TO "WeylModules :: characterRing(WeylModuleZ)"@, while @TO rawCharacter@ gives its
+    weight-indexed coefficient table.  The Cartan matrix and characteristic
+    remain part of a @TO WeylCharacter@.
   Example
     C = weylCharacter weylModuleZ(cartanA 2, {1})
     characterTerms C
@@ -6905,7 +7637,7 @@ Description
     virtual.
 SeeAlso
   weylCharacter
-  characterTerms
+  "WeylModules :: characterTerms(WeylCharacter)"
   tensorProductCharacter
 ///
 
@@ -6920,6 +7652,21 @@ Key
   [weylCharacter, WeightFormat]
 Headline
   Construct a formal character with a Cartan matrix
+Usage
+  C = weylCharacter M
+  C = weylCharacter(A, terms)
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, or subquotient
+  A:Matrix
+    a finite-type Cartan matrix
+  terms:HashTable
+    weights mapped to integer coefficients
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  C:WeylCharacter
+    the formal character, stored in Dynkin coordinates
 Description
   Text
     Applied to a module, this takes its weight multiplicities and ambient
@@ -6949,6 +7696,14 @@ Key
   (coordinateConvention, WeylCharacter)
 Headline
   Coordinates in which a formal character is stored
+Usage
+  result = coordinateConvention C
+Inputs
+  C:WeylCharacter
+    a finite formal character
+Outputs
+  result:String
+    the internal weight-coordinate convention, always Dynkin
 Description
   Text
     This returns @TT "\"Dynkin\""@ for every @TO WeylCharacter@.
@@ -6975,6 +7730,14 @@ Key
   (sourceWeightFormat, WeylCharacter)
 Headline
   Coordinate convention supplied when constructing a character
+Usage
+  result = sourceWeightFormat C
+Inputs
+  C:WeylCharacter
+    a finite formal character
+Outputs
+  result:String
+    the weight-coordinate convention supplied at construction
 Description
   Text
     This returns the weight format selected when @TO weylCharacter@
@@ -7000,6 +7763,14 @@ Key
   (isVirtualCharacter, WeylCharacter)
 Headline
   Test whether a formal character has a negative coefficient
+Usage
+  result = isVirtualCharacter C
+Inputs
+  C:WeylCharacter
+    a finite formal character
+Outputs
+  result:Boolean
+    whether any weight coefficient is negative
 Description
   Text
     This is true exactly when at least one weight coefficient is negative.
@@ -7015,8 +7786,8 @@ Description
     is virtual.
 SeeAlso
   WeylCharacter
-  characterTerms
-  decomposeCharacter
+  "WeylModules :: characterTerms(WeylCharacter)"
+  "WeylModules :: decomposeCharacter(Matrix,ZZ,HashTable)"
 ///
 
 doc ///
@@ -7025,6 +7796,14 @@ Key
   (characterMetadata, WeylCharacter)
 Headline
   Coordinates, characteristic, and origin of a formal character
+Usage
+  result = characterMetadata C
+Inputs
+  C:WeylCharacter
+    a finite formal character
+Outputs
+  result:HashTable
+    the recorded characteristic, coordinate conventions, and origin
 Description
   Text
     This returns a hash table recording the internal and supplied
@@ -7050,11 +7829,70 @@ SeeAlso
 doc ///
 Key
   rawCharacter
+  (rawCharacter, WeylModuleZ)
+  (rawCharacter, SubWeylModuleFp)
+  (rawCharacter, QuotientWeylModuleFp)
+  (rawCharacter, SubquotientWeylModuleFp)
   (rawCharacter, WeylCharacter)
+  (rawCharacter, Matrix, RingElement)
   [rawCharacter, WeightFormat]
 Headline
-  Return a weight-multiplicity hash table from a formal character
+  Weight coefficients of a module or formal character
+Usage
+  terms = rawCharacter M
+  terms = rawCharacter(M, WeightFormat => "Partition")
+  terms = rawCharacter(A, c)
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, subquotient,
+    or @TO WeylCharacter@
+  A:Matrix
+    a finite-type Cartan matrix
+  c:RingElement
+    a Laurent polynomial in the character ring of the root system of A
+  WeightFormat => String
+    the coordinate convention for the weights indexing the coefficient table
+Outputs
+  terms:HashTable
+    the nonzero weights mapped to integer coefficients in the selected coordinates
 Description
+  Text
+    This returns a weight-indexed coefficient table, rather than the
+    Laurent polynomial returned by @TO "WeylModules :: character(WeylModuleZ)"@.  For a module, its
+    values are weight-space dimensions or integral ranks.  For a
+    @TO WeylCharacter@ or a Laurent polynomial, the coefficients may
+    be negative.  All output weights use the selected @TO WeightFormat@.
+  Text
+    The two-argument form @TT "rawCharacter(A,c)"@ recovers the weight
+    coefficients of a Laurent polynomial in the corresponding
+    @TO "WeylModules :: characterRing(WeylModuleZ)"@.  It uses the supplied Cartan matrix to recover
+    Dynkin coordinates, including a simultaneous permutation of Cartan
+    rows and columns, and can then convert to partition coordinates.
+    Thus the table uses the node order of @TT "A"@ even when the
+    Laurent variables use the standard order of the character ring.
+  Example
+    A = cartanA 2
+    W = weylModuleZ(A, {1})
+    c = character W
+    rawCharacter(A, c^2)
+  Text
+    The table has coefficients 1, 2, and 1 at weights 2, 0, and -2.
+    These are the Laurent coefficients of
+    @TEX "$(x+x^{-1})^2=x^2+2+x^{-2}$"@ written as weight multiplicities.
+  Example
+    A = cartanB 3
+    perm = {2, 0, 1}
+    B = submatrix(A, perm, perm)
+    C = weylCharacter(B, new HashTable from {{1, 0, 0} => 1})
+    c = character C
+    rawCharacter(B, c)
+  Text
+    The first node of @TT "B"@ is the third node in the standard
+    @TEX "$B_3$"@ order.  The single formal weight is therefore the
+    monomial @TEX "$x_3=e^{\\omega_3}$"@ in the standard character ring,
+    while the recovered table labels it @TT "{1,0,0}"@ in the node
+    order of @TT "B"@.  This single weight is a formal sum, not by
+    itself the character of a representation.
   Text
     This returns the nonzero terms as an ordinary hash table, with weights
     as keys and integer coefficients as values. The requested
@@ -7071,20 +7909,108 @@ Description
     subtracting (1,1,1), which does not change its restriction to
     the diagonal torus of the special linear group. The representative
     convention sets the final coordinate to zero.
+  Text
+    For each weight @TEX "$\\mu$"@ of the module @TT "M"@ (a
+    @TO WeylModuleZ@, @TO SubWeylModuleFp@, or @TO QuotientWeylModuleFp@),
+    returns the formal character @TEX "$\\mathrm{ch}(M)(\\mu) = \\dim M_\\mu$"@
+    as a @TT "HashTable"@ keyed by weight.
+  Text
+    @SUBSECTION "Coordinate convention"@
+  Text
+    As for @TO weights@, keys
+    are by default in Dynkin (fundamental-weight) coordinates: a tuple
+    @TEX "$(m_1, \\ldots, m_n)$"@ of length @TT "n"@ = rank, with
+    @TEX "$m_i = \\langle\\mu, \\alpha_i^\\vee\\rangle$"@.  Pass
+    @TT "WeightFormat => \"Partition\""@ for keys in the
+    @TEX "$\\varepsilon$"@-basis (a tuple of length @TT "n+1"@ for
+    type A with last coordinate set to @TEX "$0$"@; half-integers appear
+    for spin weights in types B/D).  See @TO WeightFormat@ for
+    the conversion formulas.
+  Example
+    -- sl_3 V(2 omega_1) = Gamma^2 of the standard, dim 6.  Six distinct weights,
+    -- all multiplicity 1.
+    W = weylModuleZ(cartanA 3, {2, 0})
+    pairs rawCharacter W
+    pairs rawCharacter(W, WeightFormat => "Partition")
+  Text
+    Each pair @TEX "$(\\mu,1)$"@ contributes the term @TEX "$e^\\mu$"@ to the formal character of @TEX "$D^2(\\mathbb Z^3)$"@.  There are six terms, giving rank six.  The two outputs differ only in their coordinate expressions for @TEX "$\\mu$"@.
+  Example
+    -- sl_3 adjoint = V(1,1), dim 8.  The zero weight has multiplicity 2.
+    Wadj = weylModuleZ(cartanA 3, {1, 1})
+    dim Wadj
+    pairs rawCharacter Wadj
+    -- Note (0,0) -> 2 in the output.
+  Text
+    The entry @TEX "$((0,0),2)$"@ means that the zero-weight space has rank two.  The six root weights have rank one, so the multiplicities sum to eight.
+  Example
+    -- Over characteristic zero, type B_2 V(2 omega_1) is the traceless
+    -- symmetric-square representation of so(5).  This constructs its
+    -- 14-dimensional integral Weyl form; the zero weight has multiplicity 2.
+    Wb = weylModuleZ(cartanB 2, {2, 0})
+    pairs rawCharacter(Wb, WeightFormat => "Partition")
+  Text
+    The zero-weight multiplicity is two and the total multiplicity is 14.  This is the formal character of the integral type-@TEX "$B_2$"@ Weyl module of highest weight @TEX "$2\\omega_1$"@; its reduction has this same formal character in every characteristic.
+  Example
+    -- Character of a quotient in the same coordinates.
+    W = weylModuleZ(cartanA 3, {2, 0})
+    Q = simpleQuotient(W, 2)                            -- L(2,0) mod 2, dim 3
+    pairs rawCharacter Q
+    pairs rawCharacter(Q, WeightFormat => "Partition")
+  Text
+    The head @TEX "$L(2\\omega_1)$"@ has the three weights @TEX "$2\\varepsilon_1,2\\varepsilon_2,2\\varepsilon_3$"@, each of multiplicity one.  It is the Frobenius twist of the natural module in characteristic 2.  The tables express these three terms in Dynkin and canonical partition coordinates.
+  Text
+    The character is the natural input to @TO "WeylModules :: decomposeCharacter(Matrix,ZZ,HashTable)"@,
+    @TO differenceCharacter@, @TO productCharacter@, and the family
+    of decomposition-matrix routines.
+  Text
+    For a @TO WeylCharacter@, return its coefficients as a weight-indexed
+    table. A virtual character may have negative coefficients. These are
+    signed formal coefficients, not dimensions of weight spaces.
+  Example
+    C = weylCharacter weylModuleZ(cartanA 2, {1})
+    T = weylCharacter weylModuleZ(cartanA 2, {0})
+    rawCharacter(C - 3*T)
+  Text
+    The entries at weights 1 and -1 are 1, and the entry at weight zero is
+    -3. The formal sum is @TEX "$e^{\\omega_1}+e^{-\\omega_1}-3e^0$"@,
+    the natural character minus three trivial characters.
 SeeAlso
-  characterTerms
+  "WeylModules :: character(WeylModuleZ)"
+  "WeylModules :: characterRing(WeylModuleZ)"
+  "WeylModules :: characterTerms(WeylCharacter)"
   weylCharacter
+  "WeylModules :: decomposeCharacter(Matrix,ZZ,HashTable)"
   WeightFormat
 ///
 
 doc ///
 Key
-  characterTerms
+  (characterTerms, WeylCharacter, Option, Option)
   (characterTerms, WeylCharacter)
-  [characterTerms, WeightFormat]
-  [characterTerms, WeightOrder]
+  (characterTerms, WeylCharacter, Option)
+  (characterTerms, WeylCharacter, OptionTable)
+  (characterTerms, Option, WeylCharacter)
+  (characterTerms, Option, WeylCharacter, Option)
+  (characterTerms, Option, Option, WeylCharacter)
+  (characterTerms, OptionTable, WeylCharacter)
 Headline
   List the nonzero terms of a formal character
+Usage
+  result = characterTerms C
+  result = characterTerms(C, optionValue)
+  result = characterTerms(C, optionValue, optionValue2)
+Inputs
+  C:WeylCharacter
+    a finite formal character
+  optionValue:
+    a @TO Option@ pair for @TO WeightFormat@ or @TO WeightOrder@,
+    such as @TT "WeightFormat => \"Partition\""@, or the same
+    supported options supplied as an @TO OptionTable@
+  optionValue2:Option
+    a second weight-coordinate or weight-order pair
+Outputs
+  result:List
+    the ordered pairs of weights and nonzero coefficients
 Description
   Text
     This returns pairs @TT "(weight, coefficient)"@ for the nonzero terms,
@@ -7092,6 +8018,11 @@ Description
     The default orders by root depth and then reverse lexicographic Dynkin
     coordinates. Each weight occurs once, even when its coefficient exceeds
     1.
+  Text
+    The listed @TO Option@ and @TO OptionTable@ arguments are positional
+    conveniences on the shared @TO KacMoody@ function.  Use
+    @TO sortedCharacter@ for ordinary M2 optional arguments, including
+    option tables combined with overrides.
   Example
     C = weylCharacter weylModuleZ(cartanA 2, {1})
     characterTerms(C * C)
@@ -7110,6 +8041,14 @@ Key
   (support, WeylCharacter)
 Headline
   Weights with nonzero coefficients in a formal character
+Usage
+  ws = support C
+Inputs
+  C:WeylCharacter
+    a finite formal character
+Outputs
+  ws:List
+    the weights with nonzero coefficients, in Dynkin coordinates
 Description
   Text
     This returns the support of the formal sum in Dynkin coordinates,
@@ -7123,7 +8062,7 @@ Description
     The support consists of 2, 0, and -2. The weight-zero coefficient is 2,
     but support lists only the weights, so it appears once.
 SeeAlso
-  characterTerms
+  "WeylModules :: characterTerms(WeylCharacter)"
   weights
   weightMultiplicity
 ///
@@ -7134,6 +8073,16 @@ Key
   (tensorProductCharacter, WeylCharacter, WeylCharacter)
 Headline
   Multiply formal characters by convolution of weights
+Usage
+  E = tensorProductCharacter(C, D)
+Inputs
+  C:WeylCharacter
+    a finite formal character
+  D:WeylCharacter
+    a finite formal character with the same Cartan matrix
+Outputs
+  E:WeylCharacter
+    the convolution product of the two characters
 Description
   Text
     For @TEX "$C=\\sum_\\mu a_\\mu e^\\mu$"@ and
@@ -7164,6 +8113,20 @@ Key
   [tensorProductFactors, WeightFormat]
 Headline
   Composition multiplicities of a tensor-product character
+Usage
+  factors = tensorProductFactors(C, D, p)
+Inputs
+  C:WeylCharacter
+    a finite character
+  D:WeylCharacter
+    a finite character with the same Cartan matrix
+  p:ZZ
+    a prime
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  factors:List
+    the highest weights and multiplicities of the simple factors of the product character
 Description
   Text
     This multiplies the input characters and decomposes the resulting
@@ -7184,16 +8147,23 @@ Description
     dimensions.
 SeeAlso
   tensorProductCharacter
-  decomposeCharacter
+  "WeylModules :: decomposeCharacter(Matrix,ZZ,HashTable)"
   compositionFactors
 ///
 
 doc ///
 Key
-  dualCharacter
   (dualCharacter, WeylCharacter)
 Headline
   Formal character of the contragredient dual
+Usage
+  result = dualCharacter C
+Inputs
+  C:WeylCharacter
+    a finite formal character
+Outputs
+  result:WeylCharacter
+    the character obtained by negating every weight
 Description
   Text
     This sends @TEX "$\\sum_\\mu c_\\mu e^\\mu$"@ to
@@ -7219,6 +8189,19 @@ Key
   (frobeniusTwistCharacter, WeylCharacter, ZZ, ZZ)
 Headline
   Scale weights by a prime power
+Usage
+  D = frobeniusTwistCharacter(C, p)
+  D = frobeniusTwistCharacter(C, p, e)
+Inputs
+  C:WeylCharacter
+    a finite formal character
+  p:ZZ
+    a prime
+  e:ZZ
+    a nonnegative exponent, equal to 1 in the two-argument form
+Outputs
+  D:WeylCharacter
+    the character obtained by multiplying every weight by p^e
 Description
   Text
     For a prime @TT "p"@ and an integer @TEX "$e\\geq0$"@, this replaces
@@ -7278,6 +8261,20 @@ Key
   (decompositionTable, Matrix, List, List, HashTable)
 Headline
   Attach representation labels to a decomposition matrix
+Usage
+  T = decompositionTable(A, rows, columns, data)
+Inputs
+  A:Matrix
+    a matrix over ZZ with nonnegative entries
+  rows:List
+    distinct row labels, in matrix order
+  columns:List
+    distinct column labels, in matrix order
+  data:HashTable
+    the prime and algebra name, with any additional interpretation of the labels
+Outputs
+  T:DecompositionTable
+    the matrix together with its labels and characteristic
 Description
   Text
     This constructs a @TO DecompositionTable@ from a matrix over
@@ -7308,6 +8305,14 @@ Key
   (rowLabels, DecompositionTable)
 Headline
   Labels of the modules whose composition factors form the rows
+Usage
+  result = rowLabels T
+Inputs
+  T:DecompositionTable
+    a labeled decomposition table
+Outputs
+  result:List
+    the row labels in matrix order
 Description
   Text
     This returns the row labels in matrix order. For Schur-algebra tables
@@ -7332,6 +8337,14 @@ Key
   (columnLabels, DecompositionTable)
 Headline
   Labels of simple modules forming the columns
+Usage
+  result = columnLabels T
+Inputs
+  T:DecompositionTable
+    a labeled decomposition table
+Outputs
+  result:List
+    the column labels in matrix order
 Description
   Text
     This returns the column labels in matrix order. In Schur-algebra
@@ -7357,6 +8370,14 @@ Key
   (prime, DecompositionTable)
 Headline
   Prime characteristic of a decomposition table
+Usage
+  result = prime T
+Inputs
+  T:DecompositionTable
+    a labeled decomposition table
+Outputs
+  result:ZZ
+    the recorded prime characteristic
 Description
   Text
     This returns the prime recorded for the decomposition multiplicities.
@@ -7381,6 +8402,14 @@ Key
   (algebra, DecompositionTable)
 Headline
   Algebra named by a decomposition table
+Usage
+  result = algebra T
+Inputs
+  T:DecompositionTable
+    a labeled decomposition table
+Outputs
+  result:String
+    the recorded algebra name
 Description
   Text
     This returns the algebra name recorded with the table.
@@ -7405,6 +8434,14 @@ Key
   (tableMetadata, DecompositionTable)
 Headline
   Characteristic and labeling convention of a decomposition table
+Usage
+  result = tableMetadata T
+Inputs
+  T:DecompositionTable
+    a labeled decomposition table
+Outputs
+  result:HashTable
+    the recorded characteristic and interpretation of the labels
 Description
   Text
     This returns the recorded algebra, prime, and any additional supplied
@@ -7431,6 +8468,14 @@ Key
   (matrix, DecompositionTable)
 Headline
   Underlying integer matrix of a decomposition table
+Usage
+  A = matrix T
+Inputs
+  T:DecompositionTable
+    a labeled decomposition table
+Outputs
+  A:Matrix
+    the underlying integer matrix in the recorded row and column order
 Description
   Text
     This returns the integer matrix in the order specified by
@@ -7457,6 +8502,18 @@ Key
   (schurAlgebraDecompositionTable, ZZ, ZZ, ZZ)
 Headline
   Labelled decomposition matrix of a Schur algebra
+Usage
+  T = schurAlgebraDecompositionTable(p, n, r)
+Inputs
+  p:ZZ
+    a prime
+  n:ZZ
+    a positive integer, the dimension of the natural module
+  r:ZZ
+    a nonnegative homogeneous degree
+Outputs
+  T:DecompositionTable
+    the labeled decomposition matrix of S(n,r) in characteristic p
 Description
   Text
     For a prime @TT "p"@, a positive integer @TT "n"@, and degree
@@ -7487,6 +8544,16 @@ Key
   (symmetricGroupDecompositionTable, ZZ, ZZ)
 Headline
   Labelled decomposition matrix for a symmetric group
+Usage
+  T = symmetricGroupDecompositionTable(p, n)
+Inputs
+  p:ZZ
+    a prime
+  n:ZZ
+    a positive integer, the degree of the symmetric group
+Outputs
+  T:DecompositionTable
+    the labeled decomposition matrix in the p-restricted dual-Specht convention
 Description
   Text
     For a prime @TT "p"@ and @TEX "$n\\geq1$"@, this returns the
@@ -7548,6 +8615,26 @@ Key
   [socleAnalysis, RequireComplete]
 Headline
   Compute successive socle layers
+Usage
+  R = socleAnalysis(W, p)
+  R = socleAnalysis S
+  R = socleAnalysis Q
+Inputs
+  W:WeylModuleZ
+    an integral Weyl module
+  p:ZZ
+    a prime
+  S:SubWeylModuleFp
+    a submodule specifying the quotient V/S of its ambient reduction
+  Q:QuotientWeylModuleFp
+    a quotient of a reduced Weyl module
+  WeightFormat => String
+    the weight-coordinate convention
+  RequireComplete => Boolean
+    whether to require the full socle filtration under the stated completeness conditions
+Outputs
+  R:SocleAnalysis
+    the computed layers, factor multiplicities, and completeness information
 Description
   Text
     @TT "socleAnalysis(W,p)"@ computes successive socle layers of
@@ -7620,6 +8707,17 @@ Key
   (socleLayerFactors, SocleAnalysis, ZZ)
 Headline
   Simple factors in each computed socle layer
+Usage
+  factors = socleLayerFactors R
+  factors = socleLayerFactors(R, j)
+Inputs
+  R:SocleAnalysis
+    a computation of successive socle layers
+  j:ZZ
+    a one-based layer number
+Outputs
+  factors:
+    a list of factor hash tables, or the factor hash table for layer j
 Description
   Text
     Return the multiplicities of the simple modules in each computed layer.
@@ -7650,6 +8748,14 @@ Key
   (socleLayerGenerators, SocleAnalysis)
 Headline
   Generators of the computed socle layers
+Usage
+  result = socleLayerGenerators R
+Inputs
+  R:SocleAnalysis
+    a computation of successive socle layers
+Outputs
+  result:List
+    the maximal-vector generators of each layer, in the successive quotient coordinates
 Description
   Text
     Return, for each layer, the maximal vectors used to generate its simple
@@ -7678,6 +8784,14 @@ Key
   (cumulativeSocleLayers, SocleAnalysis)
 Headline
   Submodules forming the computed socle filtration
+Usage
+  result = cumulativeSocleLayers R
+Inputs
+  R:SocleAnalysis
+    a computation of successive socle layers
+Outputs
+  result:List
+    the cumulative submodule preimages in the ambient reduction
 Description
   Text
     Return the successive cumulative submodules inside the ambient Weyl
@@ -7707,6 +8821,14 @@ Key
   (socleLayerDimensions, SocleAnalysis)
 Headline
   Dimensions of the successive computed socle layers
+Usage
+  result = socleLayerDimensions R
+Inputs
+  R:SocleAnalysis
+    a computation of successive socle layers
+Outputs
+  result:List
+    the dimensions of the successive semisimple layers
 Description
   Text
     Return the dimensions of the semisimple layers, rather than those of
@@ -7731,6 +8853,14 @@ Key
   (cumulativeSocleDimensions, SocleAnalysis)
 Headline
   Dimensions reached by the computed socle filtration
+Usage
+  result = cumulativeSocleDimensions R
+Inputs
+  R:SocleAnalysis
+    a computation of successive socle layers
+Outputs
+  result:List
+    the dimensions of the cumulative terms in the module being analyzed
 Description
   Text
     Return the dimensions of the cumulative terms in the module being
@@ -7755,6 +8885,14 @@ Key
   (successiveQuotientDimensions, SocleAnalysis)
 Headline
   Dimensions of the quotients in which socles are sought
+Usage
+  result = successiveQuotientDimensions R
+Inputs
+  R:SocleAnalysis
+    a computation of successive socle layers
+Outputs
+  result:List
+    the dimensions of the quotients in which socles were sought
 Description
   Text
     Return the dimension of each successive quotient before its socle is
@@ -7780,6 +8918,14 @@ Key
   (ambiguousWeights, SocleAnalysis)
 Headline
   Weights with multidimensional maximal-vector spaces
+Usage
+  result = ambiguousWeights R
+Inputs
+  R:SocleAnalysis
+    a computation of successive socle layers
+Outputs
+  result:List
+    the weights with multidimensional maximal-vector spaces at some stage
 Description
   Text
     Return all weights at which a maximal-vector space of dimension greater
@@ -7808,6 +8954,14 @@ Key
   (ambiguousWeightsByLayer, SocleAnalysis)
 Headline
   Ambiguous maximal-vector weights in each successive quotient
+Usage
+  result = ambiguousWeightsByLayer R
+Inputs
+  R:SocleAnalysis
+    a computation of successive socle layers
+Outputs
+  result:List
+    the ambiguous maximal-vector weights at each successive stage
 Description
   Text
     Return one list for each stage of the socle search. The @TT "j"@th
@@ -7834,6 +8988,14 @@ Key
   (analysisIssues, SocleAnalysis)
 Headline
   Reasons a socle computation may be incomplete
+Usage
+  result = analysisIssues R
+Inputs
+  R:SocleAnalysis
+    a computation of successive socle layers
+Outputs
+  result:List
+    the reasons that the computed filtration may be incomplete
 Description
   Text
     Return the explanations recorded by the socle search: ambiguous
@@ -7860,6 +9022,14 @@ Key
   (socleAnalysisPrime, SocleAnalysis)
 Headline
   Characteristic of a socle computation
+Usage
+  p = socleAnalysisPrime R
+Inputs
+  R:SocleAnalysis
+    a computation of successive socle layers
+Outputs
+  p:ZZ
+    the prime characteristic of the analysis
 Description
   Text
     Return the prime @TEX "$p$"@ over which the socle layers were computed.
@@ -7883,6 +9053,14 @@ Key
   (socleAnalysisModuleDimension, SocleAnalysis)
 Headline
   Dimension of the module whose socle is analyzed
+Usage
+  d = socleAnalysisModuleDimension R
+Inputs
+  R:SocleAnalysis
+    a computation of successive socle layers
+Outputs
+  d:ZZ
+    the dimension of the module whose filtration was computed
 Description
   Text
     Return the dimension of the module being analyzed. A submodule argument
@@ -7906,6 +9084,14 @@ Key
   (socleAnalysisComplete, SocleAnalysis)
 Headline
   Whether the computed filtration reaches the whole module
+Usage
+  socleAnalysisComplete R
+Inputs
+  R:SocleAnalysis
+    a computation of successive socle layers
+Outputs
+  :Boolean
+    whether the computed filtration reaches the whole module
 Description
   Text
     Return @TT "true"@ when the computed filtration reaches the whole module.
@@ -7936,6 +9122,25 @@ Key
   (socleLength, QuotientWeylModuleFp)
 Headline
   Number of computed socle layers
+Usage
+  n = socleLength R
+  n = socleLength(W, p)
+  n = socleLength S
+  n = socleLength Q
+Inputs
+  R:SocleAnalysis
+    a computation of successive socle layers
+  W:WeylModuleZ
+    an integral Weyl module
+  p:ZZ
+    a prime
+  S:SubWeylModuleFp
+    a submodule specifying the quotient V/S of its ambient reduction
+  Q:QuotientWeylModuleFp
+    a quotient of a reduced Weyl module
+Outputs
+  n:ZZ
+    the number of layers found by the socle search
 Description
   Text
     Return the number of layers in a @TO SocleAnalysis@. With a Weyl module
@@ -7966,6 +9171,14 @@ Key
   (isCertified, SocleDiagram)
 Headline
   Whether the full socle filtration was determined
+Usage
+  isCertified R
+Inputs
+  R:
+    a SocleAnalysis, ExtensionData, or SocleDiagram
+Outputs
+  :Boolean
+    whether the full socle filtration was determined under the stated completeness conditions
 Description
   Text
     For a @TO SocleAnalysis@, return @TT "true"@ exactly when the computed
@@ -8001,6 +9214,21 @@ Key
   [compositionFactors, WeightFormat]
 Headline
   Highest weights and multiplicities of the composition factors
+Usage
+  factors = compositionFactors(W, p)
+  factors = compositionFactors M
+Inputs
+  W:WeylModuleZ
+    an integral Weyl module
+  p:ZZ
+    a prime
+  M:
+    a modular submodule, quotient, or subquotient
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  factors:List
+    the highest weights and multiplicities of the composition factors
 Description
   Text
     Return an ordered list of @TT "(highestWeight,multiplicity)"@ pairs.
@@ -8019,19 +9247,29 @@ Description
     that their nonsplit extension is a direct sum.
 SeeAlso
   decompositionNumbers
-  isIrreducible
+  "WeylModules :: isIrreducible(WeylModuleZ,ZZ)"
   socleAnalysis
 ///
 
 doc ///
 Key
-  isIrreducible
   (isIrreducible, WeylModuleZ, ZZ)
   (isIrreducible, SubWeylModuleFp)
   (isIrreducible, QuotientWeylModuleFp)
   (isIrreducible, SubquotientWeylModuleFp)
 Headline
   Test whether a nonzero module is simple
+Usage
+  isIrreducible(W, p)
+  isIrreducible W
+Inputs
+  W:
+    an integral Weyl module, or a modular submodule, quotient, or subquotient
+  p:ZZ
+    a prime, supplied for an integral Weyl module
+Outputs
+  :Boolean
+    whether the nonzero module has composition length one
 Description
   Text
     Return @TT "true"@ precisely when the module is nonzero and its
@@ -8093,6 +9331,26 @@ Key
   [extensionData, RequireComplete]
 Headline
   Describe the simple factors and socle filtration of an extension
+Usage
+  E = extensionData(W, p)
+  E = extensionData S
+  E = extensionData Q
+Inputs
+  W:WeylModuleZ
+    an integral Weyl module
+  p:ZZ
+    a prime
+  S:SubWeylModuleFp
+    a submodule specifying the quotient V/S of its ambient reduction
+  Q:QuotientWeylModuleFp
+    a quotient of a reduced Weyl module
+  WeightFormat => String
+    the weight-coordinate convention
+  RequireComplete => Boolean
+    whether to require the full socle filtration under the stated completeness conditions
+Outputs
+  E:ExtensionData
+    the composition factors, socle layers, and two-factor extension information
 Description
   Text
     Compute composition factors, composition length, and socle layers of the
@@ -8123,6 +9381,14 @@ Key
   (isTwoFactorExtension, ExtensionData)
 Headline
   Recognize a nonsplit extension with two simple factors
+Usage
+  result = isTwoFactorExtension E
+Inputs
+  E:ExtensionData
+    the composition factors and socle analysis of a modular quotient
+Outputs
+  result:Boolean
+    whether the module is a determined nonsplit extension of two simple factors
 Description
   Text
     Return @TT "true"@ when the module has composition length two, its
@@ -8180,6 +9446,14 @@ Key
   (chevalleyActionMatrices, SubquotientWeylModuleFp)
 Headline
   Matrices of the simple Chevalley generators on the whole module
+Usage
+  D = chevalleyActionMatrices M
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, or subquotient
+Outputs
+  D:ChevalleyActionData
+    the simple Chevalley generators in a common weight basis
 Description
   Text
     Return square matrices for @TEX "$e_i,f_i,h_i$"@, for all simple roots,
@@ -8215,6 +9489,14 @@ Key
   (raisingMatrices, ChevalleyActionData)
 Headline
   Matrices of the simple raising operators
+Usage
+  result = raisingMatrices D
+Inputs
+  D:ChevalleyActionData
+    the simple Chevalley generators in a common weight basis
+Outputs
+  result:List
+    the matrices of the simple raising operators
 Description
   Text
     Return the list of matrices for @TEX "$e_1,\\ldots,e_r$"@ in the
@@ -8241,6 +9523,14 @@ Key
   (loweringMatrices, ChevalleyActionData)
 Headline
   Matrices of the simple lowering operators
+Usage
+  result = loweringMatrices D
+Inputs
+  D:ChevalleyActionData
+    the simple Chevalley generators in a common weight basis
+Outputs
+  result:List
+    the matrices of the simple lowering operators
 Description
   Text
     Return the list of matrices for @TEX "$f_1,\\ldots,f_r$"@ in the
@@ -8266,6 +9556,14 @@ Key
   (cartanMatrices, ChevalleyActionData)
 Headline
   Matrices of the simple coroots
+Usage
+  result = cartanMatrices D
+Inputs
+  D:ChevalleyActionData
+    the simple Chevalley generators in a common weight basis
+Outputs
+  result:List
+    the matrices of the simple coroot operators
 Description
   Text
     Return the matrices for @TEX "$h_1,\\ldots,h_r$"@ in the common
@@ -8293,6 +9591,14 @@ Key
   (globalBasis, ChevalleyActionData)
 Headline
   Weight and local index of each vector in the common basis
+Usage
+  result = globalBasis D
+Inputs
+  D:ChevalleyActionData
+    the simple Chevalley generators in a common weight basis
+Outputs
+  result:List
+    the weight and local basis index of each vector in the common basis
 Description
   Text
     Return the ordered list of pairs @TT "(weight,localIndex)"@ specifying
@@ -8323,6 +9629,18 @@ Key
   (dividedPowerActionE, SubquotientWeylModuleFp, ZZ, ZZ)
 Headline
   Matrix of a simple raising divided power
+Usage
+  B = dividedPowerActionE(M, i, n)
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, or subquotient
+  i:ZZ
+    a one-based simple-root index
+  n:ZZ
+    a nonnegative integer
+Outputs
+  B:Matrix
+    the matrix of the nth simple raising divided power, in the common weight basis
 Description
   Text
     @TT "dividedPowerActionE(M,i,n)"@ gives the matrix of
@@ -8355,6 +9673,18 @@ Key
   (dividedPowerActionF, SubquotientWeylModuleFp, ZZ, ZZ)
 Headline
   Matrix of a simple lowering divided power
+Usage
+  B = dividedPowerActionF(M, i, n)
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, or subquotient
+  i:ZZ
+    a one-based simple-root index
+  n:ZZ
+    a nonnegative integer
+Outputs
+  B:Matrix
+    the matrix of the nth simple lowering divided power, in the common weight basis
 Description
   Text
     @TT "dividedPowerActionF(M,i,n)"@ gives the matrix of
@@ -8387,6 +9717,18 @@ Key
   (binomialCartanAction, SubquotientWeylModuleFp, ZZ, ZZ)
 Headline
   Matrix of a binomial coroot operator
+Usage
+  B = binomialCartanAction(M, i, n)
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, or subquotient
+  i:ZZ
+    a one-based simple-root index
+  n:ZZ
+    a nonnegative integer
+Outputs
+  B:Matrix
+    the matrix of the nth binomial in the selected simple coroot, in the common weight basis
 Description
   Text
     @TT "binomialCartanAction(M,i,n)"@ gives the Kostant-form operator
@@ -8449,6 +9791,16 @@ Key
   [checkWeylModule, CheckLevel]
 Headline
   Check dimensions and the Chevalley action of a module
+Usage
+  R = checkWeylModule M
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, or subquotient
+  CheckLevel => String
+    the dimension and action relations to check
+Outputs
+  R:WeylModuleCheck
+    the results of the requested dimension and action checks
 Description
   Text
     Return a @TO WeylModuleCheck@ for an integral or modular module.
@@ -8502,7 +9854,7 @@ Description
     @TT "\"Serre\""@. Basic checks dimensions and the consistency of the
     stored actions. Relations additionally checks the Cartan and mixed commutator
     relations. Serre also checks the positive and negative Serre relations.
-    The default is Basic for @TO checkWeylModule@ and Serre for
+    The default is Relations for @TO checkWeylModule@ and Serre for
     @TO verifyRepresentation@.
   Example
     W = weylModuleZ(cartanA 2, {2})
@@ -8528,6 +9880,16 @@ Key
   [verifyRepresentation, CheckLevel]
 Headline
   Check the Chevalley--Serre relations
+Usage
+  R = verifyRepresentation M
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, or subquotient
+  CheckLevel => String
+    the dimension and action relations to check
+Outputs
+  R:WeylModuleCheck
+    the results of the requested dimension and action checks
 Description
   Text
     Perform @TO checkWeylModule@ with default @TT "CheckLevel => \"Serre\""@.
@@ -8557,6 +9919,14 @@ Key
   (isValid, WeylModuleCheck)
 Headline
   Whether all requested representation checks pass
+Usage
+  result = isValid R
+Inputs
+  R:WeylModuleCheck
+    the results of representation checks
+Outputs
+  result:Boolean
+    whether every requested check passed
 Description
   Text
     Return @TT "true"@ when the @TO WeylModuleCheck@ has no failed
@@ -8582,6 +9952,14 @@ Key
   (verificationChecks, WeylModuleCheck)
 Headline
   Truth values of the requested representation checks
+Usage
+  result = verificationChecks R
+Inputs
+  R:WeylModuleCheck
+    the results of representation checks
+Outputs
+  result:HashTable
+    the names and truth values of the requested checks
 Description
   Text
     Return the table of check names and truth values in a
@@ -8608,6 +9986,14 @@ Key
   (verificationFailures, WeylModuleCheck)
 Headline
   Discrepancies found in a representation check
+Usage
+  result = verificationFailures R
+Inputs
+  R:WeylModuleCheck
+    the results of representation checks
+Outputs
+  result:List
+    the failed assertions with their weights, indices, and discrepancies
 Description
   Text
     Return one entry for each failed assertion. An entry gives the check,
@@ -8636,6 +10022,23 @@ Key
   [weylHomDimension, WeightFormat]
 Headline
   Dimension of homomorphisms from a Weyl module
+Usage
+  result = weylHomDimension(W, p, mu)
+  result = weylHomDimension(Q, mu)
+Inputs
+  W:WeylModuleZ
+    an integral Weyl module
+  p:ZZ
+    a prime
+  Q:QuotientWeylModuleFp
+    the target quotient over its defining prime field
+  mu:List
+    a dominant highest weight in the selected coordinate convention
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  result:ZZ
+    the dimension of the Weyl-homomorphism space
 Description
   Text
     For a dominant integral weight @TEX "$\\mu$"@, a homomorphism
@@ -8668,6 +10071,23 @@ Key
   [weylHomGenerators, WeightFormat]
 Headline
   Images of highest-weight vectors for a basis of Weyl homomorphisms
+Usage
+  result = weylHomGenerators(W, p, mu)
+  result = weylHomGenerators(Q, mu)
+Inputs
+  W:WeylModuleZ
+    an integral Weyl module
+  p:ZZ
+    a prime
+  Q:QuotientWeylModuleFp
+    the target quotient over its defining prime field
+  mu:List
+    a dominant highest weight in the selected coordinate convention
+  WeightFormat => String
+    the weight-coordinate convention
+Outputs
+  result:List
+    the images of highest-weight vectors specifying a basis of Weyl homomorphisms
 Description
   Text
     For a dominant integral weight @TEX "$\\mu$"@, return a basis of
@@ -8733,6 +10153,14 @@ Key
   (weightGraph, SubquotientWeylModuleFp)
 Headline
   Construct the graph of ordinary simple lowering maps
+Usage
+  G = weightGraph M
+Inputs
+  M:
+    an integral Weyl module, modular submodule, quotient, or subquotient
+Outputs
+  G:WeylGraph
+    the weight spaces and ranks of nonzero simple lowering maps
 Description
   Text
     @SUBSECTION "Weights and lowering maps"@
@@ -8837,6 +10265,14 @@ Key
   (graphVertices, WeylGraph)
 Headline
   Weights and multiplicities of the vertices
+Usage
+  result = graphVertices G
+Inputs
+  G:WeylGraph
+    a weight graph
+Outputs
+  result:List
+    the weights and multiplicities of its vertices
 Description
   Text
     Return the list of vertex tables in a weight graph. Each contains
@@ -8865,6 +10301,14 @@ Key
   (graphEdges, WeylGraph)
 Headline
   Source, target, and rank of each nonzero lowering map
+Usage
+  result = graphEdges G
+Inputs
+  G:WeylGraph
+    a weight graph
+Outputs
+  result:List
+    the source, target, simple-root index, and rank of each edge
 Description
   Text
     Return one table per nonzero ordinary lowering map. Its entries
@@ -8927,6 +10371,25 @@ Key
   (socleDiagram, QuotientWeylModuleFp)
 Headline
   Arrange the computed socle layers in a diagram
+Usage
+  D = socleDiagram R
+  D = socleDiagram(W, p)
+  D = socleDiagram S
+  D = socleDiagram Q
+Inputs
+  R:SocleAnalysis
+    a computation of successive socle layers
+  W:WeylModuleZ
+    an integral Weyl module
+  p:ZZ
+    a prime
+  S:SubWeylModuleFp
+    a submodule specifying the quotient V/S of its ambient reduction
+  Q:QuotientWeylModuleFp
+    a quotient of a reduced Weyl module
+Outputs
+  D:SocleDiagram
+    the computed simple factors arranged by socle layer
 Description
   Text
     @SUBSECTION "Socle layers"@
@@ -9001,6 +10464,14 @@ Key
   (diagramLayers, SocleDiagram)
 Headline
   Factors and dimensions in each layer of a socle diagram
+Usage
+  result = diagramLayers D
+Inputs
+  D:SocleDiagram
+    a socle diagram
+Outputs
+  result:List
+    the factor multiplicities, dimensions, and ambiguity information of its layers
 Description
   Text
     Return the layer tables of a @TO SocleDiagram@, in order from bottom
@@ -9032,6 +10503,17 @@ Key
   (toDot, SocleDiagram, String)
 Headline
   Write a Graphviz description of a weight graph or socle diagram
+Usage
+  text = toDot G
+  filename = toDot(G, file)
+Inputs
+  G:
+    a WeylGraph or SocleDiagram
+  file:String
+    the name of a new output file
+Outputs
+  result:String
+    the Graphviz description, or the absolute output filename in the two-argument form
 Description
   Text
     With one argument, return the DOT string describing the supplied
@@ -9071,6 +10553,17 @@ Key
   (toSVG, SocleDiagram, String)
 Headline
   Draw a weight graph or socle diagram as a vector image
+Usage
+  text = toSVG G
+  filename = toSVG(G, file)
+Inputs
+  G:
+    a WeylGraph or SocleDiagram
+  file:String
+    the name of a new output file
+Outputs
+  result:String
+    the SVG drawing, or the absolute output filename in the two-argument form
 Description
   Text
     With one argument, return the SVG image as a string. With a filename,
@@ -9110,6 +10603,14 @@ Key
   (viewGraph, SocleDiagram)
 Headline
   Open the drawing of a weight graph or socle diagram
+Usage
+  filename = viewGraph G
+Inputs
+  G:
+    a WeylGraph or SocleDiagram
+Outputs
+  filename:String
+    the filename of the temporary SVG drawing opened in the configured viewer
 Description
   Text
     Save the drawing as a temporary SVG image, open it with the configured
@@ -9142,6 +10643,14 @@ Key
   (show, SocleDiagram)
 Headline
   Open a weight graph or socle diagram
+Usage
+  filename = show G
+Inputs
+  G:
+    a WeylGraph or SocleDiagram
+Outputs
+  filename:String
+    the filename of the temporary SVG drawing opened in the configured viewer
 Description
   Text
     For these diagram types, @TT "show G"@ is the same as @TT "viewGraph G"@:
@@ -9168,6 +10677,14 @@ Key
   (html, SocleDiagram)
 Headline
   The SVG drawing for insertion in HTML
+Usage
+  image = html G
+Inputs
+  G:
+    a WeylGraph or SocleDiagram
+Outputs
+  image:String
+    the SVG drawing for insertion in HTML
 Description
   Text
     Return the same SVG string as @TO toSVG@. It describes the weight
@@ -9245,6 +10762,16 @@ Key
   (symbol +, WeylCharacter, WeylCharacter)
 Headline
   Add two formal characters
+Usage
+  E = C + D
+Inputs
+  C:WeylCharacter
+    a finite formal character
+  D:WeylCharacter
+    a finite formal character with the same Cartan matrix
+Outputs
+  E:WeylCharacter
+    the sum of the weight coefficients
 Description
   Text
     Add the coefficients at each weight in the common Cartan datum.
@@ -9262,7 +10789,7 @@ Description
 SeeAlso
   WeylCharacter
   weylCharacter
-  characterTerms
+  "WeylModules :: characterTerms(WeylCharacter)"
 ///
 
 doc ///
@@ -9271,6 +10798,17 @@ Key
   (symbol -, WeylCharacter)
 Headline
   Subtract formal characters or take an additive inverse
+Usage
+  E = C - D
+  E = -C
+Inputs
+  C:WeylCharacter
+    a finite formal character
+  D:WeylCharacter
+    a finite formal character with the same Cartan matrix
+Outputs
+  E:WeylCharacter
+    the difference, or the additive inverse in the unary form
 Description
   Text
     Binary subtraction subtracts the coefficient at each weight, and unary
@@ -9300,6 +10838,17 @@ Key
   (symbol *, WeylCharacter, ZZ)
 Headline
   Multiply formal characters or multiply by an integer
+Usage
+  E = a * b
+Inputs
+  a:
+    a finite formal character or an integer scalar
+  b:
+    a finite formal character or an integer scalar; at least one argument
+    must be a character, and two characters must have the same Cartan matrix
+Outputs
+  E:WeylCharacter
+    the convolution product, or the character with coefficients multiplied by n
 Description
   Text
     The product of two characters is convolution of their weight
@@ -9327,6 +10876,16 @@ Key
   (symbol ==, WeylCharacter, WeylCharacter)
 Headline
   Compare formal characters in the same Cartan datum
+Usage
+  C == D
+Inputs
+  C:WeylCharacter
+    a finite formal character
+  D:WeylCharacter
+    a finite formal character
+Outputs
+  :Boolean
+    whether the Cartan matrices and all weight coefficients agree
 Description
   Text
     Equality means that the Cartan matrices agree and every weight has the
@@ -9347,6 +10906,6 @@ Description
     lattice and its modular reduction are nevertheless different modules.
 SeeAlso
   WeylCharacter
-  character
+  "WeylModules :: character(WeylModuleZ)"
   characteristic
 ///
