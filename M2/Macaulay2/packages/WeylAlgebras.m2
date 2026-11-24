@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage("WeylAlgebras",
      Version => "1.4.1.1",
-     Date => "February 2023",
+     Date => "May 2026",
      Headline => "D-modules",
      HomePage => "https://antonleykin.math.gatech.edu/Dmodules/",
      AuxiliaryFiles => true,
@@ -130,6 +130,7 @@ beginDocumentation()
 load "WeylAlgebras/DOC/main.m2"
 load "WeylAlgebras/DOC/basics.m2"   -- basic commands
 load "WeylAlgebras/DOC/general.m2"
+load "WeylAlgebras/DOC/worksCited.m2"
 
 --------------------------------------------------------------------------------
 
