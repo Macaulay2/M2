@@ -101,7 +101,7 @@ gushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
     );
     if str === "K3 surface of genus 8 with class (9,5)" then (
         G15 := Grass replace(1,5,Grass ring G);
-        pr := rationalMap(G15,ring G,select(gens ambient G15,g -> last last baseName g != 5));
+        pr := legacyRationalMap(G15,ring G,select(gens ambient G15,g -> last last baseName g != 5));
         X = gushelMukaiFourfold(pr sub(ideal for i to 5 list random(1,ambient G15),G15),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#(surface X,"label") = 3;
         return X;
@@ -167,7 +167,7 @@ gushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
         X.cache#(surface X,"label") = "mukai26''";
         return X;
     );
-    error(///not valid string, permitted strings are:
+    error(///input string not recognized; permitted strings are:
 "sigma-plane",
 "rho-plane",
 "tau-quadric",
@@ -184,45 +184,141 @@ gushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
 "triple projection of K3 surface of degree 26"///);
 );
 
-gushelMukaiFourfold String := o -> str -> gushelMukaiFourfold(str,ZZ/65521,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+gushelMukaiFourfold String := o -> str -> gushelMukaiFourfold(str,if PP.ring === null then ZZ/65521 else PP.ring,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
-expression GushelMukaiFourfold := X -> expression("GM fourfold containing a surface of degree "|toString(degree surface X)|" and sectional genus "|toString(sectionalGenus surface X)|(if X.cache#?(surface X,"classSurfaceInG14") then (" with class "|toString(first cycleClass X)) else ""));
+netTexDescription GushelMukaiFourfold := o -> X -> (
+    if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (
+        toString getAttribute(X,ReverseDictionary),
+        texMath getAttribute(X,ReverseDictionary)
+    );
+    if o#"Short" then (
+        if compStatusLatticeDisc X >= 2 then return (
+            shortDescriptionFourfold(X,false),
+            texMath shortDescriptionFourfoldTeX(X,false)
+        ) else return (
+            "Gushel-Mukai fourfold",
+            "\\text{Gushel-Mukai fourfold}"
+        );
+    );
+    S := surface X;
+    F := ambientFivefold X;
+    (netX,texX) := netTexDescription projectiveVariety ring X;
+    (netF,texF) := netTexDescription F;
+    netS := surfaceDescription(9,S);
+    texS := last netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
+    netStr := net("GM fourfold: " | netX);
+    netStr = netStr || net("ambient fivefold: " | netF);
+    netStr = netStr || net("surface: " | netS);
+    texStr := "\\begin{aligned}&\\text{GM fourfold: }" | texX;
+    texStr = texStr | newline | "\\\\&\\text{ambient fivefold: }" | texF;
+    texStr = texStr | newline | "\\\\&\\text{surface: }" | texS;
+    if compStatusLatticeDisc X >= 2 then (
+        d := discriminant X;
+        cS := first cycleClass X;
+        M := X.cache#(S,"LatticeIntersectionMatrix");
+        (q,r) := quotientRemainder(d,8);
+        netStr = netStr || net("class in G(1,4): " | (toString cS));
+        netStr = netStr || net "lattice discriminant:";
+        netStr = netStr || ((net "det(") | (net M) | net(") = " | (toString d) | " = " | (toString q) | "*8 + " | (toString r)));
+        texStr = texStr | newline | "\\\\&\\text{class in }\\mathbb{G}(1,4)\\text{: }" | (replace("s_","\\\\sigma_",texMath cS));
+        texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
+        texStr = texStr | newline | "\\\\&\\det" | (texMath M) | " = " | (texMath d) | " = " | (texMath q) | "\\cdot 8 + " | (texMath r);
+    );
+    (netStr,texStr | "\\end{aligned}")
+);
 
 describe GushelMukaiFourfold := X -> (
-    (cS,ab) := cycleClass X;
-    (a,b) := ab;
     recognize X;
-    discrX := discriminant X;
-    descr:="Special Gushel-Mukai fourfold of discriminant "|toString(discrX);
-    if discrX % 8 == 2 then (
-        if even(a+b) and odd(b) then
-            descr = descr|"(')"
-        else
-            if odd(a+b) and even(b) then
-                descr = descr|"('')"
-            else error "internal error encountered"
+    S := surface X;
+    cS := first cycleClass X;
+    isGushel := dim singLocus ambientFivefold X >= 0;
+    (netS,texS) := netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true,"Indent"=>0);
+    netDescr := "Special " | shortDescriptionFourfold(X,false);
+    netDescr = netDescr || ("containing a " | netS);
+    netDescr = netDescr || ("whose class in G(1,4) is " | toString cS);
+    netDescr = netDescr || (if isGushel then "Type: Gushel (not ordinary)" else "Type: ordinary");
+    texDescr := "\\begin{aligned}&\\text{Special }" | (texMath shortDescriptionFourfoldTeX(X,false));
+    texDescr = texDescr | newline | "\\\\&\\text{containing a }" | texS;
+    texDescr = texDescr | newline | "\\\\&\\text{whose class in }\\mathbb{G}(1,4)\\text{ is }" | replace("s_","\\\\sigma_",texMath cS);
+    texDescr = texDescr | newline | "\\\\&\\text{" | (if isGushel then "Type: Gushel (not ordinary)" else "Type: ordinary") | "}";
+    if instance(recognize X,ZZ) then (
+        netDescr = netDescr || ("(case " | (toString recognize X) | " of Table 1 in arXiv:2002.07026)");
+        texDescr = texDescr | newline | "\\\\&\\text{(case }" | (texMath recognize X) | "\\text{ of Table 1 in arXiv:2002.07026)}";
     );
-    descr = descr|newline|"containing a "|surfaceDescription(0,surface X);
-    descr = descr|newline|"and with class in G(1,4) given by "|toString(cS);
-    if dim singLocus ambientFivefold X >= 0 then descr = descr|newline|"Type: Gushel (not ordinary)" else descr = descr|newline|"Type: ordinary";
-    if instance(recognize X,ZZ) then descr = descr|newline|"(case "|toString(recognize X)|" of Table 1 in arXiv:2002.07026)";
     if recognize X === "gushel26''" then (
-        if dim singLocus ambientFivefold X >= 0
-        then descr = descr|newline|"(case considered in Section 1 of arXiv:2003.07809)"
-        else descr = descr|newline|"(case discovered in November 2021; see also Section 1 of arXiv:2003.07809)";
+        if isGushel then (
+            netDescr = netDescr || "(case considered in Section 1 of arXiv:2003.07809)";
+            texDescr = texDescr | newline | "\\\\&\\text{(case considered in Section 1 of arXiv:2003.07809)}";
+        ) else (
+            netDescr = netDescr || "(case discovered in November 2021; see also Section 1 of arXiv:2003.07809)";
+            texDescr = texDescr | newline | "\\\\&\\text{(case discovered in November 2021; see also Section 1 of arXiv:2003.07809)}";
+        );
     );
-    if recognize X === "mukai26''" and dim singLocus ambientFivefold X >= 0 then descr = descr|newline|"(case considered in Section 2 of arXiv:2003.07809)";
-    if recognize X === "mukai26''" and dim singLocus ambientFivefold X == -1 then descr = descr|newline|"(case considered in Section 3 of arXiv:2003.07809)";
-    if recognize X === "october2021-26''" or recognize X === "october2021-28" or recognize X === "october2021-28-2" or recognize X === "october2021-34'" then descr = descr|newline|"(case discovered in October 2021)";
-    if recognize X === "october2021-20" then descr = descr|newline|"(case discovered in October 2021; see also Table 1 of arXiv:2003.07809)";
-    if recognize X === "april2022-GM42''" then descr = descr|newline|"(strange example discovered in October 2021)";
-    if computationStatus X >= 0 then descr = descr|newline|(computationStatusLog X)|newline|toString(describeMirrorFourfoldAndK3 X);
-    net expression descr
+    if recognize X === "mukai26''" and isGushel then (
+        netDescr = netDescr || "(case considered in Section 2 of arXiv:2003.07809)";
+        texDescr = texDescr | newline | "\\\\&\\text{(case considered in Section 2 of arXiv:2003.07809)}";
+    );
+    if recognize X === "mukai26''" and not isGushel then (
+        netDescr = netDescr || "(case considered in Section 3 of arXiv:2003.07809)";
+        texDescr = texDescr | newline | "\\\\&\\text{(case considered in Section 3 of arXiv:2003.07809)}";
+    );
+    if member(recognize X,{"october2021-26''","october2021-28","october2021-28-2","october2021-34'"}) then (
+        netDescr = netDescr || "(case discovered in October 2021)";
+        texDescr = texDescr | newline | "\\\\&\\text{(case discovered in October 2021)}";
+    );
+    if recognize X === "october2021-20" then (
+        netDescr = netDescr || "(case discovered in October 2021; see also Table 1 of arXiv:2003.07809)";
+        texDescr = texDescr | newline | "\\\\&\\text{(case discovered in October 2021; see also Table 1 of arXiv:2003.07809)}";
+    );
+    if recognize X === "april2022-GM42''" then (
+        netDescr = netDescr || "(strange example discovered in October 2021)";
+        texDescr = texDescr | newline | "\\\\&\\text{(strange example discovered in October 2021)}";
+    );
+    if computationStatus X >= 0 then (
+        (netMirror,texMirror) := describeMirrorFourfoldAndK3 X;
+        netDescr = netDescr || (computationStatusLog X) || netMirror;
+        texDescr = texDescr | newline | "\\\\&\\text{" | computationStatusLog X | "}";
+        texDescr = texDescr | newline | "\\\\" | texMirror;
+    );
+    if X.cache#?(S,"parameterCount") then (
+        (w,xyz) := X.cache#(S,"parameterCount");
+        (x,y,z) := xyz;
+        if w =!= 39 - (y+(x-1)-z) then error "internal error encountered";
+        netDescr = netDescr || ("Parameter count: " | toString w | " = 39 - (" | toString y | " + " | toString(x-1) | " - " | toString z | ")");
+        texDescr = texDescr | newline | "\\\\&\\text{Parameter count: }" | (texMath w) | " = 39 - (" | (texMath y) | " + " | (texMath(x-1)) | " - " | (texMath z) | ")";
+    );
+    if X.cache#?"CustomData" then netDescr = netDescr || (toString X.cache#"CustomData");
+    netTexMath(netDescr,texDescr | "\\end{aligned}")
 );
 
 shortDescriptionFourfold (GushelMukaiFourfold,Boolean) := (X,UseAttribute) -> (
     if UseAttribute and hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
-    "Gushel-Mukai fourfold of discriminant "|(discriminant X)
+    d := discriminant X;
+    discrStr := toString d;
+    if d % 8 == 2 then (
+        (a,b) := last cycleClass X;
+        if even(a+b) and odd(b) then (
+            discrStr = discrStr | "(')";
+        ) else if odd(a+b) and even(b) then (
+            discrStr = discrStr | "('')";
+        ) else error "internal error encountered";
+    );
+    "Gushel-Mukai fourfold of discriminant " | discrStr
+);
+
+shortDescriptionFourfoldTeX (GushelMukaiFourfold,Boolean) := (X,UseAttribute) -> (
+    if UseAttribute and hasAttribute(X,ReverseDictionary) then return shortTeX texMath getAttribute(X,ReverseDictionary);
+    d := discriminant X;
+    discrStr := "{" | (texMath d) | "}";
+    if d % 8 == 2 then (
+        (a,b) := last cycleClass X;
+        if even(a+b) and odd(b) then (
+            discrStr = discrStr | "^{'}";
+        ) else if odd(a+b) and even(b) then (
+            discrStr = discrStr | "^{''}";
+        ) else error "internal error encountered";
+    );
+    shortTeX("\\text{Gushel-Mukai fourfold in }\\mathcal{GM}_" | discrStr)
 );
 
 discriminant GushelMukaiFourfold := o -> X -> (
@@ -235,6 +331,7 @@ discriminant GushelMukaiFourfold := o -> X -> (
     (a,b) := last cycleClass X;
     n := if S.cache#?"FiniteNumberOfNodes" or S.cache#?"singularLocus" or S.cache#?"nonSaturatedSingularLocus" or (S.cache#?"fitVariety" and (S.cache#"fitVariety").cache#?"nonSaturatedSingularLocus") then numberNodes S else 0;
     S2 := 3*a + 4*b + 2*KSHS + 2*KS2 - 12*chiOS + 2*n;
+    X.cache#(S,"LatticeIntersectionMatrix") = matrix {{2,0,b},{0,2,a-b},{b,a-b,S2}};
     d := 4*S2 - 2*(b^2+(a-b)^2);
     if S.cache#?"FiniteNumberOfNodes" then X.cache#(surface X,"discriminantFourfold") = (S2,d);
     d
@@ -299,7 +396,7 @@ random GushelMukaiFourfold := o -> X -> (
     X'
 );
 
-toGrass = method(TypicalValue => MultirationalMap)
+toGrass = method(TypicalValue => RationalMap);
 
 toGrass EmbeddedProjectiveVariety := (cacheValue "toGrass") (X -> (
     K := coefficientRing X;
@@ -317,9 +414,9 @@ toGrass EmbeddedProjectiveVariety := (cacheValue "toGrass") (X -> (
         j := toGrass Var sub(ideal X',K[flatten entries submatrix'(vars ring ambient X,{0})]);
         y0 := local y0;
         coneG := quotient sub(ideal target j,K[y0,gens ring ambient target j]);
-        J := multirationalMap(
-                 rationalMap(ring X,ring X',matrix first factor inverse f) *
-                 rationalMap(ring X',coneG,matrix{{first gens ring ambient X}}|sub(lift(matrix first factor j,ring ambient source j),ring ambient X))
+        J := rationalMap(
+                 legacyRationalMap(ring X,ring X',matrix first factor inverse f) *
+                 legacyRationalMap(ring X',coneG,matrix{{first gens ring ambient X}}|sub(lift(matrix first factor j,ring ambient source j),ring ambient X))
              );
         if not(source J == X and degree(J,Strategy=>"random point") == 1) then error "internal error encountered";
         return J;
@@ -331,7 +428,7 @@ toGrass EmbeddedProjectiveVariety := (cacheValue "toGrass") (X -> (
         Y := varietyDefinedBylinearSyzygies X;
         psi := toGrass Y;
         if dim singLocus Y == -1 then return psi|X;
-        return psi * rationalMap(ring target psi,ring Y6,submatrix'(vars ring ambient target psi,{0}));
+        return psi * legacyRationalMap(ring target psi,ring Y6,submatrix'(vars ring ambient target psi,{0}));
     );
     error "expected a Gushel-Mukai fourfold, or a del Pezzo fourfold/fivefold/sixfold";
 ));
@@ -341,7 +438,7 @@ toGrass GushelMukaiFourfold := (cacheValue "toGrass") (X -> ( -- for better docu
     psi := toGrass Y;
     if dim singLocus Y == -1 then return psi|X;
     K := coefficientRing X;
-    check multirationalMap((psi|X) * rationalMap(ring target psi,ring GG(K,1,4),submatrix'(vars ring ambient target psi,{0})),GG(K,1,4))
+    check rationalMap((psi|X) * legacyRationalMap(ring target psi,ring GG(K,1,4),submatrix'(vars ring ambient target psi,{0})),GG(K,1,4))
 ));
 
 isAdmissibleGM = method();
@@ -360,40 +457,41 @@ parameterCount GushelMukaiFourfold := o -> X -> (
     S := surface X;
     if (not o.Verbose) and X.cache#?(S,"parameterCount") then return X.cache#(S,"parameterCount");
     Y := ambientFivefold X;
-    if o.Verbose then <<"S: "|toString(? ideal S)<<endl;
-    if o.Verbose then <<"X: GM fourfold containing S"<<endl;
-    if o.Verbose then <<"Y: del Pezzo fivefold containing X"<<endl;
+    if o.Verbose then << "-- S: " << net(? S) << endl;
+    if o.Verbose then << "-- X: GM fourfold containing S" << endl;
+    if o.Verbose then << "-- Y: del Pezzo fivefold containing X" << endl;
     N := normalSheaf(S,Y);
     h1N := rankHH(1,N);
-    if o.Verbose then <<"h^1(N_{S,Y}) = "|toString(h1N)<<endl;
-    if h1N != 0 then error("condition not satisfied: h^1(N_{S,Y}) = 0");
+    if o.Verbose then << "-- h^1(N_{S,Y}) = " << h1N << endl;
+    if h1N != 0 then error "condition not satisfied: h^1(N_{S,Y}) = 0";
     h0N := rankHH(0,N);
-    if o.Verbose then <<"h^0(N_{S,Y}) = "|toString(h0N)<<endl;
+    if o.Verbose then << "-- h^0(N_{S,Y}) = " << h0N << endl << flush;
     m := (# basisMem({2},S)) - 5;
     OS := OO_(variety S);
     h1OS2 := rank HH^1 (OS(2));
-    if h1OS2 != 0 then error("condition not satisfied: h^1(O_S(2)) = 0");
+    if h1OS2 != 0 then error "condition not satisfied: h^1(O_S(2)) = 0";
     m' := 40 - ((hilbertPolynomial S) 2);
-    if m != m' then error("condition not satisfied: h^0(I_{S,Y}(2)) == h^0(O_Y(2)) - \\chi(O_S(2))");
+    if m != m' then error "condition not satisfied: h^0(I_{S,Y}(2)) == h^0(O_Y(2)) - χ(O_S(2))";
     if o.Verbose then (
-        <<"h^1(O_S(2)) = 0, ";
-        <<"and h^0(I_{S,Y}(2)) = "|toString(m)|" = h^0(O_Y(2)) - \\chi(O_S(2));"|newline|"in particular, h^0(I_{S,Y}(2)) is minimal"<<endl;
+        << "-- h^1(O_S(2)) = 0, ";
+        << "and h^0(I_{S,Y}(2)) = " << m << " = h^0(O_Y(2)) - χ(O_S(2));" << endl;
+        << "-- in particular, h^0(I_{S,Y}(2)) is minimal" << endl;
     );
-    if o.Verbose then <<"h^0(N_{S,Y}) + "|toString(m-1)|" = "|toString(h0N + m - 1)<<endl;
+    if o.Verbose then << "-- h^0(N_{S,Y}) + " << (m-1) << " = " << (h0N + m - 1) << endl;
     NX := normalSheaf(S,X);
     h0NX := rankHH(0,NX);
-    if o.Verbose then <<"h^0(N_{S,X}) = "|toString(h0NX)<<endl;
-    if o.Verbose then <<"dim{[X] : S ⊂ X ⊂ Y} >= "|toString(h0N + m-1 - h0NX)<<endl;
-    if o.Verbose then <<"dim P(H^0(O_Y(2))) = 39"<<endl;
-    w := 39 - (h0N + m-1 - h0NX);
-    if o.Verbose then <<"codim{[X] : S ⊂ X ⊂ Y} <= "|toString(w)<<endl;
+    if o.Verbose then << "-- h^0(N_{S,X}) = " << h0NX << endl;
+    if o.Verbose then << "-- dim{[X] : S ⊂ X ⊂ Y} >= " << (h0N + m - 1 - h0NX) << endl;
+    if o.Verbose then << "-- dim P(H^0(O_Y(2))) = 39" << endl;
+    w := 39 - (h0N + m - 1 - h0NX);
+    if o.Verbose then << "-- codim{[X] : S ⊂ X ⊂ Y} <= " << w << endl;
     if X.cache#?(S,"parameterCount") and X.cache#(S,"parameterCount") =!= (w,(m,h0N,h0NX)) then error "internal error encountered in parameterCount: cached and computed values differ";
     X.cache#(S,"parameterCount") = (w,(m,h0N,h0NX))
 );
 
 sigmaQuadric = method();
 sigmaQuadric GushelMukaiFourfold := X -> (
-    f := toRationalMap toGrass X;
+    f := toLegacyRationalMap toGrass X;
     H := image(f,1);
     Q := ideal random(2,makeSubvariety image f);
     S := trim(Q + tangentialChowForm(chowEquations(H_0),0,1));
@@ -404,7 +502,7 @@ unirationalParametrization GushelMukaiFourfold := (cacheValue "unirationalParame
     K := coefficientRing X;
     S := sigmaQuadric X;
     s := parametrize S;
-    s = rationalMap(Grass(0,2,K,Variable=>"u"),source s) * s;
+    s = legacyRationalMap(Grass(0,2,K,Variable=>"u"),source s) * s;
     K' := frac(K[gens source s]);
     ringP8' := K'[gens ring ambient X];
     p' := trim minors(2,vars ringP8' || sub(matrix s,K'));
@@ -415,19 +513,19 @@ unirationalParametrization GushelMukaiFourfold := (cacheValue "unirationalParame
     P := plucker(W,2); while dim P <= 0 do P = plucker(W,2); P = trim sub(plucker P,vars ring W);
     Q := trim quotient(W,P);
     q := trim minors(2,vars ring W || transpose submatrix(coefficients parametrize(P+Q),,{0}));
-    f := (inverse(rationalMap trim sub(q,quotient Q),Certify=>true)) * j;
+    f := (inverse(legacyRationalMap trim sub(q,quotient Q),Certify=>true)) * j;
     ringP2xP2 := (source s) ** K[gens source f];
     K'' := frac(ringP2xP2);
     ringP8'' := K''[gens ring ambient X];
     X'' := sub(ideal X,ringP8'');
     p'' := sub(p',ringP8'');
     ringP1'' := Grass(0,1,K'',Variable=>"v");
-    l := rationalMap(ringP1'',ringP8'', (vars ringP1'') * (sub(matrix s,K'') || sub(matrix f,K'')));
+    l := legacyRationalMap(ringP1'',ringP8'', (vars ringP1'') * (sub(matrix s,K'') || sub(matrix f,K'')));
     e := parametrize trim quotient(trim (map l) X'',trim (map l) p'');
-    el := rationalMap((map e) * (map l));
-    el = rationalMap(source el,target el,(lcm apply(flatten entries sub(last coefficients matrix el,K''),denominator)) * (matrix el));
-    psi := rationalMap(ringP2xP2,ring ambient X,sub(transpose coefficients el,ringP2xP2));
-    Psi := multirationalMap({parametrize psi},X);
+    el := legacyRationalMap((map e) * (map l));
+    el = legacyRationalMap(source el,target el,(lcm apply(flatten entries sub(last coefficients matrix el,K''),denominator)) * (matrix el));
+    psi := legacyRationalMap(ringP2xP2,ring ambient X,sub(transpose coefficients el,ringP2xP2));
+    Psi := rationalMap({parametrize psi},X);
     if not isSubset(Psi point source Psi,X) then error "internal error encountered";
     Psi
 ));
@@ -435,10 +533,10 @@ unirationalParametrization GushelMukaiFourfold := (cacheValue "unirationalParame
 toGushel = method();
 toGushel GushelMukaiFourfold := X -> (
     if dim singLocus ambientFivefold X >= 0 then return X;
-    j := toRationalMap toGrass X;
+    j := toLegacyRationalMap toGrass X;
     Y := local Y;
-    i := rationalMap(target j,(coefficientRing X)[Y,gens ambient target j],0|vars target j);
-    i = rationalMap(i,Dominant=>sub(ideal target j,target i));
+    i := legacyRationalMap(target j,(coefficientRing X)[Y,gens ambient target j],0|vars target j);
+    i = legacyRationalMap(i,Dominant=>sub(ideal target j,target i));
     S := trim lift((j*i) ideal surface X,ambient target i);
     Sv := intersect(S,ideal submatrix'(vars ambient target i,{0}));
     try H := ideal random({{1},{1}},Var Sv) else error "not able to specialize to Gushel type";
@@ -457,14 +555,14 @@ GMtables = method(Options => {Verify => true});
 GMtables (ZZ,Ring) := o -> (i,K) -> (
     if i < 1 or i > 21 then error "expected an integer between 1 and 21";
     t := gens ring PP_K^2;
-    s := multirationalMap rationalMap(ring PP_K^2,ring PP_K^5,{t_0^2,t_0*t_1,t_1^2,t_0*t_2,t_1*t_2,0});
+    s := rationalMap legacyRationalMap(ring PP_K^2,ring PP_K^5,{t_0^2,t_0*t_1,t_1^2,t_0*t_2,t_1*t_2,0});
     S := image s;
     p0 := Var ideal(t_0,t_1); -- base point of s
     assert(p0 == baseLocus s);
     x := gens ring PP_K^5;
     L0 := Var ideal(x_0,x_1,x_2,x_5); -- directrix line of S
     u := gens ring PP_K^3;
-    b := multirationalMap rationalMap(ring PP_K^3,ring PP_K^5,{u_0^3*u_1-u_0*u_1^3, u_0^2*u_1^2-u_0*u_1^3+u_0^3*u_2-u_1^3*u_3, u_0^2*u_1*u_2-u_1^3*u_3, -u_0^2*u_1^2+u_0*u_1^3+u_0*u_1^2*u_2-u_1^3*u_3, u_0^2*u_1*u_3-u_1^3*u_3, u_0^2*u_1^2-u_0*u_1^3+u_0*u_1^2*u_3-u_1^3*u_3});
+    b := rationalMap legacyRationalMap(ring PP_K^3,ring PP_K^5,{u_0^3*u_1-u_0*u_1^3, u_0^2*u_1^2-u_0*u_1^3+u_0^3*u_2-u_1^3*u_3, u_0^2*u_1*u_2-u_1^3*u_3, -u_0^2*u_1^2+u_0*u_1^3+u_0*u_1^2*u_2-u_1^3*u_3, u_0^2*u_1*u_3-u_1^3*u_3, u_0^2*u_1^2-u_0*u_1^3+u_0*u_1^2*u_3-u_1^3*u_3});
     B := image b;
     E := (Var ideal(u_0,u_1), Var ideal(u_3,u_0), Var ideal(u_2,u_1), Var ideal(u_2-u_3,u_0-u_1)); -- base locus of b: E_0 triple line, E_1,E_2,E_3 simple lines
     assert(⋃ {3*E_0,E_1,E_2,E_3} == baseLocus b);
@@ -746,7 +844,7 @@ GMtables ZZ := o -> i -> (
 
 GMtables (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (B,V,C) -> (
     if not ((dim B == 2 or dim B == 3) and degree B == dim B + 1 and dim V == 2 and dim C == 1 and ring ambient C === ring ambient V and ring ambient C === ring ambient B) then error "invalid input for GMtables";
-    psi := rationalMap(ideal B,Dominant=>2);
+    psi := legacyRationalMap(ideal B,Dominant=>2);
     if o.Verify then <<"-- constructing random GM fourfold from the triple..."<<endl;
     X := gushelMukaiFourfold(psi ideal V,InputCheck=>(if o.Verify then 10 else 0),Verbose=>true);
     if o.Verify then <<"-- GM fourfold correctly constructed."<<endl;
@@ -781,7 +879,7 @@ GMtables (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,EmbeddedProjective
 
 fourfoldFromTriple = method(Options => {InputCheck => 1, Verbose => true});
 fourfoldFromTriple (ZZ,VisibleList) := o -> (i,E) -> (
-    psi := rationalMap(ideal E_0,Dominant=>2);
+    psi := legacyRationalMap(ideal E_0,Dominant=>2);
     X := gushelMukaiFourfold(psi ideal E_1,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
     X.cache#(surface X,"label") = i;
     return X;
@@ -807,7 +905,7 @@ makeGMfromCurveOnSurfaceInP6 EmbeddedProjectiveVariety := o -> C -> (
     if numgens ideal H > o.Degrees#1_1 then error "request on the degrees is not satisfied";
     -- V := if char coefficientRing C <= 65521 then image(psi',"F4") else image psi';
     V := image psi';
-    if o.Verbose then <<"got surface in GG(1,4) ⊂ PP^9 with ideal generated in degrees "<<toStringDegreesVar V<<endl;
+    if o.Verbose then <<"got surface in GG(1,4) ⊂ PP^9 with ideal generated in degrees "<<generatorDegreesString V<<endl;
     degs := flatten degrees ideal V;
     if codim H == 1 and # select(degs,d -> d == 2) < 6 then error "the surface in G(1,4) is not contained in any GM fourfold";
     if # select(degs,d -> d > 3) > 0 or
@@ -847,7 +945,7 @@ glueScroll EmbeddedProjectiveVariety := C -> (
         pr := inverse parametrize H;
         g = g * pr;
         j := inverse rationalMap((linearSpan {g point source g,g point source g})_(image g),Dominant=>true);
-        B := image((rationalMap lift(matrix j,ring ambient source j)) * inverse pr);
+        B := image((legacyRationalMap lift(matrix j,ring ambient source j)) * inverse pr);
         if not(dim B == 2 and degree B == 3 and sectionalGenus B == 0 and isSubset(C,B)) then error "something went wrong";
         E = (random(1,0_E) * E ===> B) E;
     );
@@ -915,7 +1013,7 @@ glueScroll' EmbeddedProjectiveVariety := C -> (
 );
 
 CubicScroll = memoize(K -> (
-    s := (multirationalMap segre parametrize(PP_K^1 ** PP_K^2)) << PP_K^6;
+    s := (rationalMap segre parametrize(PP_K^1 ** PP_K^2)) << PP_K^6;
     p := (baseLocus s)\top baseLocus s;
     L := top baseLocus s;
     assert(baseLocus s == L + p and dim(L*p) == -1 and dim L == 1 and degree L == 1 and dim p == 0 and degree p == 1);
@@ -955,7 +1053,7 @@ takeGMsfromSurfaceInP6 EmbeddedProjectiveVariety := o -> S -> (
     if not(S.cache#?"linear system on PP^2" and S.cache#?"takeCurve") then error "expected a surface constructed with the function \"surface\"";
     a := apply(toSequence S.cache#"linear system on PP^2",toString);
     if #a != 4 then error "not implemented yet: the surface must be of the form \"surface {a,i,j,k}\"";
-    S.cache#"nice description" = "S("|a_0|";"|a_1|","|a_2|","|a_3|",NumNodes=>"|(if S.cache#?"FiniteNumberOfNodes" then toString(S.cache#"FiniteNumberOfNodes") else "?")|") ⊂ PP^"|toString(dim linearSpan S)|(if codim linearSpan S > 0 then " ⊂ PP^"|toString(dim ambient S) else "")|" of degree: "|toString(degree S)|", genus: "|toString(sectionalGenus S)|", and degrees: "|(toStringDegreesVar S);
+    S.cache#"nice description" = "S("|a_0|";"|a_1|","|a_2|","|a_3|",NumNodes=>"|(if S.cache#?"FiniteNumberOfNodes" then toString(S.cache#"FiniteNumberOfNodes") else "?")|") ⊂ PP^"|toString(dim linearSpan S)|(if codim linearSpan S > 0 then " ⊂ PP^"|toString(dim ambient S) else "")|" of degree: "|toString(degree S)|", genus: "|toString(sectionalGenus S)|", and degrees: "|(generatorDegreesString S);
     if o.Verbose then <<"*******"<<endl<<"Surface: "<<S.cache#"nice description"<<" glued with a "<<o#"Gluing"<<endl;
     local W; local X; U := {};
     for d from 1 to 6 do for g to 1 do (

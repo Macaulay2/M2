@@ -16,12 +16,16 @@ net LatticePolarizationOnK3Surface := L -> (
 );
 texMath LatticePolarizationOnK3Surface := texMath @@ net;
 
-LatticePolarizationOnK3Surface#{WebApp,AfterPrint} =
-LatticePolarizationOnK3Surface#{WebApp,AfterNoPrint} =
 LatticePolarizationOnK3Surface#{Standard,AfterPrint} =
 LatticePolarizationOnK3Surface#{Standard,AfterNoPrint} = L -> (
     virtualK3 := if L#"isVirtual" then "Virtual lattice" else "Lattice";
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << virtualK3 << "-polarization on K3 surface associated to " << (shortDescriptionFourfold recoverFourfold L) << endl;
+);
+
+LatticePolarizationOnK3Surface#{WebApp,AfterPrint} =
+LatticePolarizationOnK3Surface#{WebApp,AfterNoPrint} = L -> (
+    virtualK3 := if L#"isVirtual" then "Virtual lattice" else "Lattice";
+    customWebAppAfterPrint(virtualK3, "-polarization on K3 surface associated to ", shortDescriptionFourfoldTeX recoverFourfold L);
 );
 
 latticeMatrix = method();
@@ -188,7 +192,7 @@ mapDefinedByLatticePolarization (LatticePolarizationOnK3Surface,WeightedProjecti
     h := (Hom(source f,P)) {M};
     if o.Verbose then << "  -- obtained map from K3 surface in " << net(ambient source h) << " to PP(1,1,1,3)" << endl;
     if o.Verbose then << "  -- computing the image in PP(1,1,1,3)..." << endl;
-    T := projectiveVariety kernel(map toRationalMap h, SubringLimit=>1);
+    T := projectiveVariety kernel(map toLegacyRationalMap h, SubringLimit=>1);
     if dim T != 2 then error "expected the image to be a surface";
     if o.Verify and degrees T =!= {({6}, 1)} then error("expected the image to be a surface of degree 6 in PP(1,1,1,3), but obtained: "|toString(? T));
     forceImage(h,T);
@@ -498,7 +502,7 @@ mapFromUtoP2xP2 DoublySpecialCubicFourfold := o -> X -> (
     if o.Verbose then << "-- obtained the two maps W --> PP^2, restricting to U via suitable representatives" << endl;
     local M; local B;
     if o.Verbose then << "-- working on the representatives of the first map" << endl << flush;
-    f := toRationalMap F;
+    f := toLegacyRationalMap F;
     F' := null;
     if not isSubset(U,projectiveVariety matrix f) then (
         F' = F;
@@ -507,7 +511,7 @@ mapFromUtoP2xP2 DoublySpecialCubicFourfold := o -> X -> (
         assert(f#"maps" =!= null);
         if o.Verbose then << "  -- degree sequence: " << degsf << endl;
         for h in f#"maps" when F' === null do (
-            M = matrix rationalMap h;
+            M = matrix legacyRationalMap h;
             B = projectiveVariety M;
             if not isSubset(U,B) then F' = (Hom(source F, target F)) {M};
         );
@@ -517,7 +521,7 @@ mapFromUtoP2xP2 DoublySpecialCubicFourfold := o -> X -> (
     );
     F'' := F'|U;
     if o.Verbose then << "-- working on the representatives of the second map" << endl << flush;
-    g := toRationalMap G;
+    g := toLegacyRationalMap G;
     G' := null;
     if not isSubset(U,projectiveVariety matrix g) then (
         G' = G;
@@ -526,7 +530,7 @@ mapFromUtoP2xP2 DoublySpecialCubicFourfold := o -> X -> (
         assert(g#"maps" =!= null);
         if o.Verbose then << "  -- degree sequence: " << degsg << endl;
         for h in g#"maps" when G' === null do (
-            M = matrix rationalMap h;
+            M = matrix legacyRationalMap h;
             B = projectiveVariety M;
             if not isSubset(U,B) then G' = (Hom(source G, target G)) {M};
         );

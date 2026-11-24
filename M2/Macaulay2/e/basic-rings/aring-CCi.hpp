@@ -33,7 +33,8 @@ class ARingCCi : public SimpleARing<ARingCCi>
   typedef cci_struct elem;
   typedef elem ElementType;
 
-  ARingCCi(unsigned long precision) : mPrecision(precision) {}
+  ARingCCi(unsigned long precision) : mPrecision(checkPrecision(precision)) {}
+
   // ring informational
   size_t characteristic() const { return 0; }
   unsigned long get_precision() const { return mPrecision; }
