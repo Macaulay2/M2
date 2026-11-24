@@ -2702,7 +2702,8 @@ doc ///
     needsPackage
 ///
 
-layoutMap := new HashTable from {
+-- a global variable, so that SimpleDoc can see it; erased after the "currentLayout" node
+layoutMap = new HashTable from {
     "bin" => "executable files (M2)",
     "data" => "architecture independent data files",
     "docdir" => "documentation for Macaulay2 packages",
@@ -2725,37 +2726,45 @@ layoutMap := new HashTable from {
 assert( set keys Layout#1 === set keys Layout#2 )
 assert( set keys Layout#1 === set keys layoutMap )
 
-document {
-    Key => {"currentLayout", "Layout"},
-    Headline => "relative locations of Macaulay2 files",
-    PARA {
-	"Macaulay2 comes with a variety of types of files, and some of them are associated with a
-	particular Macaulay2 package.  The hash table ", TT "currentLayout", " is a translation
-	table from names, corresponding to the various types of files, to directory paths.  The
-	directory paths are to be interpreted relative to the path stored in ", TO "prefixDirectory", ".  Each
-	of the directories contained in the list ", TO "prefixPath", " has its own layout, which will be detected at runtime.
-	Some of the strings contain ", TT "PKG", " as a substring, which should be replaced
-	by the name of package whose files will be stored in that directory."
-    },
-    PARA {
-	"The hash table ", TO "Layout", " contains the two possible values for ", TO "currentLayout", ";
-	corresponding to the two possible values for the ", TO [installPackage, SeparateExec], " option used with ", TO "installPackage", ".
-	The hash table ", TT "Layout#2", " is used if architecture dependent files are to be stored in
-	a directory tree separate from the one used for architecture independent files.  The hash table ", TT "Layout#1", "
-	is used otherwise."
-    },
-    PARA {
-	"Basic Macaulay2 files are regarded as being associated
-	with a special package called ", TT{"Core"}, ", and the corresponding documentation files
-	are part of the package ", TT "Macaulay2Doc", "."
-    },
-    EXAMPLE {
-	"Layout"
-    },
-    "Here are the meanings of the keys used in ", TO "currentLayout", ".",
-    UL apply(sort pairs layoutMap, (k,v) -> LI { TT format k, " : " | v}),
-    SeeAlso => {[installPackage,SeparateExec]}
-}
+doc ///
+  Key
+    "currentLayout"
+    "Layout"
+  Headline
+    relative locations of Macaulay2 files
+  Description
+    Text
+      Macaulay2 comes with a variety of types of files, and some of them are
+      associated with a particular Macaulay2 package. The hash table
+      @TT "currentLayout"@ is a translation table from names, corresponding to
+      the various types of files, to directory paths. The directory paths are
+      to be interpreted relative to the path stored in @TO "prefixDirectory"@.
+      Each of the directories contained in the list @TO "prefixPath"@ has its
+      own layout, which will be detected at runtime. Some of the strings
+      contain @TT "PKG"@ as a substring, which should be replaced by the name
+      of package whose files will be stored in that directory.
+
+      The hash table @TO "Layout"@ contains the two possible values for
+      @TO "currentLayout"@; corresponding to the two possible values for the
+      @TO [installPackage, SeparateExec]@ option used with
+      @TO "installPackage"@. The hash table @TT "Layout#2"@ is used if
+      architecture dependent files are to be stored in a directory tree
+      separate from the one used for architecture independent files. The hash
+      table @TT "Layout#1"@ is used otherwise.
+
+      Basic Macaulay2 files are regarded as being associated with a special
+      package called @TT{"Core"}@, and the corresponding documentation files
+      are part of the package @TT "Macaulay2Doc"@.
+    Example
+      Layout
+    Text
+      Here are the meanings of the keys used in @TO "currentLayout"@.
+
+      @UL apply(sort pairs layoutMap, (k,v) -> LI { TT format k, " : " | v})@
+  SeeAlso
+    [installPackage,SeparateExec]
+///
+erase symbol layoutMap
 doc ///
   Key
     "rootPath"

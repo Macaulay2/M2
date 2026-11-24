@@ -1175,159 +1175,154 @@ doc ///
     "precedence of operators"
 ///
 
-binaryOperators := core "binaryOperators"
-prefixOperators := core "prefixOperators"
-postfixOperators := core "postfixOperators"
-flexibleBinaryOperators := core "flexibleBinaryOperators"
-flexiblePrefixOperators := core "flexiblePrefixOperators"
-flexiblePostfixOperators := core "flexiblePostfixOperators"
-augmentedAssignmentOperators := core "augmentedAssignmentOperators"
-allOperators := core "allOperators"
-getParsing := core "getParsing"
 
-document {
-     Key => "operators",
-     PARA {
-	  "Here we present all of the unary and binary operators in the language.  They are members of the class ", TO "Keyword", ".
-	  The binary operators are ",
-	  between_" " apply(sort toList binaryOperators, s -> TO {s}),
-	  " , the unary prefix operators are ",
-	  between_" " apply(sort toList prefixOperators, s -> TO {s}),
-	  " , and the unary postfix operators are ",
-	  between_" " apply(sort toList postfixOperators, s -> TO {s}),
-	  " ."
-	  },
-     PARA {
-	  "Of those, the ones for which users may install new methods are ",
-	  "the binary operators ",
-	  between_" " apply(sort toList join(flexibleBinaryOperators,
-		  augmentedAssignmentOperators), s -> TO {s}),
-	  " , the unary prefix operators ",
-	  between_" " apply(sort toList flexiblePrefixOperators, s -> TO {s}),
-	  " , and the unary postfix operators ",
-	  between_" " apply(sort toList flexiblePostfixOperators, s -> TO {s}),
-	  " ."},
-     Subnodes => splice {
-     "assignment",
-	  TO symbol = ,
-	  TO symbol := ,
-	  TO symbol <- ,
-     "equality testing",
-	  TO symbol == ,
-	  TO symbol != ,
-	  TO symbol === ,
-	  TO symbol =!= ,
-     "comparison of objects",
-	  TO symbol < ,
-	  TO symbol <= ,
-	  TO symbol > ,
-	  TO symbol >= ,
-	  TO symbol ? ,
-     "predicates",
-	  TO symbol and ,
-	  TO symbol or ,
-	  TO symbol xor ,
-	  TO symbol not ,
-     "functions",
-          TO symbol SPACE,
-	  TO symbol -> ,
-          TO symbol @@ ,
-          TO symbol \\ ,
-	  TO symbol \ ,
-     "subscripting and object access",
-          TO symbol _ ,
-          TO symbol . ,
-          TO symbol .? ,
-          TO symbol # ,
-          TO symbol #? ,
-	  TO symbol @@? ,
-     "arithmetic operators",
-          TO symbol ! ,
-	  TO symbol + ,
-	  TO symbol - ,
-	  TO symbol * ,
-	  TO symbol · ,
-	  TO symbol / ,
-	  TO symbol // ,
-	  TO symbol % ,
-	  TO symbol ^ ,
-          TO symbol & ,
-	  TO symbol ++ ,
-	  TO symbol ** ,
-          TO symbol ^** ,
-	  TO symbol ⊠ ,
-	  TO symbol ⧢ ,
-          TO symbol ~ ,
-	  TO symbol (*) ,
-          TO symbol : ,
-     "miscellaneous operators",
-          TO symbol .. ,
-          TO symbol ..< ,
-          TO symbol << ,
-          TO symbol >> ,
-          TO symbol | ,
-          TO symbol || ,
-          TO symbol @ ,
-          TO symbol ^^ ,
-          TO symbol ?? ,
-          TO symbol |- ,
-          TO symbol <==> ,
-          TO symbol ===> ,
-          TO symbol ==> ,
-          TO symbol <=== ,
-          TO symbol <== ,
-          TO symbol ^<,
-          TO symbol ^<=,
-          TO symbol ^>,
-          TO symbol ^>=,
-          TO symbol _<,
-          TO symbol _<=,
-          TO symbol _>,
-          TO symbol _>=,
-          TO symbol _~,
-     "operators used for functors",
-          TO symbol ^~,
-          TO symbol ^!,
-          TO symbol ^*,
-          TO symbol _!,
-          TO symbol _*,
-          TO symbol |_,
-     "built in operators" ,
-	  TO symbol => ,
-          TO symbol , ,
-          TO symbol ;,
-     "augmented assignment",
-	 toSequence apply(sort toList augmentedAssignmentOperators,
-	     op -> TO op),
-     "further information",
-          TO "precedence of operators",
-	  TO "operatorAttributes"
-	  }
-     }
+doc ///
+  Key
+    "operators"
+  Description
+    Text
+      Here we present all of the unary and binary operators in the language.
+      They are members of the class @TO "Keyword"@. The binary operators are
+      @between_" " apply(sort toList (core "binaryOperators"), s -> TO {s})@ ,
+      the unary prefix operators are
+      @between_" " apply(sort toList (core "prefixOperators"), s -> TO {s})@ ,
+      and the unary postfix operators are
+      @between_" " apply(sort toList (core "postfixOperators"), s -> TO {s})@ .
 
-document {
-     Key => "precedence of operators",
-     SeeAlso => { "parsing precedence, in detail" },
-     PARA {
-	  "One aspect of parsing precedence is associativity.  A ", EM "left-associative", " operator is one, such as ", TO "*", ", with
-	  the property that ", TT "x * y * z", " is parsed as ", TT "(x * y) * z", ".
-	  A ", EM "right-associative", " operator is one, such as ", TO "=", ", with the property that ", TT "x = y = z", " is parsed
-	  as ", TT "x = (y = z)", ".  These operators are left associative: ",
-	  between_" " apply(sort select(allOperators, s -> (getParsing s)#0 == (getParsing s)#1), s -> TO {s}),
-	  ", and these operators are right associative: ",
-	  between_" " apply(sort select(allOperators, s -> (getParsing s)#0 == (getParsing s)#1 + 1), s -> TO {s}),
-	  " ."
-	  },
-     PARA {
-	  "Here are the operators arranged in order of increasing parsing precedence.  For example,
-	  ", TT "*", " has higher parsing precedence than ", TT "+", ", and hence ", TT "2+3*5", " is
-	  parsed as though it had been written as ", TT "2+(3*5)", ".  The symbol ", TO "SPACE", " represents the operator that is used when
-	  two things are adjacent in program code."
-	  },
-     TABLE { "class" => "examples",  TR TD PRE net (core "seeOperatorPrecedence")() }
-     }
+      Of those, the ones for which users may install new methods are the binary
+      operators
+      @between_" " apply(sort toList join((core "flexibleBinaryOperators"), (core "augmentedAssignmentOperators")), s -> TO {s})@
+      , the unary prefix operators
+      @between_" " apply(sort toList (core "flexiblePrefixOperators"), s -> TO {s})@
+      , and the unary postfix operators
+      @between_" " apply(sort toList (core "flexiblePostfixOperators"), s -> TO {s})@
+      .
+  Subnodes
+    :assignment
+    symbol =
+    symbol :=
+    symbol <-
+    :equality testing
+    symbol ==
+    symbol !=
+    symbol ===
+    symbol =!=
+    :comparison of objects
+    symbol <
+    symbol <=
+    symbol >
+    symbol >=
+    symbol ?
+    :predicates
+    symbol and
+    symbol or
+    symbol xor
+    symbol not
+    :functions
+    symbol SPACE
+    symbol ->
+    symbol @@
+    symbol \\
+    symbol \
+    :subscripting and object access
+    symbol _
+    symbol .
+    symbol .?
+    symbol #
+    symbol #?
+    symbol @@?
+    :arithmetic operators
+    symbol !
+    symbol +
+    symbol -
+    symbol *
+    symbol ·
+    symbol /
+    symbol //
+    symbol %
+    symbol ^
+    symbol &
+    symbol ++
+    symbol **
+    symbol ^**
+    symbol ⊠
+    symbol ⧢
+    symbol ~
+    symbol (*)
+    symbol :
+    :miscellaneous operators
+    symbol ..
+    symbol ..<
+    symbol <<
+    symbol >>
+    symbol |
+    symbol ||
+    symbol @
+    symbol ^^
+    symbol ??
+    symbol |-
+    symbol <==>
+    symbol ===>
+    symbol ==>
+    symbol <===
+    symbol <==
+    symbol ^<
+    symbol ^<=
+    symbol ^>
+    symbol ^>=
+    symbol _<
+    symbol _<=
+    symbol _>
+    symbol _>=
+    symbol _~
+    :operators used for functors
+    symbol ^~
+    symbol ^!
+    symbol ^*
+    symbol _!
+    symbol _*
+    symbol |_
+    :built in operators
+    symbol =>
+    symbol ,
+    symbol ;
+    :augmented assignment
+    @toSequence apply(sort toList (core "augmentedAssignmentOperators"), op -> TO op)@
+    :further information
+    "precedence of operators"
+    "operatorAttributes"
+///
 
-sp := seeParsing()
+doc ///
+  Key
+    "precedence of operators"
+  Description
+    Text
+      One aspect of parsing precedence is associativity. A
+      @EM "left-associative"@ operator is one, such as @TO "*"@, with the
+      property that @TT "x * y * z"@ is parsed as @TT "(x * y) * z"@. A
+      @EM "right-associative"@ operator is one, such as @TO "="@, with the
+      property that @TT "x = y = z"@ is parsed as @TT "x = (y = z)"@. These
+      operators are left associative:
+      @between_" " apply(sort select((core "allOperators"), s -> ((core "getParsing") s)#0 == ((core "getParsing") s)#1), s -> TO {s})@,
+      and these operators are right associative:
+      @between_" " apply(sort select((core "allOperators"), s -> ((core "getParsing") s)#0 == ((core "getParsing") s)#1 + 1), s -> TO {s})@
+      .
+
+      Here are the operators arranged in order of increasing parsing
+      precedence. For example, @TT "*"@ has higher parsing precedence than
+      @TT "+"@, and hence @TT "2+3*5"@ is parsed as though it had been written
+      as @TT "2+(3*5)"@. The symbol @TO "SPACE"@ represents the operator that
+      is used when two things are adjacent in program code.
+
+      @TABLE {
+          "class" => "examples",
+          TR TD PRE net (core "seeOperatorPrecedence")()
+          }@
+  SeeAlso
+    "parsing precedence, in detail"
+///
+
 
 doc ///
   Key
@@ -1344,67 +1339,74 @@ doc ///
     "parsing precedence, in detail"
 ///
 
-document {
-     Key => "parsing precedence, in detail",
-     "A newline ends a statement if it can, otherwise it acts like any
-     white space.",
-     EXAMPLE "2+\n3+\n4",
-     PARA{},
-     "Parsing is determined by a triple of numbers attached to each token.
-     The following table (produced by the command ", TO "seeParsing", "), 
-     displays each of these numbers.",
-     TABLE { "class" => "examples", TR TD PRE { toString net sp} },
-     "Here is the way these numbers work.  The parser maintains a number
-     which called the current parsing level, or simply, the level.
-     The parser builds up an expression until it encounters an input token
-     whose parsing precedence is less than or equal to the current level.
-     The tokens preceding the offending token are bundled into an expression
-     appropriately and incorporated into the containing expression.",
-     PARA{},
-     "When an operator or token is encountered, its binding strength serves
-     as the level for parsing the subsequent expression, unless the current level
-     is higher, in which case it is used.",
-     PARA{},
-     "Consider a binary operator such as ", TT "*", ".  The relationship between
-     its binary binding strength and its parsing precedence turns out to determine
-     whether ", TT "a*b*c", " is parsed as ", TT "(a*b)*c", " or as ", TT "a*(b*c)", ".
-     When the parser encounters the second ", TT "*", ", the current parsing level 
-     is equal to the binding strength of the first ", TT "*", ".  If the binding 
-     strength is less than the precedence, then the second ", TT "*", " becomes
-     part of the right hand operand of the first ", TT "*", ", and the
-     expression is parsed as ", TT "a*(b*c)", ".  Otherwise, the expression is
-     parsed as ", TT "(a*b)*c", ".",
-     PARA{},
-     "For unary operators, the unary binding strength is used instead of the binary
-     binding strength to reset the current level.  The reason for having both numbers 
-     is that some operators can be either unary or binary, depending on the context.
-     A good example is ", TO "#", " which binds as tightly as ", TO ".", "
-     when used as an infix operator, and binds as loosely as adjacency or
-     function application when used as a prefix operator.",
-     PARA{},
-     "To handle expressions like ", TT "b c d", ", where there are no tokens present
-     which can serve as a binary multiplication operator, after parsing ", TT "b", ",
-     the level will be set to 1 less than the precedence of an identifier,
-     so that ", TT "b c d", " will be parsed as ", TT "b (c d)", ".",
-     PARA{},
-     "The comma and semicolon get special treatment: the empty expression can
-     occur to the right of the comma or semicolon or to the left of the comma.",
-     PARA {
-	  "One of the most unusual aspects of the parsing precedence table above is that ", TT "[", " is
-	  assigned a precedence several steps lower than the precedence of symbols and adjacency, and also
-	  lower than the precedence of ", TT "/", ".  This was done so expressions like ", TT "R/I[x]", "
-	  would be parsed according to mathematical custom, but it implies that expressions like ", TT "f g [x]", "
-	  will be parsed in a surprising way, with ", TT "f g", " being evaluated first, even if ", TT "f", " and ", TT "g", "
-	  are both functions.  Suitably placed parentheses can help, as illustrated in the next example."
-	  },
-     EXAMPLE lines ///
-     	  f = x -> (print x; print)
-	  f f [1,2,3]
-	  f f ([1,2,3])
-	  f (f [1,2,3])
-     ///,
-     Subnodes => TO seeParsing
-     }
+doc ///
+  Key
+    "parsing precedence, in detail"
+  Description
+    Text
+      A newline ends a statement if it can, otherwise it acts like any white
+      space.
+    Code
+      EXAMPLE "2+\n3+\n4"
+    Text
+      Parsing is determined by a triple of numbers attached to each token. The
+      following table (produced by the command @TO "seeParsing"@), displays
+      each of these numbers.
+
+      @TABLE {"class" => "examples", TR TD PRE {toString net (seeParsing())}}@
+
+      Here is the way these numbers work. The parser maintains a number which
+      called the current parsing level, or simply, the level. The parser builds
+      up an expression until it encounters an input token whose parsing
+      precedence is less than or equal to the current level. The tokens
+      preceding the offending token are bundled into an expression
+      appropriately and incorporated into the containing expression.
+
+      When an operator or token is encountered, its binding strength serves as
+      the level for parsing the subsequent expression, unless the current level
+      is higher, in which case it is used.
+
+      Consider a binary operator such as @TT "*"@. The relationship between its
+      binary binding strength and its parsing precedence turns out to determine
+      whether @TT "a*b*c"@ is parsed as @TT "(a*b)*c"@ or as @TT "a*(b*c)"@.
+      When the parser encounters the second @TT "*"@, the current parsing level
+      is equal to the binding strength of the first @TT "*"@. If the binding
+      strength is less than the precedence, then the second @TT "*"@ becomes
+      part of the right hand operand of the first @TT "*"@, and the expression
+      is parsed as @TT "a*(b*c)"@. Otherwise, the expression is parsed as
+      @TT "(a*b)*c"@.
+
+      For unary operators, the unary binding strength is used instead of the
+      binary binding strength to reset the current level. The reason for having
+      both numbers is that some operators can be either unary or binary,
+      depending on the context. A good example is @TO "#"@ which binds as
+      tightly as @TO "."@ when used as an infix operator, and binds as loosely
+      as adjacency or function application when used as a prefix operator.
+
+      To handle expressions like @TT "b c d"@, where there are no tokens
+      present which can serve as a binary multiplication operator, after
+      parsing @TT "b"@, the level will be set to 1 less than the precedence of
+      an identifier, so that @TT "b c d"@ will be parsed as @TT "b (c d)"@.
+
+      The comma and semicolon get special treatment: the empty expression can
+      occur to the right of the comma or semicolon or to the left of the comma.
+
+      One of the most unusual aspects of the parsing precedence table above is
+      that @TT "["@ is assigned a precedence several steps lower than the
+      precedence of symbols and adjacency, and also lower than the precedence
+      of @TT "/"@. This was done so expressions like @TT "R/I[x]"@ would be
+      parsed according to mathematical custom, but it implies that expressions
+      like @TT "f g [x]"@ will be parsed in a surprising way, with @TT "f g"@
+      being evaluated first, even if @TT "f"@ and @TT "g"@ are both functions.
+      Suitably placed parentheses can help, as illustrated in the next example.
+    Example
+      f = x -> (print x; print)
+      f f [1,2,3]
+      f f ([1,2,3])
+      f (f [1,2,3])
+  Subnodes
+    seeParsing
+///
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

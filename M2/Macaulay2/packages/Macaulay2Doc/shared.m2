@@ -1,56 +1,231 @@
 -- here we document the stub definitions in m2/shared.m2
 
-methodstr := PARA { "This function is a method function, defined in the core so multiple packages can add methods to it." }
+doc ///
+  Key
+    height
+  Headline
+    height of an object
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+  SeeAlso
+    "Posets::height(Poset)"
+///
+doc ///
+  Key
+    depth
+  Headline
+    depth of an object
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+  SeeAlso
+    "Depth::Depth"
+    "SLPexpressions::SLPexpressions"
+///
+doc ///
+  Key
+    width
+  Headline
+    width of an object
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+///
+doc ///
+  Key
+    length
+  Headline
+    length of an object
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+  SeeAlso
+    "Complexes::length(Complex)"
+    "Permutations::length(Permutation)"
+///
+doc ///
+  Key
+    extend
+  Headline
+    extend an object
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+  SeeAlso
+    "Permutations :: extend(Permutation,ZZ)"
+    "Complexes :: extend(Complex,Complex,Matrix)"
+    "OldChainComplexes :: extend(ChainComplex,ChainComplex,Matrix)"
+///
 
-document { Key => height, Headline => "height of an object", methodstr,
-    SeeAlso => { "Posets::height(Poset)" } }
-document { Key => depth,  Headline => "depth of an object",  methodstr,
-    SeeAlso => { "Depth::Depth", "SLPexpressions::SLPexpressions" } }
-document { Key => width,  Headline => "width of an object",  methodstr }
-document { Key => length, Headline => "length of an object", methodstr,
-    SeeAlso => { "Complexes::length(Complex)", "Permutations::length(Permutation)" } }
-document { Key => extend, Headline => "extend an object",    methodstr,
-    SeeAlso => {
-	"Permutations :: extend(Permutation,ZZ)",
-	"Complexes :: extend(Complex,Complex,Matrix)",
-	"OldChainComplexes :: extend(ChainComplex,ChainComplex,Matrix)",
-    },
-}
-
-document { Key => complete,     methodstr, SeeAlso => { "OldChainComplexes::complete(ChainComplex)" } }
-document { Key => minimize,     methodstr, SeeAlso => { "Complexes::minimize(Complex)" } }
-document { Key => decompose,    Headline => "decompose an object", methodstr, SeeAlso => { "MinimalPrimes::MinimalPrimes" } }
-document { Key => truncate,     methodstr, SeeAlso => { "Truncations::Truncations" } }
-document { Key => chi,          methodstr, SeeAlso => {
-	"Schubert2::chi(AbstractSheaf)", "NormalToricVarieties::chi(CoherentSheaf)" } }
-document { Key => euler,        methodstr, SeeAlso => {
-	"HyperplaneArrangements::HyperplaneArrangements",
-	"MultiprojectiveVarieties::euler(MultiprojectiveVariety)",
-	"Schubert2::euler(AbstractVariety)", "Varieties::Varieties" } }
-document { Key => eulers,       methodstr }
-document { Key => genera,       methodstr }
-document { Key => genus,        Headline => "genus of an object", methodstr }
-document { Key => isExact,      Headline => "whether an object is exact", methodstr, SeeAlso => {
-	"ChainComplexExtras :: isExact(ChainComplex)",
-	"Complexes :: isExact(Complex)" } }
-document { Key => isSmooth,     Headline => "whether an object is smooth", methodstr, SeeAlso => {
-	"WeilDivisors::isSmooth(Ideal)", "LatticePolytopes::isSmooth(Polyhedron)",
-	"Varieties::isSmooth(Variety)", "SpaceCurves::isSmooth(Curve)",
-	"Polyhedra::isSmooth(Cone)", "NormalToricVarieties::isSmooth(NormalToricVariety)",
-	"SpecialFanoFourfolds::isSmooth(EmbeddedProjectiveVariety)" } }
-document { Key => isVeryAmple,  methodstr, SeeAlso => {
-	"WeilDivisors::isVeryAmple(WeilDivisor)", "Polyhedra::isVeryAmple(Polyhedron)",
-	"PositivityToricBundles::isVeryAmple(ToricVectorBundleKlyachko)",
-	"NormalToricVarieties::isVeryAmple(ToricDivisor)" } }
-document { Key => isNormal,     Headline => "whether an object is normal", methodstr, SeeAlso => {
-	"Polyhedra::isNormal(Polyhedron)",
-	"IntegralClosure::isNormal(Ring)",
-	"AssociativeAlgebras::isNormal(RingElement)",
-	} }
-document { Key => normalCone,   Headline => "normal cone of an object", methodstr, SeeAlso => {
-	"Polyhedra::normalCone(Polyhedron,Polyhedron)",
-	"ReesAlgebra::normalCone(Ideal)",
-    } }
+doc ///
+  Key
+    complete
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+  SeeAlso
+    "OldChainComplexes::complete(ChainComplex)"
+///
+doc ///
+  Key
+    minimize
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+  SeeAlso
+    "Complexes::minimize(Complex)"
+///
+doc ///
+  Key
+    decompose
+  Headline
+    decompose an object
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+  SeeAlso
+    "MinimalPrimes::MinimalPrimes"
+///
+doc ///
+  Key
+    truncate
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+  SeeAlso
+    "Truncations::Truncations"
+///
+doc ///
+  Key
+    chi
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+  SeeAlso
+    "Schubert2::chi(AbstractSheaf)"
+    "NormalToricVarieties::chi(CoherentSheaf)"
+///
+doc ///
+  Key
+    euler
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+  SeeAlso
+    "HyperplaneArrangements::HyperplaneArrangements"
+    "MultiprojectiveVarieties::euler(MultiprojectiveVariety)"
+    "Schubert2::euler(AbstractVariety)"
+    "Varieties::Varieties"
+///
+doc ///
+  Key
+    eulers
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+///
+doc ///
+  Key
+    genera
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+///
+doc ///
+  Key
+    genus
+  Headline
+    genus of an object
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+///
+doc ///
+  Key
+    isExact
+  Headline
+    whether an object is exact
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+  SeeAlso
+    "ChainComplexExtras :: isExact(ChainComplex)"
+    "Complexes :: isExact(Complex)"
+///
+doc ///
+  Key
+    isSmooth
+  Headline
+    whether an object is smooth
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+  SeeAlso
+    "WeilDivisors::isSmooth(Ideal)"
+    "LatticePolytopes::isSmooth(Polyhedron)"
+    "Varieties::isSmooth(Variety)"
+    "SpaceCurves::isSmooth(Curve)"
+    "Polyhedra::isSmooth(Cone)"
+    "NormalToricVarieties::isSmooth(NormalToricVariety)"
+    "SpecialFanoFourfolds::isSmooth(EmbeddedProjectiveVariety)"
+///
+doc ///
+  Key
+    isVeryAmple
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+  SeeAlso
+    "WeilDivisors::isVeryAmple(WeilDivisor)"
+    "Polyhedra::isVeryAmple(Polyhedron)"
+    "PositivityToricBundles::isVeryAmple(ToricVectorBundleKlyachko)"
+    "NormalToricVarieties::isVeryAmple(ToricDivisor)"
+///
+doc ///
+  Key
+    isNormal
+  Headline
+    whether an object is normal
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+  SeeAlso
+    "Polyhedra::isNormal(Polyhedron)"
+    "IntegralClosure::isNormal(Ring)"
+    "AssociativeAlgebras::isNormal(RingElement)"
+///
+doc ///
+  Key
+    normalCone
+  Headline
+    normal cone of an object
+  Description
+    Text
+      This function is a method function, defined in the core so multiple
+      packages can add methods to it.
+  SeeAlso
+    "Polyhedra::normalCone(Polyhedron,Polyhedron)"
+    "ReesAlgebra::normalCone(Ideal)"
+///
 
 doc ///
   Key
