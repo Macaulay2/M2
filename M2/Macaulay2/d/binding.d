@@ -333,6 +333,7 @@ bumpPrecedence();
      special("if",    unaryif,    precSpace, wide);
      special("try",   unarytry,   precSpace, wide);
      special("catch", unarycatch, precSpace, wide);
+     special("with",  unarywith,  precSpace, wide);
 bumpPrecedence();
      export ParenStarParenS := makeKeyword(postfix("(*)"));
 bumpPrecedence();
@@ -410,6 +411,12 @@ export RobustPrintNetE := Expr(RobustPrintNetS);
 
 export RobustPrintStringS := makeProtectedSymbolClosure("RobustPrintStringMethod");
 export RobustPrintStringE := Expr(RobustPrintStringS);
+
+export EnterMethodS := makeProtectedSymbolClosure("EnterMethod");
+export EnterMethodE := Expr(EnterMethodS);
+
+export ExitMethodS := makeProtectedSymbolClosure("ExitMethod");
+export ExitMethodE := Expr(ExitMethodS);
 
 export StopIterationS := makeProtectedSymbolClosure("StopIteration");
 export StopIterationE := Expr(StopIterationS);
@@ -945,6 +952,10 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  )
      is i:Catch do (
 	  bind(i.primary,dictionary);
+	  )
+     is i:WithDo do (
+	  bind(i.primary,dictionary);
+	  bind(i.doClause,dictionary);
 	  )
      );
 export localBind(e:ParseTree,dictionary:Dictionary):bool := (

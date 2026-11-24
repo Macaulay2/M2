@@ -527,6 +527,8 @@ scanLines(Function,String) := (p,inf) -> (		    -- the function p can use "break
      ret)
 scanLines(Function,List) := (p,infs) -> scan(infs,inf->scanLines(p,inf))
 
+File.ExitMethod = close#0
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
