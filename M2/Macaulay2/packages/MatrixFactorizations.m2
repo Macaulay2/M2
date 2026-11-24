@@ -1,8 +1,8 @@
 newPackage(
     "MatrixFactorizations",
     AuxiliaryFiles => true -*may need to change*-,
-    Version => "0.1", 
-    Date => "August 13, 2025",
+    Version => "0.2",
+    Date => "November 8, 2026",
     Authors => {
         {Name => "David Favero", 
             Email => "favero@umn.edu", 

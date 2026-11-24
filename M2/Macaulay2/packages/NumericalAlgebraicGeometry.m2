@@ -3,8 +3,8 @@
 
 newPackage(
      "NumericalAlgebraicGeometry",
-     Version => "1.24",
-     Date => "May 2024",
+     Version => "1.25",
+     Date => "November 12, 2026",
      Headline => "numerical algebraic geometry",
      HomePage => "https://antonleykin.math.gatech.edu/NAG4M2/",
      AuxiliaryFiles => true,

@@ -26,8 +26,8 @@ of the License, or any later version.
 
 newPackage (
     "Graphs",
-        Version => "0.3.4",
-        Date => "May 15, 2021",
+        Version => "0.3.5",
+        Date => "November 22, 2026",
         Authors => {
             {Name => "Jack Burkart", Email => "jburkar1@nd.edu"},
             {Name => "David Cook II", Email => "dcook.math@gmail.com", HomePage => "http://ux1.eiu.edu/~dwcook/"},

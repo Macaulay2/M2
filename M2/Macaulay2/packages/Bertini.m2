@@ -2,8 +2,8 @@ bertiniPresent := run ("type bertini >/dev/null 2>&1") === 0
 
 newPackage(
   "Bertini",
-  Version => "2.1.2.3",
-  Date => "Feb 6 2024",
+  Version => "2.1.2.4",
+  Date => "June 13, 2026",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "elizabeth.gross@sjsu.edu",
