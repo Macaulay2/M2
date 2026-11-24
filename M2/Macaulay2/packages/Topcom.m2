@@ -52,6 +52,21 @@ export {
     }
 
 topcomProgram = null
+topcomVersion = null  -- full version string, e.g. "1.1.2" or "1.2.0c"; "0.0" if unknown
+
+initTopcom = () -> (
+    if topcomProgram =!= null then return;
+    topcomProgram = findProgram("topcom", {"cube 3", "B_A 3"}, Prefix => {
+	(".*", "topcom-"), -- debian
+	("^(cross|cube|cyclic|hypersimplex|lattice)$", "TOPCOM-"), --fedora
+	("^cube$", "topcom_"), --gentoo
+	("^(binomial|cross|cube|cyclic|lattice)$", "topcom-") --arch
+	});
+    retval := runProgram(topcomProgram, "checkregularity", "-v < /dev/null",
+	KeepFiles => false, RaiseError => false);
+    m := regex("[Vv]ersion ([0-9][0-9a-z.]*)", retval#"error");
+    topcomVersion = if m =!= null then substring(retval#"error", (m#1)#0, (m#1)#1) else "0.0"
+    )
 
 augment = method()
 augment Matrix := (A) -> (
@@ -76,13 +91,7 @@ topcomPoints Matrix := opts -> (A) -> (
 -- debugLevel: set to 0 - 7 for varying verbose output
 callTopcom = method()
 callTopcom(String, List) := (command, inputs) -> (
-    if topcomProgram === null then
-	topcomProgram = findProgram("topcom", {"cube 3", "B_A 3"}, Prefix => {
-	    (".*", "topcom-"), -- debian
-	    ("^(cross|cube|cyclic|hypersimplex|lattice)$", "TOPCOM-"), --fedora
-	    ("^cube$", "topcom_"), --gentoo
-	    ("^(binomial|cross|cube|cyclic|lattice)$", "topcom-") --arch
-	    });
+    initTopcom();
     filename := temporaryFileName();
     infile := filename|".in";
     -- now create the output file
@@ -126,7 +135,11 @@ topcomIsRegularTriangulation(Matrix, List) := Boolean => opts -> (A, tri) -> (
     if rank A1 == numColumns A1 then
         return #tri == 1 and sort tri#0 == toList(0 .. numColumns A1 - 1);
     -- now create the output file
-    (outfile, errfile) := callTopcom("checkregularity --checktriang -v", {topcomPoints(A, opts), [], tri });
+    initTopcom();
+    inputs := if topcomVersion >= "1.2.0"
+        then {topcomPoints(A, opts), [], [], tri}
+        else {topcomPoints(A, opts), [], tri};
+    (outfile, errfile) := callTopcom("checkregularity --checktriang -v", inputs);
     match("[Cc]hecked 1 triangulations, 0 non-regular so far", get errfile)
     )
 
@@ -147,14 +160,20 @@ topcomRegularTriangulationWeights(Matrix, List) := List => opts -> (A, tri) -> (
         if #tri == 1 and sort tri#0 == toList(0 .. n - 1) then return toList(n : 0)
         else return null;
         );
-    (outfile, errfile) := callTopcom("checkregularity --heights", {topcomPoints(A, opts), [], tri });
+    initTopcom();
+    inputs := if topcomVersion >= "1.2.0"
+        then {topcomPoints(A, opts), [], [], tri}
+        else {topcomPoints(A, opts), [], tri};
+    (outfile, errfile) := callTopcom("checkregularity --heights", inputs);
     output := get outfile;
     if match("non-regular", output) then return null;
+    outputLines := lines output;
+    if #outputLines < 2 then return null;
     result := (
-	if match(///^\(///, first lines output) -- TOPCOM < 1.1.0
-	then value first lines output
-	else value replace(///^h\[\d+\] := (.*);///, ///\1///,
-	    (lines output)#1));
+	if match(///^\(///, first outputLines) -- TOPCOM < 1.1.0
+	then value first outputLines
+	-- extract [...] from either "h[N] := [...];" (>= 1.1.0) or "N: [...];" (>= 1.2.0)
+	else value replace(///.*(\[.*\]).*///, ///\1///, outputLines#1));
     return if instance(result, Number) then {result} else toList result
     )
 
@@ -174,7 +193,10 @@ topcomRegularFineTriangulation Matrix := List => opts -> (A) -> (
 chirotopeString = method(Options => options topcomIsRegularTriangulation)
 chirotopeString Matrix := String => opts -> A -> (
     (outfile,errfile) := callTopcom("points2chiro", {topcomPoints(A, opts)});
-    get outfile
+    -- TOPCOM >= 1.2.0 appends symmetry group lines after the chirotope; keep only
+    -- the header line (starts with a digit) and sign lines (contain only +, -, 0)
+    s := select(lines get outfile, l -> match(///^([0-9]|[-+0]+$)///, l));
+    concatenate(s/(l -> l | "\n"))
     )
 
 -- The following is a slower version that allows us to check the result of chirotopeString.
@@ -266,13 +288,17 @@ topcomAllTriangulations Matrix := List => opts -> (A) -> (
     executable := allTriangsExecutable#(opts.Fine, opts.ConnectedToRegular);
     args := if opts.RegularOnly then " --regular" else "";
     (outfile, errfile) := callTopcom(executable | args, {topcomPoints(A, Homogenize=>opts.Homogenize)});
-    tris := lines get outfile;
+    tris := select(lines get outfile, t -> #t > 0);
     -- if ConnectToRegular is true, then the output is different, and needs to be parsed.
     -- in the other case, we can avoid the first 2 lines but they don't do anything either.
+    -- >= 1.2.0: [triangID:N,...,triang:{{...}},support:{...},...]
+    -- >= 1.1.0: T[N] := {{...}};
+    -- <  1.1.0: T[N]:=[N->N,N:{{...}}];
     for t in tris list (
-        t1 := replace(///T\[[0-9,]+\] ?:= ?(\[.*:)?///, "", t);
-        t2 := replace(///\];///, "", t1);
-        t3 := sort value t2
+        t1 := if match("triangID:", t)
+            then replace("(,support:|\\]).*", "", replace(".*,triang:", "", t))
+            else replace(///\];///, "", replace(///T\[[0-9,]+\] ?:= ?(\[.*:)?///, "", t));
+        if #t1 == 0 then continue else sort value t1
         )
     )
 
@@ -291,9 +317,14 @@ topcomNumFlips = method(Options => {Homogenize=>true, RegularOnly =>true})
 topcomNumFlips(Matrix, List) := ZZ => opts -> (A, tri) -> (
     A1 := if opts.Homogenize then augment A else A;
     if rank A1 == numColumns A1 then return 0;
+    initTopcom();
     executable := "points2nflips";
     args := if opts.RegularOnly then " --regular" else "";
-    (outfile, errfile) := callTopcom(executable | args, {topcomPoints(A, Homogenize=>opts.Homogenize), [], tri});
+    inputs := if topcomVersion >= "1.2.0"
+        then {topcomPoints(A, Homogenize=>opts.Homogenize), [], [], tri}
+        else {topcomPoints(A, Homogenize=>opts.Homogenize), [], tri};
+    triangseed := if topcomVersion >= "1.2.0" then " --triangseed" else "";
+    (outfile, errfile) := callTopcom(executable | args | triangseed, inputs);
     value get outfile
     )
 
@@ -301,9 +332,14 @@ topcomFlips = method(Options => {Homogenize=>true, RegularOnly =>true})
 topcomFlips(Matrix, List) := List => opts -> (A, tri) -> (
     A1 := if opts.Homogenize then augment A else A;
     if rank A1 == numColumns A1 then return {};
+    initTopcom();
     executable := "points2flips";
     args := if opts.RegularOnly then " --regular" else "";
-    (outfile, errfile) := callTopcom(executable | args, {topcomPoints(A, Homogenize=>opts.Homogenize), [], tri});
+    inputs := if topcomVersion >= "1.2.0"
+        then {topcomPoints(A, Homogenize=>opts.Homogenize), [], [], tri}
+        else {topcomPoints(A, Homogenize=>opts.Homogenize), [], tri};
+    triangseed := if topcomVersion >= "1.2.0" then " --triangseed" else "";
+    (outfile, errfile) := callTopcom(executable | args | triangseed, inputs);
     s := get outfile;
     s = replace("->0","",s); -- I don't understand why this is in their notation...
     s = replace("[0-9,]*:", "", s);
@@ -342,7 +378,12 @@ topcomIsTriangulation(Matrix, List) := Boolean => opts -> (Vin, T) -> (
       << "Index sets do not correspond to full-dimensional simplices" << endl;
       return false;
    );
-   (outfile, errfile) := callTopcom("points2nflips --checktriang -v", {topcomPoints(V, Homogenize=>false), [], T });
+   initTopcom();
+   inputs := if topcomVersion >= "1.2.0"
+       then {topcomPoints(V, Homogenize=>false), [], [], T}
+       else {topcomPoints(V, Homogenize=>false), [], T};
+   triangseed := if topcomVersion >= "1.2.0" then " --triangseed" else "";
+   (outfile, errfile) := callTopcom("points2nflips --checktriang -v" | triangseed, inputs);
    not match("not valid", get errfile)
 )
 
