@@ -3,10 +3,11 @@
 #define M2_F4_VARPOWER_MONOMIAL_HPP
 
 #include "monomials/ExponentList.hpp"
+#include "f4/monomial-word.hpp"  // for monomial_word
 
 // Legacy specialization
-using varpower_monomials = ExponentList<long, false>;
-using index_varpower_monomial = ExponentListIterator<long, false>;
+using varpower_monomials = ExponentList<monomial_word, false>;
+using index_varpower_monomial = ExponentListIterator<monomial_word, false>;
 
 typedef varpower_monomials::Exponent varpower_word;
 typedef varpower_word *varpower_monomial;
