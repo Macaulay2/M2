@@ -449,6 +449,26 @@ void varpower::radical(ConstExponents a, Vector& result)
     }
 }
 
+template <>
+void varpower::split_signs(ConstExponents a, Vector& num, Vector& den)
+{
+  num.assign(1, 0);
+  den.assign(1, 0);
+
+  for (index_varpower i = a; i.valid(); ++i) {
+    if (i.exponent() > 0) {
+      num.push_back(i.var());
+      num.push_back(i.exponent());
+    } else if (i.exponent() < 0) {
+      den.push_back(i.var());
+      den.push_back(-i.exponent());
+    }
+  }
+
+  num[0] = static_cast<Exponent>(num.size());
+  den[0] = static_cast<Exponent>(den.size());
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil
