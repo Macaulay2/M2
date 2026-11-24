@@ -634,25 +634,25 @@ TEST /// -- already minimal/reduced
     allowableThreads= 1;    
 ///;
 
-TEST /// -- indivisible S-poly added to hash table correctly
+TEST /// -- Lex Groebner basis
     R = ZZ/101[x,y,z, MonomialOrder=>Lex];
     I = {x^3*y, 4*x^2*y*z^4 - 6*y^5*z^2 - 9*y^2, x*y^3*z^5};
     allowableThreads= 4;
     H = tgb(I);
-    f = I_0;
-    g = I_1;
-    gamma = lcm(leadMonomial f, leadMonomial g);
-    s = (gamma // leadTerm f) * f - (gamma // leadTerm g) * g;
-    assert (s == H#(0,1)) 
+    -- Intermediate remainders and their lineages depend on task scheduling.
+    assert (ideal matrix H == ideal I)
+    assert (ideal leadTerm matrix H == ideal leadTerm gens gb ideal I)
     allowableThreads= 1;    
 ///;
 
-TEST /// -- first element check
+TEST /// -- GLex Groebner basis
     R = ZZ/101[x,y,z, MonomialOrder=>GLex];
     I = {x*y*z + z^2, x*y^2 - y^3*z + x*z, y^2};
     allowableThreads= 4;
     H = tgb(I);
-    assert (x^2*z == H#(0,1))
+    -- Check the final basis rather than requiring a particular lineage.
+    assert (ideal matrix H == ideal I)
+    assert (ideal leadTerm matrix H == ideal leadTerm gens gb ideal I)
     allowableThreads= 1;    
 ///;
 

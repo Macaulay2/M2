@@ -10,10 +10,27 @@ newPackage("KacMoody",
     Headline => "Computations with symmetrizable Kac-Moody algebras and their representations",
     Keywords => {"Lie Groups and Lie Algebras", "Representation Theory"},
     PackageExports => {},
-    PackageImports => {},
+    PackageImports => {"Normaliz", "Polyhedra", "LieAlgebraRepresentations", "WeylGroups"},
     AuxiliaryFiles => true,
     DebuggingMode => false
 )
+
+-- Use the existing method functions for disjoint input types. Only these
+-- three companion names become public when the user loads KacMoody alone.
+exportFrom(LieAlgebraRepresentations, {"simpleRoots", "highestRoot", "dualCoxeterNumber"});
+larLieAlgebra := LieAlgebraRepresentations$LieAlgebra;
+larModule := LieAlgebraRepresentations$LieAlgebraModule;
+larDiagram := LieAlgebraRepresentations$dynkinDiagram;
+larTensorCoefficient := LieAlgebraRepresentations$tensorCoefficient;
+wgDiagram := WeylGroups$dynkinDiagram;
+wgRootSystemType := WeylGroups$RootSystem;
+wgDiagramType := WeylGroups$DynkinDiagram;
+wgParabolicType := WeylGroups$Parabolic;
+wgRootSystem := WeylGroups$rootSystem;
+wgDynkinType := WeylGroups$dynkinType;
+kmConeFromInequalities := Polyhedra$coneFromInequalities;
+kmConeHilbertBasis := Polyhedra$hilbertBasis;
+kmConeRays := rays;
 
 --------------------------------------------------------------------
 -- KacMoody: symmetrizable Kac-Moody algebras in Macaulay2
@@ -143,7 +160,6 @@ export {
     "weylGroup",
     "weylElement",
     "weylParent",
-    "weylWord",
     "identityWeylElement",
     "simpleWeylReflection",
     "inverseWeylElement",
@@ -211,14 +227,6 @@ export {
     "cocharacterLatticeBasis",
     "integratesToGlobalForm",
     "integratesCoweightToGlobalForm",
-    "toLegacyList",
-    "toLegacyCartanMatrix",
-    "datumFromLegacyCartan",
-    "rootFromLegacy",
-    "corootFromLegacy",
-    "weightFromLegacy",
-    "coweightFromLegacy",
-    "simpleRoots",
     "coroots",
     "fundamentalWeights",
     "toFundamental",
@@ -231,12 +239,10 @@ export {
     -- Root system data
     "negativeRoots",
     "allRoots",
-    "highestRoot",
     "highestShortRoot",
     "weylVector",
     "isDominant",
     "coxeterNumber",
-    "dualCoxeterNumber",
     "dynkinDiagramData",
     "dynkinDiagram",
     "dualCartanMatrix",
@@ -285,8 +291,6 @@ export {
     "integrableHighestWeightModule",
     "vermaModule",
     "moduleCharacter",
-    "vermaCharacter",
-    "integrableCharacter",
     "reductiveLeviDatum",
     "leviCenterBasis",
     "restrictWeight",
@@ -362,7 +366,6 @@ export {
     "affineMarks",
     "affineComarks",
     "affineNullRoot",
-    "affineCentralCoefficients",
     "affineCentralElement",
     "affineCartanA2Twisted",
     "affineCartanAOddTwisted",
@@ -375,11 +378,9 @@ export {
     "affineClassicalPart",
     "affineDerivation",
     "affineDegree",
-    "affineFullWeight",
     "affineWeightFromDynkinLabels",
     "affineStructureCacheInfo",
     "clearAffineStructureCache",
-    "affineStructuralCapabilities",
     -- Indefinite Kac-Moody functionality
     "indefiniteRootSnapshot",
     -- Human-readable view of a root snapshot
@@ -397,32 +398,10 @@ export {
     "clearInfrastructureCaches"
 }
 
+
 ------------------------------------------------------------
 -- Internal helpers (not exported)
 ------------------------------------------------------------
-
-toQQMatrix = M -> matrix(QQ, entries M)
-
--- Optional heavy dependencies are loaded only by the features that need
--- them.  Most Cartan, root, Weyl, and representation computations therefore
--- do not pay Normaliz startup costs.
-kacMoodyOptionalFunctions := new MutableHashTable;
-
-optionalPackageFunction = (packageName, functionName) -> (
-    key := (packageName, functionName);
-    if kacMoodyOptionalFunctions#?key then
-        return kacMoodyOptionalFunctions#key;
-    try needsPackage packageName else
-        error("KacMoody: could not load optional package " | packageName);
-    packageObject := value packageName;
-    dictionary := packageObject#"private dictionary";
-    if not dictionary#?functionName then error concatenate(
-        "KacMoody: optional package ", packageName,
-        " does not provide ", functionName);
-    f := value dictionary#functionName;
-    kacMoodyOptionalFunctions#key = f;
-    f
-);
 
 isPositiveVector = v -> (
     all(v, c -> c >= 0) and any(v, c -> c > 0)
@@ -432,51 +411,16 @@ isNegativeVector = v -> (
     all(v, c -> c <= 0) and any(v, c -> c < 0)
 );
 
-isMemberList = (x, L) -> (
-    for y in L do (
-        if y == x then return true;
-    );
-    false
-);
-
-extendPartition = (p, n) -> (
-    if #p > n then error "extendPartition: partition is longer than n";
-    join(p, for i from 1 to n-#p list 0)
-);
-
-partialSums = L -> (
-    s := 0;
-    res := {};
-    for i from 0 to #L-1 do (
-        s = s + L#i;
-        res = append(res, s);
-    );
-    res
-);
-
-extendPartitionTo = (parts, L) -> (
-    if #parts >= L then (
-        for i from 0 to L-1 list parts#i
-    ) else (
-        join(parts, for i from 1 to L-#parts list 0)
-    )
-);
+-- Collect a numbered table in insertion order without growing a list one
+-- slot at a time. This also lets a search read its queue by index.
+numberedTableEntries = T -> for i from 0 to #T-1 list T#i;
 
 cartanCompositions = (h, r) -> (
-    if h < 0 then error "cartanCompositions: h must be >= 0";
-    if r < 1 then error "cartanCompositions: r must be >= 1";
-    if r == 1 then (
-        {{h}}
-    ) else (
-        L := {};
-        for i from 0 to h do (
-            tails := cartanCompositions(h - i, r-1);
-            for t in tails do (
-                L = append(L, {i} | t);
-            );
-        );
-        L
-    )
+    -- Core lists the last coordinate first; preserve lexicographic order.
+    -- The unique weight of height zero in rank zero is the empty tuple.
+    if r == 0 then (if h == 0 then {{}} else {})
+    else if r == 1 then {{h}}
+    else apply(compositions(r,h),reverse)
 );
 
 
@@ -502,8 +446,6 @@ cartanA = n -> (
     ))
 )
 
-typeAfundWeights = n -> transpose inverse ((cartanA n) ** QQ)
-
 -- Simple roots: alpha_i = e_i - e_{i+1}, i = 1..n-1
 simpleRootsA = n -> (
     if not instance(n, ZZ) or n < 2 then error "simpleRootsA: n must be an integer at least 2";
@@ -518,34 +460,9 @@ simpleRootsA = n -> (
 -- Positive roots for type A_(n-1) in epsilon-basis
 positiveRootsA = n -> (
     if not instance(n, ZZ) or n < 2 then error "positiveRootsA: n must be an integer at least 2";
-    L := {};
-    for i from 0 to n-1 do (
-        for j from i+1 to n-1 do (
-            r := for k from 0 to n-1 list (
-                if k == i then 1
-                else if k == j then -1
-                else 0
-            );
-            L = append(L, r);
-        )
-    );
-    matrix L
-)
-
--- Type A_(n-1): positive roots in simple-root basis
-cartanPositiveRootsA = n -> (
-    if not instance(n, ZZ) or n < 2 then error "cartanPositiveRootsA: n must be an integer at least 2";
-    r := n - 1;
-    L := {};
-    for i from 0 to r-1 do (
-        for j from i to r-1 do (
-            v := for k from 0 to r-1 list (
-                if k >= i and k <= j then 1 else 0
-            );
-            L = append(L, v);
-        )
-    );
-    matrix L
+    matrix flatten for i from 0 to n-1 list
+        for j from i+1 to n-1 list
+            for k from 0 to n-1 list (if k == i then 1 else if k == j then -1 else 0)
 )
 
 
@@ -572,8 +489,6 @@ cartanB = ell -> (
     ))
 )
 
-typeBfundWeights = n -> transpose inverse ((cartanB n) ** QQ)
-
 -- Simple roots for type B_ell
 simpleRootsB = ell -> (
     if not instance(ell, ZZ) or ell < 2 then error "simpleRootsB: ell must be an integer at least 2";
@@ -589,38 +504,18 @@ simpleRootsB = ell -> (
     ))
 )
 
+-- For each i < j, list e_i - e_j followed by e_i + e_j.
+positiveEpsilonPairRoots = n -> flatten flatten for i from 0 to n-1 list
+    for j from i+1 to n-1 list {
+        for k from 0 to n-1 list (if k == i then 1 else if k == j then -1 else 0),
+        for k from 0 to n-1 list (if k == i or k == j then 1 else 0)
+    }
+
 -- Positive roots for type B_ell in epsilon-basis
 positiveRootsB = ell -> (
     if not instance(ell, ZZ) or ell < 2 then error "positiveRootsB: ell must be an integer at least 2";
-    L := {};
-    for i from 0 to ell-1 do (
-        for j from i+1 to ell-1 do (
-            r1 := for k from 0 to ell-1 list (
-                if k == i then 1
-                else if k == j then -1
-                else 0
-            );
-            r2 := for k from 0 to ell-1 list (
-                if k == i or k == j then 1 else 0
-            );
-            L = append(L, r1);
-            L = append(L, r2);
-        )
-    );
-    for k from 0 to ell-1 do (
-        r := for j from 0 to ell-1 list (if j == k then 1 else 0);
-        L = append(L, r);
-    );
-    matrix L
-)
-
--- Positive roots in simple-root basis for type B_ell
-cartanPositiveRootsB = ell -> (
-    if not instance(ell, ZZ) or ell < 2 then error "cartanPositiveRootsB: ell must be an integer at least 2";
-    S := simpleRootsB ell;
-    R := positiveRootsB ell;
-    invS := inverse S;
-    R * invS
+    matrix join(positiveEpsilonPairRoots ell,
+        for i from 0 to ell-1 list for j from 0 to ell-1 list if j == i then 1 else 0)
 )
 
 
@@ -647,8 +542,6 @@ cartanC = ell -> (
     ))
 )
 
-typeCfundWeights = n -> transpose inverse ((cartanC n) ** QQ)
-
 -- Simple roots for type C_ell
 simpleRootsC = ell -> (
     if not instance(ell, ZZ) or ell < 2 then error "simpleRootsC: ell must be an integer at least 2";
@@ -667,35 +560,8 @@ simpleRootsC = ell -> (
 -- Positive roots for type C_ell in epsilon-basis
 positiveRootsC = ell -> (
     if not instance(ell, ZZ) or ell < 2 then error "positiveRootsC: ell must be an integer at least 2";
-    L := {};
-    for i from 0 to ell-1 do (
-        for j from i+1 to ell-1 do (
-            r1 := for k from 0 to ell-1 list (
-                if k == i then 1
-                else if k == j then -1
-                else 0
-            );
-            r2 := for k from 0 to ell-1 list (
-                if k == i or k == j then 1 else 0
-            );
-            L = append(L, r1);
-            L = append(L, r2);
-        )
-    );
-    for k from 0 to ell-1 do (
-        r := for j from 0 to ell-1 list (if j == k then 2 else 0);
-        L = append(L, r);
-    );
-    matrix L
-)
-
--- Positive roots in simple-root basis for type C_ell
-cartanPositiveRootsC = ell -> (
-    if not instance(ell, ZZ) or ell < 2 then error "cartanPositiveRootsC: ell must be an integer at least 2";
-    S := simpleRootsC ell;
-    R := positiveRootsC ell;
-    invS := inverse (S**QQ);
-    R * invS
+    matrix join(positiveEpsilonPairRoots ell,
+        for i from 0 to ell-1 list for j from 0 to ell-1 list if j == i then 2 else 0)
 )
 
 
@@ -722,8 +588,6 @@ cartanD = ell -> (
     ))
 )
 
-typeDfundWeights = n -> transpose inverse ((cartanD n) ** QQ)
-
 -- Simple roots for type D_ell (Bourbaki)
 simpleRootsD = ell -> (
     if not instance(ell, ZZ) or ell < 4 then error "simpleRootsD: ell must be an integer at least 4";
@@ -744,31 +608,7 @@ simpleRootsD = ell -> (
 -- Positive roots for type D_ell in epsilon-basis
 positiveRootsD = ell -> (
     if not instance(ell, ZZ) or ell < 4 then error "positiveRootsD: ell must be an integer at least 4";
-    L := {};
-    for i from 0 to ell-1 do (
-        for j from i+1 to ell-1 do (
-            r1 := for k from 0 to ell-1 list (
-                if k == i then 1
-                else if k == j then -1
-                else 0
-            );
-            r2 := for k from 0 to ell-1 list (
-                if k == i or k == j then 1 else 0
-            );
-            L = append(L, r1);
-            L = append(L, r2);
-        )
-    );
-    matrix L
-)
-
--- Positive roots in simple-root basis for type D_ell
-cartanPositiveRootsD = ell -> (
-    if not instance(ell, ZZ) or ell < 4 then error "cartanPositiveRootsD: ell must be an integer at least 4";
-    S := simpleRootsD ell;
-    R := positiveRootsD ell;
-    invS := inverse(S**QQ);
-    R * invS
+    matrix positiveEpsilonPairRoots ell
 )
 
 
@@ -859,7 +699,7 @@ cartanG2 = () -> (
 -- classification when p,q,r are all at least 2,
 --   1/p + 1/q + 1/r > 1  finite    (spherical)
 --   1/p + 1/q + 1/r = 1  affine    (Euclidean)
---   1/p + 1/q + 1/r < 1  hyperbolic/Lorentzian (indefinite)
+--   1/p + 1/q + 1/r < 1  Lorentzian indefinite (not always hyperbolic)
 -- which cartanType will detect automatically.
 --
 -- Node ordering: the leaf of the first arm is node 1, the center is
@@ -900,7 +740,8 @@ cartanT = (p, q, r) -> (
 -- and arm i occupies nodes of matrix-index contributing (p_i - 1)
 -- positions after the center.  For k=3 this coincides with cartanT up
 -- to a permutation of indices; for k<=2 this gives a chain (type A);
--- for k>=4 the diagrams are always indefinite.
+-- Length-one arms add no nodes. With four nontrivial arms only the
+-- four single-edge arms give affine type; with more arms the type is indefinite.
 
 cartanStar = armLens -> (
     if not instance(armLens, List) then
@@ -1111,26 +952,12 @@ cartanAffineG2 = () -> (
 ------------------------------------------------------------
 -- Over- and very-extended Kac-Moody Cartan matrices.
 --
--- cartanOverExtended(A) takes a finite-type Cartan A, affinises it
--- via cartanExtendUntwisted to get A^+ (= A^(1)), and then appends a
+-- cartanOverExtended(A) takes a finite-type Cartan A to its untwisted
+-- affine extension A^+ (= A^(1)), and then prepends a
 -- further simple root attached by a single bond to alpha_0 (the
--- affine node).  The result A^{++} is a hyperbolic/Lorentzian
--- Kac-Moody matrix whenever such an extension makes sense.  When A
--- is of type E_n, the iterated extensions give the algebras
+-- affine node).  For type E_8 the iterated extensions give the algebras
 -- E_9 = E_8^+, E_{10} = E_8^{++}, E_{11} = E_8^{+++}.
 ------------------------------------------------------------
-
-cartanOverExtended = A -> (
-    Aaff := cartanExtendUntwisted A;
-    r := numrows Aaff;
-    M := mutableMatrix(ZZ, r+1, r+1);
-    for i from 0 to r-1 do for j from 0 to r-1 do M_(i+1, j+1) = Aaff_(i,j);
-    M_(0, 0) = 2;
-    -- attach new node at index 0 to affine node (now at index 1) by
-    -- a single bond (both long, all simply laced in the extension)
-    M_(0, 1) = -1; M_(1, 0) = -1;
-    matrix M
-)
 
 -- Helper: single over-extension step that works on any GCM (not just
 -- finite-type).  Used by cartanVeryExtended so the result prepends a
@@ -1144,6 +971,7 @@ cartanOverExtendStep = A -> (
     matrix M
 )
 
+cartanOverExtended = A -> cartanOverExtendStep cartanExtendUntwisted A
 -- Very-extended: over-extend once, then prepend one more node.
 cartanVeryExtended = A -> cartanOverExtendStep cartanOverExtended A
 
@@ -1241,61 +1069,14 @@ positiveRootsG2 = () -> (
     }
 )
 
--- G2 positive roots in simple-root (Cartan) basis
-cartanPositiveRootsG2 = () -> (
-    S := simpleRootsG2();
-    R := positiveRootsG2();
-    SQQ := S ** QQ;
-    -- S is 2x3, so use its right inverse rather than attempting to
-    -- invert a nonsquare matrix.
-    C := R * transpose(SQQ) * inverse(SQQ * transpose(SQQ));
-    try lift(C, ZZ) else
-        error "cartanPositiveRootsG2: coordinate conversion produced a nonintegral root"
-)
-
 -- F4 positive roots in epsilon-basis (ambient dim 4)
 -- 24 positive roots
 positiveRootsF4 = () -> (
-    L := {};
-    -- Long roots: e_i +/- e_j (i < j), 12 of these are positive
-    for i from 0 to 3 do (
-        for j from i+1 to 3 do (
-            r1 := for k from 0 to 3 list (
-                if k == i then 1 else if k == j then -1 else 0
-            );
-            r2 := for k from 0 to 3 list (
-                if k == i or k == j then 1 else 0
-            );
-            L = append(L, r1);
-            L = append(L, r2);
-        )
-    );
-    -- Short roots: e_i, 4 of these
-    for i from 0 to 3 do (
-        L = append(L, for k from 0 to 3 list (if k == i then 1 else 0));
-    );
-    -- Short roots: (1/2)(+/-e1 +/- e2 +/- e3 +/- e4), 8 positive ones
-    -- positive means the first nonzero sign from left determines positivity;
-    -- actually for F4 the positive half-integer roots are all with e1 coeff = +1/2
-    for s2 from 0 to 1 do (
-        for s3 from 0 to 1 do (
-            for s4 from 0 to 1 do (
-                sgn2 := if s2 == 0 then 1 else -1;
-                sgn3 := if s3 == 0 then 1 else -1;
-                sgn4 := if s4 == 0 then 1 else -1;
-                L = append(L, {1/2, sgn2 * (1/2), sgn3 * (1/2), sgn4 * (1/2)});
-            );
-        );
-    );
-    matrix L
-)
-
--- F4 positive roots in simple-root (Cartan) basis
-cartanPositiveRootsF4 = () -> (
-    S := simpleRootsF4();
-    R := positiveRootsF4();
-    invS := inverse(S ** QQ);
-    R * invS
+    unitRoots := for i from 0 to 3 list
+        for j from 0 to 3 list if j == i then 1 else 0;
+    halfRoots := flatten flatten for s2 in {1/2,-1/2} list
+        for s3 in {1/2,-1/2} list for s4 in {1/2,-1/2} list {1/2,s2,s3,s4};
+    matrix join(positiveEpsilonPairRoots 4,unitRoots,halfRoots)
 )
 
 -- E6 positive roots in epsilon-basis (ambient dim 8)
@@ -1310,9 +1091,6 @@ positiveRootsE6 = () -> (
     Rc * (S ** QQ)
 )
 
--- E6 positive roots in Cartan basis
-cartanPositiveRootsE6 = () -> cartanPositiveRoots(cartanE 6)
-
 -- E7 positive roots in epsilon-basis (ambient dim 8)
 -- 63 positive roots
 positiveRootsE7 = () -> (
@@ -1322,8 +1100,6 @@ positiveRootsE7 = () -> (
     Rc * (S ** QQ)
 )
 
-cartanPositiveRootsE7 = () -> cartanPositiveRoots(cartanE 7)
-
 -- E8 positive roots in epsilon-basis (ambient dim 8)
 -- 120 positive roots
 positiveRootsE8 = () -> (
@@ -1332,8 +1108,6 @@ positiveRootsE8 = () -> (
     Rc := cartanPositiveRoots A;
     Rc * (S ** QQ)
 )
-
-cartanPositiveRootsE8 = () -> cartanPositiveRoots(cartanE 8)
 
 
 ------------------------------------------------------------
@@ -1353,14 +1127,12 @@ cartanPositiveRootsCore = (A, maxCoeff) -> (
     A = integralCartanMatrix(A, "cartanPositiveRoots");
     r := numrows A;
 
-    R := new MutableList;
-    Q := new MutableList;
+    Q := new MutableHashTable;
     seen := new MutableHashTable;
 
     for i from 0 to r-1 do (
         v := for j from 0 to r-1 list (if j == i then 1 else 0);
         if maxCoeff === null or 1 <= maxCoeff then (
-            R#(#R) = v;
             Q#(#Q) = v;
             seen#v = true;
         );
@@ -1403,13 +1175,12 @@ cartanPositiveRootsCore = (A, maxCoeff) -> (
 
             if not seen#?mu then (
                 seen#mu = true;
-                R#(#R) = mu;
                 Q#(#Q) = mu;
             );
         );
     );
 
-    matrix toList R
+    matrix numberedTableEntries Q
 );
 
 -- Positive real roots of total height at most H.  A positive root of
@@ -1473,15 +1244,13 @@ cartanPositiveRootsDegree (Matrix, ZZ, List) := (A, d, parabolic) -> (
         s
     );
 
-    R := new MutableList;
-    Q := new MutableList;
+    Q := new MutableHashTable;
     seen := new MutableHashTable;
 
     for i from 0 to r-1 do (
         v := for j from 0 to r-1 list (if j == i then 1 else 0);
         degv := rootDegree v;
         if degv <= d then (
-            R#(#R) = v;
             Q#(#Q) = v;
             seen#v = true;
         )
@@ -1516,16 +1285,12 @@ cartanPositiveRootsDegree (Matrix, ZZ, List) := (A, d, parabolic) -> (
 
             if not seen#?mu then (
                 seen#mu = true;
-                R#(#R) = mu;
                 Q#(#Q) = mu;
             );
         );
     );
 
-    L := {};
-    for v in toList R do (
-        if rootDegree v == d then L = append(L, v);
-    );
+    L := for i from 0 to #Q-1 list if rootDegree(Q#i) == d then Q#i else continue;
 
     if #L == 0 then (
         matrix mutableMatrix(ZZ, 0, r)
@@ -1659,26 +1424,26 @@ LeviIrrep == LeviIrrep := (V,W) -> V === W;
 leviConnectedComponents0 = AL -> (
     n := numrows AL;
     visited := new MutableList from for i from 0 to n-1 list false;
-    comps := {};
-    for i from 0 to n-1 do (
+    stack := new MutableList from toList(n:0);
+    for i from 0 to n-1 list (
         if visited#i then continue;
-        stack := {i};
-        comp := {};
-        while #stack > 0 do (
-            j := last stack;
-            stack = drop(stack, -1);
-            if visited#j then continue;
-            visited#j = true;
-            comp = append(comp, j);
+        stack#0 = i;
+        top := 1;
+        visited#i = true;
+        comp := while top > 0 list (
+            top = top-1;
+            j := stack#top;
             for k from 0 to n-1 do (
                 if not visited#k and (AL_(j,k) != 0 or AL_(k,j) != 0) then (
-                    stack = append(stack, k);
+                    visited#k = true;
+                    stack#top = k;
+                    top = top+1;
                 );
             );
+            j
         );
-        comps = append(comps, sort comp);
-    );
-    comps
+        sort comp
+    )
 );
 
 -- Public node labels follow the same 1-based convention as every other
@@ -1691,50 +1456,6 @@ leviConnectedComponents Matrix := AL -> (
     if numrows AL == 0 then return {};
     AL = integralCartanMatrix(AL, "leviConnectedComponents");
     apply(leviConnectedComponents0 AL, comp -> apply(comp, i -> i+1))
-);
-
--- isTypeAComponent(M) : true iff the given (already connected) Cartan
--- matrix M is of type A_n, i.e.\ tri-diagonal with 2/-1/0 entries.
-isTypeAComponent = M -> (
-    n := numrows M;
-    if n == 0 then return true;
-    for i from 0 to n-1 do (
-        if M_(i,i) != 2 then return false;
-        for j from 0 to n-1 do (
-            if i == j then continue
-            else if abs(i - j) == 1 then (
-                if M_(i,j) != -1 then return false;
-            ) else (
-                if M_(i,j) != 0 then return false;
-            );
-        );
-    );
-    true
-);
-
--- isTypeBComponent(M) : true iff M equals cartanB n in the package's
--- standard ordering (last node is short, so M_(n-2,n-1) = -1 and
--- M_(n-1,n-2) = -2).
-isTypeBComponent = M -> (
-    n := numrows M;
-    if n < 2 or numcols M =!= n then return false;
-    M == cartanB n
-);
-
--- isTypeCComponent(M) : true iff M equals cartanC n (last node long:
--- M_(n-2,n-1) = -2, M_(n-1,n-2) = -1).
-isTypeCComponent = M -> (
-    n := numrows M;
-    if n < 2 or numcols M =!= n then return false;
-    M == cartanC n
-);
-
--- isTypeDComponent(M) : true iff M equals cartanD n (tri-diagonal
--- A_{n-1} chain with an extra fork node attached at position n-3).
-isTypeDComponent = M -> (
-    n := numrows M;
-    if n < 4 or numcols M =!= n then return false;
-    M == cartanD n
 );
 
 -- classifyConnectedCartan(M) : returns (type, rank, permutation), where
@@ -1786,20 +1507,15 @@ classifyConnectedCartan = M -> (
     if #endpoints == 2 and sum degrees == 2*(n-1)
        and all(degrees, d -> d <= 2) then (
         pathFrom := start -> (
-            p := {};
             previous := -1;
             current := start;
-            while current =!= null do (
-                p = append(p, current);
+            while current =!= null list (
+                node := current;
                 nextNodes := select(neighbors#current, j -> j != previous);
-                if #nextNodes == 0 then current = null
-                else (
-                    previousNew := current;
-                    current = first nextNodes;
-                    previous = previousNew;
-                );
-            );
-            p
+                previous = node;
+                current = if #nextNodes == 0 then null else first nextNodes;
+                node
+            )
         );
         p := pathFrom first endpoints;
         if #p == n then candidatePerms = candidatePerms | {p, reverse p};
@@ -1812,18 +1528,17 @@ classifyConnectedCartan = M -> (
        and all(degrees, d -> d <= 3) then (
         branch := first branches;
         armFrom := start -> (
-            arm := {start};
             previous := branch;
             current := start;
-            while degrees#current == 2 do (
+            tail := while degrees#current == 2 list (
                 nextNodes := select(neighbors#current, j -> j != previous);
                 if #nextNodes == 0 then break;
                 previousNew := current;
                 current = first nextNodes;
                 previous = previousNew;
-                arm = append(arm, current);
+                current
             );
-            arm
+            prepend(start,tail)
         );
         arms := apply(neighbors#branch, armFrom);
         orderedArms := sort apply(arms, arm -> {#arm, arm});
@@ -1946,25 +1661,23 @@ degreeZeroDerivedLeviTally = (A, AL, comps, fmt) -> (
     new Tally from for irr in keys byIrrep list irr => byIrrep#irr
 );
 
--- decomposeLeviWeightList(AL, weightList)
---   AL         : Levi Cartan matrix
---   weightList : list of Dynkin-label vectors (the weights, with
---                repetition, of some finite-dimensional Levi rep V)
+-- weightPairs gives the Dynkin weights of V paired with their multiplicities.
 -- Returns a list of pairs {mu, n_mu} where V = sum n_mu * V_L(mu).
-decomposeLeviWeightList = (AL, weightList) -> (
-    if #weightList == 0 then return {};
+decomposeLeviWeightPairs = (AL, weightPairs) -> (
+    if #weightPairs == 0 then return {};
     if numrows AL == 0 then (
-        if not all(weightList, w -> #w == 0) then
-            error "decomposeLeviWeightList: nonempty weights for a rank-zero Levi";
-        return {{{}, #weightList}};
+        if not all(weightPairs, p -> #p#0 == 0) then
+            error "decomposeLeviWeightPairs: nonempty weights for a rank-zero Levi";
+        return {{{}, sum(weightPairs,p -> p#1)}};
     );
 
     -- count[mu] = multiplicity of mu in V, for mu dominant
     counts := new MutableHashTable;
-    for w in weightList do (
+    for p in weightPairs do (
+        w := p#0;
         if all(w, c -> c >= 0) then (
-            if counts#?w then counts#w = counts#w + 1
-            else counts#w = 1;
+            if counts#?w then counts#w = counts#w + p#1
+            else counts#w = p#1;
         );
     );
 
@@ -1976,15 +1689,13 @@ decomposeLeviWeightList = (AL, weightList) -> (
     weightOrder := w -> sum toSimple(AL, w);
     sortedDoms := reverse sort (doms / (w -> {weightOrder w, w})) / last;
 
-    mults := {};
-    for mu in sortedDoms do (
+    mults := for mu in sortedDoms list (
         m := if counts#?mu then counts#mu else 0;
         if m < 0 then
             error concatenate(
-                "decomposeLeviWeightList: negative residual multiplicity at ",
+                "decomposeLeviWeightPairs: negative residual multiplicity at ",
                 toString mu, "; input is not a finite-dimensional Levi character");
         if m > 0 then (
-            mults = append(mults, {mu, m});
             counts#mu = 0;
             -- Subtract m copies of V_L(mu)'s dominant-weight multiplicities
             domWeightsMu := dominantWeightsInRep(AL, mu);
@@ -1994,17 +1705,18 @@ decomposeLeviWeightList = (AL, weightList) -> (
                 if wm == 0 then continue;
                 if not counts#?nu then
                     error concatenate(
-                        "decomposeLeviWeightList: missing dominant weight ",
+                        "decomposeLeviWeightPairs: missing dominant weight ",
                         toString nu, " required below highest weight ", toString mu);
                 counts#nu = counts#nu - m * wm;
             );
-        );
+            {mu,m}
+        ) else continue
     );
 
     residual := select(keys counts, w -> counts#w != 0);
     if #residual > 0 then
         error concatenate(
-            "decomposeLeviWeightList: nonzero residual dominant weights ",
+            "decomposeLeviWeightPairs: nonzero residual dominant weights ",
             toString apply(residual, w -> {w, counts#w}),
             "; input is not a finite-dimensional Levi character");
 
@@ -2035,10 +1747,7 @@ cartanLeviHighestWeights (Matrix, ZZ, List) := opts -> (A, d, parabolic) -> (
         error "cartanLeviHighestWeights: WeightFormat must be \"Dynkin\" or \"Partition\"";
 
     P := set parabolic;
-    Levi := {};
-    for i from 1 to r do (
-        if not member(i, P) then Levi = append(Levi, i);
-    );
+    Levi := for i from 1 to r list if member(i,P) then continue else i;
     Levi0 := for i in Levi list i-1;
     AL := submatrix(A, Levi0, Levi0);
     comps := leviConnectedComponents0 AL;
@@ -2051,20 +1760,12 @@ cartanLeviHighestWeights (Matrix, ZZ, List) := opts -> (A, d, parabolic) -> (
     Rdeg := cartanPositiveRootsDegree(A, d, parabolic);
     if numrows Rdeg == 0 then return tally {};
 
-    -- Compute the Levi Dynkin label of each root in g_d,
-    -- collecting them as a list (with repetition, since roots
-    -- with distinct alpha-basis coords can share a Levi label).
-    Wall := for row from 0 to numrows Rdeg - 1 list (
-        lambda := for i from 0 to r-1 list Rdeg_(row, i);
-        for j in Levi0 list (
-            s := 0;
-            for i from 0 to r-1 do s = s + A_(j, i) * lambda#i;
-            s
-        )
-    );
+    -- Distinct roots need not have distinct Levi weights.
+    weightPairs := for beta in entries Rdeg list (
+        for j in Levi0 list sum(r,i -> A_(j,i)*beta#i)) => 1;
 
     -- Decompose into V_L(mu) with multiplicities.
-    mults := decomposeLeviWeightList(AL, Wall);
+    mults := decomposeLeviWeightPairs(AL, weightPairs);
 
     -- Build the output Tally, formatting each mu per the requested basis.
     pairs := for pair in mults list (
@@ -2169,7 +1870,7 @@ parabolicCosetRepsByLengthInternal = (
     seen#(keyOf identityM) = true;
     seenCount := 1;
 
-    levels := new MutableList;
+    levels := new MutableHashTable;
     levels#0 = {new WeylElement from {
         "matrix" => identityM,
         "inverse" => identityM,
@@ -2178,13 +1879,11 @@ parabolicCosetRepsByLengthInternal = (
     ell := 0;
     while ((maxLen === null or ell < maxLen) and #(levels#ell) > 0
            and (quotientOrder === null or seenCount < quotientOrder)) do (
-        next := new MutableList;
-        nextCount := 0;
-        for elt in levels#ell do (
+        next := flatten for elt in levels#ell list (
             M := elt#"matrix";
             Minv := elt#"inverse";
             word := elt#"word";
-            for i from 0 to n-1 do (
+            for i from 0 to n-1 list (
                 -- l(s_i w)>l(w) iff w^{-1}(alpha_i)>0.
                 if isPositiveColumn(Minv, i) then (
                     M2 := Slist#i * M;
@@ -2196,24 +1895,23 @@ parabolicCosetRepsByLengthInternal = (
                         if maxElements =!= null and seenCount > maxElements then error concatenate(
                             "parabolicCosetReps: computation would materialize more than ",
                             toString maxElements, " quotient elements; increase MaxElements only if that cost is intentional");
-                        next#nextCount = new WeylElement from {
+                        new WeylElement from {
                             "matrix" => M2,
                             "inverse" => Minv2,
                             "word" => {i+1} | word
-                        };
-                        nextCount = nextCount + 1;
-                    );
-                );
-            );
+                        }
+                    ) else continue
+                ) else continue
+            )
         );
         ell = ell + 1;
-        levels#ell = toList next;
+        levels#ell = next;
     );
     if maxLen === null and seenCount != quotientOrder then error concatenate(
         "parabolicCosetReps: internal traversal error: expected ",
         toString quotientOrder, " quotient elements but found ",
         toString seenCount);
-    levels
+    numberedTableEntries levels
 );
 
 -- Backward-compatible internal entry point.  Kostant cohomology can pass a
@@ -2387,7 +2085,9 @@ weylInversionData (Matrix, List) := (A, w) -> (
 
     M := id_(R^n);
     len := 0;
-    invs := {};
+    -- Keep the order of insertion, including roots removed and later reinserted.
+    ordered := new MutableList from toList(#w:null);
+    slot := new MutableHashTable;
 
     for t from 0 to #w-1 do (
         sIndex := w#t - 1;
@@ -2395,11 +2095,15 @@ weylInversionData (Matrix, List) := (A, w) -> (
 
         if isPositiveVector alpha then (
             len = len + 1;
-            invs = append(invs, alpha);
+            ordered#t = alpha;
+            slot#alpha = t;
         ) else if isNegativeVector alpha then (
             len = len - 1;
             betaPos := for j from 0 to n-1 list (- alpha#j);
-            invs = select(invs, beta -> beta =!= betaPos);
+            if slot#?betaPos then (
+                ordered#(slot#betaPos) = null;
+                remove(slot,betaPos);
+            );
         ) else (
             error "weylInversionData: encountered a root that is neither positive nor negative"
         );
@@ -2410,7 +2114,7 @@ weylInversionData (Matrix, List) := (A, w) -> (
     new HashTable from {
         "word"       => w,
         "length"     => len,
-        "inversions" => invs
+        "inversions" => (for beta in ordered list if beta =!= null then beta else continue)
     }
 );
 
@@ -2603,10 +2307,6 @@ partitionToFundamentalBWithName = (rankB, lam, who) -> (
     result
 );
 
-partitionToFundamentalB = (rankB, lam) ->
-    partitionToFundamentalBWithName(
-        rankB, lam, "partitionToFundamentalB");
-
 -- fundamentalToPartitionB mList
 -- Inverse of partitionToFundamentalB.  Returns a list of integers if
 -- all entries are integers, else a list of rationals (half-integer
@@ -2655,10 +2355,6 @@ partitionToFundamentalCWithName = (rankC, lam, who) -> (
     result
 );
 
-partitionToFundamentalC = (rankC, lam) ->
-    partitionToFundamentalCWithName(
-        rankC, lam, "partitionToFundamentalC");
-
 -- fundamentalToPartitionC mList
 -- Inverse of partitionToFundamentalC.  Always returns an integer list.
 fundamentalToPartitionC = (mList) -> (
@@ -2704,10 +2400,6 @@ partitionToFundamentalDWithName = (rankD, lam, who) -> (
         error(who | ": entries must satisfy lambda_1 >= ... >= lambda_(n-1) >= |lambda_n|");
     result
 );
-
-partitionToFundamentalD = (rankD, lam) ->
-    partitionToFundamentalDWithName(
-        rankD, lam, "partitionToFundamentalD");
 
 -- fundamentalToPartitionD mList
 -- Inverse of partitionToFundamentalD.  The last entry lambda_n may be
@@ -2770,11 +2462,9 @@ partitionToFundamental (Matrix, List) := (A, lam) -> (
 ------------------------------------------------------------
 -- Internal helpers for routines that accept a WeightFormat option
 -- (either "Dynkin", default, or "Partition").  weightFromFormat
--- takes the user's input and normalizes it to Dynkin labels;
--- weightToFormat converts an internal Dynkin weight back to the
--- user's chosen output format.  Both are silent pass-throughs for
--- "Dynkin"; for "Partition" they require A to be a connected
--- classical Cartan (type A, B, C, or D).
+-- takes the user's input and normalizes it to Dynkin labels.
+-- For "Partition" it requires a connected classical Cartan matrix
+-- (type A, B, C, or D).
 ------------------------------------------------------------
 
 partitionToFundamentalGeneral = (A, lam) -> (
@@ -2793,12 +2483,6 @@ partitionToFundamentalGeneral = (A, lam) -> (
 weightFromFormat = (A, lambda, fmt) -> (
     if fmt === "Dynkin" then lambda
     else if fmt === "Partition" then partitionToFundamentalGeneral(A, lambda)
-    else error "WeightFormat must be \"Dynkin\" or \"Partition\""
-);
-
-weightToFormat = (A, mList, fmt) -> (
-    if fmt === "Dynkin" then mList
-    else if fmt === "Partition" then fundamentalToPartition(A, mList)
     else error "WeightFormat must be \"Dynkin\" or \"Partition\""
 );
 
@@ -3009,18 +2693,14 @@ isCartanMatrix = A -> (
     -- needed for the derived Levi of a Borel and has no axioms left to
     -- check once squareness and characteristic zero are known.
     if r == 0 then return true;
-    entriesZZ := new MutableList;
-    for i from 0 to r-1 do (
-        rowZZ := new MutableList;
-        for j from 0 to r-1 do (
+    entriesZZ := for i from 0 to r-1 list
+        for j from 0 to r-1 list (
             aij := A_(i,j);
             z := try lift(aij, ZZ) else null;
             if z === null then return false;
             if aij != z * 1_R then return false;
-            rowZZ#j = z;
+            z
         );
-        entriesZZ#i = toList rowZZ;
-    );
 
     for i from 0 to r-1 do (
         if entriesZZ#i#i != 2 then return false;
@@ -3111,10 +2791,11 @@ symmetrizer = A -> (
     for i from 0 to r-1 do (
         if not Dtab#?i then (
             Dtab#i = 1_QQ;
-            Q := {i};
-            while (#Q > 0 and not inconsistent) do (
-                u := first Q;
-                Q = drop(Q, 1);
+            Q := new MutableHashTable from {0=>i};
+            head := 0;
+            while head < #Q and not inconsistent do (
+                u := Q#head;
+                head = head+1;
                 for v from 0 to r-1 do (
                     if u == v then continue;
                     aUV := AQQ_(u,v);
@@ -3125,7 +2806,7 @@ symmetrizer = A -> (
 
                     if not Dtab#?v then (
                         Dtab#v = candidate;
-                        Q = append(Q, v);
+                        Q#(#Q) = v;
                     ) else (
                         if Dtab#v != candidate then (
                             inconsistent = true;
@@ -3303,10 +2984,10 @@ requireConnectedFiniteCartanType = (name, A) -> (
 
 
 -- Abstract simple roots (identity matrix in simple-root basis)
-simpleRoots = A -> (
+simpleRoots Matrix := Matrix => A -> (
     A = integralCartanMatrix(A, "simpleRoots");
     r := numrows A;
-    matrix table(r, r, (i,j) -> if i == j then 1_QQ else 0_QQ)
+    id_(QQ^r)
 );
 
 -- Simple coroots as functionals on the root lattice
@@ -3530,7 +3211,7 @@ isDominant (Matrix, Matrix) := opts -> (A, lambdaMat) -> (
 -- Returns the highest root (= longest root in partial order) in simple-root coords.
 -- For finite type: the unique root with maximal height.
 
-highestRoot = A -> (
+highestRoot Matrix := A -> (
     A = integralCartanMatrix(A, "highestRoot");
     requireConnectedFiniteCartanType("highestRoot", A);
     r := numrows A;
@@ -3565,18 +3246,15 @@ highestShortRoot = A -> (
     B := D * AQQ;
 
     -- Find the minimal norm among all roots (= short root norm)
-    norms := {};
-    roots := {};
-    for row from 0 to numrows R - 1 do (
-        v := for j from 0 to r-1 list R_(row,j);
+    roots := entries R;
+    norms := for v in roots list (
         n := 0_QQ;
         for i from 0 to r-1 do (
             for j from 0 to r-1 do (
                 n = n + v#i * B_(i,j) * v#j;
             );
         );
-        norms = append(norms, n);
-        roots = append(roots, v);
+        n
     );
 
     minNorm := min norms;
@@ -3615,7 +3293,7 @@ coxeterNumber = A -> (
 -- highest short root in fundamental weight basis of the dual.
 -- For simply-laced: h^v = h.
 
-dualCoxeterNumber = A -> (
+dualCoxeterNumber Matrix := A -> (
     -- The dual Coxeter number is (rho, theta^v) + 1 where theta^v
     -- is the highest coroot.  Equivalently, it equals the height
     -- of the highest short root of A^T plus 1.
@@ -3650,14 +3328,10 @@ dynkinDiagramData Matrix := opts -> A -> (
     if opts.NodeFormat =!= null and opts.NodeFormat =!= "Positions" then
         error "dynkinDiagramData: Matrix input only supports NodeFormat => \"Positions\"";
     r := numrows A;
-    edges := {};
-    for i from 0 to r-1 do (
-        for j from i+1 to r-1 do (
-            if A_(i,j) != 0 or A_(j,i) != 0 then (
-                edges = append(edges, {i+1, j+1, A_(i,j), A_(j,i)});
-            );
-        );
-    );
+    edges := flatten for i from 0 to r-1 list
+        for j from i+1 to r-1 list
+            if A_(i,j) != 0 or A_(j,i) != 0 then {i+1,j+1,A_(i,j),A_(j,i)}
+            else continue;
     new HashTable from {
         "nodes" => toList(1..r),
         "edges" => edges,
@@ -3667,26 +3341,38 @@ dynkinDiagramData Matrix := opts -> A -> (
 
 
 -- dynkinDiagram(A)
--- Produce an ASCII (with unicode arrows) rendering of the Dynkin diagram
+-- Produce a text rendering of the Dynkin diagram
 -- for the Cartan matrix A. Works for any Cartan matrix (simply-laced,
 -- non-simply-laced, possibly disconnected, including affine/Kac-Moody).
 --
 -- Returns a String suitable for "print" or << output.
 --
 -- Conventions:
---   single bond:           i ----- j
---   double bond (i long):  i ==>== j    (arrow from long to short)
---   double bond (j long):  i ==<== j
---   triple bond (i long):  i #=>=# j
---   triple bond (j long):  i #=<=# j
+--   single: i --- j; double: i =>= j or i =<= j; triple: i #>= j or i #<= j.
+--   The arrow points from long to short. The symmetric pair (-2,-2) uses ===.
+--   For all other pairs use i --(a_ij,a_ji)-- j, in the order drawn.
 --
--- Nodes are labeled 1..r. For recognized shapes (path, or path with
--- a single branch of degree 3 as in D/E types), a linear/branched
--- layout is produced. For unusual shapes (cycles, higher-valence
--- vertices, affine types with the extra node), a compact edge-list
--- layout is produced instead.
+-- Nodes are labeled 1..r. Paths and D/E-shaped trees use linear/branched
+-- layouts. A cycle repeats its starting node to show the closing bond.
+-- A triangle with one attached leaf can be drawn with two diagonal
+-- single bonds. Components without a suitable layout use an edge list.
 
-dynkinDiagram = method(Options => {NodeFormat => null});
+dynkinDiagram := KacMoody$dynkinDiagram = method(Options => {NodeFormat => null});
+-- The companions have distinct generics with this name. In particular,
+-- LAR returns a Net for (String,ZZ), whereas our text drawing is a String.
+-- Retain both conventions, delegating on the companions' own input types.
+dynkinDiagram larLieAlgebra := opts -> g -> (
+    if opts.NodeFormat =!= null then error "dynkinDiagram: NodeFormat applies only to KacMoody input";
+    larDiagram g)
+dynkinDiagram (String,ZZ,ZZ) := opts -> (s,n,k) -> (
+    if opts.NodeFormat =!= null then error "dynkinDiagram: NodeFormat applies only to KacMoody input";
+    larDiagram(s,n,k))
+dynkinDiagram wgRootSystemType := opts -> R -> (
+    if opts.NodeFormat =!= null then error "dynkinDiagram: NodeFormat applies only to KacMoody input";
+    wgDiagram R)
+dynkinDiagram (wgDiagramType,wgParabolicType) := opts -> (G,P) -> (
+    if opts.NodeFormat =!= null then error "dynkinDiagram: NodeFormat applies only to KacMoody input";
+    wgDiagram(G,P))
 
 -- The graph layout is independent of the objects used to name its nodes.
 -- Keeping the label strings as an explicit argument lets typed overloads
@@ -3702,65 +3388,37 @@ dynkinDraftDiagram = (A,nodeStrings,centerLabels) -> (
     nodeText := i -> nodeStrings#i;
     if r == 0 then return "";
 
-    -- Collect edges (undirected), with bond count and arrow direction.
-    -- Convention: our matrix A satisfies A_(i,j) = 2(alpha_j, alpha_i)/(alpha_i, alpha_i),
-    -- so |A_(i,j)| / |A_(j,i)| = (alpha_j, alpha_j) / (alpha_i, alpha_i).
-    -- Therefore |A_(i,j)| > |A_(j,i)|  <=>  alpha_j is longer  <=>  arrow j -> i.
-    -- arrow = 0 : no arrow (equal lengths)
-    -- arrow = 1 : arrow from i to j (alpha_i is longer)
-    -- arrow = -1: arrow from j to i (alpha_j is longer)
-    edgeList := {};
-    for i from 0 to r-1 do (
-        for j from i+1 to r-1 do (
-            aij := A_(i,j);
-            aji := A_(j,i);
-            if aij != 0 or aji != 0 then (
-                absIj := if aij < 0 then -aij else aij;
-                absJi := if aji < 0 then -aji else aji;
-                bondCount := if absIj > absJi then absIj else absJi;
-                dir := if absIj == absJi then 0
-                       else if absIj > absJi then -1
-                       else 1;
-                edgeList = append(edgeList, {i, j, bondCount, dir});
-            );
-        );
-    );
+    -- Collect unordered edges for the layout. Read Cartan entries in the
+    -- actual traversal order when labeling a bond, not from sorted endpoints.
+    edgeList := flatten for i from 0 to r-1 list
+        for j from i+1 to r-1 list
+            if A_(i,j) != 0 or A_(j,i) != 0 then {i,j} else continue;
 
     -- Build adjacency list (0-indexed)
-    adj := new MutableHashTable;
-    for i from 0 to r-1 do adj#i = {};
-    edgeLookup := new MutableHashTable;
+    neighbors := apply(r,i -> new MutableHashTable);
     for e in edgeList do (
         ii := e#0; jj := e#1;
-        adj#ii = append(adj#ii, jj);
-        adj#jj = append(adj#jj, ii);
-        edgeLookup#(ii, jj) = e;
-        edgeLookup#(jj, ii) = e;
+        leftNeighbors := neighbors#ii;
+        rightNeighbors := neighbors#jj;
+        leftNeighbors#(#leftNeighbors) = jj;
+        rightNeighbors#(#rightNeighbors) = ii;
     );
+    adj := apply(neighbors,numberedTableEntries);
 
-    -- Given an edge record {i, j, bondCount, dir} and the direction of
-    -- travel (from fromNode to toNode), return a 5-character bond glyph.
-    bondGlyph := (fromNode, toNode) -> (
-        e := edgeLookup#(fromNode, toNode);
-        bc := e#2;
-        d := e#3;
-        -- Does the arrow point in the direction of travel?
-        arrowInTravelDir := if d == 0 then 0
-            else if (d == 1 and e#0 == fromNode) or (d == -1 and e#1 == fromNode) then 1
-            else -1;
-        if bc == 1 then " --- "
-        else if bc == 2 then (
-            if arrowInTravelDir == 0 then " === "
-            else if arrowInTravelDir == 1 then " =>= "
-            else " =<= "
-        )
-        else (
-            -- triple (bc >= 3)
-            if arrowInTravelDir == 0 then " ### "
-            else if arrowInTravelDir == 1 then " #>= "
-            else " #<= "
-        )
+    singleBond := (i,j) -> A_(i,j) == -1 and A_(j,i) == -1;
+    -- For a symmetrizer d, d_i a_ij = d_j a_ji, so a_ij = -1,
+    -- a_ji = -2 (or -3) gives an arrow from i to j.
+    bondText := (i,j,compact) -> (
+        a := A_(i,j); b := A_(j,i);
+        if a == -1 and b == -1 then (if compact then "--" else "---")
+        else if a == -1 and b == -2 then (if compact then "=>" else "=>=")
+        else if a == -2 and b == -1 then (if compact then "<=" else "=<=")
+        else if a == -2 and b == -2 then (if compact then "==" else "===")
+        else if a == -1 and b == -3 then (if compact then "#>" else "#>=")
+        else if a == -3 and b == -1 then (if compact then "<#" else "#<=")
+        else "--(" | toString a | "," | toString b | ")--"
     );
+    bondGlyph := (i,j) -> " " | bondText(i,j,false) | " ";
 
     -- Compute degree of each node
     deg := i -> #(adj#i);
@@ -3770,21 +3428,27 @@ dynkinDraftDiagram = (A,nodeStrings,centerLabels) -> (
     for i from 0 to r-1 do visited#i = false;
 
     componentOf := startNode -> (
-        comp := {};
-        stack := {startNode};
-        while #stack > 0 do (
-            v := last stack;
-            stack = drop(stack, -1);
-            if not visited#v then (
-                visited#v = true;
-                comp = append(comp, v);
-                for u in adj#v do (
-                    if not visited#u then stack = append(stack, u);
-                );
+        pending := new MutableHashTable from {0=>startNode};
+        top := 1;
+        while top > 0 list (
+            top = top-1;
+            v := pending#top;
+            if visited#v then continue;
+            visited#v = true;
+            for u in adj#v do if not visited#u then (
+                pending#top = u;
+                top = top+1;
             );
-        );
-        comp
+            v
+        )
     );
+
+    pathText := order -> concatenate for k from 0 to #order-1 list
+        nodeText(order#k) |
+        (if k < #order-1 then bondGlyph(order#k,order#(k+1)) else "");
+
+    spaces := n -> concatenate toList(n:" ");
+    labelCenter := i -> ((width net(nodeText i))-1)//2;
 
     -- Render a single connected component.
     renderComp := comp -> (
@@ -3797,16 +3461,12 @@ dynkinDraftDiagram = (A,nodeStrings,centerLabels) -> (
             return singletonPad | "o" | newline | singletonText;
         );
         compSet := set comp;
+        componentEdges := select(edgeList,e -> member(e#0,compSet));
         -- Complete, lossless fallback used whenever a planar ASCII layout
         -- would omit part of an arm or hide a multiple-bond arrow.
         renderEdgeList := () -> concatenate between(", ", apply(
-            select(edgeList, e -> member(e#0, compSet)),
-            e -> (
-                g := if e#2 == 1 then "--"
-                     else if e#2 == 2 then (if e#3 == 1 then "=>" else if e#3 == -1 then "<=" else "==")
-                     else (if e#3 == 1 then "#>" else if e#3 == -1 then "<#" else "##");
-                nodeText(e#0) | g | nodeText(e#1)
-            )
+            componentEdges,
+            e -> nodeText(e#0) | bondText(e#0,e#1,true) | nodeText(e#1)
         ));
         -- Determine shape: path, path-with-branch (D/E), or other
         degrees := apply(comp, i -> deg i);
@@ -3824,60 +3484,92 @@ dynkinDraftDiagram = (A,nodeStrings,centerLabels) -> (
                 -- a linear sequence with the starting label repeated at the
                 -- end to indicate cycle closure, and a note "(cycle)".
                 cycStart := comp#0;
-                cycOrder := {cycStart};
                 cycPrev := -1;
                 cycCur := cycStart;
-                cycDone := false;
-                while not cycDone do (
+                cycleSteps := 1;
+                cycTail := while cycleSteps <= #comp list (
                     cycNxt := -1;
                     for u in adj#cycCur do (
                         if u != cycPrev then cycNxt = u;
                     );
-                    if cycNxt == -1 or cycNxt == cycStart then cycDone = true
-                    else (
-                        cycOrder = append(cycOrder, cycNxt);
-                        cycPrev = cycCur;
-                        cycCur = cycNxt;
-                        if #cycOrder > #comp then cycDone = true;
-                    );
+                    if cycNxt == -1 or cycNxt == cycStart then break;
+                    cycPrev = cycCur;
+                    cycCur = cycNxt;
+                    cycleSteps = cycleSteps+1;
+                    cycNxt
                 );
-                cycParts := {};
-                for k from 0 to #cycOrder-1 do (
-                    cycParts = append(cycParts, nodeText(cycOrder#k));
-                    nextNode := if k < #cycOrder-1 then cycOrder#(k+1) else cycStart;
-                    cycParts = append(cycParts, bondGlyph(cycOrder#k, nextNode));
-                );
-                cycParts = append(cycParts, nodeText(cycStart) | "  (cycle)");
-                return concatenate cycParts;
+                return pathText join({cycStart},cycTail,{cycStart}) | "  (cycle)";
             );
             startN := first leaves;
-            order := {startN};
             prev := -1;
             cur := startN;
-            while #(adj#cur) > 0 and (prev == -1 or #(adj#cur) > 1 or adj#cur#0 != prev) do (
+            steps := 1;
+            tail := while steps <= #comp list (
                 nxt := -1;
                 for u in adj#cur do (
                     if u != prev then nxt = u;
                 );
                 if nxt == -1 then break;
-                order = append(order, nxt);
                 prev = cur;
                 cur = nxt;
-                if #order > #comp then break;  -- safety
+                steps = steps+1;
+                nxt
             );
-            -- Build the rendered string
-            -- Top line: labels separated by bond glyphs
-            topParts := {};
-            for k from 0 to #order-1 do (
-                topParts = append(topParts, nodeText(order#k));
-                if k < #order - 1 then (
-                    topParts = append(topParts, bondGlyph(order#k, order#(k+1)));
-                );
-            );
-            concatenate topParts
+            pathText prepend(startN,tail)
         )
-        else if #highDeg == 1 and (deg highDeg#0) == 3 and #select(comp, i -> deg(i) > 3) == 0 then (
-            -- D/E-type: one branch node of degree 3
+        else if #comp == 4 and #componentEdges == 4 and #leaves == 1 then (
+            -- The unique leaf meets one corner of a triangle. Put its bond
+            -- on the top row so the two sloping sides close the triangle.
+            leaf := first leaves;
+            corner := first(adj#leaf);
+            corners := sort select(adj#corner,i -> i != leaf);
+            upper := first corners;
+            lower := last corners;
+            -- Only horizontal bonds can display multiplicity and direction.
+            if not singleBond(corner,lower) then (
+                upper = last corners; lower = first corners;
+            );
+            if not singleBond(corner,lower) or
+                not singleBond(upper,lower) then return renderEdgeList();
+
+            prefix := nodeText leaf | bondGlyph(leaf,corner);
+            leftCol := (width net prefix)+labelCenter corner;
+            topRow := prefix | nodeText corner | bondGlyph(corner,upper);
+            span := (width net topRow)+(labelCenter upper)-leftCol;
+            -- An even span places the bottom label exactly halfway between
+            -- the upper label centers. Leave room on the left for wide labels.
+            extraSpace := span % 2;
+            half := (span+extraSpace)//2;
+            offset := max(0,(labelCenter lower)-leftCol-half);
+            leftCol = leftCol+offset;
+            topRow = spaces offset | topRow | spaces extraSpace | nodeText upper;
+            diagonals := for j from 1 to half-1 list
+                spaces(leftCol+j) | "\\" | spaces(2*(half-j)-1) | "/";
+            bottomRow := spaces(leftCol+half-labelCenter lower) | nodeText lower;
+            concatenate between(newline,join({topRow},diagonals,{bottomRow}))
+        )
+        else if #comp == 5 and #leaves == 4 and
+            all(componentEdges,e -> singleBond(e#0,e#1)) then (
+            -- Four single bonds and four leaves give the affine D4 cross.
+            hub := first highDeg;
+            arms := sort leaves;
+            axis := width net(nodeText(arms#0) | bondGlyph(arms#0,hub));
+            axis = axis+labelCenter hub;
+            -- Shift the middle row too if a long vertical label needs room.
+            stem := max{axis,labelCenter(arms#2),labelCenter(arms#3)};
+            vertical := spaces stem | "|";
+            onStem := i -> spaces(stem-labelCenter i) | nodeText i;
+            concatenate between(newline, {
+                onStem(arms#2), vertical,
+                spaces(stem-axis) | pathText {arms#0,hub,arms#1},
+                vertical, onStem(arms#3)})
+        )
+        else if #componentEdges == #comp-1 and #highDeg == 1
+            and (deg highDeg#0) == 3 then (
+            -- D/E-shaped tree: one branch node of degree 3. The edge
+            -- count proves acyclicity because the component is connected;
+            -- a cycle with an attached leaf has the same degree pattern
+            -- but its two cyclic arms are not disjoint branches.
             branchN := highDeg#0;
             -- The branch node has 3 neighbors. Pick two "main" branches
             -- (the two longer ones) and one "side" branch.
@@ -3889,17 +3581,18 @@ dynkinDraftDiagram = (A,nodeStrings,centerLabels) -> (
             subtreeSize := nbr -> (
                 seen := new MutableHashTable;
                 seen#branchN = true;
-                stk := {nbr};
+                pending := new MutableHashTable from {0=>nbr};
+                top := 1;
                 cnt := 0;
-                while #stk > 0 do (
-                    v := last stk;
-                    stk = drop(stk, -1);
-                    if not seen#?v then (
-                        seen#v = true;
-                        cnt = cnt + 1;
-                        for u in adj#v do (
-                            if not seen#?u then stk = append(stk, u);
-                        );
+                while top > 0 do (
+                    top = top-1;
+                    v := pending#top;
+                    if seen#?v then continue;
+                    seen#v = true;
+                    cnt = cnt + 1;
+                    for u in adj#v do if not seen#?u then (
+                        pending#top = u;
+                        top = top+1;
                     );
                 );
                 cnt
@@ -3915,56 +3608,48 @@ dynkinDraftDiagram = (A,nodeStrings,centerLabels) -> (
             -- single-bond side leaf.  Anything more complicated is rendered
             -- as an edge list so that every node and bond remains visible.
             sideSize := sorted#0#0;
-            sideEdge := edgeLookup#(branchN, sideN);
-            if sideSize != 1 or sideEdge#2 != 1 then return renderEdgeList();
+            if sideSize != 1 or not singleBond(branchN,sideN) then return renderEdgeList();
 
             -- Walk from left leaf through the branch node to right leaf
             walkToLeaf := (start, forbid) -> (
-                order := {start};
                 prev := forbid;
                 cur := start;
-                while true do (
+                steps := 1;
+                tail := while steps <= #comp list (
                     nxt := -1;
                     for u in adj#cur do (
                         if u != prev then nxt = u;
                     );
                     if nxt == -1 then break;
-                    order = append(order, nxt);
                     prev = cur;
                     cur = nxt;
-                    if #order > #comp then break;
+                    steps = steps+1;
+                    nxt
                 );
-                order
+                prepend(start,tail)
             );
             leftChain := reverse walkToLeaf(left, branchN);  -- leaf ... left-neighbor
             rightChain := walkToLeaf(right, branchN);        -- right-neighbor ... leaf
             mainOrder := leftChain | {branchN} | rightChain;
 
             -- Main line
-            mainParts := {};
-            for k from 0 to #mainOrder-1 do (
-                mainParts = append(mainParts, nodeText(mainOrder#k));
-                if k < #mainOrder - 1 then (
-                    mainParts = append(mainParts, bondGlyph(mainOrder#k, mainOrder#(k+1)));
-                );
-            );
-            mainLine := concatenate mainParts;
+            mainLine := pathText mainOrder;
             -- Find the column index of branchN in mainLine.
-            -- Each displayed node takes its rendered width, and each bond
-            -- takes five columns.
+            -- An explicitly labeled bond may span more than five columns.
             col := 0;
             for k from 0 to #mainOrder-1 do (
                 if mainOrder#k == branchN then break;
-                col = col + #(nodeText(mainOrder#k)) + 5;
+                col = col + width net(nodeText(mainOrder#k) |
+                    bondGlyph(mainOrder#k,mainOrder#(k+1)));
             );
             if centerLabels then
-                col = col + (#(nodeText branchN) - 1)//2;
+                col = col + ((width net(nodeText branchN)) - 1)//2;
             -- Vertical bond (single) to side branch leaf
             pad := concatenate for kk from 1 to col list " ";
             -- For display, just use "|" for vertical bond (only single bonds have branches)
             vertLine := pad | "|";
             sideCol := if centerLabels then
-                max(0,col - (#(nodeText sideN) - 1)//2)
+                max(0,col - ((width net(nodeText sideN)) - 1)//2)
                 else col;
             sidePad := concatenate for kk from 1 to sideCol list " ";
             sideLine := sidePad | nodeText(sideN);
@@ -3975,10 +3660,8 @@ dynkinDraftDiagram = (A,nodeStrings,centerLabels) -> (
         )
     );
 
-    components := {};
-    for i from 0 to r-1 do (
-        if not visited#i then components = append(components, componentOf i);
-    );
+    components := for i from 0 to r-1 list
+        if not visited#i then componentOf i else continue;
 
     concatenate between(newline | newline, apply(components, renderComp))
 );
@@ -4184,11 +3867,10 @@ longElement Matrix := A -> (
     n := numrows A;
     Slist := apply(n, i -> reflectionMatrix(A, i+1));
     M := id_(R^n);
-    word := new MutableList;
     wordLength := 0;
     targetLength := numrows cartanPositiveRoots A;
 
-    while wordLength < targetLength do (
+    answer := while wordLength < targetLength list (
         ascent := null;
         for i from 0 to n-1 do (
             column := for j from 0 to n-1 list M_(j,i);
@@ -4200,10 +3882,9 @@ longElement Matrix := A -> (
         if ascent === null then
             error "longElement: ascent algorithm terminated before reaching the longest element";
         M = M * Slist#ascent;
-        word#wordLength = ascent + 1;
         wordLength = wordLength + 1;
+        ascent + 1
     );
-    answer := toList word;
     if not all(toList(0..n-1), i ->
         isNegativeVector(for j from 0 to n-1 list M_(j,i))) then
         error "longElement: final element does not send every simple root to a negative root";
@@ -4233,7 +3914,7 @@ weylGroupEnumerate = (A, maxLen, maxElements) -> (
     seen := new MutableHashTable;
     seen#(keyOf identityM) = true;
     seenCount := 1;
-    L := new MutableList;
+    L := new MutableHashTable;
     L#0 = {new WeylElement from {"word" => {}, "matrix" => identityM, "length" => 0}};
     ell := 0;
     done := false;
@@ -4241,12 +3922,10 @@ weylGroupEnumerate = (A, maxLen, maxElements) -> (
         current := L#ell;
         if #current == 0 then (done = true; break);
         if maxLen =!= null and ell >= maxLen then (done = true; break);
-        next := new MutableList;
-        nextCount := 0;
-        for h in current do (
+        next := flatten for h in current list (
             M := h#"matrix";
             word := h#"word";
-            for i from 0 to n-1 do (
+            for i from 0 to n-1 list (
                 if isPositiveColumn(M, i) then (
                     M2 := M * Slist#i;
                     key := keyOf M2;
@@ -4256,44 +3935,21 @@ weylGroupEnumerate = (A, maxLen, maxElements) -> (
                         if maxElements =!= null and seenCount > maxElements then error concatenate(
                             "weylGroupElements: computation would materialize more than ",
                             toString maxElements, " elements across its length strata");
-                        next#nextCount = new WeylElement from {
+                        new WeylElement from {
                             "word"   => append(word, i+1),
                             "matrix" => M2,
                             "length" => ell + 1
-                        };
-                        nextCount = nextCount + 1;
-                    );
-                );
-            );
+                        }
+                    ) else continue
+                ) else continue
+            )
         );
         ell = ell + 1;
-        L#ell = toList next;
+        L#ell = next;
     );
-    L
+    numberedTableEntries L
 );
 
-
--- The exponents are the partition conjugate to the distribution of
--- positive-root heights: #{i : m_i >= h} is the number of roots of height
--- h.  This gives the exponents componentwise as well, without a Dynkin-type
--- case split and without enumerating W.
-finiteWeylExponents = A -> (
-    A = integralCartanMatrix(A, "finiteWeylExponents");
-    requireFiniteCartanType("finiteWeylExponents", A);
-    if A.cache#?"finiteWeylExponents" then return A.cache#"finiteWeylExponents";
-    if numrows A == 0 then (
-        A.cache#"finiteWeylExponents" = {};
-        return {};
-    );
-    roots := entries cartanPositiveRoots A;
-    maxHeight := max apply(roots, rootHeight);
-    heightCounts := for h from 1 to maxHeight list
-        #(select(roots, beta -> rootHeight beta == h));
-    exponents := sort for i from 1 to numrows A list
-        #(select(heightCounts, count -> count >= i));
-    A.cache#"finiteWeylExponents" = exponents;
-    exponents
-);
 
 
 -- weylGroupOrder(A): cardinality of the finite Weyl group.  If m_i are its
@@ -4303,7 +3959,7 @@ weylGroupOrder = method()
 weylGroupOrder Matrix := A -> (
     A = integralCartanMatrix(A, "weylGroupOrder");
     requireFiniteCartanType("weylGroupOrder", A);
-    product apply(finiteWeylExponents A, m -> m + 1)
+    product apply(weylExponents A, m -> m + 1)
 );
 
 
@@ -4355,7 +4011,7 @@ weylGroupElements (Matrix, ZZ) := opts -> (A, k) -> (
 draftWeylLengthCoefficients = A -> (
     if A.cache#?"weylLengthCoefficients" then return A.cache#"weylLengthCoefficients";
     coefficients := {1};
-    for m in finiteWeylExponents A do (
+    for m in weylExponents A do (
         next := new MutableList from toList((#coefficients + m):0);
         for i from 0 to #coefficients-1 do for j from 0 to m do
             next#(i+j) = next#(i+j) + coefficients#i;
@@ -4399,9 +4055,7 @@ reducedWord (Matrix, List) := (A, w) -> (
     Slist := apply(n, i -> reflectionMatrix(A, i+1));
     M := weylElementMatrix(A, w);
     identityM := id_(R^n);
-    descents := new MutableList;
-    count := 0;
-    while M != identityM do (
+    descents := while M != identityM list (
         descent := null;
         for i from 0 to n-1 do (
             column := for j from 0 to n-1 list M_(j,i);
@@ -4413,12 +4067,11 @@ reducedWord (Matrix, List) := (A, w) -> (
         if descent === null then
             error "reducedWord: nonidentity Weyl element has no right descent";
         M = M * Slist#descent;
-        descents#count = descent + 1;
-        count = count + 1;
+        descent + 1
     );
     -- If w s_{i_1} ... s_{i_k}=1, then
     -- w=s_{i_k} ... s_{i_1}.
-    reverse toList descents
+    reverse descents
 );
 
 
@@ -4438,12 +4091,8 @@ leftDescentSet (Matrix, List) := (A, w) -> (
     M := weylElementMatrix(A, w);
     Minv := inverse(M ** QQ);
 
-    descs := {};
-    for i from 0 to n-1 do (
-        col := for j from 0 to n-1 list Minv_(j,i);
-        if any(col, c -> c < 0) then descs = append(descs, i+1);
-    );
-    descs
+    for i from 0 to n-1 list
+        if any(n,j -> Minv_(j,i) < 0) then i+1 else continue
 );
 
 
@@ -4457,12 +4106,8 @@ rightDescentSet (Matrix, List) := (A, w) -> (
     n := numrows A;
     M := weylElementMatrix(A, w);
 
-    descs := {};
-    for i from 0 to n-1 do (
-        col := for j from 0 to n-1 list M_(j,i);
-        if any(col, c -> c < 0) then descs = append(descs, i+1);
-    );
-    descs
+    for i from 0 to n-1 list
+        if any(n,j -> M_(j,i) < 0) then i+1 else continue
 );
 
 
@@ -4502,11 +4147,14 @@ weightsOfRepHash = (A, lambda) -> (
     visited#lam = true;
 
     -- levels#d consists of weights d simple roots below lambda.
-    levels := new MutableList;
-    levels#0 = {lam};
+    -- Each bucket is indexed in discovery order.  Assigning past the end of
+    -- a MutableList would still copy its entries when growing the bucket.
+    levels := new MutableHashTable from {0=>new MutableHashTable from {0=>lam}};
+    maxDepth := 0;
     depth := 0;
-    while depth < #levels do (
-        for w in levels#depth do (
+    while depth <= maxDepth do (
+        if levels#?depth then for indexInLevel from 0 to #(levels#depth)-1 do (
+            w := levels#depth#indexInLevel;
             for i from 0 to r-1 do (
                 -- Compute p_i: steps up in alpha_i direction that are weights
                 p := 0;
@@ -4524,8 +4172,11 @@ weightsOfRepHash = (A, lambda) -> (
                     if not visited#?cur then (
                         visited#cur = true;
                         targetDepth := depth + k;
-                        while #levels <= targetDepth do levels#(#levels) = {};
-                        levels#targetDepth = append(levels#targetDepth, cur);
+                        if not levels#?targetDepth then
+                            levels#targetDepth = new MutableHashTable;
+                        bucket := levels#targetDepth;
+                        bucket#(#bucket) = cur;
+                        maxDepth = max(maxDepth,targetDepth);
                     );
                 );
             );
@@ -4798,7 +4449,7 @@ weightOrbit (Matrix, List) := opts -> (A, lambda) -> (
 
     orbit := new MutableHashTable;
     orbit#lambda = true;
-    queue := new MutableList from {lambda};
+    queue := new MutableHashTable from {0=>lambda};
 
     head := 0;
     while head < #queue do (
@@ -4888,14 +4539,12 @@ tensorRacahSpeiserTable = (A, lambda, mu, who) -> (
         else totals#highest = contribution;
     );
 
-    resultPairs := {};
-    for highest in keys totals do (
+    resultPairs := for highest in keys totals list (
         multiplicity := totals#highest;
         if multiplicity < 0 then
             error concatenate(who, ": negative Racah--Speiser multiplicity ",
                 toString multiplicity, " at highest weight ", toString highest);
-        if multiplicity > 0 then
-            resultPairs = append(resultPairs, highest => multiplicity);
+        if multiplicity > 0 then highest => multiplicity else continue
     );
     frozen := new HashTable from resultPairs;
     tensorCache#cacheKey = frozen;
@@ -4938,7 +4587,7 @@ tensorDecomposition (Matrix, List, List) := opts -> (A, lambda, mu) -> (
 
 -- tensorCoefficient(A, lambda, mu, nu)
 -- Return the multiplicity c^nu_{lambda, mu} of V(nu) in V(lambda) ⊗ V(mu)
--- without computing the full decomposition.
+-- by looking up nu in the tensor-product multiplicity table.
 --
 -- Uses the Racah-Speiser formula:
 --   V(lambda) ⊗ V(mu) = ⊕_{eta wt of V(mu)} m_mu(eta) · [V(lambda + eta)]*
@@ -4947,7 +4596,10 @@ tensorDecomposition (Matrix, List, List) := opts -> (A, lambda, mu) -> (
 -- chamber), and 0 otherwise.
 -- Iterating over weights of whichever of V(lambda), V(mu) is smaller.
 
-tensorCoefficient = method(Options => {WeightFormat => "Dynkin"})
+tensorCoefficient := KacMoody$tensorCoefficient = method(Options => {WeightFormat => "Dynkin"})
+tensorCoefficient (larModule,larModule,larModule) := opts -> (V,W,U) -> (
+    if opts.WeightFormat =!= "Dynkin" then error "tensorCoefficient: WeightFormat applies only to weight lists";
+    larTensorCoefficient(V,W,U))
 tensorCoefficient (Matrix, List, List, List) := opts -> (A, lambda, mu, nu) -> (
     A = integralCartanMatrix(A, "tensorCoefficient");
     r := validateFiniteCartanForRepresentations(A, "tensorCoefficient");
@@ -5234,10 +4886,7 @@ kostantLieAlgCohomology (Matrix, List, List) := opts -> (A, parabolic, lambda) -
     lambda = highestWeightFromFormat(A, lambda, fmt, "kostantLieAlgCohomology");
 
     P := set parabolic;
-    Levi := {};
-    for i from 1 to r do (
-        if not member(i, P) then Levi = append(Levi, i);
-    );
+    Levi := for i from 1 to r list if member(i,P) then continue else i;
     Levi0 := for i in Levi list i-1;
     AL := submatrix(A, Levi0, Levi0);
     comps := leviConnectedComponents0 AL;
@@ -5312,9 +4961,6 @@ kostantLieAlgCohomology (Matrix, List, List) := opts -> (A, parabolic, lambda) -
                         "chi_j = sum_i weight_i (inverse(transpose(A)))_(i,j)"),
                     "ambientCartan" => A,
                     "ambientWeight" => wDotLam,
-                    -- Deprecated compatibility alias; w . lambda is
-                    -- Levi-dominant but need not be ambient-dominant.
-                    "ambientHighestWeight" => wDotLam,
                     "leviNodes" => Levi,
                     "removedNodes" => parabolic
                 }
@@ -5366,10 +5012,7 @@ leviSubalgebra (Matrix,List) := (A, parabolic) -> (
 
     parabolic = validateNodeSet(A, parabolic, "leviSubalgebra");
     P := set parabolic;
-    Levi := {};
-    for i from 1 to r do (
-        if not member(i, P) then Levi = append(Levi, i);
-    );
+    Levi := for i from 1 to r list if member(i,P) then continue else i;
     Levi0 := for i in Levi list i-1;
 
     AL := submatrix(A, Levi0, Levi0);
@@ -5458,13 +5101,8 @@ nilradicalRoots (Matrix, List) := (A, parabolic) -> (
     parIdx := apply(parabolic, i -> i-1);
 
     R := cartanPositiveRoots A;
-    L := {};
-    for row from 0 to numrows R - 1 do (
-        v := for j from 0 to r-1 list R_(row,j);
-        deg := 0;
-        for j in parIdx do deg = deg + v#j;
-        if deg > 0 then L = append(L, v);
-    );
+    L := for v in entries R list
+        if any(parIdx,j -> v#j > 0) then v else continue;
 
     if #L == 0 then (
         matrix mutableMatrix(ZZ, 0, r)
@@ -5489,15 +5127,7 @@ parabolicDegrees (Matrix, List) := (A, parabolic) -> (
     parIdx := apply(parabolic, i -> i-1);
 
     R := cartanPositiveRoots A;
-    result := {};
-    for row from 0 to numrows R - 1 do (
-        v := for j from 0 to r-1 list R_(row,j);
-        deg := 0;
-        for j in parIdx do deg = deg + v#j;
-        result = append(result, {v, deg});
-    );
-
-    result
+    for v in entries R list {v,sum(parIdx,j -> v#j)}
 );
 
 parabolicDegrees (Matrix, Set) := (A, parabolic) ->
@@ -5640,12 +5270,9 @@ affineRootSnapshot (Matrix, ZZ) := opts -> (A, H) -> (
     -- dispatches to this snapshot in affine type.
     Rall := cartanPositiveRealRootsByHeight(A, H);
 
-    realList := {};
-    for row from 0 to numrows Rall - 1 do (
-        v := for j from 0 to r-1 list lift(Rall_(row, j), ZZ);
-        h := 0;
-        for x in v do h = h + x;
-        if h <= H then realList = append(realList, v);
+    realList := for root in entries Rall list (
+        v := apply(root,x -> lift(x,ZZ));
+        if sum v <= H then v else continue
     );
 
     rootsToRingMatrix := roots -> (
@@ -5681,12 +5308,7 @@ affineRootSnapshot (Matrix, ZZ) := opts -> (A, H) -> (
     for x in deltaInt do hDelta = hDelta + x;
     if hDelta <= 0 then error "affineRootSnapshot: computed null root has non-positive height";
 
-    imagList := {};
-    m := 1;
-    while m * hDelta <= H do (
-        imagList = append(imagList, for x in deltaInt list (m * x));
-        m = m + 1;
-    );
+    imagList := for m from 1 to H//hDelta list apply(deltaInt,x -> m*x);
 
     Rimag := rootsToRingMatrix imagList;
 
@@ -5751,22 +5373,26 @@ draftRootSnapshotRows = (snap,limit) -> (
     Rimag := snap#"imag";
     mults := snap#"mult";
     rCols := max(numcols Rreal, numcols Rimag);
+    specs := {{Rreal,"real"},{Rimag,"imaginary"}};
+    record := (R,kind,i) -> (
+        v := for j from 0 to rCols-1 list lift(R_(i,j),ZZ);
+        mv := if mults#?v then mults#v else if kind === "real" then 1 else "?";
+        {sum v,v,mv,kind}
+    );
+    if limit === null then return sort flatten for spec in specs list
+        for i from 0 to numrows(spec#0)-1 list record(spec#0,spec#1,i);
+
+    -- The preview retains at most limit rows, regardless of snapshot size.
     rows := {};
-    for spec in {{Rreal,"real"},{Rimag,"imaginary"}} do (
+    for spec in specs do (
         R := spec#0;
         kind := spec#1;
         for i from 0 to numrows R - 1 do (
-            v := for j from 0 to rCols-1 list lift(R_(i,j),ZZ);
-            mv := if mults#?v then mults#v
-                  else if kind === "real" then 1 else "?";
-            rows = append(rows,{sum v,v,mv,kind});
-            if limit =!= null then (
-                rows = sort rows;
-                if #rows > limit then rows = take(rows,limit);
-            );
+            rows = sort append(rows,record(R,kind,i));
+            if #rows > limit then rows = take(rows,limit);
         );
     );
-    sort rows
+    rows
 );
 
 draftRootSnapshotTuple = beta ->
@@ -5892,6 +5518,21 @@ clearRootSnapshotCache Matrix := A -> (
 );
 
 
+-- Work with root multiplicities directly instead of expanding a list
+-- containing one copy of the weight for every dimension of its root space.
+leviDecompositionFromRootRows = (A,AL,comps,leviIndices,removedIndices,d,fmt,snap) -> (
+    mults := snap#"mult";
+    weightPairs := flatten for kind in {"real","imag"} list
+        for row in entries(snap#kind) list (
+            beta := apply(row,x -> lift(x,ZZ));
+            if sum(removedIndices,j -> beta#j) != d then continue;
+            w := for j in leviIndices list sum(#beta,i -> A_(j,i)*beta#i);
+            w => (if mults#?beta then mults#beta else 1)
+        );
+    new Tally from for pair in decomposeLeviWeightPairs(AL,weightPairs) list
+        formatLeviWeight(AL,comps,pair#0,fmt) => pair#1
+);
+
 -- affineLeviHighestWeights(A, d, parabolic, H)
 -- Parabolic decomposition for affine Lie algebras, with multiplicities.
 -- The Levi (complement of parabolic) must be finite-type; for any
@@ -5918,10 +5559,7 @@ affineLeviHighestWeights (Matrix, ZZ, List, ZZ) := opts -> (A, d, parabolic, H) 
     parabolic = validateNodeSet(A, parabolic, "affineLeviHighestWeights");
     P := set parabolic;
     parIdx := apply(toList P, i -> i-1);
-    Levi := {};
-    for i from 1 to r do (
-        if not member(i, P) then Levi = append(Levi, i);
-    );
+    Levi := for i from 1 to r list if member(i,P) then continue else i;
     if d > 0 and #parIdx == 0 then return tally {};
     Levi0 := for i in Levi list i-1;
     AL := submatrix(A, Levi0, Levi0);
@@ -5939,44 +5577,7 @@ affineLeviHighestWeights (Matrix, ZZ, List, ZZ) := opts -> (A, d, parabolic, H) 
 
     snap := affineRootSnapshot(A, H,
         ImaginaryMultiplicity => opts.ImaginaryMultiplicity);
-    Rreal := snap#"real";
-    Rimag := snap#"imag";
-    mults := snap#"mult";
-
-    rootDegree := v -> (
-        s := 0;
-        for j in parIdx do s = s + v#j;
-        s
-    );
-
-    -- Collect Levi Dynkin labels of all roots of parabolic degree d,
-    -- with each root contributing mult(root) copies.
-    leviLabel := v -> (
-        for j in Levi0 list (
-            s := 0;
-            for i from 0 to r-1 do s = s + A_(j, i) * v#i;
-            s
-        )
-    );
-
-    Wall := {};
-    R := if numrows Rimag == 0 then Rreal else Rreal || Rimag;
-    for row from 0 to numrows R - 1 do (
-        v := for j from 0 to r-1 list R_(row, j);
-        if rootDegree v != d then continue;
-        m := if mults#?v then mults#v else 1;
-        w := leviLabel v;
-        for i from 1 to m do Wall = append(Wall, w);
-    );
-
-    if #Wall == 0 then return tally {};
-
-    pieces := for pair in decomposeLeviWeightList(AL, Wall) list (
-        mu := pair#0;
-        multMu := pair#1;
-        formatLeviWeight(AL, comps, mu, fmt) => multMu
-    );
-    new Tally from pieces
+    leviDecompositionFromRootRows(A,AL,comps,Levi0,parIdx,d,fmt,snap)
 );
 
 
@@ -6020,26 +5621,24 @@ indefiniteVectorGCD = v -> (
     if g < 0 then -g else g
 );
 
-indefiniteRootsToMatrix = (A, L, r) -> (
-    if #L == 0 then matrix mutableMatrix(ZZ, 0, r)
-    else matrix toList L
-);
-
 indefiniteConnectedSupport = (A, v) -> (
     r := #v;
     supp := select(toList(0..r-1), i -> v#i > 0);
     if #supp == 0 then return false;
     seen := new MutableHashTable;
-    Q := new MutableList from {first supp};
+    Q := new MutableList from toList(#supp:null);
+    Q#0 = first supp;
     seen#(first supp) = true;
     head := 0;
-    while head < #Q do (
+    tail := 1;
+    while head < tail do (
         i := Q#head;
         head = head + 1;
         for j in supp do (
             if not seen#?j and (A_(i,j) != 0 or A_(j,i) != 0) then (
                 seen#j = true;
-                Q#(#Q) = j;
+                Q#tail = j;
+                tail = tail+1;
             );
         );
     );
@@ -6070,20 +5669,21 @@ indefiniteRootSnapshotSparsePeterson = (A, H) -> (
     cTable := new MutableHashTable;
     bTable := new MutableHashTable;
     multTable := new MutableHashTable;
-    realRoots := new MutableList;
-    imagRoots := new MutableList;
-    cByHeight := new MutableList from for h from 0 to H list new MutableList;
-    rootsByHeight := new MutableList from for h from 0 to H list new MutableList;
+    realRoots := new MutableHashTable;
+    imagRoots := new MutableHashTable;
+    cByHeight := new MutableList from toList((H+1):{});
+    rootsByHeight := new MutableList from toList((H+1):{});
 
-    for i from 0 to r-1 do (
+    simple := for i from 0 to r-1 list (
         beta := for j from 0 to r-1 list if i == j then 1 else 0;
         cTable#beta = 1_QQ;
         bTable#beta = for j from 0 to r-1 list B#j#i;
         multTable#beta = 1;
         realRoots#(#realRoots) = beta;
-        (cByHeight#1)#(#(cByHeight#1)) = beta;
-        (rootsByHeight#1)#(#(rootsByHeight#1)) = beta;
+        beta
     );
+    cByHeight#1 = simple;
+    rootsByHeight#1 = simple;
 
     for h from 2 to H do (
         half := h // 2;
@@ -6118,7 +5718,7 @@ indefiniteRootSnapshotSparsePeterson = (A, H) -> (
             );
         );
 
-        for beta in sort keys STable do (
+        cByHeight#h = for beta in sort keys STable list (
             bBeta := bTimes beta;
             norm := dot(beta, bBeta);
             denom := norm - 2 * dot(beta, d);
@@ -6151,22 +5751,22 @@ indefiniteRootSnapshotSparsePeterson = (A, H) -> (
             if cBeta =!= 0_QQ then (
                 cTable#beta = cBeta;
                 bTable#beta = bBeta;
-                (cByHeight#h)#(#(cByHeight#h)) = beta;
             );
             if mBetaZZ > 0 then (
                 if norm > 0 and mBetaZZ != 1 then
                     error("indefiniteRootSnapshot: positive-norm root has multiplicity other than 1 at " | toString beta);
                 multTable#beta = mBetaZZ;
-                (rootsByHeight#h)#(#(rootsByHeight#h)) = beta;
                 if norm > 0 then realRoots#(#realRoots) = beta
                 else imagRoots#(#imagRoots) = beta;
             );
+            if cBeta =!= 0_QQ then beta else continue
         );
+        rootsByHeight#h = select(cByHeight#h,beta -> multTable#?beta);
     );
 
     new HashTable from {
-        "real" => indefiniteRootsToMatrix(A, realRoots, r),
-        "imag" => indefiniteRootsToMatrix(A, imagRoots, r),
+        "real" => rootsToIntegralMatrix(numberedTableEntries realRoots,r),
+        "imag" => rootsToIntegralMatrix(numberedTableEntries imagRoots,r),
         "mult" => new HashTable from for beta in keys multTable list beta => multTable#beta
     }
 );
@@ -6210,8 +5810,8 @@ indefiniteRootSnapshotBCLConnected = (A, H) -> (
     rootC := new MutableHashTable;
     rootNorm := new MutableHashTable;
     realSet := new MutableHashTable;
-    realByHeight := new MutableList from for h from 0 to H list new MutableList;
-    imagByHeight := new MutableList from for h from 0 to H list new MutableList;
+    realByHeight := for h from 0 to H list new MutableHashTable;
+    imagByHeight := for h from 0 to H list new MutableHashTable;
 
     registerRoot := (v, m, c, normv) -> (
         if rootMult#?v then return false;
@@ -6232,7 +5832,7 @@ indefiniteRootSnapshotBCLConnected = (A, H) -> (
 
     pingpong := (seed, m, c, normSeed) -> (
         if rootMult#?seed then return null;
-        Q := new MutableList from {seed};
+        Q := new MutableHashTable from {0=>seed};
         registerRoot(seed, m, c, normSeed);
         head := 0;
         while head < #Q do (
@@ -6281,10 +5881,9 @@ indefiniteRootSnapshotBCLConnected = (A, H) -> (
     coneIneq := (-AZZ) || id_(ZZ^r);
     zeroCol := map(ZZ^(2*r), ZZ^1, 0);
     heightBound := matrix {toList(r:-1) | {H}};
-    normalizFunction := optionalPackageFunction("Normaliz", "normaliz");
-    chamberRows := (normalizFunction((coneIneq | zeroCol) || heightBound,
+    chamberRows := (Normaliz$normaliz((coneIneq | zeroCol) || heightBound,
             "inhom_inequalities"))#"gen";
-    chamberByHeight := new MutableList from for h from 0 to H list new MutableList;
+    chamberByHeight := for h from 0 to H list new MutableHashTable;
     for row from 0 to numrows chamberRows - 1 do (
         if chamberRows_(row,r) != 1 then
             error "indefiniteRootSnapshot: unexpected recession generator in bounded chamber";
@@ -6298,7 +5897,7 @@ indefiniteRootSnapshotBCLConnected = (A, H) -> (
     -- Graded ascent computes one fundamental-chamber representative of each
     -- imaginary Weyl orbit, then ping-pong fills that orbit up to height H.
     for h from 2 to H do (
-        for beta in chamberByHeight#h do (
+        for beta in numberedTableEntries(chamberByHeight#h) do (
             if rootMult#?beta then continue;
             Bbeta := bTimes beta;
             normBeta := dot(beta, Bbeta);
@@ -6311,7 +5910,9 @@ indefiniteRootSnapshotBCLConnected = (A, H) -> (
             -- Positive-norm c-support consists of multiples n*alpha of
             -- primitive real roots alpha, with c(n*alpha)=1/n.
             for hAlpha from 1 to half do (
-                for alpha in realByHeight#hAlpha do (
+                realBucket := realByHeight#hAlpha;
+                for a from 0 to #realBucket-1 do (
+                    alpha := realBucket#a;
                     normAlpha := rootNorm#alpha;
                     pairAlphaBeta := dot(alpha, Bbeta);
                     maxN := half // hAlpha;
@@ -6332,7 +5933,9 @@ indefiniteRootSnapshotBCLConnected = (A, H) -> (
 
             -- Nonpositive-norm c-support consists of actual imaginary roots.
             for hGamma from 2 to half do (
-                for gamma in imagByHeight#hGamma do (
+                imagBucket := imagByHeight#hGamma;
+                for g from 0 to #imagBucket-1 do (
+                    gamma := imagBucket#g;
                     contained := true;
                     for i from 0 to r-1 do if gamma#i > beta#i then (contained = false; break);
                     if not contained then continue;
@@ -6354,15 +5957,11 @@ indefiniteRootSnapshotBCLConnected = (A, H) -> (
         );
     );
 
-    realRoots := new MutableList;
-    imagRoots := new MutableList;
-    for h from 1 to H do (
-        for beta in realByHeight#h do realRoots#(#realRoots) = beta;
-        for beta in imagByHeight#h do imagRoots#(#imagRoots) = beta;
-    );
+    realRoots := flatten apply(realByHeight,numberedTableEntries);
+    imagRoots := flatten apply(imagByHeight,numberedTableEntries);
     new HashTable from {
-        "real" => indefiniteRootsToMatrix(A, realRoots, r),
-        "imag" => indefiniteRootsToMatrix(A, imagRoots, r),
+        "real" => rootsToIntegralMatrix(realRoots,r),
+        "imag" => rootsToIntegralMatrix(imagRoots,r),
         "mult" => new HashTable from for beta in keys rootMult list beta => rootMult#beta
     }
 );
@@ -6377,8 +5976,8 @@ indefiniteRootSnapshotBCL = (A, H) -> (
     comps := leviConnectedComponents0 AZZ;
     if #comps == 1 then return indefiniteRootSnapshotBCLConnected(A, H);
 
-    realRoots := new MutableList;
-    imagRoots := new MutableList;
+    realRoots := new MutableHashTable;
+    imagRoots := new MutableHashTable;
     multTable := new MutableHashTable;
     for comp in comps do (
         AC := submatrix(A, comp, comp);
@@ -6399,8 +5998,8 @@ indefiniteRootSnapshotBCL = (A, H) -> (
         );
     );
     new HashTable from {
-        "real" => indefiniteRootsToMatrix(A, realRoots, r),
-        "imag" => indefiniteRootsToMatrix(A, imagRoots, r),
+        "real" => rootsToIntegralMatrix(numberedTableEntries realRoots,r),
+        "imag" => rootsToIntegralMatrix(numberedTableEntries imagRoots,r),
         "mult" => new HashTable from for beta in keys multTable list beta => multTable#beta
     }
 );
@@ -6487,41 +6086,6 @@ rootSnapshot (Matrix, ZZ) := (A, H) -> (
     else error "rootSnapshot: Cartan matrix must be of finite, affine, or indefinite type"
 );
 
-indefiniteSnapshotsAgree = (S, T) -> (
-    mS := S#"mult";
-    mT := T#"mult";
-    #keys mS == #keys mT and all(keys mS, beta -> mT#?beta and mS#beta == mT#beta)
-);
-
--- Cold benchmark and cross-check of both production backends.
-benchmarkIndefiniteRootAlgorithms = method()
-benchmarkIndefiniteRootAlgorithms (Matrix, ZZ) := (A, H) -> (
-    if H < 1 then error "benchmarkIndefiniteRootAlgorithms: H must be at least 1";
-    A = integralCartanMatrix(A, "benchmarkIndefiniteRootAlgorithms");
-    if symmetrizer A === null then
-        error "benchmarkIndefiniteRootAlgorithms: Cartan matrix must be symmetrizable";
-    if cartanType A =!= "indefinite" then
-        error "benchmarkIndefiniteRootAlgorithms: Cartan matrix must be of indefinite type";
-    t0 := cpuTime();
-    bcl := indefiniteRootSnapshotBCL(A, H);
-    tBCL := cpuTime() - t0;
-    t0 = cpuTime();
-    peterson := indefiniteRootSnapshotSparsePeterson(A, H);
-    tPeterson := cpuTime() - t0;
-    agree := indefiniteSnapshotsAgree(bcl, peterson);
-    if not agree then
-        error "benchmarkIndefiniteRootAlgorithms: the two backends returned different multiplicities";
-    new HashTable from {
-        "BackusConnickLinSeconds" => tBCL,
-        "SparsePetersonSeconds" => tPeterson,
-        "faster" => if tBCL <= tPeterson then "BackusConnickLin" else "SparsePeterson",
-        "roots" => #keys(bcl#"mult"),
-        "real" => numrows(bcl#"real"),
-        "imag" => numrows(bcl#"imag"),
-        "agree" => true
-    }
-);
-
 -- indefiniteLeviHighestWeights(A, d, parabolic, H)
 -- Parabolic decomposition for indefinite Kac-Moody algebras
 
@@ -6544,10 +6108,7 @@ indefiniteLeviHighestWeights (Matrix, ZZ, List, ZZ) := opts -> (A, d, parabolic,
     parabolic = validateNodeSet(A, parabolic, "indefiniteLeviHighestWeights");
     P := set parabolic;
     parIdx := apply(toList P, i -> i-1);
-    Levi := {};
-    for i from 1 to r do (
-        if not member(i, P) then Levi = append(Levi, i);
-    );
+    Levi := for i from 1 to r list if member(i,P) then continue else i;
     if d > 0 and #parIdx == 0 then return tally {};
     Levi0 := for i in Levi list i-1;
     AL := submatrix(A, Levi0, Levi0);
@@ -6564,44 +6125,7 @@ indefiniteLeviHighestWeights (Matrix, ZZ, List, ZZ) := opts -> (A, d, parabolic,
             toString d, "; use H >= ", toString requiredH);
 
     snap := indefiniteRootSnapshot(A, H, Algorithm => opts.Algorithm);
-    Rreal := snap#"real";
-    Rimag := snap#"imag";
-    mults := snap#"mult";
-
-    rootDegree := v -> (
-        s := 0;
-        for j in parIdx do s = s + v#j;
-        s
-    );
-
-    leviLabel := v -> (
-        for j in Levi0 list (
-            s := 0;
-            for i from 0 to r-1 do s = s + A_(j, i) * v#i;
-            s
-        )
-    );
-
-    -- Collect Levi Dynkin labels of every root of parabolic degree d,
-    -- repeated according to its root multiplicity.
-    Wall := {};
-    R := if numrows Rimag == 0 then Rreal else Rreal || Rimag;
-    for row from 0 to numrows R - 1 do (
-        v := for j from 0 to r-1 list R_(row, j);
-        if rootDegree v != d then continue;
-        m := if mults#?v then mults#v else 1;
-        w := leviLabel v;
-        for i from 1 to m do Wall = append(Wall, w);
-    );
-
-    if #Wall == 0 then return tally {};
-
-    pieces := for pair in decomposeLeviWeightList(AL, Wall) list (
-        mu := pair#0;
-        multMu := pair#1;
-        formatLeviWeight(AL, comps, mu, fmt) => multMu
-    );
-    new Tally from pieces
+    leviDecompositionFromRootRows(A,AL,comps,Levi0,parIdx,d,fmt,snap)
 );
 
 -- A certified sufficient height for the infinite-type Levi routines.
@@ -6637,24 +6161,7 @@ leviHighestWeightsFromSnapshot = (A, d, parabolic, fmt, snap, who) -> (
     comps := leviConnectedComponents0 AL;
     if d == 0 then return degreeZeroDerivedLeviTally(A, AL, comps, fmt);
 
-    rootDegree := beta -> sum apply(parIdx, j -> beta#j);
-    leviLabel := beta -> for j in Levi0 list
-        sum for i from 0 to r-1 list A_(j,i) * beta#i;
-    mults := snap#"mult";
-    Wall := {};
-    for kind in {"real", "imag"} do (
-        R := snap#kind;
-        for row from 0 to numrows R-1 do (
-            beta := for j from 0 to r-1 list lift(R_(row,j), ZZ);
-            if rootDegree beta != d then continue;
-            w := leviLabel beta;
-            m := if mults#?beta then mults#beta else 1;
-            for copy from 1 to m do Wall = append(Wall, w);
-        );
-    );
-    if #Wall == 0 then return tally {};
-    new Tally from for pair in decomposeLeviWeightList(AL, Wall) list
-        formatLeviWeight(AL, comps, pair#0, fmt) => pair#1
+    leviDecompositionFromRootRows(A,AL,comps,Levi0,parIdx,d,fmt,snap)
 );
 
 -- Unified public parabolic decomposition.  The Cartan type, infinite-type
@@ -6728,6 +6235,24 @@ KMCoroot = new Type of HashTable
 KMWeight = new Type of HashTable
 KMCoweight = new Type of HashTable
 
+-- Derived data live on their mathematical owner, never in a table keyed
+-- by all the owners used in a session. A generation invalidates these
+-- values without retaining references to the matrices, data or crystals.
+kmCacheGeneration := 0
+kmCacheFills := new MutableHashTable
+kmOwnerResults = O -> (
+    store := O.cache;
+    slot := symbol kmOwnerResults;
+    saved := store#slot ?? null;
+    if saved === null or saved#"generation" != kmCacheGeneration then (
+        saved = new MutableHashTable from {"generation"=>kmCacheGeneration};
+        store#slot = saved;
+    );
+    saved
+)
+kmFillCount = key -> kmCacheFills#key ?? 0
+kmRecordFill = key -> kmCacheFills#key = (kmFillCount key)+1
+
 -- Explicit == methods document the intended mathematical equality.  Strong
 -- equality (===), which Macaulay2 hash tables use for keys, is already
 -- content equality for these immutable HashTable descendants.
@@ -6778,18 +6303,6 @@ draftIntegralVector = (v,n,who) -> (
     q
 )
 
-draftIntegralCartan = (A,who) -> (
-    if not instance(A,Matrix) then error(who | ": expected a matrix");
-    if numrows A != numcols A then error(who | ": Cartan matrix must be square");
-    qrows := apply(entries(A ** QQ), row -> apply(row,draftQQ));
-    if not all(flatten qrows,x -> instance(x,ZZ)) then
-        error(who | ": Cartan matrix entries must be integers");
-    AZZ := matrix(ZZ,qrows);
-    if not isCartanMatrix AZZ then
-        error(who | ": matrix is not a generalized Cartan matrix");
-    AZZ
-)
-
 draftDot = (u,v) -> (
     if #u != #v then error "KacMoody: internal dot-product length mismatch";
     sum apply(u,v,(x,y) -> x*y)
@@ -6798,7 +6311,6 @@ draftDot = (u,v) -> (
 draftAdd = (u,v) -> apply(u,v,(x,y) -> draftQQ(x+y))
 draftScale = (a,u) -> apply(u,x -> draftQQ(a*x))
 
-draftCartanOfRootDatum = D -> datumCartanMatrix(D#"cartanDatum")
 draftRealizationOfRootDatum = D -> D#"realization"
 
 -- Immutable realizations store coordinate rows as lists.  For positive
@@ -6841,12 +6353,14 @@ draftComponentRecord = (C,nodeLabels) -> new HashTable from {
 cartanDatum = method(Options => {NodeLabels => null})
 
 cartanDatum Matrix := opts -> A -> (
+    A = integralCartanMatrix(A,"cartanDatum");
     -- The empty generalized Cartan matrix is the rank-zero finite datum.
     -- It occurs naturally as the derived Levi of a Borel parabolic.
-    if instance(A,Matrix) and numrows A == 0 and numcols A == 0 then (
+    if numrows A == 0 then (
         if opts.NodeLabels =!= null and opts.NodeLabels =!= {} then
             error "cartanDatum: a rank-zero datum requires NodeLabels => {}";
         return new CartanDatum from {
+            symbol cache => new CacheTable,
             "cartanEntries" => {},
             "rank" => 0,
             "matrixRank" => 0,
@@ -6859,7 +6373,6 @@ cartanDatum Matrix := opts -> A -> (
             "nodeConvention" => "1-based"
         };
     );
-    A = draftIntegralCartan(A,"cartanDatum");
     r := numrows A;
     labels := if opts.NodeLabels === null then toList(1..r)
         else (
@@ -6872,9 +6385,14 @@ cartanDatum Matrix := opts -> A -> (
                         "under mathematical equality");
             opts.NodeLabels
         );
+    -- Explicitly selecting the ordinary positions gives the same datum as
+    -- omitting NodeLabels, including a list of the same integers over QQ.
+    if all(r,i -> (instance(labels#i,ZZ) or instance(labels#i,QQ))
+        and labels#i == i+1) then labels = toList(1..r);
     info := cartanData A;
     D := symmetrizer A;
     new CartanDatum from {
+        symbol cache => new CacheTable,
         "cartanEntries" => entries A,
         "rank" => r,
         "matrixRank" => rank(A ** QQ),
@@ -6885,7 +6403,7 @@ cartanDatum Matrix := opts -> A -> (
             else apply(numrows A,i -> draftQQ D_(i,i)),
         "components" => apply(info#"components",C -> draftComponentRecord(C,labels)),
         "nodeLabels" => labels,
-        "nodeConvention" => if opts.NodeLabels === null then "1-based" else "user-supplied"
+        "nodeConvention" => if labels === toList(1..r) then "1-based" else "user-supplied"
     }
 )
 
@@ -6921,25 +6439,14 @@ cartanDatum String := opts -> s -> cartanDatum(
     draftFiniteCartanFromTypeString s,NodeLabels=>opts.NodeLabels)
 
 datumCartanMatrix = method()
-datumMatrixCache := new MutableHashTable
-datumInfrastructureCacheSize = () -> #keys datumMatrixCache
-clearDatumInfrastructureCache = () -> (datumMatrixCache = new MutableHashTable; null)
 datumCartanMatrix CartanDatum := D -> (
-    if datumMatrixCache#?D then return datumMatrixCache#D;
-    A := matrix(ZZ,D#"cartanEntries");
-    datumMatrixCache#D = A;
-    A
+    (kmOwnerResults D)#(symbol datumCartanMatrix) ??= (
+        kmRecordFill "datumMatrices";
+        matrix(ZZ,D#"cartanEntries")
+    )
 )
 datumCartanMatrix Realization := R -> datumCartanMatrix(R#"cartanDatum")
 datumCartanMatrix RootDatum := D -> datumCartanMatrix(D#"cartanDatum")
-
-toLegacyCartanMatrix = method()
-toLegacyCartanMatrix CartanDatum := datumCartanMatrix
-toLegacyCartanMatrix Realization := datumCartanMatrix
-toLegacyCartanMatrix RootDatum := datumCartanMatrix
-
-datumFromLegacyCartan = method()
-datumFromLegacyCartan Matrix := cartanDatum
 
 toString CartanDatum := D -> concatenate(
     "CartanDatum(rank=",toString D#"rank",
@@ -7146,6 +6653,7 @@ rootDatum Realization := opts -> R -> (
         "validated" => true
     };
     new RootDatum from {
+        symbol cache => new CacheTable,
         "cartanDatum" => D,
         "realization" => R,
         "globalForm" => form,
@@ -7299,74 +6807,32 @@ coordinateBasis KMCoweight := x -> x#"basis"
 
 -- Bases of the ambient weight and coweight spaces.  The auxiliary choices
 -- live in a cache, not in immutable equality-bearing lattice elements.
-draftNotationNodeCache := new MutableHashTable;
-draftNotationBasisCache := new MutableHashTable;
-
 draftNotationCacheInfo = () -> new HashTable from {
-    "nodeConventions" => #keys draftNotationNodeCache,
-    "latticeBases" => #keys draftNotationBasisCache
+    "nodeConventions" => kmFillCount "nodeConventions",
+    "latticeBases" => kmFillCount "latticeBases"
 }
-
-draftClearNotationCache = () -> (
-    draftNotationNodeCache = new MutableHashTable;
-    draftNotationBasisCache = new MutableHashTable;
-    null
-)
-
-draftNotationSubscript = label -> (
-    s := toString label;
-    if instance(label,ZZ) and label >= 0 then s else "[" | s | "]"
-)
 
 draftNotationNodeInfo = D -> (
     CD := D#"cartanDatum";
-    if draftNotationNodeCache#?CD then return draftNotationNodeCache#CD;
-    r := CD#"rank";
-    labels := CD#"nodeLabels";
+    saved := kmOwnerResults CD;
+    key := symbol draftNotationNodeInfo;
+    if saved#?key then return saved#key;
     indecomposableAffine := CD#"type" === "affine" and #(CD#"components") == 1;
     data := if indecomposableAffine then affineTypeData(datumCartanMatrix CD) else null;
     affineNode := if data =!= null and data#"recognized"
         then data#"standardAffineNode" else if indecomposableAffine then 1 else null;
-    indices := labels;
-    if indecomposableAffine and data#"recognized" and labels === toList(1..r) then (
-        remaining := select(data#"canonicalNodeOrder",i -> i != affineNode);
-        indices = apply(toList(1..r),i -> if i == affineNode then 0
-            else 1 + position(remaining,j -> j == i));
-    );
-    subscripts := apply(indices,label -> (
-        collision := any(indices,other -> not draftSameNodeLabel(label,other)
-            and toString label === toString other);
-        if collision and instance(label,String) then "[" | format label | "]"
-        else draftNotationSubscript label
-    ));
     info := new HashTable from {
-        "nodeIndices" => indices,
-        "nodeSubscripts" => subscripts,
         "isAffine" => indecomposableAffine,
         "affineNode" => affineNode
     };
-    draftNotationNodeCache#CD = info;
-    info
-)
-
--- A signed linear combination, with zero terms and coefficients +/-1
--- omitted.  Rational coefficients retain their exact numerator/denominator.
-draftMathematicalSum = (coefficients,names) -> (
-    result := "";
-    for i from 0 to #coefficients-1 do (
-        q := coefficients#i;
-        if q != 0 then (
-            term := (if abs q == 1 then "" else toString(abs q) | "*") | names#i;
-            result = result | (if result == "" then (if q < 0 then "-" else "")
-                else if q < 0 then " - " else " + ") | term;
-        );
-    );
-    if result == "" then "0" else result
+    kmRecordFill "nodeConventions";
+    saved#key = info
 )
 
 draftNotationBasisInfo = (D,dual) -> (
-    key := {D,dual};
-    if draftNotationBasisCache#?key then return draftNotationBasisCache#key;
+    saved := kmOwnerResults D;
+    key := (symbol draftNotationBasisInfo,dual);
+    if saved#?key then return saved#key;
     Rz := D#"realization";
     r := (D#"cartanDatum")#"rank";
     d := Rz#"dimension";
@@ -7375,9 +6841,6 @@ draftNotationBasisInfo = (D,dual) -> (
     SC := draftSimpleCorootMatrix Rz;
     evaluations := if dual then SR else SC;
     affineBasis := nodeInfo#"isAffine" and d == r+1;
-    suffix := if dual then "^vee" else "";
-    nodeNames := apply(nodeInfo#"nodeSubscripts",i ->
-        (if affineBasis then "Lambda_" else "omega_") | i | suffix);
     equations := if affineBasis then (
         -- The row-space representative fixes the same degree-zero lift as
         -- affineDerivation.  For coweights use the corresponding dual choice.
@@ -7389,23 +6852,9 @@ draftNotationBasisInfo = (D,dual) -> (
         evaluations || degreeRow
     ) else draftExtendRowsToBasis(evaluations,"mathematical lattice notation");
     basis := transpose inverse equations;
-    supplementNames := if affineBasis then {if dual then "c" else "delta"}
-        else apply(d-r,i -> (if dual then "eta_" else "gamma_") | toString(i+1));
-    names := join(nodeNames,supplementNames);
-    info := new HashTable from {
-        "names" => names,
-        "nodeNames" => nodeNames,
-        "supplementNames" => supplementNames,
-        "basisRows" => entries basis,
-        "supplementRows" => drop(entries basis,r),
-        "coordinateMatrix" => transpose equations,
-        "nodeIndices" => nodeInfo#"nodeIndices",
-        "affineNode" => nodeInfo#"affineNode",
-        "usesAffineBasis" => affineBasis,
-        "isDual" => dual
-    };
-    draftNotationBasisCache#key = info;
-    info
+    info := new HashTable from {"basisRows" => entries basis};
+    kmRecordFill "latticeBases";
+    saved#key = info
 )
 
 -- Internal basis descriptions.  Rows are in the realization's given
@@ -7672,36 +7121,6 @@ cocharacterLatticeBasis RootDatum := D -> (
     else matrix(QQ,D#"cocharacterLatticeBasis")
 )
 
---------------------------------------------------------------------------
--- Legacy adapters
---------------------------------------------------------------------------
-
-toLegacyList = method()
-toLegacyList KMRoot := datumCoordinates
-toLegacyList KMCoroot := datumCoordinates
-toLegacyList KMWeight := datumCoordinates
-toLegacyList KMCoweight := datumCoordinates
-
-rootFromLegacy = method()
-rootFromLegacy (RootDatum,List) := kmRoot
-rootFromLegacy (CartanDatum,List) := kmRoot
-rootFromLegacy (Matrix,List) := kmRoot
-
-corootFromLegacy = method()
-corootFromLegacy (RootDatum,List) := kmCoroot
-corootFromLegacy (CartanDatum,List) := kmCoroot
-corootFromLegacy (Matrix,List) := kmCoroot
-
-weightFromLegacy = method()
-weightFromLegacy (RootDatum,List) := kmWeight
-weightFromLegacy (CartanDatum,List) := kmWeight
-weightFromLegacy (Matrix,List) := kmWeight
-
-coweightFromLegacy = method()
-coweightFromLegacy (RootDatum,List) := kmCoweight
-coweightFromLegacy (CartanDatum,List) := kmCoweight
-coweightFromLegacy (Matrix,List) := kmCoweight
-
 
 -------------------------------------------------------------------------
 -- Affine Structure
@@ -7846,17 +7265,11 @@ affineNullRoot CartanDatum := D -> affineMarks D;
 affineNullRoot Realization := R -> affineMarks R;
 affineNullRoot RootDatum := D -> kmRoot(D,affineMarks D);
 
-affineCentralCoefficients = method();
-affineCentralCoefficients Matrix := A -> affineComarks A;
-affineCentralCoefficients CartanDatum := D -> affineComarks D;
-affineCentralCoefficients Realization := R -> affineComarks R;
-affineCentralCoefficients RootDatum := D -> affineComarks D;
-
 -- The canonical central element c belongs to the simple-coroot lattice of a
 -- RootDatum.  It is intentionally distinct from its bare coefficient list.
 affineCentralElement = method();
 affineCentralElement RootDatum := D ->
-    kmCoroot(D,affineCentralCoefficients D);
+    kmCoroot(D,affineComarks D);
 
 -----------------------------------------------------------------------
 -- Canonical twisted affine matrices used by recognition
@@ -8139,15 +7552,18 @@ affineStructureConnectedDeletionNodes = A -> (
         remaining := select(toList(0..r-1),i -> i != deleted);
         if #remaining <= 1 then return true;
         visited := new MutableList from toList(r:false);
-        queue := {first remaining};
+        queue := new MutableList from toList(r:null);
+        queue#0 = first remaining;
         visited#(first remaining) = true;
         cursor := 0;
-        while cursor < #queue do (
+        tail := 1;
+        while cursor < tail do (
             i := queue#cursor;
             cursor = cursor + 1;
             for j in adjacency#i do if j != deleted and not visited#j then (
                 visited#j = true;
-                queue = append(queue,j);
+                queue#tail = j;
+                tail = tail+1;
             );
         );
         all(remaining,i -> visited#i)
@@ -8185,13 +7601,11 @@ affineTypeData Matrix := A -> (
         -- infinite family by graph isomorphism.
         apply(exactCandidates,candidate -> {candidate,identityPermutation})
     else (
-        found := {};
-        for candidate in candidates do (
+        for candidate in candidates list (
             p := if A == candidate#"matrix" then identityPermutation
                 else affineStructureCartanIsomorphism(A,candidate#"matrix");
-            if p =!= null then found = append(found,{candidate,p});
-        );
-        found
+            if p =!= null then {candidate,p} else continue
+        )
     );
 
     recognized := #matches > 0;
@@ -8309,42 +7723,37 @@ affineStructureNodeRecords = (D,nodes) ->
 affineStructureNodeLabels = (D,nodes) ->
     apply(nodes,node -> D#"nodeLabels"#(node-1));
 
-affineStructureNodePosition = (D,x,who) -> (
-    r := D#"rank";
+-- In-range ZZ arguments are positions. Other arguments name nodes by
+-- mathematical equality. A position/label record disambiguates the two.
+draftNodePosition = (D,x,who) -> (
+    labels := D#"nodeLabels";
     if instance(x,HashTable) and x#?"position" and x#?"label" then (
         i := x#"position";
-        if not instance(i,ZZ) or i < 1 or i > r then
+        if not instance(i,ZZ) or i < 1 or i > #labels then
             error(who | ": node record has an invalid position");
-        if not draftSameNodeLabel(D#"nodeLabels"#(i-1),x#"label") then
+        if not draftSameNodeLabel(labels#(i-1),x#"label") then
             error(who | ": node record label does not match its position");
         return i;
     );
-    if instance(x,ZZ) and x >= 1 and x <= r then return x;
-    labels := D#"nodeLabels";
-    matches := select(toList(0..#labels-1),i ->
-        draftSameNodeLabel(labels#i,x));
-    if #matches == 0 then error concatenate(
-        who,": unknown node label ",toString x,
+    if instance(x,ZZ) and x >= 1 and x <= #labels then return x;
+    p := position(labels,l -> draftSameNodeLabel(l,x));
+    if p === null then error concatenate(who,": unknown node label ",toString x,
         "; available labels are ",toString labels);
-    first(matches)+1
+    p+1
 );
 
--- Match the package-wide NodeFormat convention.  Bare custom integer labels
--- which collide with another public position are unsafe as round-trippable
--- output, so typed companion fields use records in exactly that case.
-affineStructureTypedNodeFormat = D -> (
+-- When a label equals another node's position (including, e.g., 1_QQ),
+-- returning that label alone is ambiguous when its output is retyped.
+typedNodeOutputFormat = D -> (
     labels := D#"nodeLabels";
-    r := #labels;
-    if any(toList(0..r-1),i ->
-        instance(labels#i,ZZ)
-        and labels#i >= 1 and labels#i <= r
-        and labels#i != i+1)
-    then "Records"
-    else "Labels"
+    if labels === toList(1..#labels) then return "Labels";
+    if any(#labels,i -> any(#labels,j ->
+        i != j and draftSameNodeLabel(labels#i,j+1)))
+    then "Records" else "Labels"
 );
 
 affineStructureTypedNodes = (D,nodes) -> (
-    if ((affineStructureTypedNodeFormat D) === "Records")
+    if ((typedNodeOutputFormat D) === "Records")
     then affineStructureNodeRecords(D,nodes)
     else affineStructureNodeLabels(D,nodes)
 );
@@ -8369,7 +7778,7 @@ affineStructureTypedNodeFields = (D,data) -> (
         });
     typedSingle := record -> (
         if record === null then null
-        else if ((affineStructureTypedNodeFormat D) === "Records") then record
+        else if ((typedNodeOutputFormat D) === "Records") then record
         else record#"label"
     );
     nodeListFields := (positionStem,companionStem,nodes) -> {
@@ -8392,7 +7801,7 @@ affineStructureTypedNodeFields = (D,data) -> (
             "nodeLabels" => D#"nodeLabels",
             "nodeRecords" => affineStructureNodeRecords(
                 D,toList(1..data#"nodeCount")),
-            "typedNodeFormat" => affineStructureTypedNodeFormat D,
+            "typedNodeFormat" => typedNodeOutputFormat D,
             "standardAffineNodeLabel" => if standardRecord === null
                 then null else standardRecord#"label",
             "standardAffineNodeRecord" => standardRecord,
@@ -8475,11 +7884,11 @@ affineFinitePart CartanDatum := D -> (
 );
 affineFinitePart (CartanDatum,ZZ) := (D,node) ->
     affineStructureFinitePartDatumRecord(D,
-        affineStructureNodePosition(D,node,"affineFinitePart"),
+        draftNodePosition(D,node,"affineFinitePart"),
         "affineFinitePart");
 affineFinitePart (CartanDatum,Thing) := (D,node) ->
     affineStructureFinitePartDatumRecord(D,
-        affineStructureNodePosition(D,node,"affineFinitePart"),
+        draftNodePosition(D,node,"affineFinitePart"),
         "affineFinitePart");
 affineStructureFiniteRealizationRecord = (R,part) -> (
     finiteRealization := standardRealization part#"cartanDatum";
@@ -8666,7 +8075,7 @@ affineClassicalPart KMWeight := lambda -> (
 );
 affineClassicalPart (KMWeight,ZZ) := (lambda,node) -> (
     D := parentDatum lambda;
-    node = affineStructureNodePosition(
+    node = draftNodePosition(
         cartanDatum D,node,"affineClassicalPart");
     finiteDatumPart := affineStructureFinitePartDatumRecord(
         cartanDatum D,node,"affineClassicalPart");
@@ -8675,7 +8084,7 @@ affineClassicalPart (KMWeight,ZZ) := (lambda,node) -> (
 );
 affineClassicalPart (KMWeight,Thing) := (lambda,node) -> (
     D := parentDatum lambda;
-    node = affineStructureNodePosition(
+    node = draftNodePosition(
         cartanDatum D,node,"affineClassicalPart");
     finiteDatumPart := affineStructureFinitePartDatumRecord(
         cartanDatum D,node,"affineClassicalPart");
@@ -8721,7 +8130,7 @@ affineDerivation (RootDatum,Thing) := (D,nodeSpecifier) -> (
         D,"affineDerivation");
     A := validated#0;
     R := validated#1;
-    node := affineStructureNodePosition(
+    node := draftNodePosition(
         cartanDatum D,nodeSpecifier,"affineDerivation");
     marks := affineStructurePrimitivePositiveKernelValidated(
         A,false,"affineDerivation");
@@ -8820,7 +8229,7 @@ affineDegree (KMWeight,KMCoweight) := (lambda,derivation) -> (
         error concatenate(
             "affineDegree: the weight is incomplete; Dynkin labels determine ",
             "only its class modulo the delta direction. Use ",
-            "affineWeightFromDynkinLabels or affineFullWeight to construct ",
+            "affineWeightFromDynkinLabels or weightFromRealizationCoordinates to construct ",
             "a complete KMWeight");
     if derivation#"realizationCoordinates" === null then
         error concatenate(
@@ -8845,54 +8254,6 @@ affineDegree (Thing,Thing) := (lambda,derivation) -> error concatenate(
     "affineDegree: expected a complete KMWeight or KMRoot and a complete ",
     "normalized KMCoweight derivation belonging to the same affine RootDatum");
 
-affineFullWeight = method();
-affineFullWeight (RootDatum,List) := (D,coordinates) -> (
-    affineStructureRequireIndecomposable(
-        datumCartanMatrix D,"affineFullWeight");
-    weightFromRealizationCoordinates(D,coordinates)
-);
-affineFullWeight (RootDatum,Matrix) := (D,coordinates) -> (
-    affineStructureRequireIndecomposable(
-        datumCartanMatrix D,"affineFullWeight");
-    weightFromRealizationCoordinates(D,coordinates)
-);
-affineFullWeight (Matrix,List) := (A,lambda) -> error concatenate(
-    "affineFullWeight: constructing a full affine weight requires a RootDatum ",
-    "and realization-basis coordinates");
-affineFullWeight (Matrix,Matrix) := (A,lambda) -> error concatenate(
-    "affineFullWeight: constructing a full affine weight requires a RootDatum ",
-    "and realization-basis coordinates");
-
-affineStructuralCapabilities = () -> new HashTable from {
-    "availableFromCartanMatrix" => {
-        "affineMarks", "affineComarks", "affineNullRoot",
-        "affineCentralCoefficients", "affineTypeData", "affineLevel",
-        "affineFinitePart", "affineClassicalPart"
-    },
-    "availableFromRootDatum" => {
-        "affineNullRoot as KMRoot", "affineCentralElement as KMCoroot",
-        "affineLevel of KMWeight or KMRoot",
-        "affineDerivation in a minimal affine realization",
-        "affineWeightFromDynkinLabels with a prescribed degree",
-        "affineFullWeight from realization coordinates",
-        "delta-sensitive formal characters", "grade-sensitive affine Weyl action"
-    },
-    "typedNodeMetadata" => {
-        "label and position/label record companions for every distinguished node list",
-        "coefficient records for the null root and central element",
-        "typed finitePart objects retaining their ambient parent"
-    },
-    "requiresExplicitCompleteWeightAndDerivation" => {
-        "affineDegree"
-    },
-    "notDeterminedByDynkinLabelsAlone" => {
-        "affineDegree", "delta translation of a weight"
-    },
-    "cacheControl" => {
-        "affineStructureCacheInfo", "clearAffineStructureCache"
-    }
-};
-
 
 -------------------------------------------------------------------------
 -- Weyl Parabolic
@@ -8916,33 +8277,6 @@ WeylElement == WeylElement := Boolean => (u,v) -> (
 KMWeylGroup == KMWeylGroup := (W,V) -> W === V
 StandardParabolic == StandardParabolic := (P,Q) -> P === Q
 
--- Resolve a public node specifier against a Cartan datum.  Integers in
--- 1..rank retain the package-wide positional convention; every other value
--- is matched against the datum's pairwise-distinct NodeLabels.  This agrees
--- with the typed crystal API and still permits labels such as 10,20,30.
-draftNodePosition = (D,x,who) -> (
-    r := D#"rank";
-    -- A position/label record is the unambiguous form used by APIs such as
-    -- minusculeNodes(...,NodeFormat=>"Records").  Accepting it here makes
-    -- those outputs composable with every labeled Weyl and parabolic
-    -- command, including when custom integer labels collide with positions.
-    if instance(x,HashTable) and x#?"position" and x#?"label" then (
-        i := x#"position";
-        if not instance(i,ZZ) or i < 1 or i > r then
-            error(who | ": node record has an invalid position");
-        if not draftSameNodeLabel(D#"nodeLabels"#(i-1),x#"label") then
-            error(who | ": node record label does not match its position");
-        return i;
-    );
-    if instance(x,ZZ) and x >= 1 and x <= r then return x;
-    labels := D#"nodeLabels";
-    matches := select(toList(0..#labels-1),i ->
-        draftSameNodeLabel(labels#i,x));
-    if #matches == 0 then error concatenate(
-        who,": unknown node label ",toString x,
-        "; available labels are ",toString labels);
-    first(matches)+1
-)
 
 draftResolveNodeSet = (D,nodes,who) -> (
     if not instance(nodes,List) and not instance(nodes,Set) then
@@ -8993,9 +8327,6 @@ weylParent WeylElement := w -> (
     w#"parent"
 )
 
-weylWord = method()
-weylWord WeylElement := w -> w#"word"
-
 identityWeylElement = method()
 identityWeylElement KMWeylGroup := W -> weylElement(W,{})
 
@@ -9007,12 +8338,12 @@ simpleWeylReflection (KMWeylGroup,Thing) := (W,label) ->
     weylElement(W,{label})
 
 inverseWeylElement = method()
-inverseWeylElement WeylElement := w -> weylElement(weylParent w,reverse weylWord w)
+inverseWeylElement WeylElement := w -> weylElement(weylParent w,reverse reducedWord w)
 
 WeylElement * WeylElement := (u,v) -> (
     if weylParent u =!= weylParent v then
         error "WeylElement * WeylElement: elements have different Weyl-group parents";
-    weylElement(weylParent u,weylWord u | weylWord v)
+    weylElement(weylParent u,reducedWord u | reducedWord v)
 )
 
 weylElementMatrix WeylElement := w -> (
@@ -9020,16 +8351,16 @@ weylElementMatrix WeylElement := w -> (
     else w#"matrix"
 )
 weylLength WeylElement := w -> if w#?"length" then w#"length" else #(w#"word")
-reducedWord WeylElement := weylWord
+reducedWord WeylElement := w -> w#"word"
 leftDescentSet WeylElement := w -> leftDescentSet(
-    datumCartanMatrix((weylParent w)#"cartanDatum"),weylWord w)
+    datumCartanMatrix((weylParent w)#"cartanDatum"),reducedWord w)
 rightDescentSet WeylElement := w -> rightDescentSet(
-    datumCartanMatrix((weylParent w)#"cartanDatum"),weylWord w)
+    datumCartanMatrix((weylParent w)#"cartanDatum"),reducedWord w)
 bruhatLessOrEqual (WeylElement,WeylElement) := (u,v) -> (
     if weylParent u =!= weylParent v then
         error "bruhatLessOrEqual: elements have different Weyl-group parents";
     bruhatLessOrEqual(
-        datumCartanMatrix((weylParent u)#"cartanDatum"),weylWord u,weylWord v)
+        datumCartanMatrix((weylParent u)#"cartanDatum"),reducedWord u,reducedWord v)
 )
 
 draftWeylActionRootCoordinates = (w,x,dual) -> (
@@ -9037,7 +8368,7 @@ draftWeylActionRootCoordinates = (w,x,dual) -> (
     if (W#"cartanDatum") =!= cartanDatum(parentDatum x) then
         error "weylAction: the Weyl element and lattice element have different Cartan parents";
     A := datumCartanMatrix(W#"cartanDatum");
-    M := if dual then weylElementMatrix(transpose A,weylWord w)
+    M := if dual then weylElementMatrix(transpose A,reducedWord w)
         else weylElementMatrix w;
     flatten entries(M * transpose matrix{datumCoordinates x})
 )
@@ -9061,9 +8392,9 @@ weylAction (WeylElement,KMWeight) := (w,x) -> (
     A := datumCartanMatrix(W#"cartanDatum");
     labels := datumCoordinates x;
     ambient := x#"realizationCoordinates";
-    positions := if #(weylWord w) == 0 then {} else reverse toList(0..#(weylWord w)-1);
+    positions := if #(reducedWord w) == 0 then {} else reverse toList(0..#(reducedWord w)-1);
     for pos in positions do (
-        i := (weylWord w)#pos;
+        i := (reducedWord w)#pos;
         coefficient := labels#(i-1);
         labels = draftSimpleWeightLabels(A,i,labels);
         if ambient =!= null then (
@@ -9083,9 +8414,9 @@ weylAction (WeylElement,KMCoweight) := (w,x) -> (
     A := datumCartanMatrix(W#"cartanDatum");
     labels := datumCoordinates x;
     ambient := x#"realizationCoordinates";
-    positions := if #(weylWord w) == 0 then {} else reverse toList(0..#(weylWord w)-1);
+    positions := if #(reducedWord w) == 0 then {} else reverse toList(0..#(reducedWord w)-1);
     for pos in positions do (
-        i := (weylWord w)#pos;
+        i := (reducedWord w)#pos;
         coefficient := labels#(i-1);
         labels = draftSimpleCoweightLabels(A,i,labels);
         if ambient =!= null then (
@@ -9503,16 +8834,17 @@ dominantizeWeight (Matrix, List) := (A, lambda) -> (
     A = finiteDraftRequireFinite(A, "dominantizeWeight");
     input := finiteDraftDynkinWeight(A, lambda, "dominantizeWeight", false);
     mu := input;
-    chronologicalReflections := {};
     maxSteps := numrows cartanPositiveRoots A;
+    steps := 0;
 
-    while any(mu, x -> x < 0) do (
+    chronologicalReflections := while any(mu, x -> x < 0) list (
         i0 := first select(toList(0..numrows A-1), j -> mu#j < 0);
         i := i0 + 1;
         mu = finiteDraftSimpleAction(A, i, mu);
-        chronologicalReflections = append(chronologicalReflections, i);
-        if #chronologicalReflections > maxSteps then
+        steps = steps+1;
+        if steps > maxSteps then
             error "dominantizeWeight: chamber walk exceeded the finite positive-root bound";
+        i
     );
 
     witness := reverse chronologicalReflections;
@@ -10105,21 +9437,6 @@ finiteDraftSpecialNodeOutput = (D,nodes,format,defaultFormat,who) -> (
         ": NodeFormat must be \"Positions\", \"Labels\", or \"Records\"")
 );
 
--- An integer in 1..rank is interpreted positionally throughout the package.
--- If custom integer labels permute that range, returning bare labels would
--- therefore not round-trip.  In precisely that case the safe typed default
--- is a position/label record rather than an ambiguous integer.
-finiteDraftTypedNodeFormat = D -> (
-    labels := (cartanDatum D)#"nodeLabels";
-    r := #labels;
-    if r == 0 then return "Labels";
-    if any(toList(0..r-1),i ->
-        instance(labels#i,ZZ)
-        and labels#i >= 1 and labels#i <= r
-        and labels#i != i+1)
-    then "Records"
-    else "Labels"
-);
 
 finiteDraftNodePositionOrRecord = (D,x,who) -> (
     draftNodePosition(cartanDatum D,x,who)
@@ -10141,7 +9458,7 @@ minusculeNodes Matrix := opts -> A -> (
 
 minusculeNodes CartanDatum := opts -> D -> finiteDraftSpecialNodeOutput(
     D,minusculeNodes(datumCartanMatrix D,NodeFormat=>"Positions"),
-    opts.NodeFormat,finiteDraftTypedNodeFormat D,"minusculeNodes");
+    opts.NodeFormat,typedNodeOutputFormat(cartanDatum D),"minusculeNodes");
 minusculeNodes Realization := opts -> R ->
     minusculeNodes(cartanDatum R,NodeFormat=>opts.NodeFormat);
 minusculeNodes RootDatum := opts -> D ->
@@ -10167,7 +9484,7 @@ cominusculeNodes Matrix := opts -> A -> (
 
 cominusculeNodes CartanDatum := opts -> D -> finiteDraftSpecialNodeOutput(
     D,cominusculeNodes(datumCartanMatrix D,NodeFormat=>"Positions"),
-    opts.NodeFormat,finiteDraftTypedNodeFormat D,"cominusculeNodes");
+    opts.NodeFormat,typedNodeOutputFormat(cartanDatum D),"cominusculeNodes");
 cominusculeNodes Realization := opts -> R ->
     cominusculeNodes(cartanDatum R,NodeFormat=>opts.NodeFormat);
 cominusculeNodes RootDatum := opts -> D ->
@@ -10382,27 +9699,12 @@ ReductiveLeviDatum = new Type of HashTable
 LeviWeight = new Type of HashTable
 LeviHighestWeight = new Type of HashTable
 
-FormalCharacter == FormalCharacter := (C,D) -> C === D
-LeviFormalCharacter == LeviFormalCharacter := (C,D) -> C === D
+FormalCharacter == FormalCharacter := (C,D) -> draftCharactersEqual(C,D)
+LeviFormalCharacter == LeviFormalCharacter := (C,D) -> draftCharactersEqual(C,D)
 KMRepresentation == KMRepresentation := (M,N) -> M === N
 ReductiveLeviDatum == ReductiveLeviDatum := (L,K) -> L === K
 LeviWeight == LeviWeight := (x,y) -> x === y
 LeviHighestWeight == LeviHighestWeight := (x,y) -> x === y
-
--- Completed Verma denominators recur throughout BGG and character
--- calculations.  Cache immutable partition tables by Cartan entries and
--- depth; package-wide cache controls below expose their lifecycle.
-draftVermaPartitionCache := new MutableHashTable
-draftCharacterOrderCache := new MutableHashTable
-draftCharacterParentCache := new MutableHashTable
-formalCharacterInfrastructureCacheSize = () -> #keys draftVermaPartitionCache
-draftCharacterParentCacheSize = () -> #keys draftCharacterParentCache
-clearFormalCharacterInfrastructureCache = () -> (
-    draftVermaPartitionCache = new MutableHashTable;
-    draftCharacterOrderCache = new MutableHashTable;
-    draftCharacterParentCache = new MutableHashTable;
-    null
-)
 
 draftCharacterCoefficient = (c,who) -> (
     q := try (c + 0_QQ) else error(who | ": coefficients must be integers");
@@ -10411,31 +9713,28 @@ draftCharacterCoefficient = (c,who) -> (
 )
 
 draftCanonicalTerms = (parent,T,weightType,who) -> (
-    if not instance(T,HashTable) and not instance(T,Tally) then
-        error(who | ": terms must be a Tally or HashTable");
-    accum := new MutableHashTable;
+    if not instance(T,HashTable) then
+        error(who | ": terms must be a hash table of weights and integer coefficients");
     coordinateMode := null;
-    for p in pairs T do (
+    new VirtualTally from for p in pairs T list (
         wt := p#0;
         c := draftCharacterCoefficient(p#1,who);
         if not instance(wt,weightType) then
             error(who | ": every key has the wrong weight type");
         actualParent := if weightType === KMWeight then parentDatum wt else wt#"parent";
         if actualParent =!= parent then error(who | ": a weight belongs to a different parent");
-        if c != 0 then (
-            if weightType === KMWeight and
-               (parent#"realization")#"dimension" > (cartanDatum parent)#"rank" then (
-                currentMode := if wt#"realizationCoordinates" === null then
-                    "DynkinLabelClass" else "CompleteRealization";
-                if coordinateMode === null then coordinateMode = currentMode
-                else if coordinateMode =!= currentMode then error concatenate(
-                    who, ": cannot mix complete realization weights with ",
-                    "Dynkin-label classes in one formal character");
-            );
-            if accum#?wt then accum#wt = accum#wt + c else accum#wt = c;
+        if c == 0 then continue;
+        if weightType === KMWeight and
+           (parent#"realization")#"dimension" > (cartanDatum parent)#"rank" then (
+            currentMode := if wt#"realizationCoordinates" === null then
+                "DynkinLabelClass" else "CompleteRealization";
+            if coordinateMode === null then coordinateMode = currentMode
+            else if coordinateMode =!= currentMode then error concatenate(
+                who, ": cannot mix complete realization weights with ",
+                "Dynkin-label classes in one formal character");
         );
-    );
-    new Tally from for wt in keys accum list if accum#wt != 0 then wt => accum#wt else continue
+        wt => c
+    )
 )
 
 formalCharacter = method(Options => {
@@ -10443,16 +9742,43 @@ formalCharacter = method(Options => {
     Truncation => null
 })
 
-draftFormalCharacter = (D,T,status,truncation) -> (
+-- A computed range belongs to one datum and one sparse expansion. Keep
+-- references to those immutable objects with the original description;
+-- copying a character needs neither a global registry nor a second run of
+-- its multiplicity algorithm.
+draftTruncationWitness = new Type of BasicList
+net draftTruncationWitness := w -> net "checked expansion"
+draftFormalCharacter = (D,T,status,truncation,computed) -> (
     if status =!= "Exact" and status =!= "Truncated" then
         error "formalCharacter: CharacterStatus must be \"Exact\" or \"Truncated\"";
     if status === "Exact" and truncation =!= null then
         error "formalCharacter: an exact character cannot carry truncation metadata";
     if status === "Truncated" and truncation === null then
         error "formalCharacter: a truncated character must describe its Truncation";
+    terms := draftCanonicalTerms(D,T,KMWeight,"formalCharacter");
+    if instance(truncation,MutableHashTable) then
+        truncation = new HashTable from pairs truncation;
+    if instance(truncation,HashTable) and truncation#?"coefficientCertificate" and
+        truncation#"coefficientCertificate" === true then (
+        if computed then (
+            original := truncation;
+            truncation = new HashTable from join(pairs original,
+                {"certified data"=>new draftTruncationWitness from {D,terms,original}});
+        ) else (
+            if not truncation#?"certified data" or
+                class(truncation#"certified data") =!= draftTruncationWitness then
+                error "formalCharacter: use the truncation of a computed character, or supply a description without a coefficient certificate";
+            saved := truncation#"certified data";
+            description := saved#2;
+            if D =!= saved#0 or terms =!= saved#1 or
+                #truncation != #description+1 or not all(keys description,k ->
+                    truncation#?k and truncation#k === description#k) then
+                error "formalCharacter: the truncation does not match the supplied datum, coefficients, or original range";
+        );
+    );
     C := new FormalCharacter from {
         "parent" => D,
-        "terms" => draftCanonicalTerms(D,T,KMWeight,"formalCharacter"),
+        "terms" => terms,
         "status" => status,
         "truncation" => truncation
     };
@@ -10462,6 +9788,8 @@ draftFormalCharacter = (D,T,status,truncation) -> (
         truncation#"kind" === "root-depth" and data === null then
         error "formalCharacter: invalid highest-weight root-depth certificate";
     if data =!= null then (
+        if (data#0)#"realizationCoordinates" === null and det datumCartanMatrix D == 0 then
+            error "formalCharacter: root depth for a singular Cartan matrix requires a highest weight with complete realization coordinates";
         draftCheckCharacterQueryMode(C,data#0);
         for mu in keys characterTerms C do (
             beta := draftCharacterRootOffset(data#0,mu);
@@ -10474,9 +9802,12 @@ draftFormalCharacter = (D,T,status,truncation) -> (
 )
 
 formalCharacter (RootDatum,HashTable) := opts -> (D,T) ->
-    draftFormalCharacter(D,T,opts.CharacterStatus,opts.Truncation)
+    draftFormalCharacter(D,T,opts.CharacterStatus,opts.Truncation,false)
 formalCharacter (RootDatum,Tally) := opts -> (D,T) ->
-    draftFormalCharacter(D,T,opts.CharacterStatus,opts.Truncation)
+    draftFormalCharacter(D,T,opts.CharacterStatus,opts.Truncation,false)
+
+draftComputedCharacter = (D,T,range) ->
+    draftFormalCharacter(D,T,if range === null then "Exact" else "Truncated",range,true)
 
 -- Print in the group-ring notation e^mu.  A bounded preview still shows
 -- actual monomials, and mathematical truncation is labeled separately.
@@ -10484,7 +9815,9 @@ draftCharacterDisplayLimit := 16
 draftCharacterLineWidth := 78
 
 draftCharacterOrderData = D -> (
-    if draftCharacterOrderCache#?D then return draftCharacterOrderCache#D;
+    saved := kmOwnerResults D;
+    key := symbol draftCharacterOrderData;
+    if saved#?key then return saved#key;
     R := draftSimpleRootMatrix(D#"realization");
     r := numrows R;
     d := numcols R;
@@ -10495,8 +9828,7 @@ draftCharacterOrderData = D -> (
     finiteDirection := if cartanType datumCartanMatrix D === "finite" then
         apply(entries fundamentalWeights datumCartanMatrix D,sum) else null;
     answer := {direction,apply(basis,row -> draftDot(row,direction)),finiteDirection};
-    draftCharacterOrderCache#D = answer;
-    answer
+    saved#key = answer
 )
 
 -- This linear functional increases by one on each simple root.  Thus
@@ -10719,20 +10051,10 @@ draftCheckCharacterModes = (C,D,who) -> (
     null
 )
 
--- RootDatum equality is structural, so independently constructed identical
--- data are already compatible.  Remember both successful and unsuccessful
--- comparisons, without identifying different lattices, central directions,
--- or coordinate conventions merely because their Cartan matrices agree.
+-- Strong equality compares all the immutable defining data. A global
+-- table of parent pairs would retain even incompatible, otherwise dead data.
 draftCheckCharacterParents = (C,D,who) -> (
-    left := characterDatum C;
-    right := characterDatum D;
-    key := {left,right};
-    if not draftCharacterParentCache#?key then (
-        reverseKey := {right,left};
-        if draftCharacterParentCache#?reverseKey then key = reverseKey
-        else draftCharacterParentCache#key = left === right;
-    );
-    if not draftCharacterParentCache#key then error(who | ": parents differ");
+    if characterDatum C =!= characterDatum D then error(who | ": parents differ");
     -- The same root datum can support both complete weights and label
     -- classes.  Parent compatibility never licenses mixing these modes.
     draftCheckCharacterModes(C,D,who)
@@ -10799,7 +10121,8 @@ draftKnownCharacterCoefficient = (C,mu) -> (
         );
         if op === "sum" then (
             left := draftKnownCharacterCoefficient(T#"left",mu);
-            right := draftKnownCharacterCoefficient(T#"right",mu);
+            right := if T#"left" === T#"right" then left
+                else draftKnownCharacterCoefficient(T#"right",mu);
             return if left === null or right === null then null else left+right;
         );
         if op === "finite product" then (
@@ -10816,6 +10139,8 @@ draftKnownCharacterCoefficient = (C,mu) -> (
     );
     data := draftRootDepthCharacterData C;
     if data =!= null then (
+        if (data#0)#"realizationCoordinates" === null and
+            det datumCartanMatrix(parentDatum(data#0)) == 0 then return null;
         beta := draftCharacterRootOffset(data#0,mu);
         if beta === null or any(beta,b -> denominator(b+0_QQ) != 1 or b < 0) then return 0;
         if sum beta > data#1 then return null;
@@ -10824,6 +10149,365 @@ draftKnownCharacterCoefficient = (C,mu) -> (
     -- With unstructured, user-supplied truncation information, only the
     -- explicitly provided coefficients are known; an absent one is unknown.
     if (characterTerms C)#?mu then (characterTerms C)#mu else null
+)
+
+-- Equality concerns coefficients and their known region, not how a
+-- certificate was obtained.  A native root-depth certificate is unknown
+-- precisely on its highest-weight cone beyond the bound.  Affine changes
+-- of coordinates transport its anchor and simple-root generators together.
+-- Sums and finite products intersect known regions.  A descriptive,
+-- user-supplied truncation knows only its explicitly stored coefficients.
+draftCharacterDomainContains = (domain,point) -> (
+    if domain#0 === "all" then return true;
+    if domain#0 === "finite" then return member(point,domain#1);
+    if domain#0 === "rays" then return all(pairs(domain#1),p -> (
+        generator := p#0#1;
+        difference := draftAdd(point,draftScale(-1,p#0#0));
+        j := position(generator,x -> x != 0);
+        offset := difference#j/generator#j;
+        denominator(offset+0_QQ) != 1 or
+            difference =!= draftScale(offset,generator) or offset > p#1
+    ));
+    all(pairs(domain#1),p -> (
+        generators := matrix(QQ,p#0#1);
+        difference := matrix(QQ,{draftAdd(p#0#0,draftScale(-1,point))});
+        coordinates := difference * transpose generators *
+            inverse(generators * transpose generators);
+        offsets := flatten entries coordinates;
+        entries(coordinates*generators) =!= entries difference or
+            any(offsets,x -> denominator(x+0_QQ) != 1 or x < 0) or
+            sum offsets <= p#1
+    ))
+)
+
+-- For x = a - n*G in the first tail, return the second tail's
+-- coordinates c+n*M.  An incompatible lattice coset or affine span
+-- precludes containment. All tests use exact rational arithmetic.
+draftCharacterTailAffineCoordinates = (small,large) -> (
+    generators := matrix(QQ,large#0#1);
+    if #(small#0#1) != numrows generators then
+        error "KacMoody: certificate cones have incompatible root ranks";
+    rows := matrix(QQ,prepend(draftAdd(large#0#0,
+        draftScale(-1,small#0#0)),small#0#1));
+    coordinates := rows * transpose generators *
+        inverse(generators * transpose generators);
+    reconstructed := entries(coordinates*generators);
+    if drop(reconstructed,1) =!= drop(entries rows,1) then
+        error "KacMoody: certificate cones have incompatible root spans";
+    if first reconstructed =!= first entries rows then return null;
+    if any(flatten drop(entries coordinates,1),x -> denominator(x+0_QQ) != 1) then
+        error "KacMoody: certificate cones have incompatible root lattices";
+    entries coordinates
+)
+
+draftCharacterTailCoordinates = (small,large) -> (
+    coordinates := draftCharacterTailAffineCoordinates(small,large);
+    if coordinates === null or
+        any(flatten coordinates,x -> denominator(x+0_QQ) != 1) then
+        return null;
+    apply(coordinates,row -> apply(row,x -> numerator(x+0_QQ)))
+)
+
+-- Decide A*n <= b for a nonnegative integer vector n.  Homogenization
+-- gives a pointed cone in (n,t)>=0.  An integer point of height one
+-- exists exactly when its Hilbert basis contains an element of height one.
+-- Rational vertices and checked rounded vertices usually supply a witness
+-- before a Hilbert basis is needed.
+draftCharacterIntegerFeasible = (A,b) -> (
+    r := numcols A;
+    if numrows b != numrows A or numcols b != 1 then
+        error "KacMoody: invalid integer-feasibility bounds";
+    if r == 0 then return all(flatten entries b,x -> x >= 0);
+    if numrows A == 0 then return true;
+    inequalities := matrix(ZZ,apply(entries(((-A)**QQ)|(b**QQ)),row -> (
+        denominatorMultiple := lcm apply(row,x -> denominator(x+0_QQ));
+        apply(row,x -> numerator(denominatorMultiple*(x+0_QQ)))
+    ))) || id_(ZZ^(r+1));
+    cone := kmConeFromInequalities inequalities;
+    rays := kmConeRays cone;
+    vertices := for j from 0 to numcols rays-1 list (
+        height := rays_(r,j);
+        if height <= 0 then continue;
+        for i from 0 to r-1 list rays_(i,j)/height
+    );
+    if #vertices == 0 then return false;
+    witness := point -> all(point,x -> denominator(x+0_QQ) == 1 and x >= 0) and
+        all(toList(0..numrows A-1),i ->
+            sum(for j from 0 to r-1 list A_(i,j)*point#j) <= b_(i,0));
+    if any(vertices,p -> any({p,apply(p,floor),apply(p,ceiling)},witness)) then
+        return true;
+    any(kmConeHilbertBasis cone,v -> v_(r,0) == 1)
+)
+
+-- Fast proofs of coverage by a finite union of unknown tails.
+-- First try exact containment in one tail.  Since n ranges over all
+-- nonnegative integers of sum >= H+1, negative entries of M preclude
+-- containment; otherwise every defining inequality has an explicit
+-- minimum on that simplex.
+draftCharacterTailCoveredFast = (small,others,budget) -> (
+    depth := small#1+1;
+    rank := #(small#0#1);
+    mixed := false;
+    covers := for large in others list (
+        if budget#0 <= 0 then return null;
+        budget#0 = budget#0-1;
+        coordinates := draftCharacterTailCoordinates(small,large);
+        if coordinates === null then continue;
+        c := first coordinates;
+        M := drop(coordinates,1);
+        if all(flatten M,x -> x >= 0) and
+            all(toList(0..#c-1),j ->
+                c#j+depth*min apply(M,row -> row#j) >= 0) and
+            sum c+depth*min apply(M,sum) > large#1 then return true;
+        if small#0#1 =!= large#0#1 then (mixed = true; continue);
+        {apply(c,x -> -x),large#1+1-sum c}
+    );
+    if #others <= 1 then return false;
+    if #covers == 0 then return if mixed then null else false;
+
+    -- In a common simple-root basis, each covering tail is given by
+    -- n_j >= d_j and sum n_j >= q.  Cut each coordinate at the finitely
+    -- many d_j values.  On each resulting integer box the coordinate
+    -- conditions are constant, and its possible sums form an interval.
+    -- This tests equivalent unions without enumerating depth simplices;
+    -- an exhausted work budget passes to the exact feasibility test.
+    cuts := for j from 0 to rank-1 list
+        sort unique prepend(0,apply(covers,p -> max(0,p#0#j)));
+    cells := 1;
+    for cut in cuts do (
+        cells = cells*#cut;
+        if cells > budget#0 then return null;
+    );
+    lower := new MutableList from toList(rank:0);
+    upper := new MutableList from toList(rank:null);
+    covered := null;
+    covered = j -> (
+        if j < rank then return all(toList(0..#(cuts#j)-1),i -> (
+            lower#j = cuts#j#i;
+            upper#j = if i+1 < #(cuts#j) then cuts#j#(i+1)-1 else null;
+            covered(j+1)
+        ));
+        budget#0 = budget#0-1;
+        minimum := max(depth,sum toList lower);
+        if all(toList upper,x -> x =!= null) and sum toList upper < minimum then
+            return true;
+        active := select(covers,p -> all(toList(0..rank-1),k -> lower#k >= p#0#k));
+        #active > 0 and minimum >= min apply(active,p -> p#1)
+    );
+    if covered 0 then true else if mixed then null else false
+)
+
+-- Outside each target tail, at least one integer inequality must fail.
+-- Search these finitely many alternatives, pruning inconsistent prefixes.
+-- Integer feasibility, not a search cutoff, decides the final answer.
+draftCharacterTailCoveredExact = (small,others) -> (
+    depth := small#1+1;
+    r := #(small#0#1);
+    systems := for large in others list (
+        coordinates := draftCharacterTailCoordinates(small,large);
+        if coordinates === null then continue;
+        c := first coordinates;
+        M := drop(coordinates,1);
+        alternatives := (for j from 0 to #c-1 list {
+            apply(M,row -> row#j),-1-c#j}) |
+            {{apply(M,sum),large#1-sum c}};
+        clauses := new MutableHashTable;
+        alwaysOutside := false;
+        for alternative in alternatives do (
+            row := alternative#0;
+            bound := alternative#1;
+            if all(row,x -> x >= 0) and depth*min row > bound then continue;
+            if all(row,x -> x <= 0) and depth*max row <= bound then (
+                alwaysOutside = true;
+                break;
+            );
+            clauses#row = if clauses#?row then max(clauses#row,bound) else bound;
+        );
+        if alwaysOutside then continue;
+        if #clauses == 0 then return true;
+        sort apply(pairs clauses,p -> {p#0,p#1})
+    );
+    if #systems == 0 then return false;
+    systems = apply(sort apply(unique systems,L -> {#L,L}),last);
+    -- Axis points on the initial simplex often exhibit noncontainment.
+    if any(toList(0..r-1),i -> all(systems,clauses ->
+        any(clauses,p -> depth*p#0#i <= p#1))) then return false;
+    chosen := new MutableList from toList((#systems+1):null);
+    chosen#0 = {toList(r:-1),-depth};
+    feasibility := new MutableHashTable;
+    outside := null;
+    outside = k -> (
+        bounds := new MutableHashTable;
+        for j from 0 to k do (
+            p := chosen#j;
+            bounds#(p#0) = if bounds#?(p#0) then min(bounds#(p#0),p#1) else p#1;
+        );
+        key := sort apply(pairs bounds,p -> {p#0,p#1});
+        if not feasibility#?key then feasibility#key =
+            draftCharacterIntegerFeasible(matrix(ZZ,apply(key,p -> p#0)),
+                transpose matrix(ZZ,{apply(key,p -> p#1)}));
+        if not feasibility#key then return false;
+        if k == #systems then return true;
+        any(systems#k,p -> (
+            chosen#(k+1) = p;
+            outside(k+1)
+        ))
+    );
+    not outside 0
+)
+
+draftCharacterTailCovered = (small,others,budget) -> (
+    answer := draftCharacterTailCoveredFast(small,others,budget);
+    if answer =!= null then answer else draftCharacterTailCoveredExact(small,others)
+)
+
+draftCharacterDomainTails = domain -> (
+    if domain#0 === "tails" then pairs(domain#1)
+    else apply(pairs(domain#1),p -> (
+        base := p#0#0;
+        generator := p#0#1;
+        ({draftAdd(base,draftScale(p#1+1,generator)),{generator}},0)
+    ))
+)
+
+draftCharacterDomainsEqual = (left,right) -> (
+    if left === right then return true;
+    if left#0 =!= right#0 or not member(left#0,{"tails","rays"}) then return false;
+    budget := new MutableList from {4096};
+    leftTails := draftCharacterDomainTails left;
+    rightTails := draftCharacterDomainTails right;
+    all(leftTails,p -> draftCharacterTailCovered(p,rightTails,budget)) and
+        all(rightTails,p -> draftCharacterTailCovered(p,leftTails,budget))
+)
+
+draftIntersectCharacterDomains = (left,right) -> (
+    if left#0 === "all" then return right;
+    if right#0 === "all" then return left;
+    if left#0 === "finite" then return {
+        "finite",set select(toList(left#1),p -> draftCharacterDomainContains(right,p))};
+    if right#0 === "finite" then return draftIntersectCharacterDomains(right,left);
+    if left#0 =!= right#0 then error "KacMoody: incomparable certificate domains";
+    tails := new MutableHashTable from pairs(left#1);
+    for p in pairs(right#1) do
+        tails#(p#0) = if not tails#?(p#0) then p#1
+            else if left#0 === "rays" then max(tails#(p#0),p#1)
+            else min(tails#(p#0),p#1);
+    {left#0,new HashTable from pairs tails}
+)
+
+-- Return a domain description and all weights where its coefficient oracle
+-- could be nonzero.  The latter lets equality reject inconsistent source
+-- metadata instead of trusting a copied highest-weight/depth description.
+draftCharacterEqualityData = (C,transform) -> (
+    terms := characterTerms C;
+    candidates := set apply(keys terms,transform);
+    if isExactCharacter C then return {{"all"},candidates};
+    T := C#"truncation";
+    if instance(T,HashTable) and T#?"coefficientCertificate" and
+        T#"coefficientCertificate" === true and T#?"operation" then (
+        op := T#"operation";
+        if op === "scale" then (
+            data := draftCharacterEqualityData(T#"source",transform);
+            return {data#0,if T#"scalar" == 0 then set {} else data#1};
+        );
+        if op === "sum" then (
+            left := draftCharacterEqualityData(T#"left",transform);
+            if T#"left" === T#"right" then return left;
+            right := draftCharacterEqualityData(T#"right",transform);
+            return {draftIntersectCharacterDomains(left#0,right#0),
+                union(left#1,right#1)};
+        );
+        if op === "dual" then return draftCharacterEqualityData(
+            T#"source",mu -> transform(-mu));
+        if op === "weyl" then (
+            w := inverseWeylElement(T#"inverseWeylElement");
+            return draftCharacterEqualityData(T#"source",
+                mu -> transform(weylAction(w,mu)));
+        );
+        if op === "restriction" then return draftCharacterEqualityData(
+            T#"source",mu -> transform(restrictWeight(characterDatum C,mu)));
+        if op === "Levi lift" then return draftCharacterEqualityData(
+            T#"source",mu -> transform(draftLiftLeviWeight mu));
+        if op === "finite product" then (
+            domain := {"all"};
+            possible := set {};
+            for p in pairs characterTerms(T#"finite") do (
+                data := draftCharacterEqualityData(T#"other",
+                    mu -> transform(mu+p#0));
+                domain = draftIntersectCharacterDomains(domain,data#0);
+                possible = union(possible,data#1);
+            );
+            return {domain,possible};
+        );
+    );
+    native := draftRootDepthCharacterData C;
+    if native =!= null then (
+        lambda := native#0;
+        D := parentDatum lambda;
+        r := (cartanDatum D)#"rank";
+        if lambda#"realizationCoordinates" === null and det datumCartanMatrix D == 0 then
+            error "KacMoody: equality requires a complete singular root-depth certificate";
+        if r == 0 then return {{"all"},candidates};
+        origin := draftCharacterNumericalCoordinates transform(0*lambda);
+        generators := sort for i from 0 to r-1 list (
+            alpha := toWeight kmRoot(D,for j from 0 to r-1 list if i == j then 1 else 0);
+            if lambda#"realizationCoordinates" === null then
+                alpha = kmWeight(D,datumCoordinates alpha);
+            draftAdd(draftCharacterNumericalCoordinates transform alpha,
+                draftScale(-1,origin))
+        );
+        anchor := draftCharacterNumericalCoordinates transform lambda;
+        -- In rank one, different anchors and depths can give the same
+        -- unknown ray.  Fix its lattice coset and keep its last unknown
+        -- integer coordinate; intersecting known regions takes the maximum.
+        if r == 1 then (
+            generator := first generators;
+            j := position(generator,x -> x != 0);
+            n := floor(anchor#j/generator#j);
+            base := draftAdd(anchor,draftScale(-n,generator));
+            return {{"rays",new HashTable from {{base,generator}=>n-native#1-1}},candidates};
+        );
+        return {{"tails",new HashTable from {{anchor,generators}=>native#1}},candidates};
+    );
+    known := set apply(toList candidates,draftCharacterNumericalCoordinates);
+    -- The empty coordinate tuple is the only point in dimension zero.
+    -- Knowing its coefficient is not the same as knowing no coefficients.
+    {if known === set {{}} then {"all"} else {"finite",known},candidates}
+)
+
+draftCharactersEqual = (C,D) -> (
+    if C === D then return true;
+    if C#"status" =!= D#"status" or characterDatum C =!= characterDatum D or
+        characterTerms C != characterTerms D then return false;
+    if instance(C,FormalCharacter) then (
+        leftMode := draftCharacterCoordinateMode C;
+        rightMode := draftCharacterCoordinateMode D;
+        if leftMode =!= rightMode then return false;
+    );
+    if isExactCharacter C and isExactCharacter D then return true;
+    -- Every transformation used here is an invertible coordinate change.
+    -- Compare a Levi character in ambient coordinates so central directions
+    -- remain visible and restriction has the same domain as its source.
+    transform := if instance(C,LeviFormalCharacter) then draftLiftLeviWeight else identity;
+    data := try {draftCharacterEqualityData(C,transform),
+        draftCharacterEqualityData(D,transform)} else return false;
+    left := data#0;
+    right := data#1;
+    if not draftCharacterDomainsEqual(left#0,right#0) then return false;
+    try (
+        consistent := (F,data) -> (
+            stored := characterTerms F;
+            possible := union(data#1,set apply(keys stored,transform));
+            all(toList possible,mu -> (
+                wt := if instance(F,LeviFormalCharacter) then
+                    restrictWeight(characterDatum F,mu) else mu;
+                value := draftKnownCharacterCoefficient(F,wt);
+                if value === null then not stored#?wt
+                else value == (if stored#?wt then stored#wt else 0)
+            ))
+        );
+        consistent(C,left) and consistent(D,right)
+    ) else false
 )
 
 draftCertifiedCharacterTerms = C -> new HashTable from
@@ -10835,12 +10519,9 @@ draftCertifiedCharacterTerms = C -> new HashTable from
 
 FormalCharacter + FormalCharacter := (C,D) -> (
     draftCheckCharacterParents(C,D,"FormalCharacter + FormalCharacter");
-    S := new MutableHashTable;
-    for p in pairs characterTerms C do S#(p#0) = p#1;
-    for p in pairs characterTerms D do
-        if S#?(p#0) then S#(p#0) = S#(p#0)+p#1 else S#(p#0)=p#1;
+    S := characterTerms C + characterTerms D;
     if isExactCharacter C and isExactCharacter D then
-        return formalCharacter(characterDatum C,new HashTable from pairs S);
+        return formalCharacter(characterDatum C,S);
     left := draftRootDepthCharacterData C;
     right := draftRootDepthCharacterData D;
     workingMetadata := new HashTable from {
@@ -10849,10 +10530,8 @@ FormalCharacter + FormalCharacter := (C,D) -> (
         new HashTable from join(pairs draftRootDepthTruncation(
             left#0,min(left#1,right#1),"sum"),{"left"=>C,"right"=>D})
     else workingMetadata;
-    result := formalCharacter(characterDatum C,new HashTable from pairs S,
-        CharacterStatus=>"Truncated",Truncation=>workingMetadata);
-    formalCharacter(characterDatum C,draftCertifiedCharacterTerms result,
-        CharacterStatus=>"Truncated",Truncation=>metadata)
+    result := draftComputedCharacter(characterDatum C,S,workingMetadata);
+    draftComputedCharacter(characterDatum C,draftCertifiedCharacterTerms result,metadata)
 )
 
 - FormalCharacter := C -> (-1)*C
@@ -10860,11 +10539,10 @@ FormalCharacter + FormalCharacter := (C,D) -> (
 ZZ * FormalCharacter := (a,C) -> (
     if a == 0 then return formalCharacter(characterDatum C,new Tally);
     metadata := if isExactCharacter C then null else new HashTable from join(
-        if draftRootDepthCharacterData C =!= null then pairs C#"truncation" else {},
+        if draftRootDepthCharacterData C === null then {} else
+            select(pairs C#"truncation",p -> p#0 =!= "certified data"),
         {"coefficientCertificate"=>true,"operation"=>"scale","source"=>C,"scalar"=>a});
-    formalCharacter(characterDatum C,
-        new HashTable from apply(pairs characterTerms C,p -> p#0 => a*p#1),
-        CharacterStatus=>C#"status",Truncation=>metadata)
+    draftComputedCharacter(characterDatum C,a*characterTerms C,metadata)
 )
 FormalCharacter * ZZ := (C,a) -> a*C
 FormalCharacter - FormalCharacter := (C,D) -> C + (-D)
@@ -10909,11 +10587,9 @@ FormalCharacter * FormalCharacter := (C,D) -> (
         "operation"=>"finite product",
         "finite"=>if isExactCharacter C then C else D,
         "other"=>if isExactCharacter C then D else C};
-    result := formalCharacter(characterDatum C,new HashTable from pairs S,
-        CharacterStatus=>"Truncated",Truncation=>metadata);
+    result := draftComputedCharacter(characterDatum C,new HashTable from pairs S,metadata);
     if bounded then return result;
-    formalCharacter(characterDatum C,draftCertifiedCharacterTerms result,
-        CharacterStatus=>"Truncated",Truncation=>metadata)
+    draftComputedCharacter(characterDatum C,draftCertifiedCharacterTerms result,metadata)
 )
 
 -- Ordinary powers are repeated tensor products, not symmetric powers.
@@ -10937,19 +10613,19 @@ FormalCharacter ^ ZZ := (C,k) -> (
 )
 
 dualCharacter = method()
-dualCharacter FormalCharacter := C -> formalCharacter(
+dualCharacter FormalCharacter := C -> draftComputedCharacter(
     characterDatum C,
     new HashTable from apply(pairs characterTerms C,p -> (-p#0) => p#1),
-    CharacterStatus=>C#"status",Truncation=>if isExactCharacter C then null
+    if isExactCharacter C then null
         else new HashTable from {"coefficientCertificate"=>true,"operation"=>"dual","source"=>C})
 
 weylAction (WeylElement,FormalCharacter) := (w,C) -> (
     if (weylParent w)#"cartanDatum" =!= cartanDatum characterDatum C then
         error "weylAction: Weyl element and character have different Cartan data";
-    formalCharacter(characterDatum C,
+    draftComputedCharacter(characterDatum C,
         new HashTable from apply(pairs characterTerms C,p ->
             weylAction(w,p#0) => p#1),
-        CharacterStatus=>C#"status",Truncation=>if isExactCharacter C then null
+        if isExactCharacter C then null
             else new HashTable from {"coefficientCertificate"=>true,"operation"=>"weyl","source"=>C,
                 "inverseWeylElement"=>inverseWeylElement w})
 )
@@ -10965,6 +10641,8 @@ characterDimension LeviFormalCharacter := C -> (
         error "characterDimension: a partial Levi character has no certified finite dimension";
     sum values characterTerms C
 )
+dim FormalCharacter := C -> characterDimension C
+dim LeviFormalCharacter := C -> characterDimension C
 
 -- Subtract a root without conflating two legitimate kinds of weight object.
 -- A complete weight retains every realization coordinate (including a
@@ -11004,11 +10682,6 @@ finiteCharacter (RootDatum,KMWeight) := (D,lambda) -> (
 finiteCharacter (RootDatum,List) := (D,lambda) -> finiteCharacter(D,kmWeight(D,lambda))
 finiteCharacter (CartanDatum,List) := (D,lambda) -> finiteCharacter(rootDatum D,lambda)
 finiteCharacter (Matrix,List) := (A,lambda) -> finiteCharacter(rootDatum A,lambda)
-
-draftDominanceDifference = (A,lambda,mu) -> (
-    q := toSimple(A,draftAdd(lambda,draftScale(-1,mu)));
-    all(q,x -> denominator(x+0_QQ) == 1 and x >= 0)
-)
 
 decomposeCharacter = method()
 decomposeCharacter FormalCharacter := C -> (
@@ -11118,13 +10791,6 @@ toString KMRepresentation := M -> concatenate(
     draftWeightNotation M#"highestWeight")
 net KMRepresentation := M -> net toString M
 
-draftCompositions = (h,r) -> (
-    if r == 0 then (if h == 0 then {{}} else {})
-    else if r == 1 then {{h}}
-    else flatten for x from 0 to h list
-        apply(draftCompositions(h-x,r-1),tail -> {x}|tail)
-)
-
 draftPositiveRootMultiplicityData = (A,H) -> (
     -- Height zero contains no positive roots.  Handling it here is both the
     -- mathematically correct empty product and essential for depth-zero
@@ -11144,9 +10810,9 @@ draftAddToTable = (T,key,value) -> (
 -- total simple-root height H.  For multiplicity m, the k-th coefficient
 -- of (1-x)^(-m) is binomial(m+k-1,k).
 draftVermaPartitionTable = (A,H) -> (
-    cacheKey := {entries A,H};
-    if draftVermaPartitionCache#?cacheKey then
-        return draftVermaPartitionCache#cacheKey;
+    saved := kmOwnerResults A;
+    key := (symbol draftVermaPartitionTable,H);
+    if saved#?key then return saved#key;
     r := numrows A;
     zero := toList(r:0);
     T := new MutableHashTable;
@@ -11154,9 +10820,8 @@ draftVermaPartitionTable = (A,H) -> (
     for rootData in draftPositiveRootMultiplicityData(A,H) do (
         alpha := rootData#0;
         m := rootData#1;
-        old := new HashTable from pairs T;
         next := new MutableHashTable;
-        for p in pairs old do (
+        for p in pairs T do (
             beta := p#0;
             maxK := (H-rootHeight beta) // rootHeight alpha;
             for k from 0 to maxK do (
@@ -11168,8 +10833,8 @@ draftVermaPartitionTable = (A,H) -> (
         T = next;
     );
     answer := new HashTable from pairs T;
-    draftVermaPartitionCache#cacheKey=answer;
-    answer
+    kmRecordFill "vermaPartitions";
+    saved#key = answer
 )
 
 draftRequireCompletedHighestWeight = (M,H,who) -> (
@@ -11184,8 +10849,8 @@ draftRequireCompletedHighestWeight = (M,H,who) -> (
 
 vermaCharacter = method(Options => {Depth => null})
 vermaCharacter KMRepresentation := opts -> M -> (
-    if M#"kind" =!= "Verma" then error "vermaCharacter: expected a Verma module";
-    data := draftRequireCompletedHighestWeight(M,opts.Depth,"vermaCharacter");
+    if M#"kind" =!= "Verma" then error "moduleCharacter: expected a Verma module";
+    data := draftRequireCompletedHighestWeight(M,opts.Depth,"moduleCharacter");
     D := data#0;
     lambda := data#1;
     H := opts.Depth;
@@ -11196,9 +10861,8 @@ vermaCharacter KMRepresentation := opts -> M -> (
         mu := draftWeightMinusRoot(lambda,betaRoot);
         terms#mu = p#1;
     );
-    formalCharacter(D,new HashTable from pairs terms,
-        CharacterStatus=>"Truncated",
-        Truncation=>new HashTable from {
+    draftComputedCharacter(D,new HashTable from pairs terms,
+        new HashTable from {
             "kind"=>"root-depth",
             "depth"=>H,
             "completeThroughDepth"=>H,
@@ -11218,10 +10882,10 @@ draftWeightRootInner = (A,labels,alpha) -> (
 integrableCharacter = method(Options => {Depth => null})
 integrableCharacter KMRepresentation := opts -> M -> (
     if M#"kind" =!= "IntegrableHighestWeight" then
-        error "integrableCharacter: expected an integrable highest-weight module";
+        error "moduleCharacter: expected an integrable highest-weight module";
     if opts.Depth === null and cartanType datumCartanMatrix(M#"parent") === "finite" then
         return finiteCharacter(M#"parent",M#"highestWeight");
-    data := draftRequireCompletedHighestWeight(M,opts.Depth,"integrableCharacter");
+    data := draftRequireCompletedHighestWeight(M,opts.Depth,"moduleCharacter");
     D := data#0;
     lambda := data#1;
     H := opts.Depth;
@@ -11232,7 +10896,7 @@ integrableCharacter KMRepresentation := opts -> M -> (
     multiplicities := new MutableHashTable;
     zero := toList(r:0);
     multiplicities#zero = 1;
-    for h from 1 to H do for beta in draftCompositions(h,r) do (
+    for h from 1 to H do for beta in cartanCompositions(h,r) do (
         denominatorValue := 2*draftWeightRootInner(A,
             apply(lambdaLabels,x -> x+1),beta) - rootInnerProduct(A,beta,beta);
         numeratorValue := 0_QQ;
@@ -11256,13 +10920,13 @@ integrableCharacter KMRepresentation := opts -> M -> (
         );
         if denominatorValue == 0 then (
             if numeratorValue != 0 then error concatenate(
-                "integrableCharacter: Freudenthal denominator vanished with nonzero numerator at offset ",
+                "moduleCharacter: Freudenthal denominator vanished with nonzero numerator at offset ",
                 toString beta);
         ) else (
             value := numeratorValue/denominatorValue;
             if denominator(value+0_QQ) != 1 or value < 0 then
                 error concatenate(
-                    "integrableCharacter: Freudenthal recurrence produced invalid multiplicity ",
+                    "moduleCharacter: Freudenthal recurrence produced invalid multiplicity ",
                     toString value," at offset ",toString beta);
             value = numerator(value+0_QQ);
             if value > 0 then multiplicities#beta = value;
@@ -11273,9 +10937,8 @@ integrableCharacter KMRepresentation := opts -> M -> (
         mu := draftWeightMinusRoot(lambda,kmRoot(D,p#0));
         terms#mu = p#1;
     );
-    formalCharacter(D,new HashTable from pairs terms,
-        CharacterStatus=>"Truncated",
-        Truncation=>new HashTable from {
+    draftComputedCharacter(D,new HashTable from pairs terms,
+        new HashTable from {
             "kind"=>"root-depth",
             "depth"=>H,
             "completeThroughDepth"=>H,
@@ -11436,11 +11099,10 @@ draftLiftLeviCharacter = C -> (
             error "LeviFormalCharacter arithmetic: restriction certificate does not agree with the weight table";
         return source;
     );
-    liftedTerms := new Tally from apply(pairs terms,p ->
+    liftedTerms := new VirtualTally from apply(pairs terms,p ->
         draftLiftLeviWeight(p#0) => p#1);
     if status === "Exact" then return formalCharacter(D,liftedTerms);
-    formalCharacter(D,liftedTerms,CharacterStatus=>"Truncated",
-        Truncation=>new HashTable from {
+    draftComputedCharacter(D,liftedTerms,new HashTable from {
             "coefficientCertificate"=>true,"operation"=>"Levi lift",
             "leviDatum"=>L,"source"=>C})
 )
@@ -11559,10 +11221,8 @@ CrystalVertex = new Type of HashTable
 Crystal == Crystal := (B,C) -> B === C
 CrystalVertex == CrystalVertex := (b,c) -> b === c
 
--- Canonical vertices and their data index are shared by all accessors and
--- Kashiwara operators.  Declare these before any closure refers to them.
-draftCrystalVerticesCache := new MutableHashTable
-draftCrystalVertexIndexCache := new MutableHashTable
+-- The crystal owns the index: dropping a crystal also releases its graph.
+draftCrystalIndex = B -> (kmOwnerResults B)#(symbol crystalVertex)
 
 -------------------------------------------------------------------------
 -- Validation and canonical node coordinates
@@ -11596,19 +11256,7 @@ draftCrystalDominantWeight = (D,lambda,who) -> (
     labels
 )
 
--- Node arguments may be their 1-based positions or user-supplied labels.
--- Integers in 1..rank mean positions; otherwise label lookup is attempted,
--- allowing deliberately numeric labels such as 10 and 20.
-draftCrystalNode = (B,node,who) -> (
-    r := B#"rank";
-    -- Ordinary 1-based positions take precedence.  An integer outside that
-    -- range may still be a user-supplied node label (for example 10 or 20).
-    if instance(node,ZZ) and node >= 1 and node <= r then return node;
-    labels := (cartanDatum(B#"parent"))#"nodeLabels";
-    p := position(labels,x -> x === node or x == node);
-    if p === null then error(who | ": node is neither a valid position nor a label of this Cartan datum");
-    p+1
-)
+draftCrystalNode = (B,node,who) -> draftNodePosition(cartanDatum(B#"parent"),node,who)
 
 draftCrystalCanonicalPosition = (B,node) -> (
     p := position(B#"canonicalNodeOrder",j -> j == node);
@@ -11620,7 +11268,7 @@ draftCrystalCheckParent = (B,b,who) -> (
     if not instance(b,CrystalVertex) then error(who | ": expected a CrystalVertex");
     if b#"parent" =!= B then error(who | ": the vertex belongs to a different crystal");
     vertices := crystalVertices B;
-    if not (draftCrystalVertexIndexCache#B)#?(b#"data") then
+    if not (draftCrystalIndex B)#?(b#"data") then
         error(who | ": the vertex data do not occur in this crystal");
     b
 )
@@ -11639,14 +11287,14 @@ draftCrystalTableaux = (shape,alphabetSize,maxElements) -> (
     cells := flatten for row from 0 to #shape-1 list
         for column from 0 to shape#row-1 list {row,column};
     entriesSoFar := new MutableHashTable;
-    answer := {};
+    answer := new MutableHashTable;
     visit := null;
     visit = positionInCells -> (
         if positionInCells == #cells then (
             tableau := for row from 0 to #shape-1 list
                 for column from 0 to shape#row-1 list
                     entriesSoFar#{row,column};
-            answer = append(answer,tableau);
+            answer#(#answer) = tableau;
             if maxElements =!= null and #answer > maxElements then
                 error concatenate(
                     "highestWeightCrystal: construction exceeded MaxElements => ",
@@ -11676,7 +11324,7 @@ draftCrystalTableaux = (shape,alphabetSize,maxElements) -> (
         null
     );
     visit 0;
-    answer
+    for j from 0 to #answer-1 list answer#j
 )
 
 draftCrystalReadingCells = T -> (
@@ -11689,21 +11337,25 @@ draftCrystalReadingCells = T -> (
 
 draftCrystalSignature = (B,T,actualNode) -> (
     canonicalNode := draftCrystalCanonicalPosition(B,actualNode);
-    survivingPlus := {};
-    survivingMinus := {};
-    for cell in draftCrystalReadingCells T do (
+    cells := draftCrystalReadingCells T;
+    plusStack := new MutableList from toList(#cells:null);
+    plusCount := 0;
+    survivingMinus := for cell in cells list (
         value := T#(cell#0)#(cell#1);
-        if value == canonicalNode then
-            survivingPlus = append(survivingPlus,cell)
-        else if value == canonicalNode+1 then (
-            if #survivingPlus > 0 then
-                survivingPlus = if #survivingPlus == 1 then {}
-                    else take(survivingPlus,#survivingPlus-1)
-            else survivingMinus = append(survivingMinus,cell);
+        if value == canonicalNode then (
+            plusStack#plusCount = cell;
+            plusCount = plusCount+1;
+            continue
         );
+        if value != canonicalNode+1 then continue;
+        if plusCount > 0 then (
+            plusCount = plusCount-1;
+            continue
+        );
+        cell
     );
     new HashTable from {
-        "plus"=>survivingPlus,
+        "plus"=>for j from 0 to plusCount-1 list plusStack#j,
         "minus"=>survivingMinus
     }
 )
@@ -11752,19 +11404,22 @@ draftCrystalLiftWeight = (B,labels) -> (
 -- keys.  The fixed central part is t times that of the highest weight;
 -- endpoint lifting below therefore retains complete realization weights.
 draftCrystalNormalizePath = path -> (
-    answer := {};
+    points := new MutableList from toList(#path:null);
+    count := 0;
     for point in path do (
-        answer = append(answer,point);
-        while #answer >= 3 do (
-            a := answer#(#answer-3);
-            b := answer#(#answer-2);
-            c := last answer;
+        points#count = point;
+        count = count+1;
+        while count >= 3 do (
+            a := points#(count-3);
+            b := points#(count-2);
+            c := points#(count-1);
             if draftScale(c#0-b#0,draftAdd(b#1,draftScale(-1,a#1))) !=
                 draftScale(b#0-a#0,draftAdd(c#1,draftScale(-1,b#1))) then break;
-            answer = append(take(answer,#answer-2),c);
+            count = count-1;
+            points#(count-1) = c;
         );
     );
-    answer
+    for j from 0 to count-1 list points#j
 )
 
 draftCrystalPathPoint = (path,t) -> (
@@ -11780,16 +11435,17 @@ draftCrystalPathPoint = (path,t) -> (
 )
 
 draftCrystalPathCrossings = (path,i,height) -> (
-    times := apply(select(path,p -> p#1#i == height),p -> p#0);
-    for k from 0 to #path-2 do (
+    atBreakpoints := for p in path list
+        if p#1#i == height then p#0 else continue;
+    betweenBreakpoints := for k from 0 to #path-2 list (
         a := path#k;
         b := path#(k+1);
         if (a#1#i < height and height < b#1#i) or
            (b#1#i < height and height < a#1#i) then
-            times = append(times,draftQQ(a#0+
-                (b#0-a#0)*(height-a#1#i)/(b#1#i-a#1#i)));
+            draftQQ(a#0+(b#0-a#0)*(height-a#1#i)/(b#1#i-a#1#i))
+        else continue
     );
-    sort unique times
+    sort unique (atBreakpoints | betweenBreakpoints)
 )
 
 draftCrystalPathStep = (A,path,node,raising) -> (
@@ -11830,8 +11486,7 @@ draftCrystalPathData = (A,labels,maxElements) -> (
     highest := {{0,toList(#labels:0)},{1,labels}};
     seen := new MutableHashTable;
     seen#highest = true;
-    queue := new MutableList;
-    queue#0 = highest;
+    queue := new MutableHashTable from {0=>highest};
     head := 0;
     while head < #queue do (
         path := queue#head;
@@ -11846,7 +11501,7 @@ draftCrystalPathData = (A,labels,maxElements) -> (
             );
         );
     );
-    toList queue
+    numberedTableEntries queue
 )
 
 -------------------------------------------------------------------------
@@ -11873,6 +11528,7 @@ highestWeightCrystal (RootDatum,KMWeight) := opts -> (D,lambda) -> (
         if #paths != expectedCardinality then
             error "KacMoody: internal path enumeration failed the Weyl-dimension check";
         return new Crystal from {
+            symbol cache=>new CacheTable,
             "parent"=>D,
             "model"=>"LittelmannPaths",
             "highestWeight"=>lambda,
@@ -11889,6 +11545,7 @@ highestWeightCrystal (RootDatum,KMWeight) := opts -> (D,lambda) -> (
     if #tableaux != expectedCardinality then
         error "KacMoody: internal tableau enumeration failed the Weyl-dimension check";
     new Crystal from {
+        symbol cache=>new CacheTable,
         "parent"=>D,
         "model"=>"SemistandardTableaux",
         "highestWeight"=>lambda,
@@ -11928,6 +11585,7 @@ tensorProductCrystal (Crystal,Crystal) := opts -> (B,C) -> (
             toString cardinality," vertices, exceeding MaxElements => ",
             toString maxElements);
     new Crystal from {
+        symbol cache=>new CacheTable,
         "parent"=>crystalDatum B,
         "model"=>"TensorProduct",
         "highestWeight"=>highest,
@@ -11943,8 +11601,7 @@ tensorProductCrystal (Crystal,Crystal) := opts -> (B,C) -> (
 draftMinusculeOrbit = (A,highest,maxElements) -> (
     seen := new MutableHashTable;
     seen#highest = true;
-    queue := new MutableList;
-    queue#0 = highest;
+    queue := new MutableHashTable from {0=>highest};
     head := 0;
     while head < #queue do (
         mu := queue#head;
@@ -11962,7 +11619,7 @@ draftMinusculeOrbit = (A,highest,maxElements) -> (
             );
         );
     );
-    toList queue
+    numberedTableEntries queue
 )
 
 minusculeCrystal = method(Options => {MaxElements=>100000})
@@ -11984,6 +11641,7 @@ minusculeCrystal (RootDatum,KMWeight) := opts -> (D,lambda) -> (
     if #weights != expectedCardinality then
         error "KacMoody: internal minuscule-orbit enumeration failed the Weyl-dimension check";
     new Crystal from {
+        symbol cache=>new CacheTable,
         "parent"=>D,
         "model"=>"MinusculeOrbit",
         "highestWeight"=>lambda,
@@ -12058,7 +11716,7 @@ crystalVertex (Crystal,List) := (B,data) -> (
     -- Build the canonical index lazily.  This turns every Kashiwara step
     -- from a linear scan of all vertices into a hash lookup.
     vertices := crystalVertices B;
-    index := draftCrystalVertexIndexCache#B;
+    index := draftCrystalIndex B;
     if not index#?data then
         error "crystalVertex: the supplied data do not label a vertex of this crystal";
     index#data
@@ -12066,23 +11724,25 @@ crystalVertex (Crystal,List) := (B,data) -> (
 
 crystalVertices = method()
 crystalVertices Crystal := B -> (
-    if draftCrystalVerticesCache#?B then return draftCrystalVerticesCache#B;
+    saved := kmOwnerResults B;
+    key := symbol crystalVertices;
+    if saved#?key then return saved#key;
     index := new MutableHashTable;
     vertices := apply(B#"vertexData",data -> (
         vertex := new CrystalVertex from {"parent"=>B,"data"=>data};
         index#data=vertex;
         vertex
     ));
-    draftCrystalVerticesCache#B=vertices;
-    draftCrystalVertexIndexCache#B=index;
-    vertices
+    saved#(symbol crystalVertex) = index;
+    kmRecordFill "crystalData";
+    saved#key = vertices
 )
 
 crystalContains = method()
 crystalContains (Crystal,CrystalVertex) := (B,b) -> (
     if crystalParent b =!= B then return false;
     vertices := crystalVertices B;
-    (draftCrystalVertexIndexCache#B)#?(crystalVertexData b)
+    (draftCrystalIndex B)#?(crystalVertexData b)
 )
 
 crystalTableau = method()
@@ -12095,11 +11755,12 @@ crystalTableau CrystalVertex := b -> (
 )
 
 crystalWeight = method()
-draftCrystalWeightCache := new MutableHashTable
 crystalWeight CrystalVertex := b -> (
     draftCrystalCheckParent(crystalParent b,b,"crystalWeight");
-    if draftCrystalWeightCache#?b then return draftCrystalWeightCache#b;
     B := crystalParent b;
+    saved := kmOwnerResults B;
+    key := (symbol crystalWeight,crystalVertexData b);
+    if saved#?key then return saved#key;
     answer := if B#"model" === "SemistandardTableaux" then
         draftCrystalTableauWeight(B,crystalVertexData b)
     else if B#"model" === "LittelmannPaths" then
@@ -12110,8 +11771,8 @@ crystalWeight CrystalVertex := b -> (
             crystalWeight crystalVertex(B#"factors"#1,data#1)
     )
     else draftCrystalLiftWeight(B,crystalVertexData b);
-    draftCrystalWeightCache#b=answer;
-    answer
+    kmRecordFill "crystalData";
+    saved#key = answer
 )
 crystalWeight (Crystal,CrystalVertex) := (B,b) -> (
     draftCrystalCheckParent(B,b,"crystalWeight");
@@ -12258,34 +11919,18 @@ crystalEdges Crystal := B -> flatten for b in crystalVertices B list
     )
 
 crystalCharacter = method()
-draftCrystalCharacterCache := new MutableHashTable
 crystalCharacter Crystal := B -> (
-    if draftCrystalCharacterCache#?B then return draftCrystalCharacterCache#B;
+    saved := kmOwnerResults B;
+    key := symbol crystalCharacter;
+    if saved#?key then return saved#key;
     terms := new MutableHashTable;
     for b in crystalVertices B do (
         mu := crystalWeight b;
         if terms#?mu then terms#mu=terms#mu+1 else terms#mu=1;
     );
     answer := formalCharacter(B#"parent",new Tally from pairs terms);
-    draftCrystalCharacterCache#B=answer;
-    answer
-)
-
--- These hooks are intentionally private.  The package-wide infrastructure
--- layer can report and clear the process-local memoization without exposing
--- mutable cache tables as part of the mathematical API.
-crystalInfrastructureCacheSize = () ->
-    #keys draftCrystalVerticesCache+
-    #keys draftCrystalVertexIndexCache+
-    #keys draftCrystalWeightCache+
-    #keys draftCrystalCharacterCache
-
-clearCrystalInfrastructureCache = () -> (
-    draftCrystalVerticesCache = new MutableHashTable;
-    draftCrystalVertexIndexCache = new MutableHashTable;
-    draftCrystalWeightCache = new MutableHashTable;
-    draftCrystalCharacterCache = new MutableHashTable;
-    null
+    kmRecordFill "crystalData";
+    saved#key = answer
 )
 
 toString Crystal := B -> concatenate(
@@ -12347,9 +11992,8 @@ draftKostantPartitionTable = (A,bound) -> (
     table := new MutableHashTable;
     table#zero = 1;
     for alpha in roots do (
-        old := new HashTable from pairs table;
-        next := new MutableHashTable from pairs old;
-        for p in pairs old do (
+        next := new MutableHashTable from pairs table;
+        for p in pairs table do (
             gamma := p#0;
             while true do (
                 gamma = draftAdd(gamma,alpha);
@@ -12385,21 +12029,20 @@ kostantWeightMultiplicity (Matrix,List,List) := (A,lambda,mu) -> (
     validateFiniteCartanForRepresentations(A,"kostantWeightMultiplicity");
     lambda = normalizeIntegralDynkinWeight(A,lambda,"kostantWeightMultiplicity",true);
     mu = normalizeIntegralDynkinWeight(A,mu,"kostantWeightMultiplicity",false);
+    -- The highest-weight line has dimension one in every irreducible module.
+    if lambda == mu then return 1;
     difference := toSimple(A,draftAdd(lambda,draftScale(-1,mu)));
     if any(difference,x -> denominator(x+0_QQ) != 1 or x < 0) then return 0;
 
     shiftedLambda := apply(lambda,x -> x+1);
     shiftedMu := apply(mu,x -> x+1);
-    candidates := {};
-    for w in weylGroupElements A do (
+    candidates := for w in weylGroupElements A list (
         image := weylActionOnWeight(A,w#"word",shiftedLambda);
         nuDynkin := draftAdd(image,draftScale(-1,shiftedMu));
         nuSimple := toSimple(A,nuDynkin);
         if all(nuSimple,x -> denominator(x+0_QQ) == 1 and x >= 0) then
-            candidates = append(candidates,{
-                apply(nuSimple,x -> numerator(x+0_QQ)),
-                (-1)^(w#"length")
-            });
+            {apply(nuSimple,x -> numerator(x+0_QQ)),(-1)^(w#"length")}
+        else continue
     );
     if #candidates == 0 then return 0;
     bound := apply(numrows A,j -> max apply(candidates,p -> p#0#j));
@@ -12468,9 +12111,13 @@ borelWeilBott (RootDatum,KMWeight) := opts -> (D,lambda) -> (
     if not all(labels,x -> instance(x,ZZ)) then
         error "borelWeilBott: the line-bundle weight must be integral";
     shifted := apply(labels,x -> x+1);
-    word := {};
     degree := 0;
     bound := numrows cartanPositiveRoots A;
+    reflections := new MutableList from toList(bound:null);
+    -- Record the chamber walk in chronological order.  The corresponding
+    -- Weyl word has the first reflection on the right.
+    currentElement := () -> weylElement(weylGroup D,
+        for j from 0 to degree-1 list reflections#(degree-1-j));
     while true do (
         if any(shifted,x -> x == 0) then return new BorelWeilBottResult from {
             "parent"=>D,
@@ -12479,17 +12126,17 @@ borelWeilBott (RootDatum,KMWeight) := opts -> (D,lambda) -> (
             "degree"=>null,
             "dominantWeight"=>null,
             "cohomologyHighestWeight"=>null,
-            "weylElement"=>weylElement(weylGroup D,word),
+            "weylElement"=>currentElement(),
             "lineBundleConvention"=>"G_sc x^{B_sc} C_{-lambda}; cohomology is V(w dot lambda)^*"
         };
-        negatives := select(toList(0..numrows(A)-1),i -> shifted#i < 0);
-        negative := if #negatives == 0 then null else first negatives;
+        negative := position(shifted,x -> x < 0);
         if negative === null then (
             -- Applying the dot action to the original weight retains any
             -- central character in a nonminimal finite realization.  Its
             -- cohomology is the dual module, including the opposite central
             -- character; rebuilding from Dynkin labels would lose it.
-            dominant := dotWeylAction(weylElement(weylGroup D,word),lambda);
+            w := currentElement();
+            dominant := dotWeylAction(w,lambda);
             cohomologyHighest := dualWeight dominant;
             return new BorelWeilBottResult from {
                 "parent"=>D,
@@ -12498,15 +12145,14 @@ borelWeilBott (RootDatum,KMWeight) := opts -> (D,lambda) -> (
                 "degree"=>degree,
                 "dominantWeight"=>dominant,
                 "cohomologyHighestWeight"=>cohomologyHighest,
-                "weylElement"=>weylElement(weylGroup D,word),
+                "weylElement"=>w,
                 "lineBundleConvention"=>"G_sc x^{B_sc} C_{-lambda}; H^degree is V(w dot lambda)^*"
             };
         );
-        coefficient := shifted#negative;
+        if degree >= bound then error "borelWeilBott: chamber walk exceeded the positive-root bound";
         shifted = draftSimpleWeightLabels(A,negative+1,shifted);
-        word = {negative+1}|word;
+        reflections#degree = negative+1;
         degree = degree+1;
-        if degree > bound then error "borelWeilBott: chamber walk exceeded the positive-root bound";
     )
 )
 
@@ -12569,8 +12215,8 @@ demazureCharacter (RootDatum,KMWeight,List) := (D,lambda,word) -> (
     W := weylGroup D;
     w := weylElement(W,word);
     answer := formalCharacter(D,new Tally from {lambda=>1});
-    positions := if #(weylWord w) == 0 then {} else reverse toList(0..#(weylWord w)-1);
-    for pos in positions do answer = demazureOperator((weylWord w)#pos,answer);
+    positions := if #(reducedWord w) == 0 then {} else reverse toList(0..#(reducedWord w)-1);
+    for pos in positions do answer = demazureOperator((reducedWord w)#pos,answer);
     answer
 )
 demazureCharacter (RootDatum,List,List) := (D,lambda,word) ->
@@ -12611,10 +12257,6 @@ draftKLCoefficient = (p,d) -> if d < 0 or d >= #p then 0 else p#d
 draftKLMultiply = (p,q) -> draftKLTrim apply(#p+#q-1,d ->
     sum apply(toList(0..d),i -> draftKLCoefficient(p,i)*draftKLCoefficient(q,d-i)))
 
-draftKLGlobalCache := new MutableHashTable
-categoryOInfrastructureCacheSize = () -> #keys draftKLGlobalCache
-clearCategoryOInfrastructureCache = () -> (draftKLGlobalCache = new MutableHashTable; null)
-
 -- A reduced expression y=s_1...s_m contains a reduced expression for every
 -- z<=y as a subword.  For connected support, grow products of subwords from
 -- left to right and identify equal products after each step.  Disconnected
@@ -12623,7 +12265,9 @@ clearCategoryOInfrastructureCache = () -> (draftKLGlobalCache = new MutableHashT
 -- group; MaxElements bounds its full cardinality, not just stored factors.
 draftKLState = W -> (
     D := W#"cartanDatum";
-    if draftKLGlobalCache#?D then return draftKLGlobalCache#D;
+    saved := kmOwnerResults D;
+    key := symbol draftKLState;
+    if saved#?key then return saved#key;
     state := new MutableHashTable from {
         "weylGroup"=>W,
         "intervals"=>new MutableHashTable,
@@ -12637,8 +12281,8 @@ draftKLState = W -> (
         "correctionCandidates"=>new MutableHashTable,
         "supportComponents"=>new MutableHashTable
     };
-    draftKLGlobalCache#D = state;
-    state
+    kmRecordFill "kazhdanLusztigData";
+    saved#key = state
 )
 
 -- The Cartan parent and reduced words have already been validated by the
@@ -12656,21 +12300,18 @@ draftKLHasRightDescent = (M,i) -> any(M,row -> row#(i-1)<0)
 draftKLElementFromEntries = (state,M) -> (
     cache := state#"elements";
     if cache#?M then return cache#M;
-    reduced := new MutableList;
-    count := 0;
     remaining := M;
     rank := #(state#"cartanEntries");
-    while remaining =!= state#"identityEntries" do (
+    descents := while remaining =!= state#"identityEntries" list (
         i := first select(toList(1..rank),j ->
             draftKLHasRightDescent(remaining,j));
-        reduced#count = i;
-        count = count+1;
         remaining = draftKLReflectEntries(state,remaining,i);
+        i
     );
     answer := new WeylElement from {
         "parent"=>state#"weylGroup",
-        "word"=>reverse toList reduced,
-        "length"=>count,
+        "word"=>reverse descents,
+        "length"=>#descents,
         "rootActionEntries"=>M
     };
     cache#M = answer;
@@ -12678,7 +12319,7 @@ draftKLElementFromEntries = (state,M) -> (
 )
 
 draftKLRightMultiply = (state,w,i) -> (
-    key := {weylWord w,i};
+    key := {reducedWord w,i};
     products := state#"products";
     if products#?key then return products#key;
     answer := draftKLElementFromEntries(state,
@@ -12688,7 +12329,7 @@ draftKLRightMultiply = (state,w,i) -> (
 )
 
 draftKLRightDescents = (state,w) -> (
-    key := weylWord w;
+    key := reducedWord w;
     cache := state#"descents";
     if cache#?key then return cache#key;
     answer := select(toList(1..#(state#"cartanEntries")),i ->
@@ -12698,12 +12339,12 @@ draftKLRightDescents = (state,w) -> (
 )
 
 draftKLBruhat = (state,x,y) -> (
-    key := {weylWord x,weylWord y};
+    key := {reducedWord x,reducedWord y};
     cache := state#"bruhat";
     if cache#?key then return cache#key;
     if weylLength x > weylLength y then (cache#key=false; return false);
     remaining := x#"rootActionEntries";
-    for i in reverse weylWord y do if draftKLHasRightDescent(remaining,i) then
+    for i in reverse reducedWord y do if draftKLHasRightDescent(remaining,i) then
         remaining = draftKLReflectEntries(state,remaining,i);
     answer := remaining === state#"identityEntries";
     cache#key = answer;
@@ -12715,23 +12356,22 @@ draftKLBruhat = (state,x,y) -> (
 -- omitted nodes connect them in the ambient Dynkin diagram.  Their Bruhat
 -- intervals and KL polynomials are direct products.
 draftKLSupportComponents = (state,w) -> (
-    key := weylWord w;
+    key := reducedWord w;
     cache := state#"supportComponents";
     if cache#?key then return cache#key;
     A := state#"cartanEntries";
     unseen := sort unique key;
-    components := {};
-    while #unseen > 0 do (
-        component := {first unseen};
+    components := while #unseen > 0 list (
+        start := first unseen;
         unseen = drop(unseen,1);
-        frontier := component;
-        while #frontier > 0 do (
+        frontier := {start};
+        layers := while #frontier > 0 list (
             adjacent := select(unseen,j -> any(frontier,i -> A#(i-1)#(j-1)!=0));
-            component = component|adjacent;
             unseen = select(unseen,j -> not member(j,adjacent));
             frontier = adjacent;
+            adjacent
         );
-        components = append(components,sort component);
+        sort prepend(start,flatten layers)
     );
     cache#key = components;
     components
@@ -12739,7 +12379,7 @@ draftKLSupportComponents = (state,w) -> (
 
 draftKLComponentElement = (state,w,nodes) -> (
     remaining := state#"identityEntries";
-    for i in weylWord w do if member(i,nodes) then
+    for i in reducedWord w do if member(i,nodes) then
         remaining = draftKLReflectEntries(state,remaining,i);
     draftKLElementFromEntries(state,remaining)
 )
@@ -12748,7 +12388,7 @@ draftKLPrincipalInterval = (W,y,maxElements) -> (
     maxElements = validateMaxElements("kazhdanLusztigPolynomial",maxElements);
     state := draftKLState W;
     intervals := state#"intervals";
-    upperKey := weylWord y;
+    upperKey := reducedWord y;
     if intervals#?upperKey then (
         cached := intervals#upperKey;
         if maxElements =!= null and cached#"elementCount" > maxElements then
@@ -12760,9 +12400,8 @@ draftKLPrincipalInterval = (W,y,maxElements) -> (
     );
     components := draftKLSupportComponents(state,y);
     if #components > 1 then (
-        factors := {};
         factorCount := 1;
-        for nodes in components do (
+        factors := for nodes in components list (
             upper := draftKLComponentElement(state,y,nodes);
             factor := draftKLPrincipalInterval(W,upper,maxElements);
             factorCount = factorCount*factor#"elementCount";
@@ -12771,7 +12410,7 @@ draftKLPrincipalInterval = (W,y,maxElements) -> (
                     "kazhdanLusztigPolynomial: principal Bruhat interval [e,v] ",
                     "has ",toString factorCount," or more elements, exceeding MaxElements => ",
                     toString maxElements);
-            factors = append(factors,{nodes,upper});
+            {nodes,upper}
         );
         factorizedInterval := new HashTable from {
             "upper"=>y,"factors"=>factors,"elementCount"=>factorCount
@@ -12780,34 +12419,29 @@ draftKLPrincipalInterval = (W,y,maxElements) -> (
         return factorizedInterval;
     );
     identity := draftKLElementFromEntries(state,state#"identityEntries");
-    elements := {identity};
+    elements := new MutableHashTable from {0=>identity};
     seen := new MutableHashTable;
-    seen#(weylWord identity) = true;
+    seen#(reducedWord identity) = true;
     count := 1;
-    for i in weylWord y do (
-        old := elements;
-        additions := new MutableList;
-        additionCount := 0;
-        for z in old do (
-            candidate := draftKLRightMultiply(state,z,i);
-            key := weylWord candidate;
-            if not seen#?key then (
-                seen#key = true;
-                count = count+1;
-                if maxElements =!= null and count > maxElements then
-                    error concatenate(
-                        "kazhdanLusztigPolynomial: principal Bruhat interval [e,v] ",
-                        "would contain more than ",toString maxElements,
-                        " elements; increase MaxElements only if that cost is intentional");
-                additions#additionCount = candidate;
-                additionCount = additionCount+1;
-            );
+    for i in reducedWord y do (
+        oldCount := count;
+        for j from 0 to oldCount-1 do (
+            candidate := draftKLRightMultiply(state,elements#j,i);
+            key := reducedWord candidate;
+            if seen#?key then continue;
+            seen#key = true;
+            count = count+1;
+            if maxElements =!= null and count > maxElements then
+                error concatenate(
+                    "kazhdanLusztigPolynomial: principal Bruhat interval [e,v] ",
+                    "would contain more than ",toString maxElements,
+                    " elements; increase MaxElements only if that cost is intentional");
+            elements#(count-1) = candidate;
         );
-        elements = elements | toList additions;
     );
     interval := new HashTable from {
         "upper"=>y,
-        "elements"=>elements,
+        "elements"=>numberedTableEntries elements,
         "elementCount"=>count
     };
     intervals#upperKey = interval;
@@ -12824,7 +12458,7 @@ draftKazhdanLusztigCoefficients = (u,v,maxElements) -> (
     if u === v then return {1};
     interval := draftKLPrincipalInterval(W,v,maxElements);
     memo := state#"memo";
-    pairKey := {weylWord u,weylWord v};
+    pairKey := {reducedWord u,reducedWord v};
     if memo#?pairKey then return memo#pairKey;
     if interval#?"factors" then (
         answer := {1};
@@ -12837,7 +12471,7 @@ draftKazhdanLusztigCoefficients = (u,v,maxElements) -> (
     elements := interval#"elements";
     KL := null;
     KL = (x,y) -> (
-        key := {weylWord x,weylWord y};
+        key := {reducedWord x,reducedWord y};
         if memo#?key then return memo#key;
         if not draftKLBruhat(state,x,y) then (memo#key={0}; return {0});
         if x === y then (memo#key={1}; return {1});
@@ -12851,7 +12485,7 @@ draftKazhdanLusztigCoefficients = (u,v,maxElements) -> (
         answer := draftKLAdd(
             draftKLShift(1-c,KL(xs,ys)),
             draftKLShift(c,KL(x,ys)));
-        candidatesKey := {weylWord y,i};
+        candidatesKey := {reducedWord y,i};
         candidatesCache := state#"correctionCandidates";
         if not candidatesCache#?candidatesKey then
             candidatesCache#candidatesKey = select(elements,z ->
@@ -12934,9 +12568,9 @@ dotWeylAction (WeylElement,KMWeight) := (w,lambda) -> (
     if lambda#"realizationCoordinates" === null then (
         A := datumCartanMatrix D;
         shifted := apply(datumCoordinates lambda,x -> x+1);
-        positions := if #(weylWord w)==0 then {} else reverse toList(0..#(weylWord w)-1);
+        positions := if #(reducedWord w)==0 then {} else reverse toList(0..#(reducedWord w)-1);
         for pos in positions do shifted = draftSimpleWeightLabels(
-            A,(weylWord w)#pos,shifted);
+            A,(reducedWord w)#pos,shifted);
         kmWeight(D,apply(shifted,x -> x-1))
     ) else (
         rho := draftRhoWeight D;
@@ -13170,9 +12804,8 @@ bggEulerCharacter BGGResolution := opts -> B -> (
             );
         );
     );
-    formalCharacter(D,new HashTable from pairs totals,
-        CharacterStatus=>"Truncated",
-        Truncation=>new HashTable from {
+    draftComputedCharacter(D,new HashTable from pairs totals,
+        new HashTable from {
             "kind"=>"root-depth",
             "depth"=>H,
             "completeThroughDepth"=>H,
@@ -13348,23 +12981,20 @@ representationDynkinIndex (RootDatum,KMWeight) := (D,lambda) -> (
 
 infrastructureCacheInfo = () -> new HashTable from {
     "affineStructure" => affineStructureCacheInfo(),
-    "datumMatrices" => datumInfrastructureCacheSize(),
+    "datumMatrices" => kmFillCount "datumMatrices",
     "weightNotation" => draftNotationCacheInfo(),
-    "kazhdanLusztigData" => categoryOInfrastructureCacheSize(),
-    "crystalData" => crystalInfrastructureCacheSize(),
-    "vermaPartitions" => formalCharacterInfrastructureCacheSize(),
-    "characterParents" => draftCharacterParentCacheSize(),
-    "scope" => "process-local caches keyed by immutable Cartan data",
-    "note" => "matrix-level root and representation caches are reported by rootSnapshotCacheInfo and representationCacheInfo"
+    "kazhdanLusztigData" => kmFillCount "kazhdanLusztigData",
+    "crystalData" => kmFillCount "crystalData",
+    "vermaPartitions" => kmFillCount "vermaPartitions",
+    "characterParents" => 0,
+    "scope" => "affine entries currently retained; owner-local results computed since the last clear",
+    "note" => "parent comparisons are not stored; separate matrix tables have rootSnapshotCacheInfo and representationCacheInfo"
 }
 
 clearInfrastructureCaches = () -> (
     clearAffineStructureCache();
-    clearDatumInfrastructureCache();
-    draftClearNotationCache();
-    clearCategoryOInfrastructureCache();
-    clearCrystalInfrastructureCache();
-    clearFormalCharacterInfrastructureCache();
+    kmCacheGeneration = kmCacheGeneration+1;
+    kmCacheFills = new MutableHashTable;
     null
 )
 
@@ -13490,22 +13120,16 @@ dynkinDiagram RootDatum := opts -> D ->
 -- toLieAlgebra(C) : convert a Cartan matrix from this package into a
 -- LieAlgebra object of the LieAlgebraRepresentations package, so the
 -- user gets access to character, fusionProduct, branchingRule, etc.
--- The dependency is lazy: we only load the package on first call.
--- Note: LieAlgebraRepresentations and WeylGroups are NOT auto-loaded
--- because their exports (simpleRoots, positiveRoots, highestRoot,
--- rootSystem, dynkinDiagram, dynkinType, cartanMatrix,
--- dualCoxeterNumber, allRoots) collide with our own.  We lazy-load
--- them on demand and reach into their private dictionaries to fetch
--- the needed symbols.
+-- PackageImports makes the companion constructors available here without
+-- changing the user's active dictionaries when a conversion is called.
+-- LieAlgebraRepresentations uses Cartan rows as simple-root Dynkin
+-- coordinates; KacMoody uses columns, so the conversion transposes C.
 toLieAlgebra = method()
 toLieAlgebra Matrix := C -> (
     C = integralCartanMatrix(C, "toLieAlgebra");
     if cartanType C =!= "finite" then
         error "toLieAlgebra: LieAlgebraRepresentations only supports finite-type Cartan matrices";
-    try needsPackage "LieAlgebraRepresentations" else
-        error "toLieAlgebra: could not load package LieAlgebraRepresentations";
-    LA := value (value "LieAlgebraRepresentations")#"private dictionary"#"LieAlgebra";
-    new LA from C
+    new larLieAlgebra from transpose C
 );
 toLieAlgebra CartanDatum := D -> toLieAlgebra datumCartanMatrix D
 toLieAlgebra Realization := R -> toLieAlgebra datumCartanMatrix R
@@ -13529,12 +13153,7 @@ toRootSystem Matrix := C -> (
             toString apply(comp, i -> i+1));
         {info#0, info#1}
     );
-    try needsPackage "WeylGroups" else
-        error "toRootSystem: could not load package WeylGroups";
-    WGdict    := (value "WeylGroups")#"private dictionary";
-    dynTypeFn := value WGdict#"dynkinType";
-    rootSysFn := value WGdict#"rootSystem";
-    rootSysFn dynTypeFn tags
+    wgRootSystem(wgDynkinType tags)
 );
 toRootSystem CartanDatum := D -> toRootSystem datumCartanMatrix D
 toRootSystem Realization := R -> toRootSystem datumCartanMatrix R
@@ -13545,7 +13164,10 @@ toRootSystem RootDatum := D -> toRootSystem datumCartanMatrix D
 
 -- Documentation and tests are kept separate from the implementation.
 beginDocumentation()
-load (currentFileDirectory | "KacMoody/Documentation.m2")
 load (currentFileDirectory | "KacMoody/Tests.m2")
+-- Resolve names in the help and examples just as they are resolved for
+-- someone using KacMoody (in particular, the option-aware dynkinDiagram).
+use KacMoody;
+load (currentFileDirectory | "KacMoody/Documentation.m2")
 
 end

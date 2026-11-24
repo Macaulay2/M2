@@ -108,6 +108,7 @@ set(CPPONLYFILES
   matrices/matrix-kbasis.cpp
   matrices/matrix-sort.cpp
   matrices/matrix-symm.cpp
+  monomials/monordering.cpp
   computations/ntl-debugio.cpp
   computations/ntl-internal.cpp
   resolutions/res-a2-gb.cpp
@@ -479,6 +480,7 @@ if(BUILD_TESTING)
 
     unit-tests/DMatTest.hpp
     unit-tests/DMatZZpTest.cpp
+    unit-tests/SMatZZpTest.cpp
 
     unit-tests/ResTest.cpp
     unit-tests/PointArray.cpp

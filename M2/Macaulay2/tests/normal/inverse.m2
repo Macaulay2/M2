@@ -28,6 +28,9 @@ assert try x^-1 else true
 F = matrix {{1.,2,3},{4,6,9},{2,4,8}}
 F * F^-1 == 1.
 
+assert(try (inverse matrix{{1., 2.}, {2., 4.}}; false) else true)
+assert(try (inverse matrix{{ii, 2*ii}, {2*ii, 4*ii}}; false) else true)
+
 --- bug found in inverse, originally noticed in a Schubert2 computation.
 --- this is from github issue #2051 (May 2021)
   kk = ZZ/32003

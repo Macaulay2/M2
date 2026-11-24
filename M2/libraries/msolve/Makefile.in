@@ -1,6 +1,6 @@
 HOMEPAGE = https://msolve.lip6.fr/
-VERSION = 0.10.1
-SHA256SUM = ce0743cc33d1dc8484193268d9220e8624ed015e521903b9228b3b38a5981291
+VERSION = 0.11.0
+SHA256SUM = 0f4e8276cacc26eb6abef47982dcb39a6d98d17c5a20b34488d6fd8676d4822d
 URL = https://github.com/algebraic-solving/msolve/archive/refs/tags
 TARFILE = v$(VERSION).tar.gz
 LICENSEFILES = README.md COPYING

@@ -143,16 +143,19 @@ document {
 
 	PARA {
 	    "This function is provided by the package ", TO InvariantRing, 
-	    ". This function can be used to compute the generating invariants of a diagonal group action, finite group action or linearly reductive group action.
-	    It can also be used to compute a basis of a graded component of the invariant ring. 
-	    Below is a list of the many ways to use this function:"
+	    ". This function can be used to compute the generating invariants of a
+            diagonal, finite, permutation or linearly reductive group action.
+	    It can also be used to compute a basis of a graded component of the
+            invariant ring. Below is a list of the many ways to use this function:"
 	    },
 	UL{
 	    {TO (invariants, FiniteGroupAction), ": computes the generating invariants of a finite group action"},
+	    {TO (invariants, PermutationAction), ": computes the generating invariants of a permutation action"},
 	    {TO (invariants, DiagonalAction), ": computes the generating invariants of a diagonal group action"},
 	    {TO (invariants, LinearlyReductiveAction), ": computes the generating invariants of a linearly reductive action"},
-	    {TO (invariants, FiniteGroupAction, ZZ)," or ", TO (invariants, FiniteGroupAction, List), ": computes a basis for graded component of the invariant ring of a finite group action"},
-	    {TO (invariants, LinearlyReductiveAction, ZZ)," or ", TO (invariants, LinearlyReductiveAction, List), ": computes a basis for graded component of the invariant ring of a linearly reductive group action"},
+	    {TO (invariants, FiniteGroupAction, ZZ)," or ", TO (invariants, FiniteGroupAction, List), ": computes a basis for a graded component of the invariant ring of a finite group action"},
+	    {TO (invariants, PermutationAction, ZZ), ": computes a basis for a graded component of the invariant ring of a permutation action"},
+	    {TO (invariants, LinearlyReductiveAction, ZZ)," or ", TO (invariants, LinearlyReductiveAction, List), ": computes a basis for a graded component of the invariant ring of a linearly reductive group action"},
 	    },
     
     	SeeAlso => {
@@ -280,7 +283,12 @@ document {
     
     	PARA {
 	    "The example above uses the new algorithm for elementary abelian $p$-groups
-	    introduced in version 2.4. To call the older general-purpose algorithm,
+	    introduced in version 2.4.
+            As of version 2.5, this is the default strategy when applicable
+	    for a diagonal action,
+	    i.e., when there is no torus action, all cyclic factors have the
+	    same prime order, and the weight matrix has maximal rank.
+            To call the older general-purpose algorithm,
 	    use the option ", TT "Strategy=>\"DerksenGandini\"" , "."
 	},
 	
@@ -315,44 +323,44 @@ document {
 	    [invariants, Strategy], [invariantRing, Strategy]
 	    },
 	Headline => "choose the strategy for computing invariants",
-	
-	PARA {
-	    "The default strategy for computing invariants of a finite
-	    group action uses the Reynolds operator, however
-	    this may be slow for large groups. Using the option ", 
-	    TT "Strategy => \"LinearAlgebra\"", " uses the linear algebra 
-	    method for computing invariants of a given degree by calling ",
-	    TO (invariants, FiniteGroupAction, ZZ), ". This may
-	    provide a speedup at lower degrees, especially if the
-	    user-provided generating set for the group is small."
-	    },
-	
-	PARA {
-	    "The following example computes the invariants of the
-	    symmetric group on 4 elements. Note that using
-	    different strategies may lead to different sets of 
-	    generating invariants."
-	    },
-	
-	EXAMPLE {
-	    "R = QQ[x_1..x_4]",
-	    "L = apply({[2, 1, 3, 4], [2, 3, 4, 1]}, permutationMatrix);",
-	    "S4 = finiteAction(L, R)",
-	    "elapsedTime invariants S4",
-	    "elapsedTime invariants(S4, Strategy => \"LinearAlgebra\")"
-	},
 
-	PARA {
-	    "Version 2.4 introduces a new algorithm to compute invariants
-	    of elementary abelian $p$-groups.
-	    As of version 2.5, this is the default strategy when applicable
-	    for a diagonal action,
-	    i.e., when there is no torus action, all cyclic factors have the
-	    same prime order, and the weight matrix has maximal rank.
-	    To call the older general-purpose algorithm, use the option ",
-	    TT "Strategy=>\"DerksenGandini\"", "; see ",
-	    TO (invariants, DiagonalAction), " for an example."
-	    },
+        PARA {
+            "Users may select different strategies when computing invariants
+            or invariant rings. For convenience, this page lists all available
+            strategies in one place. The strategies are documented in the ",
+            TT "invariants", " page for each type of action. Note that the default
+            strategy is never called explicitly but is always used when the
+            string value of ", TT "Strategy=>", " does not match one of the
+            recognized alternative options.",
+            },
+        
+        HEADER2 "Strategies for finite group actions",
+
+        UL {
+            {"King's algorithm with Reynolds operator (default)"},
+            {"Linear algebra method (", TT "Strategy => \"LinearAlgebra\"", ")"},
+            },
+        
+        HEADER2 "Strategies for permutation actions",
+
+        UL {
+            {"Göbel's method with orbit sums (default)"},
+            {"King's algorithm with Reynolds operator (",
+                TT "Strategy => \"King\"", ")"},
+            {"Linear algebra method (", TT "Strategy => \"LinearAlgebra\"", ")"},
+            },
+
+        HEADER2 "Strategies for diagonal actions",
+
+        UL {
+            {"General purpose strategy combining methods of Derksen, for tori,
+                and Gandini, for finite abelian groups (default)"},
+            {"Elementary invariants method (default strategy when there is no
+                torus action, all cyclic factors have the same prime order,
+                and the weight matrix has maximal rank; use
+                ", TT "Strategy => \"DerksenGandini\"", "
+                 for the general purpose strategy)"},
+            },
 	
 	SeeAlso => {
 	    diagonalAction,
@@ -397,7 +405,21 @@ document {
 	    "R = QQ[x_1..x_4]",
 	    "L = apply({[2, 3, 1, 4], [2, 1, 4, 3]}, permutationMatrix);",
 	    "A4 = finiteAction(L, R)",
-	    "netList invariants A4"
+	    "elapsedTime netList invariants A4"
+	},
+	PARA {
+	    "King's algorithm uses the Reynolds operator, however
+	    this may be slow for large groups. Using the option ", 
+	    TT "Strategy => \"LinearAlgebra\"", " uses the linear algebra 
+	    method for computing invariants of a given degree by calling ",
+	    TO (invariants, FiniteGroupAction, ZZ), ". This may
+	    provide a speedup at lower degrees, especially if the
+	    user-provided generating set for the group is small.
+            Note that using different strategies may lead to different sets of 
+	    generating invariants."
+	    },
+    	EXAMPLE {
+            "elapsedTime netList invariants(A4,Strategy=>\"LinearAlgebra\")"
 	},
     
     	SeeAlso => {
@@ -811,7 +833,7 @@ document {
 	
 	EXAMPLE {
 	    "R = QQ[x_1..x_3]",
-	    "L = apply(2, i -> permutationMatrix(3, [i + 1, i + 2] ) )",
+	    "L = apply(2, i -> permutationMatrix(3, {[i + 1, i + 2]} ) )",
 	    "S3 = finiteAction(L, R)",
 	    "isInvariant(1 + x_1^2 + x_2^2 + x_3^2, S3)",
 	    "isInvariant(x_1*x_2*x_3^2, S3)"
@@ -1020,3 +1042,105 @@ document {
 		},
 	    }
 
+
+document {
+	Key => {
+	    (invariants, PermutationAction),
+	    },
+	Headline => "computes the generating invariants of a permutation action",
+	Usage => "invariants P",
+	Inputs => {
+	    "P" => PermutationAction,
+	    },
+	Outputs => {
+		"L" => List => {"a minimal set of generating invariants for the group action"}
+		},
+	PARA {
+	    "This function is provided by the package ", TO InvariantRing, "."
+	    },
+	PARA {
+	    "It implements Göbel's method for computing invariants of permutation
+            actions, which says the generating invariants are the orbit sums
+            of special monomials together with the product of the variables;
+            for more details, see Section 2.3.2 in ",
+            HREF {"https://fragandi.github.io/M2forall/ch-invarianttheory.html",
+                "https://fragandi.github.io/M2forall/ch-invarianttheory.html"},
+            " or Chapter 4 of M. D. Neusel, ",
+            EM "Invariant theory", ", AMS 2007. ",
+            "This method outputs a minimal generating set."
+	    },
+
+        PARA {
+	    "The following example computes a minimal set of generating invariants
+            for the defining permutation action of the symmetric group ",
+            TEX ///$\mathfrak{S}_4$///, ". The generating permutations can be
+            entered as one-line notation arrays or lists of cycles arrays
+            as in ", TO permutationMatrix , ", and are stored in one-line notation."
+	    },
+    	EXAMPLE {
+	    "R = QQ[x_1..x_4]",
+            "P = permutationAction({{[1,2]},[2,3,4,1]}, R)",
+	    "elapsedTime netList invariants P"
+	},
+
+        PARA {
+	    "One can use the default method for finite group actions by
+            passing the option ", TT "Strategy=>\"King\"", " or the linear
+            algebra method by passing the option ", TT "Strategy=>\"LinearAlgebra\"",
+            ". However, Göbel's method should generally be much faster.
+            Note that using different strategies may lead to different sets of 
+	    generating invariants."
+	    },
+    	EXAMPLE {
+	    "elapsedTime netList invariants(P,Strategy=>\"King\")"
+	},
+    
+    	SeeAlso => {
+	    permutationAction,
+	    invariantRing, 
+	    isInvariant
+	    }	
+        }
+
+document {
+    Key => {
+        (invariants, PermutationAction,ZZ),
+        },
+    Headline => "basis for graded component of invariant ring",
+    Usage => "invariants(P,d)",
+    Inputs => {
+        "P" => PermutationAction,
+        "d" => ZZ,
+        },
+    Outputs => {
+        "L" => List => {"an additive basis for a graded component of the ring of invariants"}
+        },
+    PARA {
+        "This function is provided by the package ", TO InvariantRing, "."
+        },
+    PARA {
+        "When called on a permutation action and a degree, it computes an
+        additive basis for the invariants of the action in the given degree.
+        The basis is given by the orbit sums in the given degree;
+        for more details, see Proposition 4.12 of M. D. Neusel, ",
+        EM "Invariant theory", ", AMS 2007. ",
+        },
+
+    PARA {
+        "The following example recovers the monomial symmetric functions
+        of degree 5 in four variables. The generating permutations can be
+        entered as one-line notation arrays or lists of cycles arrays
+        as in ", TO permutationMatrix , ", and are stored in one-line notation."
+        },
+    EXAMPLE {
+        "R = QQ[x_1..x_4]",
+        "P = permutationAction({{[1,2]},[2,3,4,1]}, R)",
+        "elapsedTime netList invariants(P,5)"
+        },
+
+    SeeAlso => {
+        permutationAction,
+        invariantRing, 
+        isInvariant
+        }	
+    }

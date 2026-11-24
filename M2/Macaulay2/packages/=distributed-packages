@@ -171,6 +171,7 @@ Tropical
 SymbolicPowers
 Complexes
 OldChainComplexes
+CanonicalMaps
 GroebnerWalk
 RandomMonomialIdeals
 Matroids
@@ -297,5 +298,11 @@ EuclideanDistanceDegree
 NeuralIdeals
 TestAudit
 LanguageServer
+NongeneralTypeSurfacesInP4
+HilbertSchemeStrata
+HookPieri
 KacMoody
+ComprehensiveGBs
+PALPInterface
+KoszulFiltrations
 WeylModules

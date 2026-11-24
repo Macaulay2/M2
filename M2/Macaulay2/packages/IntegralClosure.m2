@@ -680,9 +680,9 @@ isNormal(Ring) := Boolean => (R) -> (
 conductor = method()
 conductor RingMap := Ideal => phi -> (
     -- 3/25/26 TODO: do we want to cache the results?
-    pf := pushFwd phi;
-    assert(pf#1_(0,0) == 1);
-    pmod := pf_0_{0};
+    M := pushFwd phi;
+    assert((pushFwdGens M)_0 == 1);
+    pmod := M_{0};
     ann coker pmod
     )
 conductor Ring := Ideal => R -> conductor icMap R
@@ -1536,9 +1536,9 @@ doc ///
      S' = QQ[symbol a .. symbol f]
      M' = genericSymmetricMatrix(S',a,3)
      I' = minors(2,M')
-     center = ideal(b,c,e,a-d,d-f)
+     center' = ideal(b,c,e,a-d,d-f)
      S = QQ[a,b,c,d,e]
-     p = map(S'/I',S,gens center)
+     p = map(S'/I',S,gens center')
      I = kernel p
      betti res I
      R = S/I
@@ -1548,9 +1548,9 @@ doc ///
      S' = QQ[a..f]
      M' = genericSymmetricMatrix(S',a,3)
      I' = minors(2,M')
-     center = ideal(b,e,a-d,d-f)
+     center' = ideal(b,e,a-d,d-f)
      S = QQ[a,b,d,e]
-     p = map(S'/I',S,gens center)
+     p = map(S'/I',S,gens center')
      I = kernel p
      betti res I
      R = S/I

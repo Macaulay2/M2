@@ -29,3 +29,7 @@ fragment = "#L1:C1-L2:C2_L1:C1"
 toURL' = value Core#"private dictionary"#"toURL"
 assert(toURL' (filename | fragment) == rootURI | urlEncode filename | fragment)
 removeFile filename
+
+-- issue #4392
+assert try stdio << close then false else true
+assert try stderr << close then false else true

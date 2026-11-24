@@ -1312,6 +1312,8 @@ doc ///
     Subnodes
         "isSkewCommutative"
         "antipode"
+        center
+        centerMap
 ///
 
 document {
