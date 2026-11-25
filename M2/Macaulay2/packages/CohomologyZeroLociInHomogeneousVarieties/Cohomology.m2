@@ -256,6 +256,8 @@ cokerCohomology(List, List,HashTable, HashTable) := (A, B, oldBoundsA, oldBounds
     S := ZZ[y_0..y_(#appearingVars - 1)];
     substitutions := (for i from 0 to #appearingVars - 1 list appearingVars_i => y_i);
     gensC := generators ring C_0;
+    -- unknowns that cancelled out get a placeholder value (any number works):
+    -- it is never a key of bounds, so the bound updates below skip them
     substitutions = substitutions | apply(select(gensC, g -> not member(g, appearingVars)), g -> g => 20000);
     -- substitute in all entries at once: sub builds its ring map from the ring and the list only
     toReturn = flatten entries sub(matrix{toReturn}, substitutions);
@@ -424,6 +426,8 @@ centralMemberCohomology(List, List,HashTable, HashTable) := (A, B, oldBoundsA, o
     S := ZZ[y_0..y_(#appearingVars - 1)];
     substitutions := (for i from 0 to #appearingVars - 1 list appearingVars_i => y_i);
     gensC := generators ring C_0;
+    -- unknowns that cancelled out get a placeholder value (any number works):
+    -- it is never a key of bounds, so the bound updates below skip them
     substitutions = substitutions | apply(select(gensC, g -> not member(g, appearingVars)), g -> g => 20000);
     -- substitute in all entries at once: sub builds its ring map from the ring and the list only
     toReturn = flatten entries sub(matrix{toReturn}, substitutions);
@@ -543,6 +547,8 @@ kerCohomology(List, List,HashTable, HashTable) := (B, C, oldBoundsB, oldBoundsC)
     S := ZZ[y_0..y_(#appearingVars - 1)];
     substitutions := (for i from 0 to #appearingVars - 1 list appearingVars_i => y_i);
     gensA := generators ring A_0;
+    -- unknowns that cancelled out get a placeholder value (any number works):
+    -- it is never a key of bounds, so the bound updates below skip them
     substitutions = substitutions | apply(select(gensA, g -> not member(g, appearingVars)), g -> g => 20000);
     -- substitute in all entries at once: sub builds its ring map from the ring and the list only
     toReturn = flatten entries sub(matrix{toReturn}, substitutions);
@@ -777,7 +783,8 @@ hodgeNumbers EmbeddedVariety := o -> Y -> (
                 );
             ));
         )
-    -- if the dimension of Y is less or equal than five I save memory but I compute the same thing multiple times
+    -- if the dimension of Y is at most five, the intermediate tensor products are not stored
+    -- but recomputed for each p: this saves memory, at the cost of repeating some computations
     else (
         timedIf(o.Verbose, () -> (
             -- p is the exterior power of the cotangent bundle I am currently considering

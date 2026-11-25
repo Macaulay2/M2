@@ -47,8 +47,8 @@ document {
 	"symmetric and exterior powers of representations) is computed with the package ",
 	TT "LieAlgebraRepresentations", "."},
     PARA {EM "Acknowledgement: ", "the basic Lie-theoretic constructions of this package are built on top of the ",
-	"package ", TT "WeylGroups", " by Baptiste Calmès and Viktor Petrov. Moreover, we gained inspirations for many representation-theoretic functions ",
-        "from the program ", TT "LiE", " and from the the package ", TT "HighestWeights", " by Federico Galetto."
+	"package ", TT "WeylGroups", " by Baptiste Calmès and Viktor Petrov. Moreover, we drew inspiration for many representation-theoretic functions ",
+        "from the program ", HREF{"http://wwwmathlabo.univ-poitiers.fr/~maavl/LiE/", "LiE"}, " and from the package ", TT "HighestWeights", " by Federico Galetto."
         },
     PARA {EM "References:"},
     UL {
@@ -56,7 +56,7 @@ document {
 	{"G. Ottaviani, ", EM "Rational homogeneous varieties", ", Lecture notes, Cortona, 1995."},
 	{"J. Weyman, ", EM "Cohomology of vector bundles and syzygies", ", Cambridge Univ. Press, 2003."},
         {"W. A. de Graaf, ", EM "Lie algebras: theory and algorithms", ", Amsterdam: North-Holland (2000; Zbl 1122.17300)."},
-	{"M. A. A. van Leeuwen, A. M. Cohen, B. Lisser, ", EM "LiE, a package for Lie group computations", ", CAN, 1992."}
+	{"M. A. A. van Leeuwen, A. M. Cohen, B. Lisser, ", EM "LiE, a package for Lie group computations", ", CAN, 1992, ", HREF{"http://wwwmathlabo.univ-poitiers.fr/~maavl/LiE/"}, "."}
 	},
     Subnodes => {
 	"Parabolic subgroups and homogeneous varieties",
@@ -788,7 +788,7 @@ document {
     Outputs => {
 	{"the ", TEX///$n$///, "-th symmetric power of ", TEX///$E$///, " (an object of class ", TO HomogeneousVectorBundle, ")"}
 	},
-    PARA {"The decomposition is computed with the Adams operations, following the same strategy as LiE."},
+    PARA {"The decomposition is computed with the Adams operations, following the same strategy as ", HREF{"http://wwwmathlabo.univ-poitiers.fr/~maavl/LiE/", "LiE"}, "."},
     EXAMPLE {
 	"X = Gr{2,5};",
 	"R = X#\"rootSystem\";",
@@ -810,7 +810,7 @@ document {
 	{"the ", TEX///$n$///, "-th exterior power of ", TEX///$E$///,
 	    " (an object of class ", TO HomogeneousVectorBundle, " or ", TO FiltrationBundle, ")"}
 	},
-    PARA {"The decomposition is computed with the Adams operations, following the same strategy as LiE.",
+    PARA {"The decomposition is computed with the Adams operations, following the same strategy as ", HREF{"http://wwwmathlabo.univ-poitiers.fr/~maavl/LiE/", "LiE"}, ".",
         " It is also possible to compute exteriorPowers of ", TO FiltrationBundle, "."},
     EXAMPLE {
 	"X = Gr{2,5};",

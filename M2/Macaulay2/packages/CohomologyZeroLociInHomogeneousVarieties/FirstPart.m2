@@ -165,7 +165,7 @@ weylFormula (Weight, RootSystem) := (l,R) -> (
     key := rootSystemKey R;
     if not weylFormulaCache#?key then (
         n := rank R;
-        fund := apply(n, i -> weight(R, apply(n, j -> if i == j then 1 else 0)));
+        fund := apply(entries id_(ZZ^n), e -> weight(R, e));
         C := apply(toList positiveRoots(R), r -> apply(fund, w -> eval(R,w,r)));
         weylFormulaCache#key = (C, product(C, c -> sum c));
         );
