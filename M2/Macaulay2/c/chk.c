@@ -2402,8 +2402,10 @@ node chk(node e, scope v){
 	       node sym = lookupword(e);
 	       if (sym == NULL)
 		    sym = newsymbol(e,deferred__T,v,intern_F);
-	       else if (sym->body.symbol.flags & macro_variable_F) {
-		    sym = chk(sym->body.symbol.body,v);
+	       else {
+		    sym->body.symbol.flags |= used_F; /* track usage for unused parameter detection */
+		    if (sym->body.symbol.flags & macro_variable_F)
+			 sym = chk(sym->body.symbol.body,v);
 		    }
 	       return repos(e,sym);
 	       }

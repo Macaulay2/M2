@@ -21,9 +21,9 @@ newPackage(
     	Version => "2.0",
     	Date => "April 17, 2026",
     	Authors => {
-	     {Name => "Michael Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"},
+	     {Name => "Michael Stillman", Email => "mikestillman1@gmail.com", HomePage => "https://mikestillman.github.io"},
 	     {Name => "Hal Schenck"},
-	     {Name => "Claudiu Raicu", Email => "craicu@nd.edu", HomePage => "http://math.berkeley.edu/~claudiu/"},
+	     {Name => "Claudiu Raicu", Email => "craicu@nd.edu", HomePage => "https://academicweb.nd.edu/~craicu/"},
 	     {Name => "Keller VandeBogert", Email => "keller.v@uky.edu", HomePage => "https://sites.google.com/view/kellervandebogert/home"}
 	     },
 	Keywords => {"Representation Theory"},

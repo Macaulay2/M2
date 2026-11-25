@@ -5,7 +5,7 @@ newPackage(
     "RationalPoints2",
     Version => "0.5",
     Date => "Mar 18, 2021",
-    Authors => { {Name => "Jieao Song", Email => "jieao.song@imj-prg.fr"} },
+    Authors => { {Name => "Jieao Song", Email => "song@mpim-bonn.mpg.de", HomePage => "https://jieaosong.github.io/"} },
     Headline => "find the rational points on a variety",
     Keywords => {"Commutative Algebra"},
     DebuggingMode => false,
@@ -1476,6 +1476,14 @@ TEST ///
         X = Proj(F[x,y,z]/((4*a+3)*x-5*z));
         assert(#rationalPoints(X, Bound=>3+1e-10) == 30);
     ) else continue;
+///
+-------------------------------------------------------------------------------
+TEST ///
+    R = QQ[x]
+    f = x^3 - 2
+    b = baseChange_7 f
+    assert(numgens ring b == 1)
+    assert(char(coefficientRing ring b) == 7)
 ///
 -------------------------------------------------------------------------------
 endPackage "RationalPoints2"

@@ -5,13 +5,13 @@ newPackage(
   Authors => {
     {Name => "Joseph Cummings",
     Email => "josephcummings03@gmail.com",
-    HomePage => "https://sites.google.com/view/josephcummingsuky/home"},
+    HomePage => "https://sites.google.com/view/josephcummingsmath/home"},
     {Name => "Benjamin Hollering",
     Email => "benhollering@gmail.com",
     HomePage => "https://sites.google.com/view/benhollering"},
     {Name => "Mahrud Sayrafi",
-    Email => "mahrud@umn.edu",
-    HomePage => "https://math.umn.edu/~mahrud"}
+    Email => "msayrafi2@unl.edu",
+    HomePage => "https://mahrud.github.io"}
   },
   Headline => "solving implicitization problems using multigradings",
   Keywords => {"Algebraic Statistics", "Commutative Algebra"},
@@ -363,6 +363,64 @@ use R;
 samplePoints = {{x_1 => -6002, x_2 => -37732, x_3 => -43250, x_4 => 32043, x_5 => -32855, x_6 => -9794, x_7 => 15988, x_8 => 12703, x_9 => 46296}, {x_1 => -44235, x_2 => 32764, x_3 => -554, x_4 => -2799, x_5 => -45090, x_6 => -47890, x_7 => 7916, x_8 => -47725, x_9 => 17466}}
 G = interpolateComponent(samplePoints, sub(basis({0, 1, 1, 0, 1}, dom), R))
 assert(G == {x_6*x_8-x_5*x_9})
+///
+
+------------------------------------------------------------
+-- Coverage tests for previously untested options.
+------------------------------------------------------------
+
+TEST ///
+-- maxGrading(F, ReturnTargetGrading => true) returns the full grading matrix
+-- including the columns indexing the target ring's generators; the default
+-- form returns only the source-ring columns.  Verify the column counts and
+-- that the source-ring columns of the full form agree with the default form.
+A = matrix {{1,1,1,0,0,0,0,0,0}, {0,0,0,1,1,1,0,0,0}, {0,0,0,0,0,0,1,1,1}, {1,0,0,1,0,0,1,0,0}, {0,1,0,0,1,0,0,1,0}};
+R = QQ[x_1..x_(numcols A)];
+S = QQ[t_1..t_(numrows A)];
+F = map(S, R, apply(numcols(A), i -> S_(flatten entries A_i)));
+Mdef = maxGrading F;
+Mfull = maxGrading(F, ReturnTargetGrading => true);
+assert(numColumns Mfull == numColumns Mdef + numgens S);
+assert(submatrix(Mfull, toList(0..(numgens R - 1))) == Mdef);
+///
+
+TEST ///
+-- componentsOfKernel(d, F, UseMatroid => false) skips the matroid-based
+-- shortcut but yields the same ideal of relations.
+A = matrix {{1,1,1,0,0,0,0,0,0}, {0,0,0,1,1,1,0,0,0}, {0,0,0,0,0,0,1,1,1}, {1,0,0,1,0,0,1,0,0}, {0,1,0,0,1,0,0,1,0}};
+R = QQ[x_1..x_(numcols A)];
+S = QQ[t_1..t_(numrows A)];
+F = map(S, R, apply(numcols(A), i -> S_(flatten entries A_i)));
+gdef = delete(null, flatten values new HashTable from componentsOfKernel(2, F, Verbose => false));
+gnm = delete(null, flatten values new HashTable from componentsOfKernel(2, F, Verbose => false, UseMatroid => false));
+assert(ideal gnm == ideal gdef);
+///
+
+TEST ///
+-- componentsOfKernel(d, F, UseInterpolation => true) uses interpolation
+-- (rather than symbolic evaluation) and, on a homogeneous input over QQ,
+-- recovers the same ideal as the default symbolic path.
+A = matrix {{1,1,1,0,0,0,0,0,0}, {0,0,0,1,1,1,0,0,0}, {0,0,0,0,0,0,1,1,1}, {1,0,0,1,0,0,1,0,0}, {0,1,0,0,1,0,0,1,0}};
+R = QQ[x_1..x_(numcols A)];
+S = QQ[t_1..t_(numrows A)];
+F = map(S, R, apply(numcols(A), i -> S_(flatten entries A_i)));
+gdef = delete(null, flatten values new HashTable from componentsOfKernel(2, F, Verbose => false));
+gip = delete(null, flatten values new HashTable from componentsOfKernel(2, F, Verbose => false, UseInterpolation => true, CoefficientRing => QQ));
+assert(ideal gip == ideal gdef);
+///
+
+TEST ///
+-- componentsOfKernel(d, F, Grading => G) accepts a user-supplied multigrading;
+-- passing the default maxGrading-derived matrix yields the same ideal as
+-- letting the routine compute it.
+A = matrix {{1,1,1,0,0,0,0,0,0}, {0,0,0,1,1,1,0,0,0}, {0,0,0,0,0,0,1,1,1}, {1,0,0,1,0,0,1,0,0}, {0,1,0,0,1,0,0,1,0}};
+R = QQ[x_1..x_(numcols A)];
+S = QQ[t_1..t_(numrows A)];
+F = map(S, R, apply(numcols(A), i -> S_(flatten entries A_i)));
+M = maxGrading F;
+gdef = delete(null, flatten values new HashTable from componentsOfKernel(2, F, Verbose => false));
+ggr = delete(null, flatten values new HashTable from componentsOfKernel(2, F, Verbose => false, Grading => M));
+assert(ideal ggr == ideal gdef);
 ///
 
 -----------------------------

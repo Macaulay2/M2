@@ -138,80 +138,80 @@ interface.o :						\
 	@srcdir@/../system/supervisorinterface.h	\
 	@srcdir@/../e/engine.h				\
 	@srcdir@/../e/engine-includes.hpp		\
-	@srcdir@/../e/ZZp.hpp				\
-	@srcdir@/../e/ring.hpp				\
+	@srcdir@/../e/rings/ZZp.hpp				\
+	@srcdir@/../e/rings/ring.hpp				\
 	@srcdir@/../e/hash.hpp				\
 	@srcdir@/../e/newdelete.hpp			\
 	@srcdir@/../e/error.h				\
-	@srcdir@/../e/ringelem.hpp			\
+	@srcdir@/../e/rings/ringelem.hpp			\
 	@srcdir@/../e/monoid.hpp			\
 	@srcdir@/../e/style.hpp				\
 	@srcdir@/../e/buffer.hpp			\
 	@srcdir@/../e/mem.hpp				\
 	@srcdir@/../e/../system/mutex.h			\
 	@srcdir@/../e/imonorder.hpp			\
-	@srcdir@/../e/aring.hpp				\
+	@srcdir@/../e/basic-rings/aring.hpp				\
 	@srcdir@/../e/exceptions.hpp			\
-	@srcdir@/../e/ZZ.hpp				\
+	@srcdir@/../e/rings/ZZ.hpp				\
 	@srcdir@/../e/coeffrings.hpp			\
-	@srcdir@/../e/monomial.hpp			\
+	@srcdir@/../e/monomials/monomial.hpp			\
 	@srcdir@/../e/exceptions.hpp			\
-	@srcdir@/../e/relem.hpp				\
+	@srcdir@/../e/ring-elements/ring-element.hpp				\
 	@srcdir@/../e/engine.h				\
-	@srcdir@/../e/aring-glue.hpp			\
-	@srcdir@/../e/aring-translate.hpp		\
-	@srcdir@/../e/aring-RR.hpp			\
+	@srcdir@/../e/basic-rings/aring-glue.hpp			\
+	@srcdir@/../e/basic-rings/aring-translate.hpp		\
+	@srcdir@/../e/basic-rings/aring-RR.hpp			\
 	@srcdir@/../e/ringmap.hpp			\
-	@srcdir@/../e/aring-CC.hpp			\
-	@srcdir@/../e/aring-RRR.hpp			\
-	@srcdir@/../e/aring-CCC.hpp			\
-	@srcdir@/../e/aring-zz-gmp.hpp			\
-	@srcdir@/../e/aring-zz-flint.hpp		\
-	@srcdir@/../e/aring-zzp.hpp			\
-	@srcdir@/../e/aring-zzp-flint.hpp		\
-	@srcdir@/../e/aring-zzp-ffpack.hpp		\
-	@srcdir@/../e/aring-qq.hpp			\
-	@srcdir@/../e/aring-qq-flint.hpp		\
-	@srcdir@/../e/aring-qq-gmp.hpp			\
-	@srcdir@/../e/aring-m2-gf.hpp			\
-	@srcdir@/../e/polyring.hpp			\
-	@srcdir@/../e/skew.hpp				\
-	@srcdir@/../e/qring.hpp				\
-	@srcdir@/../e/aring-gf-flint-big.hpp		\
-	@srcdir@/../e/aring-gf-flint.hpp		\
-	@srcdir@/../e/aring-tower.hpp			\
-	@srcdir@/../e/mutablemat.hpp			\
-	@srcdir@/../e/mutablemat-defs.hpp		\
-	@srcdir@/../e/mat.hpp				\
-	@srcdir@/../e/relem.hpp				\
-	@srcdir@/../e/matrix-con.hpp			\
-	@srcdir@/../e/dmat.hpp				\
-	@srcdir@/../e/mat-util.hpp			\
+	@srcdir@/../e/basic-rings/aring-CC.hpp			\
+	@srcdir@/../e/basic-rings/aring-RRR.hpp			\
+	@srcdir@/../e/basic-rings/aring-CCC.hpp			\
+	@srcdir@/../e/basic-rings/aring-ZZ-gmp.hpp			\
+	@srcdir@/../e/basic-rings/aring-ZZ-flint.hpp		\
+	@srcdir@/../e/basic-rings/aring-ZZp.hpp			\
+	@srcdir@/../e/basic-rings/aring-ZZp-flint.hpp		\
+	@srcdir@/../e/basic-rings/aring-ZZp-ffpack.hpp		\
+	@srcdir@/../e/basic-rings/aring-QQ.hpp			\
+	@srcdir@/../e/basic-rings/aring-QQ-flint.hpp		\
+	@srcdir@/../e/basic-rings/aring-QQ-gmp.hpp			\
+	@srcdir@/../e/basic-rings/aring-m2-GF.hpp			\
+	@srcdir@/../e/rings/polyring.hpp			\
+	@srcdir@/../e/rings/skew.hpp				\
+	@srcdir@/../e/rings/qring.hpp				\
+	@srcdir@/../e/basic-rings/aring-GF-flint-big.hpp		\
+	@srcdir@/../e/basic-rings/aring-GF-flint.hpp		\
+	@srcdir@/../e/basic-rings/aring-tower.hpp			\
+	@srcdir@/../e/mutable-matrices/mutablemat.hpp			\
+	@srcdir@/../e/mutable-matrices/mutablemat-defs.hpp		\
+	@srcdir@/../e/basic-mutable-matrices/mat.hpp				\
+	@srcdir@/../e/ring-elements/ring-element.hpp				\
+	@srcdir@/../e/matrices/matrix-con.hpp			\
+	@srcdir@/../e/basic-mutable-matrices/dmat.hpp				\
+	@srcdir@/../e/basic-mutable-matrices/mat-util.hpp			\
 	@srcdir@/../e/text-io.hpp			\
-	@srcdir@/../e/dmat-zz-flint.hpp			\
-	@srcdir@/../e/dmat-qq-flint.hpp			\
-	@srcdir@/../e/dmat-zzp-flint.hpp		\
-	@srcdir@/../e/dmat-gf-flint-big.hpp		\
-	@srcdir@/../e/dmat-gf-flint.hpp			\
-	@srcdir@/../e/smat.hpp				\
-	@srcdir@/../e/ZZp.hpp				\
-	@srcdir@/../e/mat-elem-ops.hpp			\
-	@srcdir@/../e/mat-arith.hpp			\
-	@srcdir@/../e/mat-linalg.hpp			\
+	@srcdir@/../e/basic-mutable-matrices/dmat-zz-flint.hpp			\
+	@srcdir@/../e/basic-mutable-matrices/dmat-qq-flint.hpp			\
+	@srcdir@/../e/basic-mutable-matrices/dmat-zzp-flint.hpp		\
+	@srcdir@/../e/basic-mutable-matrices/dmat-gf-flint-big.hpp		\
+	@srcdir@/../e/basic-mutable-matrices/dmat-gf-flint.hpp			\
+	@srcdir@/../e/basic-mutable-matrices/smat.hpp				\
+	@srcdir@/../e/rings/ZZp.hpp				\
+	@srcdir@/../e/basic-mutable-matrices/mat-elem-ops.hpp			\
+	@srcdir@/../e/basic-mutable-matrices/mat-arith.hpp			\
+	@srcdir@/../e/basic-mutable-matrices/mat-linalg.hpp			\
 	@srcdir@/../e/util.hpp				\
-	@srcdir@/../e/lapack.hpp			\
-	@srcdir@/../e/dmat-lu.hpp			\
-	@srcdir@/../e/dmat-lu-inplace.hpp		\
-	@srcdir@/../e/dmat-lu-zzp-ffpack.hpp		\
-	@srcdir@/../e/dmat-lu-zzp-flint.hpp		\
-	@srcdir@/../e/dmat-lu-qq.hpp			\
-	@srcdir@/../e/dmat-qq-interface-flint.hpp	\
+	@srcdir@/../e/basic-mutable-matrices/lapack.hpp			\
+	@srcdir@/../e/basic-mutable-matrices/dmat-lu.hpp			\
+	@srcdir@/../e/basic-mutable-matrices/dmat-lu-inplace.hpp		\
+	@srcdir@/../e/basic-mutable-matrices/dmat-lu-zzp-ffpack.hpp		\
+	@srcdir@/../e/basic-mutable-matrices/dmat-lu-zzp-flint.hpp		\
+	@srcdir@/../e/basic-mutable-matrices/dmat-lu-qq.hpp			\
+	@srcdir@/../e/basic-mutable-matrices/dmat-qq-interface-flint.hpp	\
 	@srcdir@/../e/eigen.hpp				\
-	@srcdir@/../e/SLP-defs.hpp			\
-	@srcdir@/../e/mutablemat-imp.hpp		\
-	@srcdir@/../e/SLP-imp.hpp			\
+	@srcdir@/../e/SLP/SLP-defs.hpp			\
+	@srcdir@/../e/mutable-matrices/mutablemat-imp.hpp		\
+	@srcdir@/../e/SLP/SLP-imp.hpp			\
 	@srcdir@/../e/timing.hpp			\
-	@srcdir@/../e/aring-zzp.hpp			\
+	@srcdir@/../e/basic-rings/aring-ZZp.hpp			\
 	@srcdir@/../e/memory-status.hpp
 
 engine.o :						\
@@ -226,32 +226,32 @@ engine.o :						\
 	@srcdir@/../e/error.h				\
 	@srcdir@/../e/exceptions.hpp			\
 	@srcdir@/../e/hash.hpp				\
-	@srcdir@/../e/monomial.hpp			\
+	@srcdir@/../e/monomials/monomial.hpp			\
 	@srcdir@/../e/engine-includes.hpp		\
-	@srcdir@/../e/monomial.hpp			\
+	@srcdir@/../e/monomials/monomial.hpp			\
 	@srcdir@/../e/buffer.hpp			\
 	@srcdir@/../e/style.hpp				\
 	@srcdir@/../e/mem.hpp				\
 	@srcdir@/../system/mutex.h			\
-	@srcdir@/../e/relem.hpp				\
-	@srcdir@/../e/ring.hpp				\
-	@srcdir@/../e/aring.hpp				\
-	@srcdir@/../e/ringelem.hpp			\
+	@srcdir@/../e/ring-elements/ring-element.hpp				\
+	@srcdir@/../e/rings/ring.hpp				\
+	@srcdir@/../e/basic-rings/aring.hpp				\
+	@srcdir@/../e/rings/ringelem.hpp			\
 	@srcdir@/../e/interface/gmp-util.h		\
-	@srcdir@/../e/ZZ.hpp				\
-	@srcdir@/../e/matrix.hpp			\
+	@srcdir@/../e/rings/ZZ.hpp				\
+	@srcdir@/../e/matrices/matrix.hpp			\
 	@srcdir@/../e/monoid.hpp			\
 	@srcdir@/../e/imonorder.hpp			\
 	@srcdir@/../e/interface/monomial-ordering.h	\
-	@srcdir@/../e/freemod.hpp			\
-	@srcdir@/../e/schorder.hpp			\
-	@srcdir@/../e/monideal.hpp			\
+	@srcdir@/../e/free-modules/freemod.hpp		\
+	@srcdir@/../e/free-modules/schreyer-orders.hpp		\
+	@srcdir@/../e/monomials/monideal.hpp			\
 	@srcdir@/../e/int-bag.hpp			\
-	@srcdir@/../e/polyring.hpp			\
+	@srcdir@/../e/rings/polyring.hpp			\
 	@srcdir@/../e/interface/computation.h		\
-	@srcdir@/../e/skew.hpp				\
-	@srcdir@/../e/qring.hpp				\
-	@srcdir@/../e/mat.hpp				
+	@srcdir@/../e/rings/skew.hpp				\
+	@srcdir@/../e/rings/qring.hpp				\
+	@srcdir@/../e/basic-mutable-matrices/mat.hpp				
 
 # now assemble the files into various categories:
 M2_DNAMES := $(patsubst %.d, %, $(patsubst %.dd, %, $(M2_DFILES)))

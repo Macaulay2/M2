@@ -10,6 +10,17 @@ Node
       This package provides the classes @TO YoungTableau@, @TO MutableYoungTableau@, and @TO Tabloid@. These classes
       can be used to construct (skew) tableaux, and entries in the boxes may be any class. See the constructor's
       page @TO youngTableau@ for some basics of this class.
+    Example
+      lam = new Partition from {4,3,2}
+      mu = new Partition from {3,1}
+      T = youngTableau(lam, mu, {1,2,3,3,9})
+      allStandardTableaux(new Partition from {2,1})
+  SeeAlso
+    youngTableau
+    mutableYoungTableau
+    tabloid
+    allStandardTableaux
+    allSemistandardTableaux
 ///
 
 doc ///

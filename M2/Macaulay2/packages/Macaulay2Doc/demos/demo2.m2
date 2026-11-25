@@ -11,4 +11,23 @@ f = t -> (
      w := x+t;
      )
 
-     
+F = t -> (
+     x := 1;
+     breakpoint "debug me";
+     y := t+1;
+     z := 1/t;
+     w := x+t;
+     )
+
+G = t -> (
+     x := 1;
+     F(t);
+     Z := "Zedd"
+)
+
+h = t -> (
+     x := 1;
+     breakpoint y := t+1;
+     z := 1/t;
+     w := x+t;
+)

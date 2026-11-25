@@ -480,7 +480,7 @@ i89 : I = gkz(matrix{{1,2}}, {5})
 o89 = ideal (x D  + 2x D  - 5, D  - D )
               1 1     2 2       1    2
 
-o89 : Ideal of QQ[x ..x , D ..D ]
+o89 : Ideal of QQ[x , x , D , D ]
                    1   2   1   2
 
 i90 : PolySols I

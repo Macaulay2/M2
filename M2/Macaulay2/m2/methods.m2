@@ -281,8 +281,7 @@ setupMethods((), {
 	  presentation, dismiss, precision, 
 	  norm, clean, fraction, part,
 	  hasEngineLinearAlgebra, nullSpace,
-      isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile,
-      minimize
+	  isBasicMatrix, basicDet, basicInverse, basicRank, minimize
 	  })
 
 gradedModule = method(Dispatch => Thing)

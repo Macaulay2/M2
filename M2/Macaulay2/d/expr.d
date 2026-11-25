@@ -210,6 +210,9 @@ export dummyTernaryFun(c:Code,d:Code,e:Code):Expr := (
 export dummyMultaryFun(c:CodeSequence):Expr := (
      anywhereError("dummy multary function called");
      nullE);
+export dummyEE(e:Expr,f:Expr):Expr := (
+     anywhereError("dummy binary function called");
+     nullE);
 
 export emptySequence := Sequence();
 export emptySequenceE := Expr(emptySequence);

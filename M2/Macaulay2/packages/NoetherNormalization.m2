@@ -8,8 +8,8 @@ newPackage(
      Version => "0.9.3", 
      Date => "Sept, 2010",
      Authors => {
-	  {Name => "Bart Snapp", Email => "snapp@math.ohio-state.edu", HomePage => "http://www.math.ohio-state.edu/~snapp/"},
-	  {Name => "Nathaniel Stapleton", Email => "nstaple2@math.uiuc.edu"}
+	  {Name => "Bart Snapp", Email => "snapp.14@osu.edu", HomePage => "https://people.math.osu.edu/snapp.14/"},
+	  {Name => "Nathaniel Stapleton", Email => "nat.j.stapleton@gmail.com"}
 	  },
      Headline => "place an ideal in Noether normal position",
      Keywords => {"Commutative Algebra"},
@@ -229,7 +229,15 @@ document {
      used are based on algorithms found in A. Logar's paper: A
      Computational Proof of the Noether Normalization Lemma. In:
      Proceedings 6th AAEEC, Lecture Notes in Computer Science 357,
-     Springer, 1989, 259-273."
+     Springer, 1989, 259-273.",
+     PARA{},
+     "A first example computes a random linear change of coordinates that places an ideal in Noether normal position.",
+     EXAMPLE lines ///
+     R = QQ[x_1..x_4];
+     I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
+     (f,J,X) = noetherNormalization I
+     ///,
+     SeeAlso => {noetherNormalization, LimitList, RandomRange}
      }
 
 -----------------------------------------------------------------------------

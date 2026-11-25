@@ -33,6 +33,7 @@ set(PACKAGES_DEVEL       "EngineTests" CACHE INTERNAL "the list of packages to o
 ## Arguments to M2
 set(errorDepth                  "1" CACHE STRING "set the error printing depth")
 set(debugLevel                  "0" CACHE STRING "set the debugging level")
+set(gbTrace                     "0" CACHE STRING "set the Groebner basis trace level")
 ## Options to installPackage
 set(CheckDocumentation       "true" CACHE STRING "check documentation for completeness")
 set(IgnoreExampleErrors     "false" CACHE STRING "ignore errors in example code")
@@ -251,3 +252,25 @@ foreach(package IN LISTS PACKAGES)
     DEPENDS M2-core
     )
 endforeach()
+
+if(TARGET install-LanguageServer)
+  file(COPY LanguageServer/M2-language-server
+       DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
+
+  install(PROGRAMS LanguageServer/M2-language-server
+          DESTINATION ${CMAKE_INSTALL_BINDIR}
+          COMPONENT ALL)
+
+  set(LSP_MAN_DIR ${M2_DIST_PREFIX}/${M2_INSTALL_MANDIR}/man1)
+  add_custom_command(TARGET install-LanguageServer POST_BUILD
+    COMMENT "Creating man page for M2-language-server"
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${LSP_MAN_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_CURRENT_SOURCE_DIR}/LanguageServer/M2-language-server.1 ${LSP_MAN_DIR}
+    COMMAND gzip -nf9 ${LSP_MAN_DIR}/M2-language-server.1)
+
+  add_custom_command(TARGET uninstall-LanguageServer POST_BUILD
+    COMMAND rm -f
+      ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2-language-server
+      ${LSP_MAN_DIR}/M2-language-server.1.gz)
+endif()

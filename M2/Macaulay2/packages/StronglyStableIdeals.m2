@@ -623,6 +623,52 @@ TEST ///
   assert((isHilbSegment I)#0);
 ///
 
+-- negative segment-test cases
+TEST ///
+  -- ideal(x^2, x*y^3, y^4) is a generation segment but neither a regularity
+  -- segment nor a Hilbert segment, exercising the "false" branch of two of
+  -- the three segment predicates.
+  QQ[x,y,z];
+  I = ideal(x^2, x*y^3, y^4);
+  assert((isGenSegment I)#0);
+  assert(not (isRegSegment I)#0);
+  assert(not (isHilbSegment I)#0);
+///
+
+-- OrderVariables option for lexIdeal and stronglyStableIdeals
+TEST ///
+  -- OrderVariables=>Up reverses the variable order from the default Down,
+  -- producing a ring with the opposite variable ordering.  The count of
+  -- strongly stable ideals does not depend on this choice, but the rings do.
+  QQ[t];
+  Ldown = lexIdeal(3, 3, OrderVariables=>Down);
+  Lup = lexIdeal(3, 3, OrderVariables=>Up);
+  assert(ring Ldown =!= ring Lup);
+  SSdown = stronglyStableIdeals(3*t, 3, OrderVariables=>Down);
+  SSup = stronglyStableIdeals(3*t, 3, OrderVariables=>Up);
+  assert(#SSdown == #SSup);
+  assert(ring(SSdown#0) =!= ring(SSup#0));
+  -- unknown values are rejected
+  assert(try (lexIdeal(3, 3, OrderVariables=>Sideways); false) else true);
+///
+
+-- MaxRegularity option for stronglyStableIdeals
+TEST ///
+  -- MaxRegularity bounds the regularity of the returned ideals; tighter
+  -- bounds give subsets, and non-positive values are rejected.
+  QQ[t];
+  allssi = stronglyStableIdeals(4*t, 4);
+  assert(#allssi == 4);
+  restricted4 = stronglyStableIdeals(4*t, 4, MaxRegularity=>4);
+  restricted3 = stronglyStableIdeals(4*t, 4, MaxRegularity=>3);
+  assert(#restricted4 == 2);
+  assert(#restricted3 == 1);
+  assert(#restricted3 <= #restricted4);
+  assert(#restricted4 <= #allssi);
+  assert(try (stronglyStableIdeals(4*t, 4, MaxRegularity=>0); false) else true);
+  assert(try (stronglyStableIdeals(4*t, 4, MaxRegularity=>-1); false) else true);
+///
+
 -------------------------------------------
 -----          DOCUMENTATION          -----
 -------------------------------------------
@@ -677,14 +723,27 @@ doc ///
         {\it Strongly stable ideals and segment ideals:}
 
           @TO lexIdeal@ -- Compute the saturated lexicographic ideal with a given Hilbert polynomial.
-          
-          @TO stronglyStableIdeals@ -- Compute the saturated strongly stable ideals with a given Hilbert polynomial.
-	  
-	  @TO isGenSegment@ -- Test whether there exists a term ordering such that each minimal generator of a strongly stable ideal is greater than all monomials of the same degree outside the ideal.
-      
-	  @TO isRegSegment@ -- Test whether the truncation of a strongly stable ideal in degree equal to its regularity is a segment. 	                   
 
-	  @TO isHilbSegment@ -- Test whether the truncation of a strongly stable ideal in degree equal to the Gotzmann number of its Hilbert polynomial is a segment. 
+          @TO stronglyStableIdeals@ -- Compute the saturated strongly stable ideals with a given Hilbert polynomial.
+
+          @TO isGenSegment@ -- Test whether there exists a term ordering such that each minimal generator of a strongly stable ideal is greater than all monomials of the same degree outside the ideal.
+
+          @TO isRegSegment@ -- Test whether the truncation of a strongly stable ideal in degree equal to its regularity is a segment.
+
+          @TO isHilbSegment@ -- Test whether the truncation of a strongly stable ideal in degree equal to the Gotzmann number of its Hilbert polynomial is a segment.
+   Example
+     QQ[t];
+     isHilbertPolynomial(3*t+4)
+     gotzmannNumber(3*t+4)
+     ideals = stronglyStableIdeals(3, 3);
+     #ideals
+     ideals#0
+  SeeAlso
+    isHilbertPolynomial
+    gotzmannNumber
+    gotzmannDecomposition
+    stronglyStableIdeals
+    lexIdeal
 ///   
 
 doc ///

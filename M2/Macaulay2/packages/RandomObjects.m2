@@ -3,20 +3,17 @@ newPackage ("RandomObjects",
     	Date => "June 19, 2011",
     	Authors => {
 	     {Name     => "Hans-Christian Graf v. Bothmer",
-	      Email    => "bothmer@uni-math.gwdg.de",
-	      HomePage => "http://www.crcg.de/wiki/User:Bothmer"},
+	      Email    => "hcvbothmer@gmail.com",
+	      HomePage => "https://www.math.uni-hamburg.de/personen/bothmer/"},
 
-	     {Name     => "Florian Geiss",
-	      Email    => "fg@math.uni-sb.de",
-	      HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
+	     {Name     => "Florian Geiss"},
 
 	     {Name     => "Daniel R. Grayson",
-	      Email    => "dan@math.uiuc.edu",
-	      HomePage => "http://www.math.uiuc.edu/~dan/"},
+	      HomePage => "https://www.graysonfamily.org/dan/"},
 
 	     {Name     => "Frank-Olaf Schreyer",
 	      Email    => "schreyer@math.uni-sb.de",
-	      HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}},
+	      HomePage => "https://www.math.uni-sb.de/ag/schreyer/"}},
         Headline => "a framework for making random objects in algebraic geometry",
 	Keywords => {"Examples and Random Objects"},
 	PackageImports => {"SimpleDoc"},
@@ -317,6 +314,13 @@ doc ///
 --   Outputs
 --    :Boolean
 -- ///
+
+-- randomObjectTemplate
+TEST ///
+t = randomObjectTemplate("foo")
+assert instance(t, String);
+///
+
 
 end
 

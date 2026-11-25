@@ -10,8 +10,8 @@ newPackage(
         Version => "1.10",
         Date => "August 06, 2009",
         Authors => {{Name => "Daniel Robertz",
-                  Email => "daniel@momo.math.rwth-aachen.de",
-                  HomePage => "http://wwwb.math.rwth-aachen.de/~daniel/"}},
+                  Email => "daniel.robertz@math.rwth-aachen.de",
+                  HomePage => "https://www.math.rwth-aachen.de/~Daniel.Robertz/"}},
         Headline => "Methods for Janet bases and Pommaret bases in Macaulay 2",
         PackageExports => { "Complexes" },
 	Keywords => {"Groebner Basis Algorithms"},
@@ -1226,4 +1226,36 @@ TEST ///
      assert ( zero(S.dd_2 * S.dd_3) )
      assert ( zero(S.dd_3 * S.dd_4) )
 ///
+
+TEST ///
+-- janetMultVar and pommaretMultVar on the documented monomial-row example
+-- return a list of sets of multiplicative variables for each generator.
+R = QQ[x1,x2,x3];
+M = matrix {{x1*x2*x3, x2^2*x3, x1*x2*x3^2}};
+jmv = janetMultVar M;
+assert(instance(jmv, List) and #jmv == 3);
+assert(all(jmv, s -> instance(s, Set)));
+assert(jmv == {set{x2,x1}, set{x3,x2}, set{x3,x2,x1}});
+pmv = pommaretMultVar M;
+assert(pmv == {set{x3}, set{x3}, set{x3}});
+///
+
+TEST ///
+-- basisElements returns the underlying matrix of an InvolutiveBasis;
+-- invReduce respects the reduction invariant p == B*c + r, where
+-- (r, c) = invReduce(p, J) and B = basisElements J.  Verified for both
+-- the Matrix and RingElement forms of invReduce.
+R = QQ[x,y];
+J = janetBasis gb ideal(x^3, y^2);
+B = basisElements J;
+assert(instance(B, Matrix));
+assert(B === J#0);
+p = matrix{{x^4 + 2*y^3}};
+(r, c) = invReduce(p, J);
+assert(entries (B*c + r) == entries p);
+(r2, c2) = invReduce(x^4 + 2*y^3, J);
+assert(entries (B*c2 + r2) == entries p);
+///
+
+end--
 

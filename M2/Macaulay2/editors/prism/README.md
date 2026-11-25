@@ -9,13 +9,14 @@ used in [Macaulay2Web](https://github.com/pzinn/Macaulay2Web).
 Building
 --------
 
-To build only the Macaulay2 grammar, run the following:
+To regenerate the Macaulay2 grammar from this repository, change to
+`M2/Macaulay2/editors` and run:
 
 ```
-M2 --script /path/to/M2/Macaulay2/editors/make-M2-symbols
+M2 --script make-M2-symbols.m2
 ```
 
-This will generate the file `prism/macaulay2.js`.
+This writes the file `prism/macaulay2.js`.
 
 Using
 -----
@@ -45,7 +46,7 @@ monomialCurveIdeal(R, {1, 2, 3})
 Style package
 -------------
 
-The file `prism.js` included in Macaulay2's `Style` package the Prism
+The file `prism.js` in Macaulay2's `Style` package bundles the Prism
 JavaScript and CSS files together with the Macaulay2 grammar using
 [node](https://nodejs.org/) and [webpack](https://webpack.js.org/).
 

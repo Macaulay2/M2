@@ -19,12 +19,12 @@ document {
 	UL { 
 	    {"An elimination theory algorithm that computes the Hilbert ideal for any linearly reductive group: ",
 		"Derksen, H. & Kemper, G. (2015). ",
-		HREF{"https://link.springer.com/book/10.1007%2F978-3-662-48422-7","Computational Invariant Theory"}, 
+		HREF{"https://doi.org/10.1007/978-3-662-48422-7","Computational Invariant Theory"}, 
 	   	". Heidelberg: Springer. Algorithm 4.1.9, pp 159-164"
 		},
 	    {"A simple and efficient algorithm for invariants of tori based on: ",
 		"Derksen, H. & Kemper, G. (2015). ",
-		HREF{"https://link.springer.com/book/10.1007%2F978-3-662-48422-7","Computational Invariant Theory"}, 
+		HREF{"https://doi.org/10.1007/978-3-662-48422-7","Computational Invariant Theory"}, 
 	   	". Heidelberg: Springer. Algorithm 4.3.1 pp 174-177"
 		},
 	    {"An adaptation of the tori algorithm for invariants of finite abelian groups based on: ",
@@ -32,13 +32,14 @@ document {
 		HREF{"https://deepblue.lib.umich.edu/handle/2027.42/151589","Ideals of Subspace Arrangements"}, 
 	   	". Thesis (Ph.D.)-University of Michigan. 2019. ISBN: 978-1392-76291-2. pp 29-34."
 		},
-	    {"A new algorithm for invariants of elementary abelian groups by Arasha, Cassell, Dolorfino, Gandini, Novak, Qin, and Strom. See ",
-		HREF{"https://github.com/gordonovak/algorithms"}, 
-	   	" for more information."
+	    {"A faster algorithm for invariants of elementary abelian groups based on: ",
+		"Arasha S., Cassell M., Dolorfino M., Gandini F., Novak G., Qin D., and Strom S. (2026). ",
+		arXiv("2605.19158","An algorithm for invariants of elementary abelian groups"),
+		". arXiv:2605.19158"
 		},
 	    {"King's algorithm and the linear algebra method for invariants of finite groups: ",
 		"Derksen, H. & Kemper, G. (2015). ",
-		HREF{"https://link.springer.com/book/10.1007%2F978-3-662-48422-7","Computational Invariant Theory"}, 
+		HREF{"https://doi.org/10.1007/978-3-662-48422-7","Computational Invariant Theory"}, 
 	   	". Heidelberg: Springer. Algorithm 3.8.2, pp 107-109; pp 72-74"
 		},
 	    {"The algorithms for primary and secondary invariants, and Molien series of finite groups implemented
@@ -82,7 +83,14 @@ document {
 		},
 	    {BOLD "2.3: ", "minor documentation updates."},
 	    {BOLD "2.4: ", "a new algorithm for invariants of elementary
-		abelian $p$-groups."}
+		abelian $p$-groups."},
+	    {BOLD "2.5: ", "the algorithm for elementary abelian $p$-groups
+		is now much faster, and is used by default when possible.
+		Includes various bug fixes and TeX output for all package classes."},
+	    {BOLD "2.6: ", "introduces the new type ", TT "PermutationAction",
+                " with the faster orbit sum method for computing invariants.
+                This version also simplifies inputs for ", TT "permutationMatrix",
+                ", a minor breaking change."}
 	    },
 	Contributors=>{
 	    "The following people worked on the algorithm for invariants of elementary
@@ -92,7 +100,11 @@ document {
 	    Mal Dolorfino,
 	    Gordie Novak,
 	    Daniel Qin,
-	    and Sumner Strom."
+	    and Sumner Strom.
+            The orbit sum method of version 2.6 was initially developed
+            by ", HREF{"https://sites.google.com/tec.mx/liliaalanislopez/","Lilia Alanís-López"},
+            ", Dalena Vien, Indalecio Ruiz, Francesca Gandini, and Summer Strom;
+            the final version was developed by Marcus Cassell."
 	    },
 	}
     
@@ -198,10 +210,25 @@ document {
 	    (net, RingOfInvariants),
 	    (net, DiagonalAction),
 	    (net, FiniteGroupAction),
-	    (net, LinearlyReductiveAction)
+	    (net, LinearlyReductiveAction),
+	    (net, PermutationAction)
 	    },
 	Headline => "format for printing, as a net",
 	PARA {"Format objects of the package ",
 	    TO InvariantRing, " for printing. See ",
 	    TO net," for more information."},
+	    }
+
+document {
+	Key => {
+	    (texMath, RingOfInvariants),
+	    (texMath, DiagonalAction),
+	    (texMath, FiniteGroupAction),
+	    (texMath, LinearlyReductiveAction),
+	    (texMath, PermutationAction)
+	    },
+	Headline => "format for printing, as TeX strings",
+	PARA {"Format objects of the package ",
+	    TO InvariantRing, " for printing in TeX. See ",
+	    TO texMath," for more information."},
 	    }

@@ -493,7 +493,7 @@ int F4MonomialLookupTableT<Key>::debug_check(mi_node *const p,
 template <typename Key>
 void F4MonomialLookupTableT<Key>::debug_check() const
 {
-  int nfound = 0;
+  [[maybe_unused]] int nfound = 0;
   for (auto& i : mis)
     {
       if (i != nullptr) nfound += debug_check(i, nullptr);

@@ -402,3 +402,29 @@ assert(fpt(g) == infinity);
 assert(fpt(g, AtOrigin=>false, Attempts => 10) == 1/3);
 assert(fpt(g, AtOrigin=>false, DepthOfSearch => 2) == 1/3);
 ///
+
+TEST ///
+-- fpt with non-default Bounds and FinalAttempt options returns the same
+-- F-pure threshold as the default invocation on the binomial example
+-- f = x^7*y^2 + x^5*y^6 over ZZ/47, whose FPT is 3/16.
+ZZ/47[x,y];
+f = x^7*y^2 + x^5*y^6;
+assert(fpt(f, FinalAttempt => true) == 3/16);
+assert(fpt(f, Bounds => {1/100, 99/100}) == 3/16);
+///
+
+TEST ///
+-- frobeniusNu accepts the option symbols ContainmentTest (with values
+-- StandardPower, FrobeniusRoot, FrobeniusPower), Search (Binary | Linear),
+-- and ReturnList; AtOrigin => false forces the GlobalFrobeniusRoot
+-- internal code path.  All routes give the same answer on the binomial
+-- example where frobeniusNu(1, f) = 8 and frobeniusNu(2, f) = 414.
+ZZ/47[x,y];
+f = x^7*y^2 + x^5*y^6;
+assert(frobeniusNu(1, f, ContainmentTest => StandardPower) == 8);
+assert(frobeniusNu(1, f, ContainmentTest => FrobeniusRoot) == 8);
+assert(frobeniusNu(1, f, ContainmentTest => FrobeniusPower) == 8);
+assert(frobeniusNu(1, f, AtOrigin => false) == 8);
+assert(frobeniusNu(2, f, ReturnList => true) == {0, 8, 414});
+assert(frobeniusNu(2, f, Search => Linear, ReturnList => true) == {0, 8, 414});
+///

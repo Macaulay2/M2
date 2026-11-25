@@ -11,35 +11,39 @@ globalAssignment WeightedSurfaceAssociatedToRationalFourfold;
 
 WeightedSurfaceAssociatedToRationalFourfold.synonym = SurfaceAssociatedToRationalFourfold.synonym = "surface associated to rational fourfold";
 
-expression WeightedSurfaceAssociatedToRationalFourfold := expression SurfaceAssociatedToRationalFourfold := U -> (
-    X := recoverFourfold U;
-    (S,F) := if instance(X,CubicFourfold)
-             then ("K3 surface","cubic fourfold")
-             else if instance(X,GushelMukaiFourfold)
-             then ("K3 surface","GM fourfold")
+netTexDescription WeightedSurfaceAssociatedToRationalFourfold := netTexDescription SurfaceAssociatedToRationalFourfold := o -> U -> (
+    if o#"UseName" and hasAttribute(U,ReverseDictionary) then return (
+        toString getAttribute(U,ReverseDictionary),
+        texMath getAttribute(U,ReverseDictionary)
+    );
+    if o#"Short" then (
+        X := recoverFourfold U;
+        S := if instance(X,CubicFourfold) or instance(X,GushelMukaiFourfold)
+             then "K3 surface"
              else if instance(X,IntersectionOfThreeQuadricsInP7)
-             then ("Castelnuovo surface","complete intersection of 3 quadrics in PP^7")
-             else ("surface","fourfold");
-    if dim U == -1 then S = "not-fully-calculated "|S;
-    A := if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else (F|" of discriminant "|toString(discriminant X));
-    expression(S|" associated to "|A)
+             then "Castelnuovo surface"
+             else "surface";
+        if dim U == -1 then S = "not-fully-calculated " | S;
+        return (
+            S | " associated to " | shortDescriptionFourfold(X,true),
+            "\\text{" | S | " associated to }" | (texMath shortDescriptionFourfoldTeX(X,true))
+        );
+    );
+    if dim U >= 0 then return netTexDescription(projectiveVariety(ring U,Saturate=>false),"Ambient"=>o#"Ambient","GeneratorDegrees"=>o#"GeneratorDegrees","NumericalInvariants"=>o#"NumericalInvariants","Indent"=>o#"Indent");
+    (
+        "-* some calculations are missing *-",
+        "\\text{some calculations are missing}"
+    )
 );
 
-net WeightedSurfaceAssociatedToRationalFourfold := net SurfaceAssociatedToRationalFourfold := U -> (
-    if hasAttribute(U,ReverseDictionary) then return toString getAttribute(U,ReverseDictionary);
-    if dim U >= 0 then return ? U;
-    "-* some calculations are missing *-"
-);
-texMath WeightedSurfaceAssociatedToRationalFourfold := texMath SurfaceAssociatedToRationalFourfold := texMath @@ net;
-
-describe WeightedSurfaceAssociatedToRationalFourfold := describe SurfaceAssociatedToRationalFourfold := S -> (
-    out := "Fourfold: ";
-    if hasAttribute(recoverFourfold S,ReverseDictionary) then out = out|(toString getAttribute(recoverFourfold S,ReverseDictionary))|", ";
-    (out|shortDescriptionFourfold(recoverFourfold S,false))||(describeMirrorFourfoldAndK3 recoverFourfold S)
+describe WeightedSurfaceAssociatedToRationalFourfold := describe SurfaceAssociatedToRationalFourfold := U -> (
+    (nU,tU) := netTexDescription(U,"UseName"=>false,"Short"=>true);
+    (nD,tD) := describeMirrorFourfoldAndK3 recoverFourfold U;
+    netTexMath(nU || nD, "\\begin{aligned}&" | tU | "\\\\" | newline | tD | "\\end{aligned}")
 );
 
 makeSurfaceAssociated = (X,mu,U,C,f) -> (
-    assert(instance(X,HodgeSpecialFourfold) and instance(mu,MultirationalMap) and instance(U,EmbeddedProjectiveVariety) and instance(C,List) and (instance(f,Nothing) or instance(f,MultirationalMap)));
+    assert(instance(X,HodgeSpecialFourfold) and instance(mu,RationalMap) and instance(U,EmbeddedProjectiveVariety) and instance(C,List) and (instance(f,Nothing) or instance(f,RationalMap)));
     S := if f =!= null then image f else projectiveVariety((coefficientRing X)[],Saturate=>false);
     S = if instance(S,WeightedProjectiveVariety) then new WeightedSurfaceAssociatedToRationalFourfold from S else new SurfaceAssociatedToRationalFourfold from S;
     S.cache#"construction of SurfaceAssociatedToRationalFourfold" = (mu,U,C,f);
@@ -100,7 +104,7 @@ associatedK3surface CubicFourfold := associatedK3surface GushelMukaiFourfold := 
     fanoMap(X,Singular=>o.Singular,Verbose=>o.Verbose);
     (L,C) := exceptionalCurves(X,Verbose=>o.Verbose,Strategy=>o.Strategy);
     U := ambientVariety L;
-    mu := multirationalMap fanoMap X;
+    mu := rationalMap fanoMap X;
     f := contractionMap(U,X,Verbose=>o.Verbose,Strategy=>o.Strategy,"ForceNormalization"=>false);
     Utilde := makeSurfaceAssociated(X,mu,U,{L,C},f);
     if o.Verbose then printFinalLog Utilde;
@@ -144,7 +148,8 @@ associatedUnderlyingK3Raw DoublySpecialCubicFourfold := o -> X -> (
     Str := setStrategyDSCFtoK3(X,o.Strategy);
     (L,C) := exceptionalCurves(X,Verbose=>o.Verbose,Strategy=>Str);
     U := ambientVariety L;
-    f := contractionMap(U,X,Verbose=>o.Verbose,Strategy=>Str,"ForceNormalization"=>isNormalizationKnownToTerminateQuickly(X));
+    -- f := contractionMap(U,X,Verbose=>o.Verbose,Strategy=>Str,"ForceNormalization"=>isNormalizationKnownToTerminateQuickly(X));
+    f := contractionMap(U,X,Verbose=>o.Verbose,Strategy=>Str,"ForceNormalization"=>false);
     Utilde := makeSurfaceAssociated(X,mu,U,{L,C},f);
     if o.Verbose then printFinalLog Utilde;
     Utilde

@@ -1,8 +1,9 @@
-#pragma once
+#ifndef M2_GB_F4_SPAIRS_HPP
+#define M2_GB_F4_SPAIRS_HPP
 
-#include "MonomialTypes.hpp"
-#include "MonomialView.hpp"
-#include "Basis.hpp"
+#include "gb-f4/MonomialTypes.hpp"
+#include "gb-f4/MonomialView.hpp"
+#include "gb-f4/Basis.hpp"
 
 #include <map>
 
@@ -90,6 +91,7 @@ class SPairSet
 
 } // end namespace newf4
 
+#endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

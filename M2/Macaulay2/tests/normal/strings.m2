@@ -93,3 +93,7 @@ T = new SelfInitializingType of String
 assert Equation(net T "foo", "foo")
 assert Equation(format T "foo", "\"foo\"")
 assert Equation(value T "5", 5)
+
+-- substrings
+assert Equation("Macaulay2"_{0..2}, "Mac")
+assert Equation("Macaulay2"_{5,4,3,4}, "luau")

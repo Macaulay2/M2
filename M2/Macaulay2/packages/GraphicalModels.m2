@@ -23,33 +23,31 @@ newPackage(
      Date => "November, 2020",
      Authors => {
           {Name=> "Carlos Amendola", 
-	   Email=> "carlos.amendola@tum.de",
-	   HomePage=>"http://www.carlos-amendola.com/"},
+	   Email=> "amendola@math.tu-berlin.de",
+	   HomePage=>"http://www.luke-amendola.appspot.com/"},
        
 	  {Name => "Luis David Garcia Puente",
-	   Email => "lgarcia@shsu.edu",
-	   HomePage => "http://www.shsu.edu/~ldg005"},
+	   Email => "lgarciapuente@coloradocollege.edu",
+	   HomePage => "https://luisgarciapuente.github.io"},
        
           {Name=> "Roser Homs Pons", 
-	   Email=> "roser.homs@tum.de",
-	   HomePage=>"https://personal-homepages.mis.mpg.de/homspons/index.html"},
+	   Email=> "roser.homs@upc.edu",
+	   HomePage=>"https://roserhp.github.io"},
        
           {Name=> "Olga Kuznetsova", 
-	   Email=> "kuznetsova.olga@gmail.com",
-	   HomePage=>"https://okuznetsova.com"},
+	   Email=> "kuznetsova.olga@gmail.com"},
        
           {Name=> "Harshit J Motwani", 
-	   Email=> "harshitmotwani2015@gmail.com",
-	   HomePage=>"https://sites.google.com/view/harshitjmotwani/home"},
+	   Email=> "harshitmotwani2015@gmail.com"},
           {Name=> "Sonja Petrovic", 
-	   Email=> "sonja@psu.edu",
-	   HomePage=>"http://www.personal.psu.edu/sxp61"}, 
+	   Email=> "sonja.petrovic@iit.edu",
+	   HomePage=>"https://www.sonjapetrovicstats.com"},
 	  {Name => "Mike Stillman",
-	   Email => "mike@math.cornell.edu",
-	   HomePage => "http://www.math.cornell.edu/~mike/"},
+	   Email => "mikestillman1@gmail.com",
+	   HomePage => "https://mikestillman.github.io"},
           {Name=> "Seth Sullivant", 
 	   Email=> "smsulli2@ncsu.edu",
-	   HomePage=>"http://www4.ncsu.edu/~smsulli2/"}
+	   HomePage=>"https://sethsullivant.wordpress.ncsu.edu/"}
           --{Name=> "Contributing authors and collaborators: Alexander Diaz, Shaowei Lin, David Murrugarra", 
 	  -- Email=> "",
 	  -- HomePage=>""}      

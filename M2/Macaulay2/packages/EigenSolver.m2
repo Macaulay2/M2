@@ -5,16 +5,14 @@ newPackage(
     Authors => {
         {Name => "Laurent Busé", 
         Email => "Laurent.Buse@inria.fr"},
-        {Name => "Justin Chen", 
-        Email => "justin.chen@math.gatech.edu"},
+        {Name => "Justin Chen"},
         {Name => "Kisun Lee", 
-        Email => "kil004@ucsd.edu"},
+        Email => "kisunl@kaist.ac.kr"},
         {Name => "Anton Leykin", 
-        Email => "anton.leykin@gmail.com"},
+        Email => "leykin@math.gatech.edu"},
         {Name => "Tomas Pajdla", 
         Email => "pajdla@cvut.cz"},
-        {Name => "Erika Pirnes", 
-        Email => "pirnes@wisc.edu"}
+        {Name => "Erika Pirnes"}
     },
     Headline => "polynomial system solver via eigen-computations",
     Keywords => {"Numerical Algebraic Geometry"},
@@ -128,6 +126,12 @@ eigSolveP2 Ideal := List => opts -> J -> ( -- currently assumes dim R = 2 et 2 (
 -- needs "laurent-eigensolving.m2"
 -- needs "documentation.m2"
 
+TEST ///
+-- Test Basis opt arg
+R = QQ[x,y]
+I = ideal(x^2,x*y,y^2)
+assert(zeroDimSolve(I, Basis => matrix{{1,x,y}}) == zeroDimSolve(I))
+///
 
 TEST ///
 -- Problem 2.11 in https://math.berkeley.edu/~bernd/cbms.pdf

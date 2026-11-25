@@ -128,33 +128,34 @@ Node
 -----------------------------------------------------------------------------
 
 doc ///
-Node
-  Key
+Key
     End
-   [End, DegreeLimit]
-   [End, MinimalGenerators]
-   [End, Strategy]
-  Headline
+    [End, DegreeLimit]
+    [End, MinimalGenerators]
+    [End, Strategy]
+Headline
     module of endomorphisms
-  Usage
+Usage
     End M
-  Inputs
+Inputs
     M:{Ring,Ideal,Module}
     DegreeLimit => {ZZ,List}
-      see @TO [Hom, DegreeLimit]@
+        see @TO [Hom, DegreeLimit]@
     MinimalGenerators => Boolean
-      see @TO [Hom, MinimalGenerators]@
+        see @TO [Hom, MinimalGenerators]@
     Strategy => Thing
-      see @TO [Hom, Strategy]@
-  Description
+        see @TO [Hom, Strategy]@
+Description
     Text
-      Constructs the module of endomorphisms of $M$.
+        Constructs the module of endomorphisms of $M$.
     Example
-      R = QQ[a,b,c];
-      M = coker koszul_2 vars R
-      End M
-  SourceCode
+        R = QQ[a,b,c];
+        M = coker koszul_2 vars R
+        End M
+SourceCode
     End
+SeeAlso
+    (End, RingMap, Module)
 ///
 
 -----------------------------------------------------------------------------

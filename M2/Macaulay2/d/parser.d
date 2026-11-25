@@ -215,10 +215,12 @@ export unaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree :=
      if ret == errorTree then ret
      else accumulate(ParseTree(Unary(token1,ret)),file,prec,obeylines));
 export nunaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
+    -- e.g. return, continue, etc.
      ret := nparse(file,token1.word.parse.unaryStrength,obeylines);
      if ret == errorTree then ret
      else accumulate(ParseTree(Unary(token1,ret)),file,prec,obeylines));
 export nnunaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
+    -- e.g. comma
      if token1.word.parse.precedence <= prec
      then errorunary(token1,file,prec,obeylines)
      else (
@@ -243,13 +245,13 @@ export parse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      ret
      );
 export nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
+    -- used by any nunaryop (e.g. code(() -> return) or continue, break, etc.)
+    -- and comma which is both nnunaryop and nbinaryop (e.g. code(() -> (,)))
      if prec == nopr then return errorTree;		    -- shouldn't ever happen
      token := peektoken(file,obeylines);
      if token == errorToken then return errorTree;
      ret := (
-	  if token == errorToken
-	  then errorTree
-	  else if token.word.parse.precedence > prec
+	  if token.word.parse.precedence > prec
      	  then (
      	       token = gettoken(file,obeylines);
 	       token.word.parse.funs.unary(token,file,prec,obeylines)
@@ -265,6 +267,7 @@ export binaryop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines
      if ret == errorTree then ret 
      else ParseTree(Binary(lhs, token2, ret)));
 export nbinaryop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
+    -- e.g. comma
      ret := nparse(file,token2.word.parse.binaryStrength,obeylines);
      if ret == errorTree then ret else ParseTree(Binary(lhs, token2, ret)));
 export arrowop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
@@ -556,7 +559,7 @@ export treePosition(e:ParseTree):Position := (
 	if t.newInitializer != dummyTree then t.newInitializer else
 	if t.newParent      != dummyTree then t.newParent      else t.newClass;
 	combinePositionL(t.newToken.position, treePosition(lastClass)))
-    is dummy do dummyPosition
+    is t:dummy do t.position
     );
 
 size(x:Token):int := Ccode(int,"sizeof(*",x,")");

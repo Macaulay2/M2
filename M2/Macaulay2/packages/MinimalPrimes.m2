@@ -14,7 +14,6 @@
 --        3. turn strategies into hooks
 --        4. which symbols need to be exported
 --        5. Binomials package should add binomialMinimalPrimes as a strategy to minimalPrimes
---        6. add installMinprimes that gives a warning
 ---------------------------------------------------------------------------
 newPackage(
     "MinimalPrimes",
@@ -22,11 +21,11 @@ newPackage(
     Date => "November 12, 2020",
     Headline => "minimal primes and radical routines for ideals",
     Authors => {
-	{Name => "Frank Moore",    Email => "moorewf@wfu.edu",       HomePage => "https://users.wfu.edu/moorewf"},
-	{Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "https://www.math.cornell.edu/~mike"},
+	{Name => "Frank Moore",    Email => "moorewf@wfu.edu",       HomePage => "https://users.wfu.edu/moorewf/"},
+	{Name => "Mike Stillman",  Email => "mikestillman1@gmail.com", HomePage => "https://mikestillman.github.io"},
 	{Name => "Franziska Hinkelmann"},
-	{Name => "Justin Chen",    Email => "justin.chen@math.gatech.edu"},
-	{Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud"}},
+	{Name => "Justin Chen"},
+	{Name => "Mahrud Sayrafi", Email => "msayrafi2@unl.edu",        HomePage => "https://mahrud.github.io"}},
     Keywords => {"Commutative Algebra"},
     PackageImports => { "Elimination" },
     AuxiliaryFiles => true,
@@ -67,7 +66,7 @@ newPackage(
 -- .  Document minprimes, something about the strategies
 -- .  Export only the symbols we want
 
-export { "Hybrid", "minimalPrimes", "minprimes" => "minimalPrimes", "radical", "radicalContainment", "installMinprimes" }
+export { "Hybrid", "minimalPrimes", "minprimes" => "minimalPrimes", "radical", "radicalContainment"}
 
 importFrom_Core { "raw", "rawCharSeries", "rawGBContains", "rawRadical", "newMonomialIdeal" }
 importFrom_Core { "isComputationDone", "cacheComputation", "fetchComputation", "updateComputation", "cacheHit", "Context", "Computation" }
@@ -107,9 +106,6 @@ algorithms = new MutableHashTable from {}
 
 -- used for dynamic strategies here and in PrimaryDecomposition
 Hybrid = new SelfInitializingType of List
-
--- deprecate this soon
-installMinprimes = () -> printerr "warning: the installMinprimes routine is now deprecated and should be removed"
 
 --------------------------------------------------------------------
 -- Support routines

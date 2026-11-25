@@ -7,15 +7,15 @@
 
 newPackage(
         "ReflexivePolytopesDB",
-        Version => "1.0", 
-        Date => "22 May 2019",
+        Version => "1.1",
+        Date => "10 November 2026",
         Authors => {{
                 Name => "Mike Stillman", 
-                Email => "mike@math.cornell.edu", 
-                HomePage=>"http://www.math.cornell.edu/~mike"
+                Email => "mikestillman1@gmail.com", 
+                HomePage=>"https://mikestillman.github.io"
                 }},
         Headline => "simple access to Kreuzer-Skarke database of reflexive polytopes of dimensions 3 and 4",
-	Keywords => {"Convex Geometry"},
+        Keywords => {"Convex Geometry"},
         AuxiliaryFiles => true
         )
 
@@ -77,7 +77,7 @@ kreuzerSkarkeURL ZZ := URL => opts -> (h11) -> (
     valF := getopt("F", Facets, opts);
     valH21 := getopt("h12", H12, opts);
     valL := getopt("L", Limit, opts);
-    str := "http://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?h11="|toString h11;
+    str := "https://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?h11="|toString h11;
     ksopts := {valV, valM, valN, valF, valH21, valL};
     ksopts = select(ksopts, x -> x =!= "");
     URL concatenate between("&", prepend(str,ksopts))
@@ -99,8 +99,10 @@ retrieve URL := String => opts -> url -> (
     )
 
 parseKSRawString = method()
-parseKSRawString String := List => (str) -> (
+parseKSRawString String := List => (str) -> parseKSRawString(str, 0)
+parseKSRawString(String, ZZ) := List => (str, startID) -> (
     -- result is a List of KSEntry's: each has first line as a description, rest of the lines a matrix,
+    -- with ids startID, startID+1, ...
     locA := regex("<b>Result:</b>\n", str);
     locB := regex("#NF", str);
     if locB === null then locB = regex("Exceeded", str);
@@ -112,8 +114,25 @@ parseKSRawString String := List => (str) -> (
     starts := positions(cys, s -> s#0 != " ");
     starts = append(starts, #cys);
     for i from 0 to #starts-2 list (
-        KSEntry(cys_(starts#i) | " id:" | i | "\n" |  demark("\n", cys_{starts#i+1 .. starts#(i+1)-1}))
+        KSEntry(cys_(starts#i) | " id:" | startID+i | "\n" |  demark("\n", cys_{starts#i+1 .. starts#(i+1)-1}))
         )
+    )
+
+-- A complete server response ends with "#NF: n" or "Exceeded limit of n".
+-- If neither is present, the server-side search died partway through.
+isCompleteKSResponse = str -> match("#NF|Exceeded", str)
+
+-- hodgePairs()#h11 is the sorted list of h12 values such that (h11, h12) occurs
+-- in the Kreuzer-Skarke database.  Read from a data file on first use.
+hodgePairsCache = null;
+hodgePairs = () -> (
+    if hodgePairsCache === null then
+        hodgePairsCache = hashTable for s in lines get(offlineDirectory | "ks-hodge-pairs.txt")
+            list (
+                if #s == 0 or match("^--", s) then continue;
+                L := separate(" ", s) / value;
+                L#0 => drop(L, 1));
+    hodgePairsCache
     )
 
 offlines = hashTable {
@@ -169,12 +188,35 @@ findOffline ZZ := opts -> (h11) -> (
 
 kreuzerSkarke = method(Options => join(pairs options kreuzerSkarkeURL, {Access=>null}))
 kreuzerSkarke ZZ := List => opts -> h11 -> (
+    -- some queries match tens of millions of polytopes, so always require a limit
+    if not instance(opts.Limit, ZZ) or opts.Limit <= 0 then
+        error "kreuzerSkarke: Limit must be a positive integer (the default is 1000)";
     optsA := new OptionTable from select(pairs opts, k -> k#0 =!= Access);
     offlineResult := findOffline(h11, optsA);
     if offlineResult =!= null then return offlineResult;
     url := kreuzerSkarkeURL(h11, optsA);
     rawstr := retrieve(url, Access=>opts.Access);
-    parseKSRawString rawstr
+    if isCompleteKSResponse rawstr then return parseKSRawString rawstr;
+    if optsA.H12 =!= null then
+        error("incomplete response from the Kreuzer-Skarke server for " | url#0);
+    -- As of Nov 2026, the server's search dies partway through for queries
+    -- with large h11 (roughly h11 > 250) and no h12, returning a truncated
+    -- result, although queries giving h12 still work.  Work around this by
+    -- querying each h12 that occurs with this h11.
+    if debugLevel > 0 then
+        << "-- incomplete server response; querying each h12 value separately" << endl;
+    lim := optsA.Limit;
+    count := 0;
+    flatten for h12 in (hodgePairs())#h11 ?? {} list (
+        if count >= lim then break;
+        u := kreuzerSkarkeURL(h11, optsA, H12 => h12, Limit => lim - count);
+        s := retrieve(u, Access=>opts.Access);
+        if not isCompleteKSResponse s then
+            error("incomplete response from the Kreuzer-Skarke server for " | u#0);
+        L := parseKSRawString(s, count);
+        count = count + #L;
+        L
+        )
     )
 
 kreuzerSkarke(ZZ, ZZ) := List => opts -> (h11, h12) -> kreuzerSkarke(h11, opts, H12 => h12)
@@ -243,6 +285,8 @@ generateOffline = method(Options=>{Expected=>null, Limit=>1000, Prefix=>"./", Fi
 generateOffline(ZZ,ZZ) := opts -> (h11, h12) -> (
     url := kreuzerSkarkeURL(h11, h12, Limit => opts.Limit);
     contents := retrieve url;
+    if not isCompleteKSResponse contents then
+        error("incomplete response from the Kreuzer-Skarke server for " | url#0);
     L := parseKSRawString contents;
     nexpected := opts.Expected;
     if instance(nexpected,ZZ) and  #L =!= nexpected then 
@@ -256,6 +300,8 @@ generateOffline(ZZ,ZZ) := opts -> (h11, h12) -> (
 generateOffline ZZ := opts -> (h11) -> (
     url := kreuzerSkarkeURL(h11, Limit => opts.Limit);
     contents := retrieve url;
+    if not isCompleteKSResponse contents then
+        error("incomplete response from the Kreuzer-Skarke server for " | url#0);
     L := parseKSRawString contents;
     nexpected := opts.Expected;
     if instance(nexpected,ZZ) and  #L =!= nexpected then 
@@ -280,7 +326,7 @@ generateOffline ZZ := opts -> (h11) -> (
   generateOffline(5, 53)
   generateOffline 491
   generateOffline(11, 24, Expected=>200)
-  urlPrefix = "http://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?"
+  urlPrefix = "https://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?"
 
   generateOffline(9, 21)
 ///
@@ -547,6 +593,13 @@ Key
   DualLatticePoints
   H12
   Access
+  [kreuzerSkarke, Limit]
+  [kreuzerSkarke, Vertices]
+  [kreuzerSkarke, Facets]
+  [kreuzerSkarke, LatticePoints]
+  [kreuzerSkarke, DualLatticePoints]
+  [kreuzerSkarke, H12]
+  [kreuzerSkarke, Access]
 Headline
   access Kreuzer-Skarke dimension 4 reflexive polytopes database
 Usage
@@ -559,7 +612,9 @@ Inputs
   h12:ZZ
     (optional) the desired $h^{1,2}$ of the Calabi-Yau hypersurface
   Limit => ZZ
-    The maximum number of examples to retrieve
+    The maximum number of examples to retrieve.  This must be a positive integer
+    (the default is 1000): some queries match tens of millions of polytopes,
+    so an unlimited query is not allowed
   str:String
     parses the given string into a list of KSEntry's
   Vertices => ZZ
@@ -923,6 +978,10 @@ Key
   (generateOffline,ZZ)
   (generateOffline,ZZ,ZZ)
   Expected
+  [generateOffline, Expected]
+  [generateOffline, Limit]
+  [generateOffline, Prefix]
+  [generateOffline, FileName]
 Headline
   generate tables of reflexive 4d polytopes from the Kreuzer-Skarke list
 Usage
@@ -1165,6 +1224,77 @@ TEST ///
   set1/matrix
   set1/description
   netList (set1/description)
+///
+
+------------------------------------------------------------
+-- Tests added in the 2026 test-audit pass: direct coverage
+-- for availableOffline, description, the kreuzerSkarke String
+-- dispatch / KSEntry SelfInitializingType, and the Limit and
+-- H12 options on the offline-data path.
+------------------------------------------------------------
+
+-- availableOffline: returns a HashTable whose keys describe the bundled
+-- offline kreuzerSkarke calls and whose values are paths to existing files.
+-- The bundled offline databases are the ten listed in the package source.
+TEST ///
+  ao = availableOffline()
+  assert(class ao === HashTable)
+  assert(#(keys ao) == 10)
+  assert(all(keys ao, k -> match("^kreuzerSkarke\\(", k)))
+  assert(all(values ao, v -> fileExists v))
+  -- a few of the expected keys must be present
+  assert(member("kreuzerSkarke(1)", keys ao))
+  assert(member("kreuzerSkarke(491)", keys ao))
+  assert(member("kreuzerSkarke(11,24)", keys ao))
+///
+
+-- description on a KSEntry recovers the first (header) line; KSEntry's
+-- SelfInitializingType-from-String constructor and the kreuzerSkarke String
+-- dispatch round-trip raw entry text into KSEntries with matrices of the
+-- declared dimensions.
+TEST ///
+  ent = first kreuzerSkarke 1
+  assert(class ent === KSEntry)
+  d = description ent
+  assert(class d === String)
+  assert(match("^4 5  M:", d))         -- "4 5" => 4-row, 5-column matrix
+  m = matrix ent
+  assert(numRows m == 4 and numColumns m == 5)
+  -- KSEntry String constructor + kreuzerSkarke String dispatch
+  str = "4 5  M:53 5 N:9 5 H:3,43 [-80] id:0
+   1   0   2   4 -10
+   0   1   3   5 -10
+   0   0   4   0  -4
+   0   0   0   8  -8"
+  e2 = KSEntry str
+  assert(class e2 === KSEntry)
+  assert(match("^4 5  M:53", description e2))
+  parsed = kreuzerSkarke str
+  assert(class parsed === List)
+  assert(#parsed == 1)
+  m2 = matrix first parsed
+  assert(numRows m2 == 4 and numColumns m2 == 5)
+///
+
+-- The Limit and H12 options on the offline-data path.  Limit caps the
+-- returned list to the requested size; H12 selects the (h11, h12) database
+-- and agrees with the two-argument call form.
+TEST ///
+  -- Limit caps the count when below the database size
+  assert(#kreuzerSkarke(2, Limit => 3) == 3)
+  assert(#kreuzerSkarke(2, Limit => 10) == 10)
+  assert(#kreuzerSkarke(11, 24, Limit => 5) == 5)
+  -- Total counts from the bundled offline databases match
+  assert(#kreuzerSkarke 1 == 5)
+  assert(#kreuzerSkarke 2 == 36)
+  assert(#kreuzerSkarke 491 == 1)
+  assert(#kreuzerSkarke(9, 21) == 10)
+  assert(#kreuzerSkarke 300 == 20)
+  assert(#kreuzerSkarke(11, 24) == 200)
+  -- H12 => h12 form agrees with the two-argument form
+  e0 = first kreuzerSkarke(11, H12 => 24, Limit => 1)
+  e1 = first kreuzerSkarke(11, 24, Limit => 1)
+  assert(toString e0 == toString e1)
 ///
 
 end--

@@ -1,0 +1,11 @@
+-- -*- M2-comint -*- hash: 13689930562824927558
+
+i1 : R = QQ[x,y];
+
+i2 : F = {x^2 + 1, x * y, y - 1};
+
+i3 : GED = parameterizedGenericEDDegree(F, UseMonodromy => true)
+
+o3 = 7
+
+i4 : 

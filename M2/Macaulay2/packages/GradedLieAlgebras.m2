@@ -8,8 +8,8 @@
 
 newPackage(
 	"GradedLieAlgebras",  
-	Version => "3.0",
-	Date => "June 2020",
+	Version => "3.1",
+	Date => "October 21, 2026",
 	Authors => {
 	    {Name => "Clas Löfwall", Email => "clas.lofwall@gmail.com"},
 	    {Name => "Samuel Lundqvist", Email => "samuel@math.su.se"}},
@@ -34,7 +34,6 @@ newPackage(
   
 export {
     "boundaries",
-    "center",
     "computedDegree",
     "cycles",
     "differential",
@@ -564,8 +563,7 @@ annihilator(FGLieSubAlgebra):=opts->(S)->(
     quotient(zeroIdeal L,S)
     );
 
-center=method()
-center(LieAlgebra):=L->(
+center(LieAlgebra):= opts -> L->(
     c:=annihilator(fullLieSubAlgebra L);
     new LieIdeal from c
     );

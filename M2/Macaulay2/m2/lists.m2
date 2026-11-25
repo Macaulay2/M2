@@ -11,6 +11,8 @@ needs "methods.m2"
  MutableList.synonym = "mutable list"
 AngleBarList.synonym = "angle bar list"
 
+size BasicList := ZZ => size0
+
 List ? List := (s,t) -> if class s === class t then toSequence s ? toSequence t else (class s) ? (class t)
 Option ? Option := (s,t) -> toSequence s ? toSequence t
 
@@ -35,6 +37,8 @@ List  % RingElement := List  % Number := List => (v,b) -> apply(v,x->x  % b)
 
 VisibleList _ List := VisibleList => (L, ind) -> (
     new class L from apply(splice ind, i -> L#i))
+String _ List := String => (s, ind) -> (
+    concatenate apply(splice ind, i -> s#i))
 
 Sequence .. Sequence := Sequence => (v,w) -> (
      n := #v;

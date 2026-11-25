@@ -7,9 +7,7 @@ newPackage(
      "Book3264Examples",
      Version => "0.1",
      Date => "July 20, 2010",
-     Authors => {{Name => "Charley Crissman",
-	       Email => "charleyc@math.berkeley.edu",
-	       HomePage => "http://math.berkeley.edu/~charleyc/"}},
+     Authors => {{Name => "Charley Crissman"}},
      PackageExports => {"Schubert2", "SchurRings"},
      Keywords => {"Intersection Theory"},
      Headline => "examples to accompany the eponymous book by Eisenbud and Harris"
@@ -817,4 +815,26 @@ doc ///
                            -- the coefficient of H_(2,i) is the coefficient of sigma_1^i
       sigma_1 = chern(1,G13.Bundles#1)
       1 + sum(1..4, i -> coefficient(chern(i,P5.Bundles#1),TG) * ((sigma_1)^i))
+///
+
+
+--test exported functions work
+TEST ///
+    -- grassmannian
+    G = grassmannian(1, 3)
+    assert(instance(G, FlagBundle))
+
+    -- diagram
+    d = diagrams(1,1)
+    assert(instance(d, List))
+
+    -- placeholderSchubertCycle
+    s = placeholderSchubertCycle({1}, G)
+    assert(instance(s, RingElement))
+
+    -- placeholderToSchubertBasis
+    R = intersectionRing G
+    f = R_0   -- grab any ring element to convert
+    b = placeholderToSchubertBasis(f, G)
+    assert(instance(b, RingElement))
 ///

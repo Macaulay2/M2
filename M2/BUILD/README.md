@@ -1,5 +1,6 @@
-See [INSTALL](../INSTALL) or [INSTALL-CMake.md](../INSTALL-CMake.md) for build
-requirements and instructions.
+See the [Macaulay2 wiki](https://github.com/Macaulay2/M2/wiki) for current
+build requirements and instructions, especially the "Building M2 from source"
+pages for the autotools and CMake workflows.
 
 This directory may be used as a convenient location for the build directory
 trees.  For example, it may contain subdirectories `Linux-i686` and
@@ -33,5 +34,5 @@ architecture-independent files are in a subdirectory of this directory called
 `common`, and the architecture-dependent files will be in other subdirectories,
 such as `x86_64-Linux-Ubuntu-8.10`.  (Actually, this is being changed...)
 
-Alternatively, see the [this guide](docker/README.md) for instructions on using
-Docker to build Linux container images running Macaulay2.
+Alternatively, see the [Docker guide](docker/README.md) for instructions on
+using Docker to build Linux container images running Macaulay2.

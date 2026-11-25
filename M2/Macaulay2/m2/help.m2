@@ -148,6 +148,7 @@ documentableMethods = key -> select(methods key, isDocumentableMethod)
 
 subclasses = T -> keys fold(ancestors  T, showStructure(),      lookup)
 subobjects = T -> keys fold(ancestors' T, showClassStructure(), lookup)
+subobjects' = T -> if T === Package then { Core, User } else subobjects T
 descendants  = T -> flatten prepend(L := subclasses T, apply(L, descendants))
 descendants' = T -> flatten prepend(L := subobjects T, apply(L, descendants'))
 
@@ -165,7 +166,7 @@ documentationValue(Symbol, Type)  := (S, T) -> (
     -- functions on T
     c := smenu select(documentableMethods T, key -> not typicalValues#?key or typicalValues#key =!= T);
     -- objects of type T
-    e := smenu(toString \ subobjects T);
+    e := smenu(toString \ subobjects' T);
     DIV nonnull splice ( "class" => "waystouse",
 	if #b > 0 then ( SUBSECTION {"Types of ", if T.?synonym then T.synonym else TT toString T, ":"}, b),
 	if #a > 0 then ( SUBSECTION {"Functions and methods returning ",     indefinite synonym T, ":"}, a),
@@ -380,11 +381,10 @@ getTechnical := (S, s) -> DIV nonnull ( "class" => "waystouse",
     getOperator S)
 
 getLocation := tag -> if tag =!= null then (
-    pkg := package tag;
     docpos := locate tag;
     linepos := ":" | docpos#1 | ":" | docpos#2;
     docfile := toAbsolutePath docpos#0;
-    filename := replace(pkg#"source directory", "", docfile);
+    filename := replace(getpkgsrcdir tag.Package, "", docfile);
     HR{},
     DIV ( "class" => "waystouse",
 	fixup PARA (
@@ -400,8 +400,13 @@ getLocation := tag -> if tag =!= null then (
 getOption := (rawdoc, tag) -> if rawdoc =!= null and rawdoc#?tag then rawdoc#tag
 
 headline = method(Dispatch => Thing)
-headline Thing := key -> getOption(fetchRawDocumentationNoLoad makeDocumentTag key, Headline)
-headline DocumentTag := tag -> getOption(fetchRawDocumentation getPrimaryTag tag, Headline)
+headline Thing := key -> getOption(
+    fetchRawDocumentation(makeDocumentTag key,
+	LoadDocumentation => false), Headline)
+headline DocumentTag := tag -> (
+    -- TODO: how can we make sure readPackage loads the correct package?
+    if isPackageNode tag then (readPackage tag.Package).Headline
+    else getOption(fetchRawDocumentation getPrimaryTag tag, Headline))
 
 headlines = method()
 headlines List := L -> (
@@ -447,7 +452,8 @@ getDefaultOptions := (nkey, opt) -> DIV (
 getDescription := (key, tag, rawdoc) -> (
     desc := getOption(rawdoc, Description);
     if desc =!= null and #desc > 0 then (
-	desc = processExamples(package' tag, format tag, desc);
+	pkg := getpkgNoLoad tag.Package ?? tag.Package;
+	desc = processExamples(pkg, tag.Format, desc);
 	if instance(key, String) -- overview key
 	or instance(key, Package) then DIV { desc }
 	else DIV { SUBSECTION "Description", desc })

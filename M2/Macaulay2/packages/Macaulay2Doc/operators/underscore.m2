@@ -106,8 +106,35 @@ document {
      	  s = "I did not do that!"
 	  "." | s_(6,7) | "."
 	  ///,
-     SeeAlso => {"strings and nets", substring, (symbol|,String,String)}
+     SeeAlso => {"strings and nets", substring, (symbol|,String,String),
+	 (symbol _, String, List)}
      }
+
+doc ///
+  Key
+    (symbol _, String, List)
+  Headline
+    create a string from characters at given indices
+  Usage
+    s_ind
+  Inputs
+    s:String
+    ind:List -- of indices
+  Outputs
+    :String
+  Description
+    Text
+      Given a string @VAR "s"@ and a list of integer indices @VAR "ind"@, this
+      method returns a new string formed by concatenating the characters of
+      @VAR "s"@ at the positions specified by @VAR "ind"@ in the order
+      given. Indices may be repeated, omitted, or given in any order.
+    Example
+      "Macaulay2"_{0..2}
+      "Macaulay2"_{5,4,3,4}
+  SeeAlso
+    (symbol _, String, Sequence)
+///
+
 document { 
      Key => (symbol _, Partition, ZZ),        
      Headline => "get element",

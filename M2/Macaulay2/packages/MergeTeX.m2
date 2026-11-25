@@ -5,7 +5,7 @@ newPackage(
         Date => "April 15, 2022", -- "March 16, 2022",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
-                  HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
+                  HomePage => "https://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "Run Macaulay2 code inside a LaTeX file",
 	Keywords => {"System"},
         DebuggingMode => false,
@@ -197,4 +197,9 @@ multidoc ///
     @TT "mergeTeX"@ takes as input the TeX source as a string and returns the output as a string,
     whereas @TT "mergeTeXFile"@ takes as arguments the names of the source LaTeX file and of the target LaTeX file (the two can be identical;
     @TT "mergeTeXFile"@ acts idempotently).
+///
+
+
+TEST ///
+mergeTeXFile(MergeTeX # "auxiliary files" | "ex.tex","ex-parsed1.tex")
 ///

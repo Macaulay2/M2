@@ -5,7 +5,7 @@ newPackage(
         Date => "March 23, 2022", -- "March 2, 2022",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
-                  HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
+                  HomePage => "https://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "Look up mathematical information online",
 	Keywords => {"System"},
         DebuggingMode => false,
@@ -155,4 +155,21 @@ multidoc ///
     (@HREF "http://wayback.cecm.sfu.ca/projects/ISC/"@).
    Example
     isc (sqrt 2*pi)
+///
+
+-- oeis function
+TEST ///
+oeis {1,3,31,1145}
+instance(oeis {1,3,31,1145}, MarkUpType)
+///
+
+-- oeis options
+TEST ///
+L = apply(5,n->n!);
+oeis (L,Limit=>5);
+x= #oeis (L,Limit=>5)
+assert(x<=5)
+oeis (L,Limit=>1,Position=>2);
+y= #oeis (L,Limit=>1,Position=>2)
+assert(y==1)
 ///

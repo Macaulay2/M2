@@ -4,8 +4,7 @@ newPackage(
     	Version => "1.0", 
     	Date => "February, 2008",
     	Authors => {{Name => "Daniel R. Grayson", 
-		  Email => "dan@math.uiuc.edu", 
-		  HomePage => "http://www.math.uiuc.edu/~dan/"}},
+		  HomePage => "https://www.graysonfamily.org/dan/"}},
     	Headline => "uniformization of elliptic curves",
 	Keywords => {"Complex Analytic Geometry", "Numerical Algebraic Geometry"},
 	PackageImports => {"Varieties"},
@@ -377,7 +376,7 @@ assert( D.log D {4,-18,1} === .3699194819486195528952431359596266496086624767821
 assert( D.periodCoordinates D.log D {4,-18,1} === {1./4,0.} );
 assert( D.periodCoordinates D.log D {-8,12,1} === {1./8,-1./2} );
 assert( D.Period === .14796779277944782115809725438385065984346499071284989007712207p200e1 )
-assert( D.Period' === toCC(.0p200,-.99348185850601324739329990214047552905027815853831220628647471p200) )
+assert( D.Period' === toCC(.2373891936439949686868310567390489288555241458404986241569945p200e-65,-.99348185850601324739329990214047552905027815853831220628647471p200) )
  -* actually, the paper has the complex conjugate of this period ... *-
 ///
 

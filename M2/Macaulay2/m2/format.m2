@@ -20,13 +20,16 @@ needs "nets.m2"
 -- Common utilities for formatting documentation nodes
 -----------------------------------------------------------------------------
 
+-- skip Options; TODO: define parser Option := null instead
+nooptsnull := x -> select(x,e -> class e =!= Option and class e =!= OptionTable and class e =!= Nothing)
+
 -- Macro for setting default parsing of type T
 -- When writing a new formatting tool, call setupRenderer to create the default
 -- parsing for Hypertext, then use the examples provided below to test rendering
 -- of individual subtypes.
 setupRenderer = (parser, joiner, T) -> (
-    parser T := node -> joiner apply(node,
-	subnode -> if class subnode =!= Option and class subnode =!= OptionTable then parser subnode))
+    parser T := node -> joiner apply(nooptsnull node,
+	parser))
 
 -- Default joiners: (TODO: move to string.m2?)
 -- concatenate
@@ -46,8 +49,6 @@ wrapHorizontalJoin := x -> wrap horizontalJoin' x
 -- Hypertext  > HypertextParagraph, HypertextContainer
 -- MarkUpType > IntermediateMarkUpType
 
--- skip Options; TODO: define parser Option := null instead
-noopts := x -> select(x,e -> class e =!= Option and class e =!= OptionTable)
 
 -----------------------------------------------------------------------------
 -- Setup uniform rendering
@@ -171,7 +172,7 @@ scan({net, info},
 	))
 
 Hop := (op,filler) -> x -> (
-     r := horizontalJoin apply(noopts x,op);
+     r := horizontalJoin apply(nooptsnull x,op);
      if width r === 1 then r = horizontalJoin(r," ");
      r || concatenate( width r : filler ) )
 net  HEADER1 := Hop(net, "*")
@@ -187,20 +188,20 @@ net CODE  :=
 net SAMP  :=
 info TT   :=
 info SAMP :=
-info CODE :=  x -> horizontalJoin' apply(noopts x,net)
+info CODE :=  x -> horizontalJoin' apply(nooptsnull x,net)
 
 net  KBD :=
-info KBD := x -> formatNoEscaping toString horizontalJoin' apply(noopts x,net)
+info KBD := x -> formatNoEscaping toString horizontalJoin' apply(nooptsnull x,net)
 
 info PRE  := x ->
-    wrap(printWidth, "-", concatenate apply(noopts x,toString @@ info))
+    wrap(printWidth, "-", concatenate apply(nooptsnull x,toString @@ info))
 
 net TH := Hop(net, "-")
 
 ULop := op -> x -> (
      s := "  * ";
      printWidth = printWidth - #s;
-     r := stack apply(toList noopts x, i -> s | op i);
+     r := stack apply(toList nooptsnull x, i -> s | op i);
      printWidth = printWidth + #s;
      r)
 info UL := ULop info
@@ -217,13 +218,13 @@ OLop := op -> x -> (
 info OL := OLop info
 net  OL := OLop net
 
-info DL := x -> stack apply(noopts x, info)
-net  DL := x -> stack apply(noopts x, net)
+info DL := x -> stack apply(nooptsnull x, info)
+net  DL := x -> stack apply(nooptsnull x, net)
 
-info DD := x -> "    " | horizontalJoin apply(noopts x, info)
-net  DD := x -> "    " | horizontalJoin apply(noopts x, net)
+info DD := x -> "    " | horizontalJoin apply(nooptsnull x, info)
+net  DD := x -> "    " | horizontalJoin apply(nooptsnull x, net)
 
-opSU := (op,n) -> x -> (horizontalJoin apply(noopts x, op))^n
+opSU := (op,n) -> x -> (horizontalJoin apply(nooptsnull x, op))^n
 net  SUP := opSU(net, 1)
 info SUP := opSU(info,1)
 net  SUB := opSU(net, -1)
@@ -250,13 +251,13 @@ net TABLE :=  x -> (
      (op,ag) := override(options TABLE, toSequence x);
      save := printWidth;
      printWidth = printWidth - 2;
-     r := netList(Boxes => op#"class" === "examples", HorizontalSpace => 2, noopts \ toList \ toList sequence ag);
+     r := netList(Boxes => op#"class" === "examples", HorizontalSpace => 2, nooptsnull \ toList \ toList sequence ag);
      printWidth = save;
      r)
 info TABLE := x -> (
      s := printWidth;
      if printWidth > 2 then printWidth = printWidth - 2;
-     ret := netList(Boxes=>true, applyTable(noopts \ toList \ noopts \\ toList x,info));
+     ret := netList(Boxes=>true, applyTable(nooptsnull \ toList \ nooptsnull \\ toList x,info));
      printWidth = s;
      ret)
 
@@ -288,7 +289,7 @@ infoTagConvert DocumentTag := tag -> (
 
 -- TODO: can this be simplified?
 -- checking if doc is missing can be very slow if node is from another package
-info TO  := x -> info TO2{x#0, format x#0 | if x#?1 then x#1 else ""}
+info TO  := x -> info TO2 x
 info TO2 := x -> (
      tag := fixup x#0;
      if isMissingDoc tag or isUndocumented tag then concatenate(x#1, " (missing documentation)")

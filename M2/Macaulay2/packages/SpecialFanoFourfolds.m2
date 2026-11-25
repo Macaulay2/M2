@@ -9,8 +9,8 @@
 
 newPackage(
     "SpecialFanoFourfolds",
-    Version => "2.8",
-    Date => "Apr 13, 2026",
+    Version => "2.8.1",
+    Date => "November 22, 2026",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -34,16 +34,7 @@ newPackage(
 	}
 )
 
-requiredMultiprojectiveVarietiesVersion := "2.7.1";
-if MultiprojectiveVarieties.Options.Version < requiredMultiprojectiveVarietiesVersion then (
-    <<endl<<"Your version of the MultiprojectiveVarieties package is outdated (required version "<<requiredMultiprojectiveVarietiesVersion<<" or newer);"<<endl;
-    <<"you can manually download the latest version from"<<endl;
-    <<"https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages."<<endl;
-    <<"To automatically download the latest version of MultiprojectiveVarieties in your current directory,"<<endl;
-    <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
-    <<///run "curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2";///<<endl<<endl<<"***"<<endl;
-    error("required MultiprojectiveVarieties package version "|requiredMultiprojectiveVarietiesVersion|" or newer");
-);
+if MultiprojectiveVarieties.Options.Version < "2.7.2" then error "the package MultiprojectiveVarieties is outdated (required version 2.7.2 or newer); see updatePackage";
 
 export{
     "HodgeSpecialFourfold",
@@ -81,7 +72,12 @@ export{
     "beauvilleMap",
     "polarizedK3surface",
     "latticePolarization",
-    "swap"
+    "swap",
+    "example",
+    "texTables",
+    "OpenPDF",
+    "localExamplesArchive",
+    "updatePackage"
 }
 
 needsPackage "IntegralClosure"; -- for method: normalization
@@ -111,11 +107,15 @@ load "./SpecialFanoFourfolds/contractionMaps.m2";
 
 load "./SpecialFanoFourfolds/mirrorFourfolds.m2";
 
+load "./SpecialFanoFourfolds/LatticePolarizations.m2";
+
 load "./SpecialFanoFourfolds/LatticePolarizedK3.m2";
 
 load "./SpecialFanoFourfolds/examples.m2";
 
 load "./SpecialFanoFourfolds/utils.m2";
+
+load "./SpecialFanoFourfolds/LatexTables.m2";
 
 load "./SpecialFanoFourfolds/HodgeSpecialSurfaces.m2";
 

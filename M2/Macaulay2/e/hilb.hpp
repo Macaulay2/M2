@@ -1,14 +1,14 @@
 // Copyright 1996 Michael E. Stillman
 
-#ifndef _hilb_hh_
-#define _hilb_hh_
+#ifndef M2_HILB_HH_
+#define M2_HILB_HH_
 
 // Computation of Hilbert functions via Bigatti's (et al) algorithm.
 
 #include "hash.hpp"       // for MutableEngineObject
 #include "monoid.hpp"     // for Monoid, monomial
 #include "newdelete.hpp"  // for gc_vector, our_new_delete
-#include "ringelem.hpp"   // for ring_elem
+#include "rings/ringelem.hpp"   // for ring_elem
 
 class FreeModule;
 class Matrix;

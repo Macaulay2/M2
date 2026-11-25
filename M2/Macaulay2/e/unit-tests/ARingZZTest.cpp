@@ -8,8 +8,8 @@
 #include <gtest/gtest.h>
 #include <mpfr.h>
 
-#include "aring-zz-flint.hpp"
-#include "ARingTest.hpp"
+#include "basic-rings/aring-ZZ-flint.hpp"
+#include "unit-tests/ARingTest.hpp"
 
 extern gmp_ZZ getRandomInteger();
 

@@ -176,15 +176,18 @@ import realpath(filename:string):(null or string);
 import readDirectory(name:string):(null or array(string));
 import strncmp(s:string,t:string,n:int):int;
 import history():array(string);
-import getHistory(n:int):charstar;
-import addHistory(s:charstar):void;
 import appendHistory(n:int,f:charstar):int;
 import readHistory(f:charstar):int;
 import historyLength():int;
 import chdir(name:string):int;
 import initReadlineVariables():void;
 import handleInterruptsSetup(handleInterrupts:bool):void;
-export segmentationFault():void := Ccode(void, "*((int*)1)=0"); -- for debugging our handling of segmentation faults
+export segmentationFault():void := Ccode(void, "
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored \"-Warray-bounds\"
+*((int*)1)=0;
+#pragma GCC diagnostic pop
+(void)0"); -- for debugging our handling of segmentation faults
 import isReady(fd:int):int;
 import hasException(fd:int):int;
 

@@ -30,11 +30,11 @@ cut out by 5 hypersurfaces of degrees 2^1 3^4
 X = apply(strIn,cubicFourfold);
 -- X = apply(strIn,x -> cubicFourfold(x,InputCheck=>10,Verbose=>true));
 assert all(X,x -> x.cache#?(surface x,"label"));
-assert(concatenate apply(X,x -> toString describe x | newline) == strOut);
+assert(concatenate apply(X,x -> toString net describe x | newline) == strOut);
 Y = apply(X,x -> cubicFourfold surface x);
 assert all(Y,y -> not y.cache#?(surface y,"label"));
 assert(apply(Y,discriminant) == {14,14,26,26,38,42,48});
-assert(concatenate apply(Y,y -> toString describe y | newline) == strOut);
+assert(concatenate apply(Y,y -> toString net describe y | newline) == strOut);
 assert(parameterCount(Y_0,Verbose=>true) == (1, (25, 35, 5)) and parameterCount(Y_1,Verbose=>true) == (1, (28, 29, 2)));
 ///
 
@@ -42,18 +42,18 @@ TEST /// -- Test 1 (1/2) -- GM fourfolds from strings: describe, discriminant, p
 strIn := {"sigma-plane", "rho-plane", "tau-quadric"};
 strOut := "Special Gushel-Mukai fourfold of discriminant 10('')
 containing a plane
-and with class in G(1,4) given by s_(3,1)
+whose class in G(1,4) is s_(3,1)
 Type: ordinary
 (case 6 of Table 1 in arXiv:2002.07026)
 Special Gushel-Mukai fourfold of discriminant 12
 containing a plane
-and with class in G(1,4) given by s_(2,2)
+whose class in G(1,4) is s_(2,2)
 Type: ordinary
 (case 9 of Table 1 in arXiv:2002.07026)
 Special Gushel-Mukai fourfold of discriminant 10(')
 containing a surface of degree 2 and sectional genus 0
 cut out by 6 hypersurfaces of degrees 1^5 2^1 
-and with class in G(1,4) given by s_(3,1)+s_(2,2)
+whose class in G(1,4) is s_(3,1)+s_(2,2)
 Type: ordinary
 (case 1 of Table 1 in arXiv:2002.07026)
 ";
@@ -72,19 +72,19 @@ strIn := {"cubic scroll", "quintic del Pezzo surface", "general GM 4-fold of dis
 strOut := "Special Gushel-Mukai fourfold of discriminant 12
 containing a surface of degree 3 and sectional genus 0
 cut out by 7 hypersurfaces of degrees 1^4 2^3 
-and with class in G(1,4) given by 2*s_(3,1)+s_(2,2)
+whose class in G(1,4) is 2*s_(3,1)+s_(2,2)
 Type: ordinary
 (case 7 of Table 1 in arXiv:2002.07026)
 Special Gushel-Mukai fourfold of discriminant 10('')
 containing a surface of degree 5 and sectional genus 1
 cut out by 8 hypersurfaces of degrees 1^3 2^5 
-and with class in G(1,4) given by 3*s_(3,1)+2*s_(2,2)
+whose class in G(1,4) is 3*s_(3,1)+2*s_(2,2)
 Type: ordinary
 (case 4 of Table 1 in arXiv:2002.07026)
 Special Gushel-Mukai fourfold of discriminant 20
 containing a surface of degree 9 and sectional genus 2
 cut out by 19 hypersurfaces of degree 2
-and with class in G(1,4) given by 6*s_(3,1)+3*s_(2,2)
+whose class in G(1,4) is 6*s_(3,1)+3*s_(2,2)
 Type: ordinary
 (case 17 of Table 1 in arXiv:2002.07026)
 ";
@@ -102,7 +102,7 @@ assert(parameterCount(Y_1,Verbose=>true) == (1, (24, 18, 3)));
 TEST /// -- Test 3 -- 21 examples from GMtables
 X = for i from 1 to 21 list (
    A = GMtables(i,ZZ/65521);
-   time gushelMukaiFourfold((rationalMap(ideal A_0,Dominant=>2)) ideal A_1,InputCheck=>0)
+   time gushelMukaiFourfold((legacyRationalMap(ideal A_0,Dominant=>2)) ideal A_1,InputCheck=>0)
 );
 S = apply(X,x -> surface x);
 assert(apply(X,x -> degree surface x) === {2, 4, 14, 5, 9, 1, 3, 7, 1, 10, 10, 14, 12, 8, 9, 11, 9, 7, 10, 4, 12});
@@ -209,7 +209,7 @@ for a in {(1,0),(2,0),(3,0),(4,0),(5,0),(5,1)} do (
     E := curvesOnSurface(S,d,g);
     assert(#E>0);
     for C in E do (
-        <<"(d,g) = "<<(d,g)<<", curve: "<<? ideal C<<endl;
+        <<"(d,g) = "<<(d,g)<<", curve: "<< (? C) <<endl;
         assert(degree C == d and sectionalGenus C == g);
         B := glueScroll C;
         assert(dim B == 3 and degree B == 3 and degrees B == {({1},1),({2},3)} and isSubset(C,S*B));
@@ -242,18 +242,18 @@ s1 = "Special cubic fourfold of discriminant 14
 containing a rational surface of degree 4 and sectional genus 0
 cut out by 6 hypersurfaces of degree 2
 K3 status: [▓▓▓░░ / ▓▓▓▓▓]
-Mirror fourfold: hypersurface in PP^5 of degree 2
-Surface U of degree 10, sectional genus 7, χ(O_U) = 2, cut out by 7 hypersurfaces of degrees 2^1 3^6 ";
+Mirror fourfold: quadric hypersurface in PP^5
+Surface U: surface of degree 10 and sectional genus 7 cut out by 7 hypersurfaces of degrees 2^1 3^6, χ(O_U) = 2";
 assert(toString describe X === s1)
 associatedK3surface X
 s2 = "Special cubic fourfold of discriminant 14
 containing a rational surface of degree 4 and sectional genus 0
 cut out by 6 hypersurfaces of degree 2
 K3 status: [▓▓▓▓▓ / ▓▓▓▓▓]
-Mirror fourfold: hypersurface in PP^5 of degree 2
-Surface U of degree 10, sectional genus 7, χ(O_U) = 2, cut out by 7 hypersurfaces of degrees 2^1 3^6 
+Mirror fourfold: quadric hypersurface in PP^5
+Surface U: surface of degree 10 and sectional genus 7 cut out by 7 hypersurfaces of degrees 2^1 3^6, χ(O_U) = 2
 Exceptional curves: an irreducible conic curve
-Minimal K3 surface Ũ: degree 14 and sectional genus 8 in PP^8 cut out by 15 hypersurfaces of degree 2";
+Minimal K3 surface Ũ: surface in PP^8 of degree 14 and sectional genus 8 cut out by 15 hypersurfaces of degree 2";
 assert(toString describe X === s2)
 ///
 
@@ -290,8 +290,8 @@ debug SpecialFanoFourfolds;
 (B,V,C) = GMtables(1,ZZ/65521);
 assert(B * V == C and dim C == 1)
 X = specialFourfold(B & V);
-assert(surfaceIntersectionNumber X == 1)
-assert(latticeIntersectionMatrix3x3 X == matrix {{3, 3, 2}, {3, 7, 1}, {2, 1, 4}})
+t = genRingIntMatr3x3()
+assert(latticeIntersectionMatrix3x3 X == matrix {{3, 3, 2}, {3, 7, t}, {2, t, 4}})
 ///
 
 TEST /// -- test 21 DSCF
@@ -309,6 +309,7 @@ TEST /// -- test 22 DSCF
 debug SpecialFanoFourfolds;
 L = discoverCubicFourfoldsInC8({4,4,3,2,1},1,4,5,7,"test_file",true,300,{});
 assert(apply(L,discriminant) == {14, 20, 24, 32, 38})
+assert(apply(L, X -> det latticeIntersectionMatrix3x3 X) == {29, 37, 37, 45, 45})
 assert(fileExists "test_file.txt" and fileExists "test_file_commands.m2")
 removeFile "test_file.txt"
 removeFile "test_file_commands.m2"
@@ -398,11 +399,87 @@ T = polarizedK3surface polarizedK3surface X;
 assert(computationStatus T == 4)
 f = map(T,1,1);
 assert(source f === projectiveVariety T and dim ambient source f == 4 and dim ambient target f == 8)
-E = T(1,1);
-assert(E === image f and degree E == 14 and sectionalGenus E == 8)
-assert((latticePolarization T)(1,1) === E)
+E = image f;
+assert(dim E == 2 and degree E == 14 and sectionalGenus E == 8)
 T' = polarizedK3surface(T,Strategy=>"MapFromU-Virtual")
 assert(computationStatus T == 3)
 assert instance(T'(1,1),LatticePolarizationOnK3Surface)
-assert((polarizedK3surface(T,Strategy=>"SpecialCurve"))(1,1) === E)
+Y = toExternalString X;
+assert(#Y > 10000)
+Y = value Y;
+assert(recognizeDSCF Y === "DSCF-V1-6")
+assert(sanityCheckDSCF polarizedK3surface Y)
+///
+
+TEST /// -- test 29 isAdmissible
+-- The admissible discriminants of special cubic fourfolds in [0,150]
+-- match the known list (cf. Hassett's classification): 14, 26, 38, 42, 62,
+-- 74, 78, 86, 98, 114, 122, 134, 146.
+assert(select(150, isAdmissible) == {14, 26, 38, 42, 62, 74, 78, 86, 98, 114, 122, 134, 146});
+assert(isAdmissible 14);
+assert(not isAdmissible 6);    -- d must exceed 6
+assert(not isAdmissible 7);    -- d must be even
+assert(not isAdmissible 8);    -- d % 4 must be nonzero
+assert(not isAdmissible 18);   -- d % 9 must be nonzero
+///
+
+TEST /// -- test 30 isAdmissibleGM
+-- The admissible discriminants of Gushel-Mukai fourfolds in [0,150]
+-- match the known list.
+assert(select(150, isAdmissibleGM) == {10, 20, 26, 34, 50, 52, 58, 68, 74, 82, 100, 106, 116, 122, 130, 146, 148});
+assert(isAdmissibleGM 10);
+assert(isAdmissibleGM 20);
+assert(not isAdmissibleGM 8);   -- d must exceed 8
+assert(not isAdmissibleGM 12);  -- a small prime in d with the wrong residue mod 4
+assert(not isAdmissibleGM 16);  -- d % 8 must not be 0
+///
+
+TEST /// -- test 31 -- K3 surface of genus 2
+X = specialFourfold surface((2,0),(1,0));
+E = polarizedK3surface polarizedK3surface(X,Strategy=>"Genus2Curve")
+assert(genus E == 4 and degree E == 6 and degree surface E == 6)
+E' = E(1,0,Verbose=>true)
+assert(genus E' == 4 and degree E' == 6 and degree surface E' == 6)
+E'' = E'(0,1)
+assert(genus E'' == 2 and degree E'' == 2 and degree surface E'' == 6 and degrees ring ambient surface E'' === {{1},{1},{1},{3}})
+f = last building E'';
+(f1,f2,f3) = toSequence f.cache#"CompositionFactors";
+vf = value f;
+assert(vf == f1 * f2 * f3)
+assert(source f === (building E)_1 and target f === surface E'')
+(p,q) := (point source f,point target f)
+assert(p == f^* f p and q == f f^* q)
+assert(p == vf^* vf p and q == vf vf^* q)
+assert(E'(2,Verbose=>false) === E'')
+L'' = latticePolarization E''
+h = map(L'',1,1)
+assert(instance(h,WeightedRationalMap) and dim target h == 12)
+g = quadricFibration map(L'',1,0);
+assert(dim target g == 2 and dim discriminant g == 1 and degree discriminant g == 6 and dim singularLocus discriminant g == -1)
+///
+
+TEST /// -- test 32 -- texTable
+debug SpecialFanoFourfolds;
+checkTexTable = F -> (
+    if findProgram("pdflatex",RaiseError=>false) === null then return;
+    texTableRaw(F,OpenPDF=>false);
+    assert fileExists "tableK3.pdf";
+    removeFile "tableK3.pdf";
+    texTableRaw(F,"IncludeK3Info"=>false,OpenPDF=>false);
+    assert fileExists "tableAll.pdf";
+    removeFile "tableAll.pdf";
+    if instance(F_0,IntersectionOfThreeQuadricsInP7) then associatedCastelnuovoSurface F_0 else associatedK3surface F_0;
+    if instance(F_0,DoublySpecialCubicFourfold) then polarizedK3surface F_0;
+    apply(F,parameterCount);
+    texTableRaw(F,OpenPDF=>false);
+    assert fileExists "tableK3.pdf";
+    removeFile "tableK3.pdf";
+    texTableRaw(F,"IncludeK3Info"=>false,OpenPDF=>false);
+    assert fileExists "tableAll.pdf";
+    removeFile "tableAll.pdf";
+);
+checkTexTable {cubicFourfold "quartic scroll", cubicFourfold(PP_(ZZ/65521)^(2,2))};
+checkTexTable {specialFourfold "plane in PP^7"};
+X = specialFourfold surface((2,0,0),(1,0,0));
+checkTexTable {X,X}
 ///

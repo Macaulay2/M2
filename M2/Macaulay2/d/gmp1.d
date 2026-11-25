@@ -145,7 +145,19 @@ export format(
 	  concatenate(
 	       array(string)(
 		    if pt == 0 then "." else "",
-		    if l == 0 then "" else new string len l do provide '0',
+		    -- GCC incorrectly infers a zero-size region from the "" branch of
+		    -- this if-else and spuriously warns about the new string allocation.
+		    if l == 0 then "" else (
+			Ccode(void, "
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored \"-Warray-bounds\"
+#pragma GCC diagnostic ignored \"-Wstringop-overflow\"
+(void)0");
+			r := new string len l do provide '0';
+			Ccode(void, "
+#pragma GCC diagnostic pop
+(void)0");
+			r),
 		    substr(mantissa,0,pt),
 		    if pt > 0 && pt < manlen then "." else "",
 		    substr(mantissa,pt,manlen-pt),

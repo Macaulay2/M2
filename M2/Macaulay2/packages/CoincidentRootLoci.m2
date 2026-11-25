@@ -1,20 +1,20 @@
 
-if version#"VERSION" < "1.15" then error "this package requires Macaulay2 version 1.15 or newer";
-
 newPackage(
-       "CoincidentRootLoci",
-	Version => "0.1.3", 
-        Date => "January 30, 2021",
-    	Headline => "coincident root loci",
-        Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
-	Keywords => {"Real Algebraic Geometry", "Interfaces"},
-        PackageExports => {"Cremona","Resultants"},
-        DebuggingMode => false,
-        AuxiliaryFiles => true,
-        OptionalComponentsPresent => try get "!qepcad -h 2>&1" then true else false,
-        CacheExampleOutput => false,
-        Reload => false
+   "CoincidentRootLoci",
+   Version => "0.1.4", 
+   Date => "November 22, 2026",
+   Headline => "coincident root loci",
+   Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it"}},
+   Keywords => {"Real Algebraic Geometry", "Interfaces"},
+   PackageExports => {"Cremona","Resultants"},
+   DebuggingMode => false,
+   AuxiliaryFiles => true,
+   OptionalComponentsPresent => try get "!qepcad -h 2>&1" then true else false,
+   CacheExampleOutput => false,
+   Reload => false
 )
+
+if Cremona.Options.Version < "5.3.0" then error "the package Cremona is outdated (required version 5.3.0 or newer); see updatePackage";
 
 export{"apolar",
        "recover",
@@ -69,9 +69,9 @@ coincidentRootLocus Thing := o -> LK -> (
    y := local y; F := P1d[y_0,y_1];
    g := for i to d-1 list flatten entries sub(vars R_i,P1d);
    s := switch1 product apply(d,j->(switch1(g_j,F))^(lambda_j));
-   phi := rationalMap(ring matrix {s},Grass(0,n,K,Variable=>o.Variable),s);
+   phi := legacyRationalMap(ring matrix {s},Grass(0,n,K,Variable=>o.Variable),s);
    if n <= 7 then forceImage(phi,idealCRL_lambda gens target phi);
-   phi2 := if class phi === RationalMap then phi else parametrize(phi,getSymbol toString(o.Variable));
+   phi2 := if instance(phi,LegacyRationalMap) then phi else parametrize(phi,getSymbol toString(o.Variable));
    if phi#"idealImage" =!= null and phi2#"idealImage" === null then forceImage(phi2,image phi);
    multiplicities := for i to n list #select(lambda,e -> e == i);
    X := new CoincidentRootLocus from {
@@ -597,7 +597,7 @@ apolar (ZZ,ZZ,Ring) := o -> (n,s,K) -> (-- apolar map P^n --> G(2*s-n-1,s,K)  ~ 
    if n > 2*s then error "expected integers n,s with n < 2*s+1";
    Pn := Grass(0,n,K,Variable=>o.Variable);
    H := catalecticantMatrix(Pn,s);
-   f := rationalMap dualize map rationalMap(Pn,Grass(n-s,s,K,Variable=>o.Variable),gens minors(n-s+1,H));
+   f := legacyRationalMap dualize map legacyRationalMap(Pn,Grass(n-s,s,K,Variable=>o.Variable),gens minors(n-s+1,H));
    assert(target f === Grass(2*s-n-1,s,K,Variable=>o.Variable));
    f
 );
@@ -849,7 +849,7 @@ projectiveJoin (Thing) := o -> U -> (
     if #U == 0 then return;
     if apply(U,class) === (#U):RingMap
     then return joinOfAffineParameterizations(U,SubringLimit=>o.SubringLimit) 
-    else if apply(U,class) === (#U):RationalMap
+    else if all(U,u -> instance(u,LegacyRationalMap))
     then return joinOfParameterizations(U,SubringLimit=>o.SubringLimit) 
     else if apply(U,class) === (#U):Ideal 
     then (
@@ -888,7 +888,7 @@ joinOfParameterizations (Thing) := o -> U -> (
     U = sequence U;
     r := #U-1;
     if r == -1 then return;
-    if apply(U,class) =!= (r+1):RationalMap then error "expected a sequence of rational maps";
+    if not all(U,u -> instance(u,LegacyRationalMap)) then error "expected a sequence of rational maps";
     if # unique apply(U,target) > 1 then error "expected maps with the same target";
     ringPN := target first U;
     if not isPolynomialRing ringPN then error "expected maps between projective spaces";
@@ -1018,7 +1018,7 @@ switch (List) := (L) -> switch2 switch1 L;
 
 pairingIsomorphism = method()
 
-pairingIsomorphism (Ring) := (R) -> inverse rationalMap for i to numgens R -1 list binomial(numgens R -1,i) * (gens R)_i;
+pairingIsomorphism (Ring) := (R) -> inverse legacyRationalMap for i to numgens R -1 list binomial(numgens R -1,i) * (gens R)_i;
 
 pairingIsomorphism (Ideal) := (I) -> (pairingIsomorphism ring I) I;
 

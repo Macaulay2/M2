@@ -1,0 +1,21 @@
+-- -*- M2-comint -*- hash: 4180291041213606841
+
+i1 : R = QQ[x,y];
+
+i2 : F = {x^2 + 1, x * y, y - 1};
+
+i3 : (U,W) = ({12, 23, 25}, {15, 331, 1});
+
+i4 : UED = parameterizedUnitEDDegree F
+
+o4 = 7
+
+i5 : GED = parameterizedGenericEDDegree F
+
+o5 = 7
+
+i6 : GED = parameterizedWeightEDDegree(F, U, W)
+
+o6 = 7
+
+i7 : 

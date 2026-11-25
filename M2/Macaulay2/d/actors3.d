@@ -96,6 +96,17 @@ override(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("override",override);
 -----------------------------------------------------------------------------
+EqualEqualfunpointer := dummyEE;
+listComparison(s:Sequence, t:Sequence):Expr := (
+    n := length(s);
+    if n == length(t) then (
+	for i from 0 to n - 1 do (
+	    ret := EqualEqualfunpointer(s.i, t.i);
+	    when ret is Error do return ret else nothing;
+	    if ret == False then return False);
+	True)
+    else False);
+
 equalmethod(x:Expr,y:Expr):Expr := (
      method := lookupBinaryMethod(Class(x),Class(y),EqualEqualS);
      if method == nullE 
@@ -177,36 +188,28 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 	  when y 
 	  is yy:stringCell do toExpr(xx.v === yy.v)	 -- # typical value: symbol ==, String, String, Boolean
 	  else equalmethod(x,y))
-     is s:Sequence do when y is t:Sequence do (				 -- # typical value: symbol ==, Sequence, Sequence, Boolean
-	  if length(s) != length(t) then return False;
-	  for i from 0 to length(s)-1 do (
-	       ret := EqualEqualfun(s.i,t.i);
-	       when ret is Error do return ret else nothing;
-	       if ret == False then return False;
-	       );
-	  True
-	  ) else equalmethod(x,y)
+     is s:Sequence do (
+	 when y
+	 is t:Sequence do listComparison(s, t)           -- # typical value: symbol ==, Sequence, Sequence, Boolean
+	 is List do WrongArg("lists of the same class")
+	 else equalmethod(x, y))
      else equalmethod(x,y));
+EqualEqualfunpointer = EqualEqualfun;
 listComparison(e:Expr):Expr := (
-     when e 
-     is args:Sequence do if length(args) != 2 then WrongNumArgs(2) else (
-	  when args.0 is a:List do
-	  when args.1 is b:List do (
-	       if a.Class != b.Class then return False;
-	       s := a.v;
-	       t := b.v;
-	       if length(s) != length(t) then return False;
-	       for i from 0 to length(s)-1 do (
-		    ret := EqualEqualfun(s.i,t.i);
-		    when ret is Error do return ret else nothing;
-		    if ret == False then return False;
-		    );
-	       True
-	       )
-	  else WrongArg(2,"a visible list")
-	  else WrongArg(1,"a visible list")
-	  )
-     else WrongNumArgs(2));
+    when e
+    is args:Sequence do (
+	if length(args) == 2 then (
+	    when args.0 is a:List do (
+		when args.1
+		is b:List do (
+		    if a.Class != b.Class
+		    then WrongArg("lists of the same class")
+		    else listComparison(a.v, b.v))
+		is Sequence do WrongArg("lists of the same class")
+		else WrongArg(2,"a visible list"))
+	    else WrongArg(1,"a visible list"))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
 installMethod(EqualEqualS,visibleListClass,visibleListClass,listComparison);
 EqualEqualfun(lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);
@@ -499,8 +502,8 @@ subsort(l:int,r:int):Expr := (
 	       sortlist.j = tmp;
 	       i = i+1;
 	       j = j-1));
-     if l+1 < j then subsort(l+1,j);
-     if j+1 < r then subsort(j+1,r);
+     if l+1 < j then when subsort(l+1,j) is e:Error do return Expr(e) else nothing;
+     if j+1 < r then when subsort(j+1,r) is e:Error do return Expr(e) else nothing;
      for k from l+1 to j do sortlist.(k-1) = sortlist.k;
      sortlist.j = pivot;
      nullE);
@@ -636,7 +639,7 @@ mergepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
 	       else return WrongArg(1,"a list of pairs"));
 	  if n < length(x)+length(y)
 	  then z = new Sequence len n do foreach a in z do provide a;
-	  Expr(sethash(List(commonAncestor(xl.Class,yl.Class), z,hash_t(0),false),xl.Mutable | yl.Mutable)))
+	  list(commonAncestor(xl.Class,yl.Class), z, xl.Mutable | yl.Mutable))
      else WrongArg(2,"a list")
      else WrongArg(1,"a list"));
 mergepairsfun(e:Expr):Expr := (
@@ -1605,11 +1608,7 @@ setupfun("sqrt",sqrt).Protected=false;
 export toSequence(e:Expr):Expr := (
      when e
      is Sequence do e
-     is b:List do (
-	  if b.Mutable
-	  then Expr(new Sequence len length(b.v) do foreach i in b.v do provide i)
-	  else Expr(b.v)
-	  )
+     is b:List do Expr(elements(b))
      is s:stringCell do Expr(strtoseq(s))
      else (
 	 iter := getIterator(e);
@@ -2111,7 +2110,7 @@ map(e:Expr,f:Expr):Expr := (
 --	  if obj.Mutable then return WrongArg("an immutable hash table");
 --	  if ancestor(obj.Class,VirtualTally) then mapkeys(f,obj) else mapvalues(f,obj))
      is b:List do (
-	  c := map(b.v,f);
+	  c := map(elements(b),f);
 	  when c is err:Error do if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else c
 	  is v:Sequence do list(b.Class,v,b.Mutable)
 	  else nullE			  -- will not happen
@@ -2622,7 +2621,7 @@ scan(e1:Expr,e2:Expr,f:Expr):Expr := (
 scan(e:Expr,f:Expr):Expr := (
      when e
      is a:Sequence do scan(a,f)
-     is b:List do scan(b.v,f)
+     is b:List do scan(elements(b),f)
      is i:ZZcell do (
 	  if !isInt(i)
 	  then WrongArgSmallInteger(1)

@@ -8,24 +8,23 @@ newPackage(
      Version => "1.21",
      Date => "Nov 2022",
      Headline => "straight line programs and algebraic circuits",
-     HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
+     HomePage => "https://antonleykin.math.gatech.edu/NAG4M2/",
      AuxiliaryFiles => true,
      Authors => {
 	  {Name => "Anton Leykin", 
 	      Email => "leykin@math.gatech.edu",
-	      HomePage => "https://people.math.gatech.edu/~aleykin3"
+	      HomePage => "https://antonleykin.math.gatech.edu/"
 	      },
 	  {Name => "Timothy Duff", 
-                Email => "tduff3@gatech.edu",
-                HomePage => "http://people.math.gatech.edu/~tduff3"
+                Email => "tduff@missouri.edu",
+                HomePage => "https://timduff35.github.io/timduff35/"
                 },
 	  {Name => "Justin Chen",
-                Email => "jchen646@math.gatech.edu",
-                HomePage => "https://people.math.gatech.edu/~jchen646"
+                HomePage => "https://sites.google.com/view/justinchenmath/home"
                 },
 	  {Name => "Mike Stillman", 
-                Email => "mike@math.cornell.edu", 
-                HomePage => "http://www.math.cornell.edu/~mike"
+                Email => "mikestillman1@gmail.com",
+                HomePage => "https://mikestillman.github.io"
                 }
 	  },
      Configuration =>  {},	
@@ -749,7 +748,15 @@ XpC = X+C+2
 XXC = productGate{X,X,C}
 detXCCX = detGate{{X,C},{C,X}}
 XoC = X/C
-cCode (matrix{{XXC,detXCCX,0},{XoC,1,2}},matrix{{X,C}})
+-- cCode emits a C function "void evaluate(...)" with one y[i] assignment per
+-- output gate; redirect to a temp file and check the structure of the output.
+fn = temporaryFileName() | ".c"
+f = openOut fn
+cCode(matrix{{XXC,detXCCX,0},{XoC,1,2}}, matrix{{X,C}}, f)
+close f
+s = get fn
+assert(match("void evaluate", s) =!= null)
+assert(match("y\\[0\\]", s) =!= null)
 ///
 
 --fill m x n matrix with values from another matrix
@@ -889,6 +896,32 @@ FY = value(diff(Y,F),h)
 assert ( value(compress diff(Y,G/F), h) == (GY*value(F,h) - value(G,h)*FY)/(value(F,h))^2 )
 ///
 
+TEST ///
+-- undeclareVariable reverses the effect of declareVariable on a Symbol: it
+-- restores the symbol's binding to itself (so its class returns to Symbol).
+declareVariable myVar
+assert(instance(myVar, InputGate))
+undeclareVariable myVar
+assert(instance(myVar, Symbol))
+assert(myVar === symbol myVar)
+///
+
+TEST ///
+-- constants returns the list of constant InputGates appearing in a gate
+-- expression; countGates returns a HashTable counting each gate class.
+X = inputGate symbol X
+C = inputGate symbol C
+D = detGate{{X,C},{C,X}}
+c1 = constants(3*D + 2*X)
+assert(instance(c1, List))
+assert(#c1 == 2)
+assert(#constants X == 0)
+assert(#constants gateMatrix{{D, 12*X}} == 1)
+ct = countGates matrix{{D, 12*X}}
+assert(instance(ct, HashTable))
+assert(ct#?DetGate and ct#?ProductGate and ct#?InputGate)
+assert(instance(countGates(X*X), HashTable))
+///
 
 ------------------------
 -- expression, net, html
@@ -986,12 +1019,6 @@ document {
 load "./SLPexpressions/doc.m2"
 
 undocumented {
-printAsSLP,
-(printAsSLP,GateMatrix,GateMatrix),
-(printAsSLP,List,List),
-cCode,
-(cCode,GateMatrix,GateMatrix),
-(cCode,List,List),
 constants,
 (constants,DetGate),
 (constants,DivideGate),
@@ -1006,12 +1033,6 @@ constants,
 (net,InputGate),
 (net,ProductGate),
 (net,SumGate),
-(support,DetGate),
-(support,DivideGate),
-(support,GateMatrix),
-(support,InputGate),
-(support,ProductGate),
-(support,SumGate)
     }
 
 end

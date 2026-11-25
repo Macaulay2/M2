@@ -1,22 +1,22 @@
 
 -*
-   Copyright 2020, Giovanni Staglianò.
+   Copyright 2020-2026, Giovanni Staglianò.
 
    You may redistribute this file under the terms of the GNU General Public
    License as published by the Free Software Foundation, either version 2 of
-   the License, or any later version.
+   the License, or (at your option) any later version.
 *-
 
 newPackage(
-       "Cremona",
-	Version => "5.2.1", 
-        Date => "January 18, 2023",
-    	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
-    	Headline => "rational maps between projective varieties",
-	Keywords => {"Algebraic Geometry"},
-        AuxiliaryFiles => true,
-	PackageImports => {"Varieties"},
-	Certification => {
+    "Cremona",
+    Version => "5.3.0", 
+    Date => "November 22, 2026",
+    Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
+    Headline => "rational maps between projective varieties",
+    Keywords => {"Algebraic Geometry"},
+    AuxiliaryFiles => true,
+    PackageImports => {"Varieties"},
+    Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "A Macaulay2 package for computations with rational maps",
@@ -29,7 +29,7 @@ newPackage(
 	     "volume number" => "8",
 	     "volume URI" => "https://msp.org/jsag/2018/8-1/"
 	     }
-	)
+)
 
 export{
    "ChernSchwartzMacPherson",
@@ -52,8 +52,8 @@ export{
    "specialCremonaTransformation",
    "quadroQuadricCremonaTransformation",
    "specialQuadraticTransformation",
-   "RationalMap",
-   "rationalMap",
+   "LegacyRationalMap",
+   "legacyRationalMap",
    "BlowUpStrategy",
    "forceInverseMap",
    "forceImage",
@@ -67,11 +67,11 @@ export{
 
 certificate := "Certify: output certified!"|newline;
 
-MultihomogeneousRationalMap = new Type of MutableHashTable;
-WeightedHomogeneousRationalMap = new Type of MultihomogeneousRationalMap; -- this isn't really a subtype
-RationalMap = new Type of MutableHashTable;
+LegacyMultihomogeneousRationalMap = new Type of MutableHashTable;
+LegacyWeightedHomogeneousRationalMap = new Type of LegacyMultihomogeneousRationalMap; -- this isn't really a subtype
+LegacyRationalMap = new Type of MutableHashTable;
 
-RationalMap.synonym = "rational map";
+LegacyRationalMap.synonym = "legacy rational map";
 
 ChernSchwartzMacPherson = method(TypicalValue => RingElement, Options => {Certify => false, BlowUpStrategy => "Eliminate", Verbose => true});
 SegreClass = method(TypicalValue => RingElement, Options => {Certify => false, BlowUpStrategy => "Eliminate", Verbose => true});
@@ -86,26 +86,26 @@ projectiveDegrees = method(TypicalValue => List, Options => {Certify => false, N
 toMap = method(TypicalValue => RingMap, Options => {Dominant => null});
 approximateInverseMap = method(Options => {Certify => false, CodimBsInv => null, Verbose => true});
 parametrize = method();
-specialCremonaTransformation = method(TypicalValue=>RationalMap);
-quadroQuadricCremonaTransformation = method(TypicalValue=>RationalMap);
-specialQuadraticTransformation = method(TypicalValue=>RationalMap);
-specialCubicTransformation = method(TypicalValue=>RationalMap);
-rationalMap = method(Options => {Dominant => null});
+specialCremonaTransformation = method(TypicalValue=>LegacyRationalMap);
+quadroQuadricCremonaTransformation = method(TypicalValue=>LegacyRationalMap);
+specialQuadraticTransformation = method(TypicalValue=>LegacyRationalMap);
+specialCubicTransformation = method(TypicalValue=>LegacyRationalMap);
+legacyRationalMap = method(Options => {Dominant => null});
 forceInverseMap = method(TypicalValue => Nothing);
 forceImage = method(TypicalValue => Nothing);
 point = method();
-segre = method(TypicalValue => RationalMap);
+segre = method(TypicalValue => LegacyRationalMap);
 abstractRationalMap = method();
 isMorphism = method(TypicalValue => Boolean);
 exceptionalLocus = method(TypicalValue => Ideal, Options => {Certify => false});
 
-rationalMap RingMap := o -> ((cacheValue (o.Dominant,"RationalMapAssociatedToRingMap")) (phi -> (
+legacyRationalMap RingMap := o -> ((cacheValue (o.Dominant,"RationalMapAssociatedToRingMap")) (phi -> (
     checkMultihomogeneousRationalMap phi;
     isStandardMap := all(degrees target phi,i -> i == {1}) and all(degrees source phi,i -> i == {1});
     isWeightedMap := (degreeLength target phi == 1 and max flatten degrees target phi >= 2) or (degreeLength source phi == 1 and max flatten degrees source phi >= 2);
     if (not isStandardMap) and (not isWeightedMap) and (o.Dominant =!= "notSimplify") then phi = simplifyMap phi;
     if (o.Dominant =!= null and o.Dominant =!= "notSimplify") then phi = toMap(phi,Dominant=>o.Dominant);
-    Phi := new (if isStandardMap then RationalMap else MultihomogeneousRationalMap) from {
+    Phi := new (if isStandardMap then LegacyRationalMap else LegacyMultihomogeneousRationalMap) from {
            "map" => phi,
            "maps" => null,
            "isDominant" => if o.Dominant === true or o.Dominant === infinity then true else null,
@@ -120,27 +120,27 @@ rationalMap RingMap := o -> ((cacheValue (o.Dominant,"RationalMapAssociatedToRin
            "dimSource" => max(dim source phi -1,-1),
            "blowUpIdeal" => null};
    if isWeightedMap then (
-       Phi = new WeightedHomogeneousRationalMap from Phi;
+       Phi = new LegacyWeightedHomogeneousRationalMap from Phi;
        if max flatten degrees target phi >= 2 then Phi#"dimAmbientTarget" = toSequence flatten degrees target phi;
        if max flatten degrees source phi >= 2 then Phi#"dimAmbientSource" = toSequence flatten degrees source phi;
    );
    return Phi;
 )));
-rationalMap (Matrix) := o -> (F) -> rationalMap(toMap(F,Dominant=>null),Dominant=>o.Dominant);
-rationalMap (List) := o -> (F) -> rationalMap(toMap(F,Dominant=>null),Dominant=>o.Dominant);
-rationalMap (Ideal) := o -> (I) -> rationalMap(toMap(I,Dominant=>null),Dominant=>o.Dominant);
-rationalMap (Ideal,ZZ) := o -> (I,d) -> rationalMap(toMap(I,d,Dominant=>null),Dominant=>o.Dominant);
-rationalMap (Ideal,List) := o -> (I,d) -> rationalMap(toMap(I,d,Dominant=>null),Dominant=>o.Dominant);
-rationalMap (Ideal,ZZ,ZZ) := o -> (I,d,e) -> rationalMap(toMap(I,d,e,Dominant=>null),Dominant=>o.Dominant);
-rationalMap (PolynomialRing,List) := o -> (R,L) -> ( -- undocumented
+legacyRationalMap (Matrix) := o -> (F) -> legacyRationalMap(toMap(F,Dominant=>null),Dominant=>o.Dominant);
+legacyRationalMap (List) := o -> (F) -> legacyRationalMap(toMap(F,Dominant=>null),Dominant=>o.Dominant);
+legacyRationalMap (Ideal) := o -> (I) -> legacyRationalMap(toMap(I,Dominant=>null),Dominant=>o.Dominant);
+legacyRationalMap (Ideal,ZZ) := o -> (I,d) -> legacyRationalMap(toMap(I,d,Dominant=>null),Dominant=>o.Dominant);
+legacyRationalMap (Ideal,List) := o -> (I,d) -> legacyRationalMap(toMap(I,d,Dominant=>null),Dominant=>o.Dominant);
+legacyRationalMap (Ideal,ZZ,ZZ) := o -> (I,d,e) -> legacyRationalMap(toMap(I,d,e,Dominant=>null),Dominant=>o.Dominant);
+legacyRationalMap (PolynomialRing,List) := o -> (R,L) -> ( -- undocumented
    try assert(ring matrix{L} === ZZ) else error "expected a list of integers";
    J := if unique L_{1..#L-1} === {0} or L_{1..#L-1} === {}
         then ideal vars R 
         else saturate intersect flatten for i from 1 to #L-1 list for j from 1 to L_i list (point R)^i;
-   rationalMap(J,L_0,Dominant=>o.Dominant)
+   legacyRationalMap(J,L_0,Dominant=>o.Dominant)
 );
-rationalMap RationalMap := rationalMap MultihomogeneousRationalMap := o -> Phi -> ( 
-     Psi := Phi * rationalMap(target Phi,ambient target Phi);
+legacyRationalMap LegacyRationalMap := legacyRationalMap LegacyMultihomogeneousRationalMap := o -> Phi -> ( 
+     Psi := Phi * legacyRationalMap(target Phi,ambient target Phi);
      if Phi#"projectiveDegrees" =!= {} then setKeyValue(Psi,"projectiveDegrees",Phi#"projectiveDegrees"); 
      if Phi#"degree" =!= null then setKeyValue(Psi,"degree",Phi#"degree"); 
      if Phi#"idealImage" =!= null then setKeyValue(Psi,"idealImage",trim(lift(image Phi,ambient source Phi#"map") + ideal(source Phi#"map")));   
@@ -163,24 +163,24 @@ rationalMap RationalMap := rationalMap MultihomogeneousRationalMap := o -> Phi -
      return Psi;
 );
 
-super RationalMap := super MultihomogeneousRationalMap := Phi -> if target Phi === ambient target Phi then Phi else rationalMap Phi;
+super LegacyRationalMap := super LegacyMultihomogeneousRationalMap := Phi -> if target Phi === ambient target Phi then Phi else legacyRationalMap Phi;
 
-rationalMap (Ring,Ring,Matrix) := o -> (R,S,F) -> (
+legacyRationalMap (Ring,Ring,Matrix) := o -> (R,S,F) -> (
      if not (isPolynomialRing ambient S) then error("the ambient rings must be polynomial rings");
      phi := map(R,ambient S,F);
      if not isHomogeneous ideal S then error "got quotient of polynomial ring by a non-homogeneous ideal";
      if phi(ideal S) != 0 then error "the map is not valid";
-     rationalMap(map(R,S,F),Dominant=>o.Dominant)
+     legacyRationalMap(map(R,S,F),Dominant=>o.Dominant)
 );
 
-rationalMap (Ring,Ring,List) := o -> (R,S,L) -> (
-     rationalMap(R,S,matrix{L},Dominant=>o.Dominant)
+legacyRationalMap (Ring,Ring,List) := o -> (R,S,L) -> (
+     legacyRationalMap(R,S,matrix{L},Dominant=>o.Dominant)
 );
 
-rationalMap (Ring,Ring) := o -> (R,S) -> (
+legacyRationalMap (Ring,Ring) := o -> (R,S) -> (
     if (numgens ambient R != numgens ambient S) then error "expected ambient rings to have the same dimension";
-    Phi := rationalMap(R,S,vars ambient R,Dominant=>o.Dominant);
-    if (isPolynomialRing R and isPolynomialRing S and instance(Phi,RationalMap)) then (
+    Phi := legacyRationalMap(R,S,vars ambient R,Dominant=>o.Dominant);
+    if (isPolynomialRing R and isPolynomialRing S and instance(Phi,LegacyRationalMap)) then (
          setKeyValue(Phi,"maps",{map Phi});
          setKeyValue(Phi,"isDominant",true);
          setKeyValue(Phi,"isBirational",true);
@@ -190,9 +190,9 @@ rationalMap (Ring,Ring) := o -> (R,S) -> (
     Phi
 );
 
-rationalMap (Ring) := o -> (R) -> rationalMap(R,R,Dominant=>o.Dominant);
+legacyRationalMap (Ring) := o -> (R) -> legacyRationalMap(R,R,Dominant=>o.Dominant);
 
-rationalMap (Ring,Tally) := o -> (R,E) -> ( 
+legacyRationalMap (Ring,Tally) := o -> (R,E) -> ( 
     if not isField coefficientRing R then error "the coefficient ring needs to be a field";
     if not ((isPolynomialRing R or isQuotientRing R) and isPolynomialRing ambient R and isHomogeneous ideal R) then error "the base ring must be a quotient of a polynomial ring by a homogeneous ideal";
     -- if # heft R =!= 1 then error "expected standard grading";
@@ -203,13 +203,13 @@ rationalMap (Ring,Tally) := o -> (R,E) -> (
     J := quotient(ideal I_0,I);
     d := first degrees I;
     if # heft R == 1 then d = first d;
-    rationalMap(J,d,Dominant=>o.Dominant)
+    legacyRationalMap(J,d,Dominant=>o.Dominant)
 );
 
-rationalMap (Tally) := o -> (E) -> ( 
+legacyRationalMap (Tally) := o -> (E) -> ( 
     R := unique for X in keys E list (if not instance(X,Ideal) then error "expected a tally of ideals"; ring X);
-    if #R == 1 or (#R == 2 and last R === ambient first R) then return rationalMap(first R,E,Dominant=>o.Dominant);
-    if #R == 2 and first R === ambient last R then return rationalMap(last R,E,Dominant=>o.Dominant);
+    if #R == 1 or (#R == 2 and last R === ambient first R) then return legacyRationalMap(first R,E,Dominant=>o.Dominant);
+    if #R == 2 and first R === ambient last R then return legacyRationalMap(last R,E,Dominant=>o.Dominant);
     error "expected a tally whose elements represent pure codimension 1 subschemes of a projective variety";
 );
 
@@ -336,14 +336,14 @@ toMap (Ideal,ZZ,ZZ) := o -> (I,v,jj) -> (
    toMap(linSys,Dominant=>o.Dominant)
 );
 
-toMap RationalMap := toMap MultihomogeneousRationalMap := o -> Phi -> (
+toMap LegacyRationalMap := toMap LegacyMultihomogeneousRationalMap := o -> Phi -> (
     maps Phi; 
     if o.Dominant === null then return Phi#"map" else return toMap(Phi#"map",Dominant=>o.Dominant);
 );
 
-map RationalMap := map MultihomogeneousRationalMap := o -> Phi -> Phi#"map";
+map LegacyRationalMap := map LegacyMultihomogeneousRationalMap := o -> Phi -> Phi#"map";
 
-map (ZZ,RationalMap) := map (ZZ,MultihomogeneousRationalMap) := o -> (i,Phi) -> (
+map (ZZ,LegacyRationalMap) := map (ZZ,LegacyMultihomogeneousRationalMap) := o -> (i,Phi) -> (
     if i < 0 then error "expected a nonnegative integer";
     if i == 0 then return map Phi;
     n := # maps Phi;
@@ -351,7 +351,7 @@ map (ZZ,RationalMap) := map (ZZ,MultihomogeneousRationalMap) := o -> (i,Phi) -> 
     (Phi#"maps")_i
 );
 
-expression RationalMap := (Phi) -> (
+expression LegacyRationalMap := (Phi) -> (
     if Phi#"dimTarget" < 0 or Phi#"dimSource" < 0 then return expression("map from " | expressionVar(Phi#"dimTarget" , Phi#"dimAmbientTarget") | " to " | expressionVar(Phi#"dimSource" , Phi#"dimAmbientSource"));
     d:= max flatten degrees ideal compress matrix Phi; type:="";
       if d === 1 then type = "linear "; if d === 2 then type = "quadratic "; if d === 3 then type = "cubic ";
@@ -364,19 +364,19 @@ expression RationalMap := (Phi) -> (
     return expression(type|(if Phi#"isBirational" === true then "birational " else (if Phi#"isDominant" === true then "dominant rational " else "rational "))| "map from " | expressionVar(Phi#"dimTarget" , Phi#"dimAmbientTarget") | " to " | expressionVar(Phi#"dimSource" , Phi#"dimAmbientSource"));
 );
 
-expression MultihomogeneousRationalMap := (Phi) -> (
+expression LegacyMultihomogeneousRationalMap := (Phi) -> (
     if Phi#"dimTarget" < 0 or Phi#"dimSource" < 0 then return expression("map from " | expressionVar(Phi#"dimTarget" , Phi#"dimAmbientTarget") | " to " | expressionVar(Phi#"dimSource" , Phi#"dimAmbientSource"));
     return expression((if Phi#"isBirational" === true then "birational " else (if Phi#"isDominant" === true then "dominant rational " else "rational "))| "map from " | expressionVar(Phi#"dimTarget" , Phi#"dimAmbientTarget") | " to " | expressionVar(Phi#"dimSource" , Phi#"dimAmbientSource"));
 );
 
-net RationalMap := net MultihomogeneousRationalMap := Phi -> nicePrint Phi;
+net LegacyRationalMap := net LegacyMultihomogeneousRationalMap := Phi -> nicePrint Phi;
 
-texMath RationalMap := texMath MultihomogeneousRationalMap := texMath @@ net;
+texMath LegacyRationalMap := texMath LegacyMultihomogeneousRationalMap := texMath @@ net;
 
-RationalMap#{WebApp,AfterPrint} = RationalMap#{WebApp,AfterNoPrint} = 
-MultihomogeneousRationalMap#{WebApp,AfterPrint} = MultihomogeneousRationalMap#{WebApp,AfterNoPrint} = 
-RationalMap#{Standard,AfterPrint} = RationalMap#{Standard,AfterNoPrint} = 
-MultihomogeneousRationalMap#{Standard,AfterPrint} = MultihomogeneousRationalMap#{Standard,AfterNoPrint} = Phi -> (
+LegacyRationalMap#{WebApp,AfterPrint} = LegacyRationalMap#{WebApp,AfterNoPrint} = 
+LegacyMultihomogeneousRationalMap#{WebApp,AfterPrint} = LegacyMultihomogeneousRationalMap#{WebApp,AfterNoPrint} = 
+LegacyRationalMap#{Standard,AfterPrint} = LegacyRationalMap#{Standard,AfterNoPrint} = 
+LegacyMultihomogeneousRationalMap#{Standard,AfterPrint} = LegacyMultihomogeneousRationalMap#{Standard,AfterNoPrint} = Phi -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class Phi << " (" << expression Phi << ")" << endl;
 );
 
@@ -401,9 +401,9 @@ nicePrint (PolynomialRing) := (R) -> (
 
 nicePrint (QuotientRing) := (R) -> ("subvariety of "|nicePrint(ambient R)|" defined by")||nicePrint(ideal R);
 
-nicePrint RationalMap := nicePrint MultihomogeneousRationalMap := Phi -> "-- rational map --"||("source: "|nicePrint(source Phi))||("target: "|nicePrint(target Phi))||"defining forms: "|nicePrint(entries Phi); 
+nicePrint LegacyRationalMap := nicePrint LegacyMultihomogeneousRationalMap := Phi -> "-- rational map --"||("source: "|nicePrint(source Phi))||("target: "|nicePrint(target Phi))||"defining forms: "|nicePrint(entries Phi); 
 
-describe RationalMap := describe MultihomogeneousRationalMap := Phi -> (
+describe LegacyRationalMap := describe LegacyMultihomogeneousRationalMap := Phi -> (
     d := max degrees ideal compress matrix Phi; 
     isStandardMap := false; if instance(Phi#"dimAmbientTarget",ZZ) and instance(Phi#"dimAmbientSource",ZZ) then (d = first d; isStandardMap = true);
     descr:="rational map defined by "|(if not isStandardMap then "multiforms" else "forms")|" of degree "|toString(d)|newline;
@@ -430,9 +430,9 @@ describe RationalMap := describe MultihomogeneousRationalMap := Phi -> (
     net expression descr
 );
 
-toString RationalMap := toString MultihomogeneousRationalMap := Phi -> "rationalMap("|toExternalString(map Phi)|")";
+toString LegacyRationalMap := toString LegacyMultihomogeneousRationalMap := Phi -> "legacyRationalMap("|toExternalString(map Phi)|")";
 
-image RationalMap := image MultihomogeneousRationalMap := Phi -> (
+image LegacyRationalMap := image LegacyMultihomogeneousRationalMap := Phi -> (
    if Phi#"idealImage" =!= null then return Phi#"idealImage";
    f := Phi#"map";
    if all(flatten apply(entries Phi,degree),o -> o <= 0) then f = map(target f,source f,(first gens target f) * toMatrix f);
@@ -440,7 +440,7 @@ image RationalMap := image MultihomogeneousRationalMap := Phi -> (
    return Phi#"idealImage";
 );
 
-image (RationalMap,ZZ) := image (MultihomogeneousRationalMap,ZZ) := (Phi,d) -> (
+image (LegacyRationalMap,ZZ) := image (LegacyMultihomogeneousRationalMap,ZZ) := (Phi,d) -> (
    if Phi#"idealImage" === null then return kernel(Phi#"map",d);
    J := select(flatten entries gens Phi#"idealImage",g -> degree g <= {d});
    if #J == 0 then return trim ideal 0_(target Phi);
@@ -448,7 +448,7 @@ image (RationalMap,ZZ) := image (MultihomogeneousRationalMap,ZZ) := (Phi,d) -> (
    if unique degrees J == {{d}} then return J else return ideal image basis(d,J);
 );
 
-image (ZZ,RationalMap) := image (ZZ,MultihomogeneousRationalMap) := (d,Phi) -> image(Phi,d); -- undocumented
+image (ZZ,LegacyRationalMap) := image (ZZ,LegacyMultihomogeneousRationalMap) := (d,Phi) -> image(Phi,d); -- undocumented
 
 kernel(RingMap,ZZ) := o -> (phi,d) -> kernelComponent(phi,d); 
 
@@ -472,13 +472,13 @@ kernelComponent(RingMap,ZZ) := (phi,d) -> (
    trim sub(ideal(submatrix(transpose mingens kernel transpose sub(last coefficients(gens eqs,Monomials=>(vars AB)),K),{0..f})*mm),source phi)
 );
 
-forceImage (RationalMap,Ideal) := forceImage (MultihomogeneousRationalMap,Ideal) := (Phi,I) -> (
+forceImage (LegacyRationalMap,Ideal) := forceImage (LegacyMultihomogeneousRationalMap,Ideal) := (Phi,I) -> (
    if Phi#"idealImage" =!= null then error "not permitted to reassign image of rational map";
    if not(isHomogeneous I and ring I === target Phi) then error "expected homogeneous ideal in the coordinate ring of the target variety";
    setKeyValue(Phi,"idealImage",trim I);
 );
 
-image (RationalMap,String) := (phi,alg) -> (
+image (LegacyRationalMap,String) := (phi,alg) -> (
    if alg =!= "F4" and alg =!= "MGB" then error "expected Strategy to be \"F4\" or \"MGB\"";
    if phi#"idealImage" =!= null then return image phi;
    n := phi#"dimAmbientTarget";
@@ -498,14 +498,14 @@ image (RationalMap,String) := (phi,alg) -> (
    image phi
 );
 
-image (MultihomogeneousRationalMap,String) := (phi,alg) -> (
+image (LegacyMultihomogeneousRationalMap,String) := (phi,alg) -> (
    if alg =!= "F4" and alg =!= "MGB" then error "expected Strategy to be \"F4\" or \"MGB\"";
-   error "not implemented yet: image(RationalMap,String) when the source is a multi-projective variety";
+   error "not implemented yet: image(LegacyRationalMap,String) when the source is a multi-projective variety";
 );
 
-matrix RationalMap := matrix MultihomogeneousRationalMap := o -> Phi -> toMatrix map Phi;
+matrix LegacyRationalMap := matrix LegacyMultihomogeneousRationalMap := o -> Phi -> toMatrix map Phi;
 
-matrix (ZZ,RationalMap) := matrix (ZZ,MultihomogeneousRationalMap) := o -> (i,Phi) -> (
+matrix (ZZ,LegacyRationalMap) := matrix (ZZ,LegacyMultihomogeneousRationalMap) := o -> (i,Phi) -> (
     if i < 0 then error "expected a nonnegative integer";
     if i == 0 then return matrix Phi;
     n := # maps Phi;
@@ -513,7 +513,7 @@ matrix (ZZ,RationalMap) := matrix (ZZ,MultihomogeneousRationalMap) := o -> (i,Ph
     toMatrix (Phi#"maps")_i
 );
 
-coefficients (RationalMap) := o -> (Phi) ->  ( -- matrix M s.t M * (transpose gens((ideal vars R)^d)) == transpose F
+coefficients (LegacyRationalMap) := o -> (Phi) ->  ( -- matrix M s.t M * (transpose gens((ideal vars R)^d)) == transpose F
     if o.Variables =!= null then error "option not available";
     R:=ambient target Phi#"map";
     F:=lift(matrix Phi,R);
@@ -525,55 +525,55 @@ coefficients (RationalMap) := o -> (Phi) ->  ( -- matrix M s.t M * (transpose ge
     M
 );
 
-entries RationalMap := entries MultihomogeneousRationalMap := Phi -> flatten entries matrix Phi;
+entries LegacyRationalMap := entries LegacyMultihomogeneousRationalMap := Phi -> flatten entries matrix Phi;
 
-source RationalMap := source MultihomogeneousRationalMap := Phi -> target Phi#"map";
+source LegacyRationalMap := source LegacyMultihomogeneousRationalMap := Phi -> target Phi#"map";
 
-target RationalMap := target MultihomogeneousRationalMap := Phi -> source Phi#"map";
+target LegacyRationalMap := target LegacyMultihomogeneousRationalMap := Phi -> source Phi#"map";
 
-coefficientRing RationalMap := coefficientRing MultihomogeneousRationalMap := Phi -> coefficientRing source Phi;
+coefficientRing LegacyRationalMap := coefficientRing LegacyMultihomogeneousRationalMap := Phi -> coefficientRing source Phi;
 
 directImageInt = method();
-directImageInt (RationalMap,Ideal) := directImageInt (MultihomogeneousRationalMap,Ideal) := (Phi,I) -> (
+directImageInt (LegacyRationalMap,Ideal) := directImageInt (LegacyMultihomogeneousRationalMap,Ideal) := (Phi,I) -> (
     if (ring I =!= source Phi and ring I === ambient source Phi) then return directImageInt(Phi,sub(I,source Phi)); 
     if not (ring I === source Phi and isHomogeneous I) then error "expected homogeneous ideal in the coordinate ring of the source variety";
     trim preimage(map Phi,I)
 );
 
-RationalMap SPACE Ideal := MultihomogeneousRationalMap SPACE Ideal := (Phi,I) -> directImageInt(Phi,I);
+LegacyRationalMap SPACE Ideal := LegacyMultihomogeneousRationalMap SPACE Ideal := (Phi,I) -> directImageInt(Phi,I);
 
 directImageStrongInt = method();
-directImageStrongInt (RationalMap,Ideal) := directImageStrongInt (MultihomogeneousRationalMap,Ideal) := (Phi,I) -> (
+directImageStrongInt (LegacyRationalMap,Ideal) := directImageStrongInt (LegacyMultihomogeneousRationalMap,Ideal) := (Phi,I) -> (
     if (ring I =!= source Phi and ring I === ambient source Phi) then return directImageStrongInt(Phi,sub(I,source Phi)); 
     if not (ring I === source Phi and isHomogeneous I) then error "expected homogeneous ideal in the coordinate ring of the source variety";
     trim intersect apply(maps Phi,F -> preimage(F,I))
 );
 
-RationalMap _* := (Phi) -> Ideal := (I) -> directImageStrongInt(Phi,I);
+LegacyRationalMap _* := (Phi) -> Ideal := (I) -> directImageStrongInt(Phi,I);
 
-MultihomogeneousRationalMap _* := (Phi) -> Ideal := (I) -> directImageStrongInt(Phi,I);
+LegacyMultihomogeneousRationalMap _* := (Phi) -> Ideal := (I) -> directImageStrongInt(Phi,I);
 
 inverseImageStrongInt = method();
-inverseImageStrongInt (RationalMap,Ideal) := inverseImageStrongInt (MultihomogeneousRationalMap,Ideal) := (Phi,I) -> (
+inverseImageStrongInt (LegacyRationalMap,Ideal) := inverseImageStrongInt (LegacyMultihomogeneousRationalMap,Ideal) := (Phi,I) -> (
    if (ring I =!= target Phi and ring I === ambient target Phi) then return inverseImageStrongInt(Phi,sub(I,target Phi)); 
    Z := intersect apply(maps Phi,F -> inverseImage(F,I,Certify=>true));
 -- if #(heft ambient ring Z) > 1 then Z = multisaturate Z;
    return Z;
 );
 
-RationalMap ^** Ideal := MultihomogeneousRationalMap ^** Ideal := (Phi,I) -> inverseImageStrongInt(Phi,I);
+LegacyRationalMap ^** Ideal := LegacyMultihomogeneousRationalMap ^** Ideal := (Phi,I) -> inverseImageStrongInt(Phi,I);
 
 inverseImageWeakInt = method();
-inverseImageWeakInt (RationalMap,Ideal) := inverseImageWeakInt (MultihomogeneousRationalMap,Ideal) := (Phi,I) -> (
+inverseImageWeakInt (LegacyRationalMap,Ideal) := inverseImageWeakInt (LegacyMultihomogeneousRationalMap,Ideal) := (Phi,I) -> (
    if (ring I =!= target Phi and ring I === ambient target Phi) then return inverseImageWeakInt(Phi,sub(I,target Phi)); 
    Z := inverseImage(map Phi,I,Certify=>false);
 -- if #(heft ambient ring Z) > 1 then Z = multisaturate Z;
    return Z;
 );
 
-RationalMap ^* := (Phi) -> Ideal := (I) -> inverseImageWeakInt(Phi,I);
+LegacyRationalMap ^* := (Phi) -> Ideal := (I) -> inverseImageWeakInt(Phi,I);
 
-MultihomogeneousRationalMap ^* := (Phi) -> Ideal := (I) -> inverseImageWeakInt(Phi,I);
+LegacyMultihomogeneousRationalMap ^* := (Phi) -> Ideal := (I) -> inverseImageWeakInt(Phi,I);
 
 inverseImage = method(TypicalValue => Ideal, Options => {Certify => false});
 inverseImage (RingMap,Ideal) := o -> (phi,J) -> (
@@ -585,9 +585,9 @@ inverseImage (RingMap,Ideal) := o -> (phi,J) -> (
    saturate(phi J,F)
 );
 
-RationalMap ^ ZZ := (Phi,j) -> (
+LegacyRationalMap ^ ZZ := (Phi,j) -> (
    if j == 0 then (
-         if (target Phi#"map" === source Phi#"map") then return rationalMap(target Phi#"map") else error "expected non-zero integer";
+         if (target Phi#"map" === source Phi#"map") then return legacyRationalMap(target Phi#"map") else error "expected non-zero integer";
    );
    if j < 0 then (
          Psi:=inverse Phi;
@@ -597,9 +597,9 @@ RationalMap ^ ZZ := (Phi,j) -> (
    return Psi2;
 );
 
-inverse (RationalMap,Option) := (Phi,opt) -> (
+inverse (LegacyRationalMap,Option) := (Phi,opt) -> (
    o := toList opt;
-   if not(#o == 2 and first o === Certify) then error "Certify is the only available option for inverse(RationalMap)";
+   if not(#o == 2 and first o === Certify) then error "Certify is the only available option for inverse(LegacyRationalMap)";
    if not instance(last o,Boolean) then error "option Certify accepts true or false";
    if Phi#"inverseRationalMap" =!= null then return Phi#"inverseRationalMap";
    if last o then return inverseMap(Phi,Certify=>true,Verbose=>false);
@@ -609,9 +609,9 @@ inverse (RationalMap,Option) := (Phi,opt) -> (
    Psi
 );
 
-inverse (RationalMap) := (Phi) -> inverse(Phi,Certify=>false);
+inverse (LegacyRationalMap) := (Phi) -> inverse(Phi,Certify=>false);
 
-RationalMap ! := MultihomogeneousRationalMap ! := Phi -> (  
+LegacyRationalMap ! := LegacyMultihomogeneousRationalMap ! := Phi -> (  
      ideal Phi;
      try inverse Phi;     
      degrees Phi;
@@ -623,49 +623,49 @@ RationalMap ! := MultihomogeneousRationalMap ! := Phi -> (
 );
 
 restrictionMapInt = method();
-restrictionMapInt (RationalMap,Ideal) := restrictionMapInt (MultihomogeneousRationalMap,Ideal) := (Phi,J) -> ( -- restriction of Phi to V(J)
+restrictionMapInt (LegacyRationalMap,Ideal) := restrictionMapInt (LegacyMultihomogeneousRationalMap,Ideal) := (Phi,J) -> ( -- restriction of Phi to V(J)
     if J === ideal source Phi then return Phi;
     Pn1Pn2Pn3 := ambient source Phi;
     if not ((ring J === source Phi or ring J === Pn1Pn2Pn3) and isHomogeneous J) then error "expected homogeneous ideal in the coordinate ring of the source variety";
-    rationalMap (map(Pn1Pn2Pn3/trim(lift(J,Pn1Pn2Pn3) + ideal source Phi),source Phi,vars Pn1Pn2Pn3) * map Phi) 
+    legacyRationalMap (map(Pn1Pn2Pn3/trim(lift(J,Pn1Pn2Pn3) + ideal source Phi),source Phi,vars Pn1Pn2Pn3) * map Phi) 
 );
-restrictionMapInt (RationalMap,RingElement) := restrictionMapInt (MultihomogeneousRationalMap,RingElement) := (Phi,F) -> restrictionMapInt(Phi,ideal F);
-restrictionMapInt (RationalMap,Ring) := restrictionMapInt (MultihomogeneousRationalMap,Ring) := (Phi,S) -> (
+restrictionMapInt (LegacyRationalMap,RingElement) := restrictionMapInt (LegacyMultihomogeneousRationalMap,RingElement) := (Phi,F) -> restrictionMapInt(Phi,ideal F);
+restrictionMapInt (LegacyRationalMap,Ring) := restrictionMapInt (LegacyMultihomogeneousRationalMap,Ring) := (Phi,S) -> (
     if S === source Phi then return Phi;
     if not (ambient S === ambient source Phi and isSubset(ideal source Phi,ideal S) and isHomogeneous ideal S) then error "expected homogeneous coordinate ring of a subvariety of the source variety";
     Psi := restrictionMapInt(Phi,ideal(S));
-    rationalMap (map(S,source Psi,vars ambient S) * map Psi)
+    legacyRationalMap (map(S,source Psi,vars ambient S) * map Psi)
 );
 
-RationalMap | Ideal := MultihomogeneousRationalMap | Ideal := (Phi,J) -> restrictionMapInt(Phi,J);
-RationalMap | RingElement := MultihomogeneousRationalMap | RingElement := (Phi,F) -> restrictionMapInt(Phi,F);
-RationalMap | Ring := MultihomogeneousRationalMap | Ring := (Phi,S) -> restrictionMapInt(Phi,S);
+LegacyRationalMap | Ideal := LegacyMultihomogeneousRationalMap | Ideal := (Phi,J) -> restrictionMapInt(Phi,J);
+LegacyRationalMap | RingElement := LegacyMultihomogeneousRationalMap | RingElement := (Phi,F) -> restrictionMapInt(Phi,F);
+LegacyRationalMap | Ring := LegacyMultihomogeneousRationalMap | Ring := (Phi,S) -> restrictionMapInt(Phi,S);
 
 restrictionMapInt2 = method();
-restrictionMapInt2 (RationalMap,Ideal) := restrictionMapInt2 (MultihomogeneousRationalMap,Ideal) := (Phi,J) -> ( -- restriction of Phi to Phi^(-1)(V(J)) ---> V(J)
+restrictionMapInt2 (LegacyRationalMap,Ideal) := restrictionMapInt2 (LegacyMultihomogeneousRationalMap,Ideal) := (Phi,J) -> ( -- restriction of Phi to Phi^(-1)(V(J)) ---> V(J)
     if J === ideal target Phi then return Phi;    
     Pn1Pn2Pn3 := ambient source Phi;
     Pm := ambient target Phi;
     J':= trim(lift(Phi^* J,Pn1Pn2Pn3) + ideal source Phi);
     J  = trim(lift(J,Pm) + ideal target Phi);
-    rationalMap map(Pn1Pn2Pn3/J',Pm/J,lift(matrix Phi,Pn1Pn2Pn3))
+    legacyRationalMap map(Pn1Pn2Pn3/J',Pm/J,lift(matrix Phi,Pn1Pn2Pn3))
 );
-restrictionMapInt2 (RationalMap,RingElement) := restrictionMapInt2 (MultihomogeneousRationalMap,RingElement) := (Phi,F) -> restrictionMapInt2(Phi,ideal F);
-restrictionMapInt2 (RationalMap,Ring) := restrictionMapInt2 (MultihomogeneousRationalMap,Ring) := (Phi,S) -> (
+restrictionMapInt2 (LegacyRationalMap,RingElement) := restrictionMapInt2 (LegacyMultihomogeneousRationalMap,RingElement) := (Phi,F) -> restrictionMapInt2(Phi,ideal F);
+restrictionMapInt2 (LegacyRationalMap,Ring) := restrictionMapInt2 (LegacyMultihomogeneousRationalMap,Ring) := (Phi,S) -> (
     if S === target Phi then return Phi;
     if not (ambient S === ambient target Phi and isSubset(ideal target Phi,ideal S) and isHomogeneous ideal S) then error "expected homogeneous coordinate ring of a subvariety of the target variety";
     Psi := restrictionMapInt2(Phi,ideal(S));
-    Psi * rationalMap(target Psi,S)
+    Psi * legacyRationalMap(target Psi,S)
 );
 
-RationalMap || Ideal := MultihomogeneousRationalMap || Ideal := (Phi,J) -> restrictionMapInt2(Phi,J);
-RationalMap || RingElement := MultihomogeneousRationalMap || RingElement := (Phi,F) -> restrictionMapInt2(Phi,F);
-RationalMap || Ring := MultihomogeneousRationalMap || Ring := (Phi,S) -> restrictionMapInt2(Phi,S);
+LegacyRationalMap || Ideal := LegacyMultihomogeneousRationalMap || Ideal := (Phi,J) -> restrictionMapInt2(Phi,J);
+LegacyRationalMap || RingElement := LegacyMultihomogeneousRationalMap || RingElement := (Phi,F) -> restrictionMapInt2(Phi,F);
+LegacyRationalMap || Ring := LegacyMultihomogeneousRationalMap || Ring := (Phi,S) -> restrictionMapInt2(Phi,S);
 
-RationalMap == RationalMap := 
-MultihomogeneousRationalMap == RationalMap :=
-RationalMap == MultihomogeneousRationalMap := 
-MultihomogeneousRationalMap == MultihomogeneousRationalMap := (Phi,Psi) -> ( 
+LegacyRationalMap == LegacyRationalMap := 
+LegacyMultihomogeneousRationalMap == LegacyRationalMap :=
+LegacyRationalMap == LegacyMultihomogeneousRationalMap := 
+LegacyMultihomogeneousRationalMap == LegacyMultihomogeneousRationalMap := (Phi,Psi) -> ( 
    if (degreeLength target Phi == 1 and any(flatten degrees target Phi,i -> i =!= 1)) or (degreeLength target Psi == 1 and any(flatten degrees target Psi,i -> i =!= 1)) then error "not implemented yet: equality of rational maps with target a weighted-projective variety";
    if not areEqualMaps(Phi#"map",Psi#"map") then return false;
            if Phi#"isDominant" =!= Psi#"isDominant" then (
@@ -696,7 +696,7 @@ MultihomogeneousRationalMap == MultihomogeneousRationalMap := (Phi,Psi) -> (
            if Phi#"maps" =!= null and Psi#"maps" === null then setKeyValue(Psi,"maps",Phi#"maps");
            if Phi#"blowUpIdeal" === null and Psi#"blowUpIdeal" =!= null then Phi#"blowUpIdeal" = Psi#"blowUpIdeal";
            if Phi#"blowUpIdeal" =!= null and Psi#"blowUpIdeal" === null then Psi#"blowUpIdeal" = Phi#"blowUpIdeal";
-           if instance(Phi,RationalMap) and instance(Psi,RationalMap) then (
+           if instance(Phi,LegacyRationalMap) and instance(Psi,LegacyRationalMap) then (
               if Phi#"inverseRationalMap" === null and Psi#"inverseRationalMap" =!= null then Phi#"inverseRationalMap" = Psi#"inverseRationalMap";
               if Phi#"inverseRationalMap" =!= null and Psi#"inverseRationalMap" === null then Psi#"inverseRationalMap" = Phi#"inverseRationalMap";
            );
@@ -705,27 +705,27 @@ MultihomogeneousRationalMap == MultihomogeneousRationalMap := (Phi,Psi) -> (
    return true;
 );
 
-RationalMap == ZZ := (Phi,n) -> (
-    if n == 1 then return Phi == rationalMap(source Phi) else error "encountered integer other than 1 in comparison with a rational map";
+LegacyRationalMap == ZZ := (Phi,n) -> (
+    if n == 1 then return Phi == legacyRationalMap(source Phi) else error "encountered integer other than 1 in comparison with a rational map";
 );
 
-ZZ == RationalMap := (n,Phi) -> Phi == n;
+ZZ == LegacyRationalMap := (n,Phi) -> Phi == n;
 
-ideal RationalMap := ideal MultihomogeneousRationalMap := Phi -> (
+ideal LegacyRationalMap := ideal LegacyMultihomogeneousRationalMap := Phi -> (
     if Phi#?"baseLocus" then return Phi#"baseLocus";
     Phi#"baseLocus" = trim sum apply(maps Phi,F -> ideal toMatrix F);
-    if not instance(Phi,RationalMap) then Phi#"baseLocus" = multisaturate Phi#"baseLocus";
+    if not instance(Phi,LegacyRationalMap) then Phi#"baseLocus" = multisaturate Phi#"baseLocus";
     return Phi#"baseLocus";
 );
 
-isDominant RationalMap := isDominant MultihomogeneousRationalMap := o -> Phi -> ( 
+isDominant LegacyRationalMap := isDominant LegacyMultihomogeneousRationalMap := o -> Phi -> ( 
    if Phi#"isDominant" =!= null then (if o.Certify and o.Verbose then <<certificate; return Phi#"isDominant");
    if Phi#"dimTarget" < Phi#"dimSource" then (
        setKeyValue(Phi,"isDominant",false);
        if o.Certify and o.Verbose then <<certificate;
        return Phi#"isDominant";
    );    
-   if instance(Phi,WeightedHomogeneousRationalMap) then (
+   if instance(Phi,LegacyWeightedHomogeneousRationalMap) then (
       setKeyValue(Phi,"isDominant",image Phi == 0);  
       if o.Certify and o.Verbose then <<certificate;
       return Phi#"isDominant";
@@ -734,18 +734,18 @@ isDominant RationalMap := isDominant MultihomogeneousRationalMap := o -> Phi -> 
        setKeyValue(Phi,"isDominant",isDominantMath(map Phi,Phi#"dimTarget",Phi#"dimSource",o.Verbose));
        return Phi#"isDominant";
    );
-   if instance(Phi,RationalMap) then (
+   if instance(Phi,LegacyRationalMap) then (
        phi := Phi#"map";
        for i from 1 to Phi#"dimTarget" - Phi#"dimSource" do phi = genericRestriction phi;
        return (first projectiveDegrees(phi,NumDegrees=>0) != 0);
    );
-   if instance(Phi,MultihomogeneousRationalMap) then (
+   if instance(Phi,LegacyMultihomogeneousRationalMap) then (
        Z := sub((ideal source Phi#"map") + randomLinearSubspace(ambient source Phi#"map",Phi#"dimAmbientSource" - Phi#"dimSource"),source Phi#"map");
        return (dim inverseImage(Phi#"map",Z,Certify=>false) - (# heft ambient target Phi#"map") == Phi#"dimTarget" - Phi#"dimSource");
    );
 );
 
-isDominant RingMap := o -> phi -> isDominant(rationalMap phi,Certify=>o.Certify,Verbose=>o.Verbose);
+isDominant RingMap := o -> phi -> isDominant(legacyRationalMap phi,Certify=>o.Certify,Verbose=>o.Verbose);
 
 isDominantMath = (phi,n,m,MathVerb) -> (
    -- phi:X--->Y multihomogeneous map, n = dim X, m = dim Y
@@ -764,7 +764,7 @@ isDominantMath = (phi,n,m,MathVerb) -> (
    return isDom;
 );
 
-isBirational RationalMap := isBirational MultihomogeneousRationalMap := o -> Phi -> (
+isBirational LegacyRationalMap := isBirational LegacyMultihomogeneousRationalMap := o -> Phi -> (
    if Phi#"isBirational" =!= null then (if o.Certify and o.Verbose then <<certificate; return Phi#"isBirational");
    if Phi#"dimTarget" != Phi#"dimSource" then (
           setKeyValue(Phi,"isBirational",false);
@@ -779,11 +779,11 @@ isBirational RationalMap := isBirational MultihomogeneousRationalMap := o -> Phi
    if o.Certify then (setKeyValue(Phi,"isBirational",isB); return Phi#"isBirational") else return isB;
 );
 
-isBirational RingMap := o -> phi -> isBirational(rationalMap phi,Certify=>o.Certify,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
+isBirational RingMap := o -> phi -> isBirational(legacyRationalMap phi,Certify=>o.Certify,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
 
 inverseMapInt = method(Options => {Certify => false, BlowUpStrategy => "Eliminate", Verbose => true});
 
-inverseMapInt (RationalMap) := o -> (Phi) -> (
+inverseMapInt (LegacyRationalMap) := o -> (Phi) -> (
    if Phi#"dimTarget" != Phi#"dimSource" then error "expected a birational map";
    if # select((flatten degrees ideal source Phi)|(flatten degrees ideal target Phi)|(flatten degrees ideal matrix Phi),g -> g > 1) == 0 then (
        try eta := inverse map Phi else error "linear rational map not invertible";
@@ -806,13 +806,13 @@ inverseMapInt (RationalMap) := o -> (Phi) -> (
    );
 );
 
-inverseMapInt (RationalMap,Nothing) := o -> (Phi,nothing) -> (
+inverseMapInt (LegacyRationalMap,Nothing) := o -> (Phi,nothing) -> (
    if Phi#"dimTarget" != Phi#"dimSource" then error "expected a birational map";
    Bl := graphIdealInt(Phi,BlowUpStrategy=>o.BlowUpStrategy);
    n := Phi#"dimAmbientTarget"; 
    Sub := map(target Phi,ring Bl,matrix{{(n+1):0_(ambient target Phi)}}|(vars ambient target Phi));
    T := transpose mingens kernel transpose Sub submatrix(jacobian Bl,{0..n},);
-   psi := try map rationalMap(target Phi,source Phi,submatrix(T,{0},)) else error "not able to obtain an inverse rational map; the map may not be birational";
+   psi := try map legacyRationalMap(target Phi,source Phi,submatrix(T,{0},)) else error "not able to obtain an inverse rational map; the map may not be birational";
    psiAll := apply(numRows T,i -> map(target Phi,source Phi,submatrix(T,{i},)));
    if not o.Certify then return (psi,psiAll);
    if (if n - Phi#"dimTarget" <= Phi#"dimAmbientSource" - Phi#"dimSource" then isInverseMap(map Phi,psi) else isInverseMap(psi,map Phi)) then (
@@ -822,31 +822,31 @@ inverseMapInt (RationalMap,Nothing) := o -> (Phi,nothing) -> (
    );
 );
 
-inverseMap (RationalMap) := o -> (Phi) -> (
+inverseMap (LegacyRationalMap) := o -> (Phi) -> (
     if Phi#"inverseRationalMap" =!= null then (if o.Certify and o.Verbose then <<certificate; return Phi#"inverseRationalMap");
     if Phi#"isBirational" === false or Phi#"isDominant" === false then error "expected a birational map";
     if Phi#"isBirational" === null then if Phi#"dimTarget" != Phi#"dimSource" then (setKeyValue(Phi,"isBirational",false); error "expected a birational map";);
     U := inverseMapInt(Phi,Certify=>o.Certify,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
-    Psi := rationalMap first U;
+    Psi := legacyRationalMap first U;
     if last U =!= null and Psi#"maps" === null then setKeyValue(Psi,"maps",last U);
     if o.Certify then forceInverseMap(Phi,Psi);
     return Psi;
 );
 
-inverseMap (RationalMap,Nothing) := o -> (Phi,nothing) -> ( -- code copied from above -- undocumented 
+inverseMap (LegacyRationalMap,Nothing) := o -> (Phi,nothing) -> ( -- code copied from above -- undocumented 
     if Phi#"inverseRationalMap" =!= null then (if o.Certify and o.Verbose then <<certificate; return Phi#"inverseRationalMap");
     if Phi#"isBirational" === false or Phi#"isDominant" === false then error "expected a birational map";
     if Phi#"isBirational" === null then if Phi#"dimTarget" != Phi#"dimSource" then (setKeyValue(Phi,"isBirational",false); error "expected a birational map";);
     U := inverseMapInt(Phi,null,Certify=>o.Certify,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
-    Psi := rationalMap first U;
+    Psi := legacyRationalMap first U;
     if last U =!= null and Psi#"maps" === null then setKeyValue(Psi,"maps",last U);
     if o.Certify then forceInverseMap(Phi,Psi);
     return Psi;
 );
 
-inverseMap MultihomogeneousRationalMap := o -> Phi -> error "please load the package \"MultiprojectiveVarieties\" to compute inverse maps of birational maps from multi-projective varieties";
+inverseMap LegacyMultihomogeneousRationalMap := o -> Phi -> error "please load the package \"MultiprojectiveVarieties\" to compute inverse maps of birational maps from multi-projective varieties";
 
-inverseMap RingMap := o -> phi -> map inverseMap(rationalMap phi,Certify=>o.Certify,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
+inverseMap RingMap := o -> phi -> map inverseMap(legacyRationalMap phi,Certify=>o.Certify,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
 
 invertBirationalMapRS = (F,a)  -> ( 
    -- Notation as in the paper [Russo, Simis - On Birational Maps and Jacobian Matrices] 
@@ -908,11 +908,11 @@ approximateInverseMap (RingMap,ZZ) := o -> (phi,d) -> (
 
 approximateInverseMap (RingMap) := o -> (phi) -> approximateInverseMap(phi,-1,CodimBsInv=>o.CodimBsInv,Certify=>o.Certify,Verbose=>o.Verbose);
 
-approximateInverseMap (RationalMap,ZZ) := o -> (Phi,d) -> (
+approximateInverseMap (LegacyRationalMap,ZZ) := o -> (Phi,d) -> (
     if Phi#"inverseRationalMap" =!= null then (if o.Certify and o.Verbose then <<certificate; return Phi#"inverseRationalMap");
     if Phi#"isBirational" === false or Phi#"isDominant" === false then error "expected a birational map";
     if Phi#"isBirational" === null then if Phi#"dimTarget" != Phi#"dimSource" then (setKeyValue(Phi,"isBirational",false); error "expected a birational map";);
-    Psi := rationalMap approximateInverseMap(Phi#"map",d,CodimBsInv=>o.CodimBsInv,Certify=>o.Certify,Verbose=>o.Verbose);
+    Psi := legacyRationalMap approximateInverseMap(Phi#"map",d,CodimBsInv=>o.CodimBsInv,Certify=>o.Certify,Verbose=>o.Verbose);
     if (not o.Certify) then return Psi;
     setKeyValue(Psi,"isBirational",true);
     if Phi#"projectiveDegrees" =!= {} then setKeyValue(Psi,"projectiveDegrees",reverse Phi#"projectiveDegrees"); 
@@ -925,9 +925,9 @@ approximateInverseMap (RationalMap,ZZ) := o -> (Phi,d) -> (
     return Phi#"inverseRationalMap";
 );
 
-approximateInverseMap (RationalMap) := o -> (Phi) -> approximateInverseMap(Phi,-1,CodimBsInv=>o.CodimBsInv,Certify=>o.Certify,Verbose=>o.Verbose);
+approximateInverseMap (LegacyRationalMap) := o -> (Phi) -> approximateInverseMap(Phi,-1,CodimBsInv=>o.CodimBsInv,Certify=>o.Certify,Verbose=>o.Verbose);
 
-isInverseMap (RationalMap,RationalMap) := (Phi,Psi) -> (
+isInverseMap (LegacyRationalMap,LegacyRationalMap) := (Phi,Psi) -> (
    if Phi#"inverseRationalMap" =!= null and Psi#"inverseRationalMap" =!= null then if Phi#"inverseRationalMap" === Psi and Psi#"inverseRationalMap" === Phi then return true;
    if Phi#"dimTarget" != Psi#"dimTarget" then return false;
    T := if Phi#"dimAmbientTarget" - Phi#"dimTarget" <= Psi#"dimAmbientTarget" - Psi#"dimTarget" then isInverseMap(map Phi,map Psi) else isInverseMap(map Psi,map Phi);
@@ -951,7 +951,7 @@ isInverseMap (RingMap,RingMap) := (phi,psi) -> (
 );
 
 isInverseMapFast = method(TypicalValue => Boolean);
-isInverseMapFast (RationalMap,RationalMap) := (Phi,Psi) -> (
+isInverseMapFast (LegacyRationalMap,LegacyRationalMap) := (Phi,Psi) -> (
    if Phi#"inverseRationalMap" =!= null and Psi#"inverseRationalMap" =!= null then if Phi#"inverseRationalMap" === Psi and Psi#"inverseRationalMap" === Phi then return true;
    if Phi#"dimTarget" != Psi#"dimTarget" then return false;
    if (source Phi =!= target Psi or target Phi =!= source Psi) then return false; 
@@ -966,8 +966,8 @@ isInverseMapFast (RationalMap,RationalMap) := (Phi,Psi) -> (
        F := sub(lift(matrix Phi,ambient source Phi),vars Pn);
        G := sub(lift(matrix Psi,ambient target Phi),vars Pm);
        R := Pn/I; S := Pm/J;
-       Phi = rationalMap map(R,S,F);
-       Psi = rationalMap map(S,R,G);
+       Phi = legacyRationalMap map(R,S,F);
+       Psi = legacyRationalMap map(S,R,G);
    ); 
    c := if K === ZZ/(char K) then char K else if instance(K,GaloisField) then K#order else 0;
    if c < 50 then return isInverseMap(Phi,Psi);
@@ -979,9 +979,9 @@ isInverseMapFast (RationalMap,RationalMap) := (Phi,Psi) -> (
        return (Phi Psi q == q);
    );
 );
-isInverseMapFast (RingMap,RingMap) := (phi,psi) -> isInverseMapFast(rationalMap phi,rationalMap psi);
+isInverseMapFast (RingMap,RingMap) := (phi,psi) -> isInverseMapFast(legacyRationalMap phi,legacyRationalMap psi);
 
-forceInverseMap (RationalMap,RationalMap) := (Phi,Psi) -> (
+forceInverseMap (LegacyRationalMap,LegacyRationalMap) := (Phi,Psi) -> (
      if Phi#"inverseRationalMap" =!= null or Psi#"inverseRationalMap" =!= null then error "not permitted to reassign inverse rational map";
      if source Phi =!= target Psi or target Phi =!= source Psi then error "incompatible target and source";
      if Phi#"dimTarget" != Phi#"dimSource" then setKeyValue(Phi,"isBirational",false);
@@ -1008,12 +1008,12 @@ compose (RingMap,RingMap) := RingMap => {} >> o -> (f,g) -> (
     return map(target f,source g,M);
 );
 
-compose (RationalMap,RationalMap) := 
-compose (MultihomogeneousRationalMap,RationalMap) := 
-compose (RationalMap,MultihomogeneousRationalMap) := 
-compose (MultihomogeneousRationalMap,MultihomogeneousRationalMap) := {} >> o -> (Phi,Psi) -> (
+compose (LegacyRationalMap,LegacyRationalMap) := 
+compose (LegacyMultihomogeneousRationalMap,LegacyRationalMap) := 
+compose (LegacyRationalMap,LegacyMultihomogeneousRationalMap) := 
+compose (LegacyMultihomogeneousRationalMap,LegacyMultihomogeneousRationalMap) := {} >> o -> (Phi,Psi) -> (
     if target Phi === source Psi then (     
-        Eta:=rationalMap(compose(map Phi,map Psi),Dominant=>"notSimplify");
+        Eta:=legacyRationalMap(compose(map Phi,map Psi),Dominant=>"notSimplify");
         if Phi#"isDominant" === true then (
             if Psi#"isDominant" === true then setKeyValue(Eta,"isDominant",true);
             if Phi#"degree" =!= null and Psi#"degree" =!= null then setKeyValue(Eta,"degree",(Phi#"degree")*(Psi#"degree"));  
@@ -1024,10 +1024,10 @@ compose (MultihomogeneousRationalMap,MultihomogeneousRationalMap) := {} >> o -> 
     error "rational maps not composable: incompatible target and source";
 );
 
-RationalMap * RationalMap := 
-MultihomogeneousRationalMap * RationalMap := 
-RationalMap * MultihomogeneousRationalMap :=
-MultihomogeneousRationalMap * MultihomogeneousRationalMap := (Phi,Psi) -> compose(Phi,Psi);
+LegacyRationalMap * LegacyRationalMap := 
+LegacyMultihomogeneousRationalMap * LegacyRationalMap := 
+LegacyRationalMap * LegacyMultihomogeneousRationalMap :=
+LegacyMultihomogeneousRationalMap * LegacyMultihomogeneousRationalMap := (Phi,Psi) -> compose(Phi,Psi);
 
 areEqualMaps = method(TypicalValue => Boolean);
 areEqualMaps (RingMap,RingMap) := (phi,psi) -> (
@@ -1050,9 +1050,9 @@ maps (RingMap) := (phi) -> (
    apply(T,t -> map(target phi,source phi,t))
 );
 
-maps RationalMap := maps MultihomogeneousRationalMap := Phi -> (
+maps LegacyRationalMap := maps LegacyMultihomogeneousRationalMap := Phi -> (
    if Phi#"maps" === null then (
-            if instance(Phi,WeightedHomogeneousRationalMap) and max flatten degrees target Phi >= 2 then (<<"--warning: not implemented yet: base locus of a rational map with target a weighted-projective variety"<<endl);
+            if instance(Phi,LegacyWeightedHomogeneousRationalMap) and max flatten degrees target Phi >= 2 then (<<"--warning: not implemented yet: base locus of a rational map with target a weighted-projective variety"<<endl);
             if (isPolynomialRing source Phi) then (
                  if codim ideal matrix Phi > 1 then (
                        setKeyValue(Phi,"maps",{Phi#"map"});
@@ -1069,8 +1069,8 @@ maps RationalMap := maps MultihomogeneousRationalMap := Phi -> (
    Phi#"maps"
 );
 
-projectiveDegrees RationalMap := projectiveDegrees MultihomogeneousRationalMap := o -> Phi -> (
-   if instance(Phi,WeightedHomogeneousRationalMap) then error "not implemented yet: projective degrees of weighted rational map";
+projectiveDegrees LegacyRationalMap := projectiveDegrees LegacyMultihomogeneousRationalMap := o -> Phi -> (
+   if instance(Phi,LegacyWeightedHomogeneousRationalMap) then error "not implemented yet: projective degrees of weighted rational map";
    if o.NumDegrees < 0 then return {};
    n := Phi#"dimAmbientTarget";
    m := Phi#"dimAmbientSource";
@@ -1086,32 +1086,32 @@ projectiveDegrees RationalMap := projectiveDegrees MultihomogeneousRationalMap :
        return d_ll;
    ) else (
        phi := Phi#"map";
-       if instance(Phi,RationalMap) then (
+       if instance(Phi,LegacyRationalMap) then (
            L := {projDegree(phi,0,r,{})}; 
            L = L | for i from 1 to min(r,o.NumDegrees) list (phi = genericRestriction phi; projDegree(phi,0,r-i,{}));
            return reverse L;
        );
-       if instance(Phi,MultihomogeneousRationalMap) then (
+       if instance(Phi,LegacyMultihomogeneousRationalMap) then (
            return apply(deepSplice ll,j -> projDegree(phi,r-j,r,n));
        );
    );
 );
 
-projectiveDegrees (RationalMap,ZZ) := projectiveDegrees (MultihomogeneousRationalMap,ZZ) := o -> (Phi,i) -> ( -- undocumented
+projectiveDegrees (LegacyRationalMap,ZZ) := projectiveDegrees (LegacyMultihomogeneousRationalMap,ZZ) := o -> (Phi,i) -> ( -- undocumented
    if i < 0 or i > Phi#"dimTarget" then error("expected integer between 0 and "|toString(Phi#"dimTarget")); 
    if Phi#"projectiveDegrees" =!= {} then return (Phi#"projectiveDegrees")_(Phi#"dimTarget" - i);
-   if o.Certify then error "option Certify=>true not available for projectiveDegrees(RationalMap,ZZ); you can use the option with projectiveDegrees(RationalMap)"; 
-   if instance(Phi,WeightedHomogeneousRationalMap) then error "not implemented yet: projective degrees of weighted rational map";
+   if o.Certify then error "option Certify=>true not available for projectiveDegrees(LegacyRationalMap,ZZ); you can use the option with projectiveDegrees(LegacyRationalMap)"; 
+   if instance(Phi,LegacyWeightedHomogeneousRationalMap) then error "not implemented yet: projective degrees of weighted rational map";
    n := Phi#"dimAmbientTarget"; if instance(n,ZZ) then n = {n};
    projDegree(Phi#"map",i,Phi#"dimTarget",n)
 );
 
-projectiveDegrees RingMap := o -> phi -> projectiveDegrees(rationalMap phi,Certify=>o.Certify,NumDegrees=>o.NumDegrees,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
+projectiveDegrees RingMap := o -> phi -> projectiveDegrees(legacyRationalMap phi,Certify=>o.Certify,NumDegrees=>o.NumDegrees,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
 
-projectiveDegrees (RingMap,ZZ) := o -> (phi,i) -> projectiveDegrees(rationalMap phi,i,Certify=>o.Certify,NumDegrees=>o.NumDegrees,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
+projectiveDegrees (RingMap,ZZ) := o -> (phi,i) -> projectiveDegrees(legacyRationalMap phi,i,Certify=>o.Certify,NumDegrees=>o.NumDegrees,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
 
-degrees RationalMap := degrees MultihomogeneousRationalMap := 
-multidegree RationalMap := multidegree MultihomogeneousRationalMap := Phi -> projectiveDegrees(Phi,Certify=>true,Verbose=>false);
+degrees LegacyRationalMap := degrees LegacyMultihomogeneousRationalMap := 
+multidegree LegacyRationalMap := multidegree LegacyMultihomogeneousRationalMap := Phi -> projectiveDegrees(Phi,Certify=>true,Verbose=>false);
 
 projDegree = method();
 projDegree (RingMap,ZZ,ZZ,List) := (phi,i,k,n) -> (
@@ -1130,19 +1130,19 @@ projDegree (RingMap,ZZ,ZZ,List) := (phi,i,k,n) -> (
    );
 );
 
-degreeMap RationalMap := degreeMap MultihomogeneousRationalMap := o -> Phi -> (
+degreeMap LegacyRationalMap := degreeMap LegacyMultihomogeneousRationalMap := o -> Phi -> (
    if Phi#"degree" =!= null then return (if o.Certify and o.Verbose then <<certificate; Phi#"degree");
-   if instance(Phi,WeightedHomogeneousRationalMap) then error "not implemented yet: degree of weighted rational map";
-   if (instance(Phi,RationalMap) and (not o.Certify) and isPolynomialRing source Phi) then (
+   if instance(Phi,LegacyWeightedHomogeneousRationalMap) then error "not implemented yet: degree of weighted rational map";
+   if (instance(Phi,LegacyRationalMap) and (not o.Certify) and isPolynomialRing source Phi) then (
         p := Phi randomLinearSubspace(source Phi,0);   
         hP := hilbertPolynomial(inverseImage(map Phi,p,Certify=>false),Projective=>false);
         if degree hP > {0} then return 0 else return sub(hP,ZZ);
    );
-   if (instance(Phi,MultihomogeneousRationalMap) and (not o.Certify) and isPolynomialRing source Phi) then (
+   if (instance(Phi,LegacyMultihomogeneousRationalMap) and (not o.Certify) and isPolynomialRing source Phi) then (
         z := local z; 
         return degreeMap(parametrize(Phi,z),Certify=>o.Certify,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
    );
-   if (instance(Phi,RationalMap) and (not o.Certify) and Phi#"dimTarget" >= 1 and char coefficientRing Phi > 0 and coefficientRing Phi === ZZ/(char coefficientRing Phi)) then (
+   if (instance(Phi,LegacyRationalMap) and (not o.Certify) and Phi#"dimTarget" >= 1 and char coefficientRing Phi > 0 and coefficientRing Phi === ZZ/(char coefficientRing Phi)) then (
         q := Phi (point source Phi);   
         F := trim lift(inverseImage(map Phi,q,Certify=>false),ambient source Phi);
         if dim F -1 > 0 then return 0 else return degree F;
@@ -1155,7 +1155,7 @@ degreeMap RationalMap := degreeMap MultihomogeneousRationalMap := o -> Phi -> (
          return pr0;
    );
    if isPrime pr0 then (
-         f := rationalMap Phi;
+         f := legacyRationalMap Phi;
          val := if dim image(f,1) - 1 > f#"dimTarget" then 1 else pr0;
          if o.Certify then setKeyValue(Phi,"degree",val);
          if o.Certify and o.Verbose then <<certificate;
@@ -1168,26 +1168,26 @@ degreeMap RationalMap := degreeMap MultihomogeneousRationalMap := o -> Phi -> (
    return val1;
 );
 
-degreeMap RingMap := o -> phi -> degreeMap(rationalMap phi,Certify=>o.Certify,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
+degreeMap RingMap := o -> phi -> degreeMap(legacyRationalMap phi,Certify=>o.Certify,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
 
-degree RationalMap := degree MultihomogeneousRationalMap := Phi -> degreeMap(Phi,Certify=>true,Verbose=>false);
+degree LegacyRationalMap := degree LegacyMultihomogeneousRationalMap := Phi -> degreeMap(Phi,Certify=>true,Verbose=>false);
 
 parametrize (Ideal) := (L) -> (
    K:=coefficientRing ring L; t:=local t; local T;
    if not isField K then error "the coefficient ring needs to be a field";
    L = trim L;
-   if dim L -1 < 0 then (T=K[t]/ideal(t); return rationalMap map(T,ring L,toList((numgens ring L):(first gens T))));
+   if dim L -1 < 0 then (T=K[t]/ideal(t); return legacyRationalMap map(T,ring L,toList((numgens ring L):(first gens T))));
    if not (isPolynomialRing ring L and isHomogeneous L) then error "expected homogeneous ideal in a polynomial ring";
-   if L == 0 then return rationalMap(ring L);
+   if L == 0 then return legacyRationalMap(ring L);
    if unique degrees L == {{1}} then (
        N:=mingens kernel transpose sub(last coefficients(gens L,Monomials=>gens ring L),K);
        T=K[t_0..t_(numgens source N -1)];
-       return rationalMap map(T,ring L,(vars T)*transpose(N));
+       return legacyRationalMap map(T,ring L,(vars T)*transpose(N));
     );
     if degree L == 2 then (
         p:=point((ring L)/L);
         try(
-            f:=rationalMap inverseMap rationalMap(gens p,Dominant=>1);
+            f:=legacyRationalMap inverseMap legacyRationalMap(gens p,Dominant=>1);
             f=(parametrize source f)*f;
             if image f != L then error "failed to get parameterization";
             return f;
@@ -1198,11 +1198,11 @@ parametrize (Ideal) := (L) -> (
 
 parametrize (QuotientRing) := (R) -> (
    if not (isPolynomialRing(ambient R) and isHomogeneous(ideal R)) then error "expected coordinate ring of a projective variety";
-   f:=rationalMap(parametrize ideal R,Dominant=>true);
-   f * rationalMap(target f,R)
+   f:=legacyRationalMap(parametrize ideal R,Dominant=>true);
+   f * legacyRationalMap(target f,R)
 );
 
-parametrize (PolynomialRing) := (R) -> rationalMap R;
+parametrize (PolynomialRing) := (R) -> legacyRationalMap R;
 
 parametrizeProductOfProjectiveSpaces = method(TypicalValue => RingMap);
 parametrizeProductOfProjectiveSpaces (PolynomialRing,Symbol) := (R,x) -> (
@@ -1215,23 +1215,23 @@ parametrizeProductOfProjectiveSpaces (PolynomialRing,Symbol) := (R,x) -> (
    map(S,R,flatten apply(v,e -> x_(prepend(0,e))))
 );
 
-parametrize (MultihomogeneousRationalMap,Symbol) := (Phi,x) -> (
+parametrize (LegacyMultihomogeneousRationalMap,Symbol) := (Phi,x) -> (
    if not isPolynomialRing source Phi then error "not implemented yet";
-   rationalMap((parametrizeProductOfProjectiveSpaces(source Phi,x)) * (map Phi))
+   legacyRationalMap((parametrizeProductOfProjectiveSpaces(source Phi,x)) * (map Phi))
 );
 
-parametrize (MultihomogeneousRationalMap) := (Phi) -> parametrize(Phi,getSymbol "x");
+parametrize (LegacyMultihomogeneousRationalMap) := (Phi) -> parametrize(Phi,getSymbol "x");
 
-flatten RationalMap := flatten MultihomogeneousRationalMap := Phi -> (
+flatten LegacyRationalMap := flatten LegacyMultihomogeneousRationalMap := Phi -> (
     if degreeLength target Phi == 1 and max flatten degrees target Phi == 1 then (
-        J := entries rationalMap(ideal target Phi,1);
+        J := entries legacyRationalMap(ideal target Phi,1);
         if #J > 0 then (
-            g := inverse rationalMap(parametrize ideal J,Dominant=>1);
-            Phi = Phi * rationalMap(g|(target Phi),Dominant=>true);
+            g := inverse legacyRationalMap(parametrize ideal J,Dominant=>1);
+            Phi = Phi * legacyRationalMap(g|(target Phi),Dominant=>true);
         );
     );
     if degreeLength source Phi == 1 and max flatten degrees source Phi == 1 then (
-        I := entries rationalMap(ideal source Phi,1);
+        I := entries legacyRationalMap(ideal source Phi,1);
         if #I > 0 then (
             f := parametrize ideal I;
             Phi = (f||(source Phi)) * Phi;
@@ -1240,11 +1240,11 @@ flatten RationalMap := flatten MultihomogeneousRationalMap := Phi -> (
     return Phi;
 );
 
-lift RationalMap := lift MultihomogeneousRationalMap := o -> Phi -> (
-   Psi := rationalMap Phi;
+lift LegacyRationalMap := lift LegacyMultihomogeneousRationalMap := o -> Phi -> (
+   Psi := legacyRationalMap Phi;
    if isPolynomialRing source Psi then return Psi;
    F := lift(matrix Psi,ambient source Psi) | gens(ideal source Psi);
-   try return rationalMap(F) else error "cannot lift given rational map";
+   try return legacyRationalMap(F) else error "cannot lift given rational map";
 );
 
 GraphIdealSat = method(TypicalValue => Ideal);
@@ -1287,9 +1287,9 @@ GraphIdealElim (RingMap) := (phi) -> (
 );
                      
 graphIdealInt = method(Options => {BlowUpStrategy => "Eliminate"});
-graphIdealInt RationalMap := graphIdealInt MultihomogeneousRationalMap := o -> Phi -> (
+graphIdealInt LegacyRationalMap := graphIdealInt LegacyMultihomogeneousRationalMap := o -> Phi -> (
    if o.BlowUpStrategy =!= "Eliminate" and o.BlowUpStrategy =!= "Saturate" then error "expected value for option BlowUpStrategy to be \"Saturate\" or \"Eliminate\"";
-   if Phi#"blowUpIdeal" === null then if instance(Phi,RationalMap) then if Phi#"inverseRationalMap" =!= null then if (Phi#"inverseRationalMap")#"blowUpIdeal" =!= null then (
+   if Phi#"blowUpIdeal" === null then if instance(Phi,LegacyRationalMap) then if Phi#"inverseRationalMap" =!= null then if (Phi#"inverseRationalMap")#"blowUpIdeal" =!= null then (
        Bl := (Phi#"inverseRationalMap")#"blowUpIdeal";
        z := reverse multigens ring Bl;
        R := (coefficientRing ring Bl)[flatten z,Degrees => {(#first z):{1,0},(#last z):{0,1}}];
@@ -1303,35 +1303,35 @@ graphIdealInt RationalMap := graphIdealInt MultihomogeneousRationalMap := o -> P
    return Phi#"blowUpIdeal"; 
 );
 
-graph RationalMap := graph MultihomogeneousRationalMap := o -> Phi -> (
+graph LegacyRationalMap := graph LegacyMultihomogeneousRationalMap := o -> Phi -> (
   bl := graphIdealInt(Phi,BlowUpStrategy=>o.BlowUpStrategy);
   Z := (ring bl)/bl;
   gg := multigens Z;
-  p2 := rationalMap(map(Z,target Phi,last gg),Dominant=>"notSimplify");
+  p2 := legacyRationalMap(map(Z,target Phi,last gg),Dominant=>"notSimplify");
   if Phi#"isDominant" =!= null then setKeyValue(p2,"isDominant",Phi#"isDominant");
   if Phi#"degree" =!= null then setKeyValue(p2,"degree",Phi#"degree");
   if Phi#"isBirational" =!= null then setKeyValue(p2,"isBirational",Phi#"isBirational");
   if #gg == 2 then (
-       p1 := rationalMap(map(Z,source Phi,first gg),Dominant=>"notSimplify");
+       p1 := legacyRationalMap(map(Z,source Phi,first gg),Dominant=>"notSimplify");
        setKeyValue(p1,"isDominant",true);
        setKeyValue(p1,"degree",1);
        setKeyValue(p1,"isBirational",true);
        return (p1,p2);
   );
-  return toSequence append(for i to #gg -2 list rationalMap(gg_i,Dominant=>"notSimplify"),p2);
+  return toSequence append(for i to #gg -2 list legacyRationalMap(gg_i,Dominant=>"notSimplify"),p2);
 );
 
-graph RingMap := o -> phi -> apply(graph(rationalMap phi,BlowUpStrategy=>o.BlowUpStrategy),map);
+graph RingMap := o -> phi -> apply(graph(legacyRationalMap phi,BlowUpStrategy=>o.BlowUpStrategy),map);
 
-exceptionalLocus RationalMap := o -> Phi -> (
+exceptionalLocus LegacyRationalMap := o -> Phi -> (
    B := ideal inverse(Phi,Certify=>o.Certify);
    if o.Certify then Phi^** B else Phi^* B
 );
 
-exceptionalLocus MultihomogeneousRationalMap := o -> Phi -> error "please load the package \"MultiprojectiveVarieties\" to compute exceptional loci of birational maps from multi-projective varieties";
+exceptionalLocus LegacyMultihomogeneousRationalMap := o -> Phi -> error "please load the package \"MultiprojectiveVarieties\" to compute exceptional loci of birational maps from multi-projective varieties";
 
 changeCoefficientRing = method();
-changeCoefficientRing (RationalMap,Ring) := changeCoefficientRing (MultihomogeneousRationalMap,Ring) := (Phi,KK) -> (
+changeCoefficientRing (LegacyRationalMap,Ring) := changeCoefficientRing (LegacyMultihomogeneousRationalMap,Ring) := (Phi,KK) -> (
    Pn := ambient source Phi;
    Pm := ambient target Phi;
    if not isField KK then error "expected a field";
@@ -1345,9 +1345,9 @@ changeCoefficientRing (RationalMap,Ring) := changeCoefficientRing (Multihomogene
    J' := sub(J,Pm');
    F' := sub(F,Pn');
    -- try assert(sub(I',Pn) == I and sub(J',Pm) == J and sub(F',Pn) - F == 0) else error "cannot extend coefficient ring";
-   rationalMap(Pn'/I',Pm'/J',F')
+   legacyRationalMap(Pn'/I',Pm'/J',F')
 );
-RationalMap ** Ring := MultihomogeneousRationalMap ** Ring := (Phi,KK) -> changeCoefficientRing(Phi,KK);
+LegacyRationalMap ** Ring := LegacyMultihomogeneousRationalMap ** Ring := (Phi,KK) -> changeCoefficientRing(Phi,KK);
 
 ChowRing := local ChowRing;
 
@@ -1378,7 +1378,7 @@ SegreClass (RingMap) := o -> (phi) -> (
    sum(r+1,k->(-1)^(n-k-1)*sum(n-k+1,i->(-1)^i*binomial(n-k,i)*d1^(n-k-i)*d_i)*h^(N-k))
 );
 
-SegreClass (RationalMap) := o -> (Phi) -> SegreClass(map Phi,Certify=>o.Certify,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
+SegreClass (LegacyRationalMap) := o -> (Phi) -> SegreClass(map Phi,Certify=>o.Certify,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
 
 ChernSchwartzMacPherson (Ideal) := o -> (X) -> ( 
    Pn:=ring X;
@@ -1579,7 +1579,7 @@ setKeyValue (MutableHashTable,String,Thing) := (Phi,str,val) -> (
          return;
     );
     if str === "inverseRationalMap" then (
-         if not instance(val,RationalMap) then errorClass();
+         if not instance(val,LegacyRationalMap) then errorClass();
          if Phi#str === null then Phi#str = val else errorChange();
          return;
     );
@@ -1587,7 +1587,7 @@ setKeyValue (MutableHashTable,String,Thing) := (Phi,str,val) -> (
          if not instance(val,List) then errorClass();
          if # val =!= 1 + Phi#"dimTarget" then errorClass();
          if Phi#str === {} then (Phi#str = val) else (if Phi#str =!= val then errorChange());
-         if not instance(val,RationalMap) then return;
+         if not instance(val,LegacyRationalMap) then return;
          if Phi#"dimTarget" === Phi#"dimAmbientTarget" then if Phi#"dimSource" === Phi#"dimAmbientSource" then if (Phi#"dimTarget" === Phi#"dimSource" and Phi#"dimTarget" > 0) then (if Phi#"isDominant" =!= (last val > 0) then setKeyValue(Phi,"isDominant",last val > 0); if Phi#"degree" =!= (last val) then setKeyValue(Phi,"degree",last val));
          if Phi#"inverseRationalMap" =!= null then if (Phi#"inverseRationalMap")#"projectiveDegrees" =!= (reverse val) then setKeyValue(Phi#"inverseRationalMap","projectiveDegrees",reverse val);
          return;
@@ -1700,7 +1700,7 @@ point (Ideal,Boolean) := (I,b) -> (  -- see also: code(randomKRationalPoint,Idea
        p = par point(par^* I,false);
    );
    if c > 1 and n - c < 2 then (
-       f := (rationalMap gens randomLinearSubspace(R,c-2))|I;
+       f := (legacyRationalMap gens randomLinearSubspace(R,c-2))|I;
        I' := kernel(map f,SubringLimit=>1);
        p = trim lift(f^*(point(I',false)),ambient source f);
    );
@@ -1717,13 +1717,13 @@ point (QuotientRing) := (R) -> (
    sub(point ideal R,R)
 );
 
-segre RationalMap := segre MultihomogeneousRationalMap := Phi -> segre source Phi;
+segre LegacyRationalMap := segre LegacyMultihomogeneousRationalMap := Phi -> segre source Phi;
 
-segre PolynomialRing := R -> rationalMap(gens product apply(multigens R,ideal));
+segre PolynomialRing := R -> legacyRationalMap(gens product apply(multigens R,ideal));
 
 segre QuotientRing := R -> (
-    phi := rationalMap(compress gens product apply(multigens R,ideal),Dominant=>1);
-    phi * (rationalMap inverseMap parametrize target phi)
+    phi := legacyRationalMap(compress gens product apply(multigens R,ideal),Dominant=>1);
+    phi * (legacyRationalMap inverseMap parametrize target phi)
 );
 
 segre (Ideal,Ideal) := (I,J) -> ( -- undocumented
@@ -1772,7 +1772,7 @@ specialCremonaTransformation (Ring,ZZ) := (K,a) -> (
    if not isField K then error "expected a field";
    if a<1 or a>12 then error("expected integer between 1 and 12, see Table 1 of "|"https://arxiv.org/abs/1509.06028");
    (F,degs,str) := Examples(K,a);
-   phi := rationalMap F;
+   phi := legacyRationalMap F;
    setKeyValue(phi,"isBirational",true);
    setKeyValue(phi,"maps",{map phi});
    setKeyValue(phi,"projectiveDegrees",degs);
@@ -1788,7 +1788,7 @@ quadroQuadricCremonaTransformation (Ring,ZZ,ZZ) := (K,n,i) -> (
    if n <= 0 or i <= 0 then error "expected positive integers";
    if position({(2,1),(2,2),(2,3),(3,1),(3,2),(3,3),(3,4),(3,5),(3,6),(3,7),(4,1),(4,2),(4,3),(4,4),(4,5),(4,6),(4,7),(4,8),(4,9),(4,10),(4,11),(4,12),(4,13),(4,14),(4,15),(4,16),(5,1),(5,2),(5,3),(5,4),(5,5),(5,6),(5,7),(5,8),(5,9),(5,10),(5,11),(5,12),(5,13),(5,14),(5,15),(5,16),(5,17),(5,18),(5,19),(5,20),(5,21),(5,22),(5,23),(5,24),(5,25),(5,26),(5,27),(5,28),(5,29),(5,30),(5,31),(5,32),(5,33),(5,34),(5,35),(5,36),(5,37),(5,38),(5,39),(8,1),(11,1),(14,1),(20,1),(26,1)},pa -> pa == (n,i)) === null then error("quadro-quadric Cremona transformation of P^"|toString(n)|" not available");
    F := quadroquadric(K,n,i);
-   Phi := rationalMap(ring F,ring F,F);
+   Phi := legacyRationalMap(ring F,ring F,F);
    setKeyValue(Phi,"maps",{map Phi});
    setKeyValue(Phi,"isDominant",true);
    setKeyValue(Phi,"isBirational",true);
@@ -1807,7 +1807,7 @@ specialQuadraticTransformation (Ring,ZZ) := (K,a) -> (
    if a == 2 then return specialCremonaTransformation(K,9);
    if a == 3 then return specialCremonaTransformation(K,10);
    (F,Z,degs,str) := examplesQuadratic(K,a);
-   Phi := rationalMap(ring F,Z,F);
+   Phi := legacyRationalMap(ring F,Z,F);
    setKeyValue(Phi,"maps",{map Phi});
    setKeyValue(Phi,"isBirational",true);
    setKeyValue(Phi,"projectiveDegrees",degs);
@@ -1826,13 +1826,13 @@ specialCubicTransformation (Ring,ZZ) := (K,a) -> (
    if a == 2 then (
        cre3 := specialCremonaTransformation(K,3);
        x := gens source cre3;
-       return (rationalMap((parametrize(ideal(x_0-x_1+x_2))) * cre3,Dominant=>2))!;
+       return (legacyRationalMap((parametrize(ideal(x_0-x_1+x_2))) * cre3,Dominant=>2))!;
    );
    if a == 3 then return specialCremonaTransformation(K,3);
    if a == 4 then return specialCremonaTransformation(K,11);
    if a == 5 then return specialCremonaTransformation(K,12);
    (F,Z,degs,str) := examplesCubic(K,a-5);
-   Phi := rationalMap map(ring F,Z,F);
+   Phi := legacyRationalMap map(ring F,Z,F);
    setKeyValue(Phi,"maps",{map Phi});
    setKeyValue(Phi,"isBirational",true);
    setKeyValue(Phi,"projectiveDegrees",degs);
@@ -1877,7 +1877,7 @@ abstractRationalMap (PolynomialRing,PolynomialRing,FunctionClosure,ZZ) := (Pn,Pm
 
 abstractRationalMap (PolynomialRing,PolynomialRing,FunctionClosure) := (Pn,Pm,f) -> abstractRationalMap(Pn,Pm,f,1);
 
-abstractRationalMap (RationalMap) := (Phi) -> (
+abstractRationalMap (LegacyRationalMap) := (Phi) -> (
    if not (isPolynomialRing source Phi and isPolynomialRing target Phi) then error "expected a rational map between projective spaces";
    F := matrix Phi;
    x := gens source Phi;
@@ -1924,7 +1924,7 @@ compose (AbstractRationalMap,AbstractRationalMap) := AbstractRationalMap => {} >
 
 AbstractRationalMap * AbstractRationalMap := (Phi,Psi) -> compose(Phi,Psi); 
 
-rationalMap (AbstractRationalMap) := o -> (Phi) -> (
+legacyRationalMap (AbstractRationalMap) := o -> (Phi) -> (
    d := degForms Phi;
    if Phi#"rationalMap" =!= null then return Phi#"rationalMap";
    Pn := source Phi;
@@ -1962,7 +1962,7 @@ rationalMap (AbstractRationalMap) := o -> (Phi) -> (
    g := gens R;
    PP = K[x_0..x_n];
    G := sub(sub(sub(F,apply(#g,i -> g_i => S0_i)),PP),vars Pn);
-   phi := rationalMap(Pn,Pm,G);
+   phi := legacyRationalMap(Pn,Pm,G);
    if #S > 1 then maps phi;
    Phi#"degForms" = max flatten degrees ideal compress matrix phi;
    Phi#"rationalMap" = phi
@@ -1993,7 +1993,7 @@ degForms (AbstractRationalMap) := (Phi) -> (
       if Phi#"verbose" then <<"-- searching degree of forms: trying "<<d<<endl; 
       try (
          Phi'#"degForms" = d;
-         psi = rationalMap Phi';
+         psi = legacyRationalMap Phi';
          c = false;
       );
    );
@@ -2014,7 +2014,7 @@ projectiveDegrees (AbstractRationalMap,ZZ) := o -> (Phi,i) -> (
 
 inverseMap (AbstractRationalMap) := o -> (Phi) -> (
    if o.Certify then error "the option Certify is not available with inverseMap(AbstractRationalMap)";
-   phi := rationalMap Phi;
+   phi := legacyRationalMap Phi;
    if not isBirational phi then error "expected a birational map";
    if phi#"inverseRationalMap" =!= null then return abstractRationalMap(phi#"inverseRationalMap");
    f := a -> flatten entries coefficients parametrize(phi^* trim minors(2,(vars target phi)||matrix{a}));
@@ -2082,7 +2082,7 @@ abstractRationalMap (Ideal,String) := (X,str) -> (
    abstractRationalMap(ring X,ring X,f)
 );
 
-sub (RationalMap,PolynomialRing,PolynomialRing) := (Phi,Pn,Pm) -> (
+sub (LegacyRationalMap,PolynomialRing,PolynomialRing) := (Phi,Pn,Pm) -> (
    if not(coefficientRing Pn === coefficientRing Phi and coefficientRing Pm === coefficientRing Phi) then error "expected same coefficient ring";
    if numgens Pn != Phi#"dimAmbientTarget"+1 then error ("the ambient projective space of the source has dimension "|toString(Phi#"dimAmbientTarget"));
    if numgens Pm != Phi#"dimAmbientSource"+1 then error ("the ambient projective space of the target has dimension "|toString(Phi#"dimAmbientSource"));
@@ -2094,7 +2094,7 @@ sub (RationalMap,PolynomialRing,PolynomialRing) := (Phi,Pn,Pm) -> (
    mF := if Phi#"maps" =!= null then (for i to #(Phi#"maps")-1 list flatten entries sub(lift(matrix (Phi#"maps")_i,ambient source Phi),vars Pn)) else null;
    Z := if Phi#"idealImage" =!= null then sub(ideal sub(lift(gens Phi#"idealImage",ambient target Phi),vars Pm),S) else null;
    Bl := if Phi#"blowUpIdeal" =!= null then sub(Phi#"blowUpIdeal",vars tensor(Pn,Pm,MonomialOrder=>{GRevLex,Position=>Up})) else null;
-   phi := rationalMap map(R,S,F);
+   phi := legacyRationalMap map(R,S,F);
    if mF =!= null then setKeyValue(phi,"maps",for i to #mF-1 list map(R,S,mF_i));
    if Z =!= null then forceImage(phi,Z);
    if Phi#"isDominant" =!= null then setKeyValue(phi,"isDominant",Phi#"isDominant");
@@ -2108,7 +2108,7 @@ sub (RationalMap,PolynomialRing,PolynomialRing) := (Phi,Pn,Pm) -> (
        mG := if Psi#"maps" =!= null then (for i to #(Psi#"maps")-1 list flatten entries sub(lift(matrix (Psi#"maps")_i,ambient source Psi),vars Pm)) else null;
        Z' := if Psi#"idealImage" =!= null then sub(ideal sub(lift(gens Psi#"idealImage",ambient target Psi),vars Pn),R) else null;
        Bl' := if Psi#"blowUpIdeal" =!= null then sub(Psi#"blowUpIdeal",vars tensor(Pm,Pn,MonomialOrder=>{GRevLex,Position=>Up})) else null;
-       psi := rationalMap map(S,R,G);
+       psi := legacyRationalMap map(S,R,G);
        if mG =!= null then setKeyValue(psi,"maps",for i to #mG-1 list map(S,R,mG_i));
        if Z' =!= null then forceImage(psi,Z');
        if Bl' =!= null then psi#"blowUpIdeal" = Bl';
@@ -2117,7 +2117,7 @@ sub (RationalMap,PolynomialRing,PolynomialRing) := (Phi,Pn,Pm) -> (
    return phi;
 );
 
-toExternalString RationalMap := Phi -> (
+toExternalString LegacyRationalMap := Phi -> (
     n := Phi#"dimAmbientTarget"; m := Phi#"dimAmbientSource";
     K := coefficientRing Phi;
     x := local x; y := local y;
@@ -2128,7 +2128,7 @@ toExternalString RationalMap := Phi -> (
     if Psi =!= null then Z' := Psi#"idealImage";
     str := ///(o -> (
 n := ///|toString(n)|///; m := ///|toString(m)|///;
-K := ///|toString(K)|///;
+K := ///|toExternalString(K)|///;
 x := local x; y := local y;
 Pn := K[x_0..x_n]; Pm := K[y_0..y_m];
 I := ///|toString ideal source Phi|///;
@@ -2146,7 +2146,7 @@ PnPm := tensor(Pn,Pm,MonomialOrder=>{GRevLex,Position=>Up});
 x = (gens PnPm)_{0 .. n};
 y = (gens PnPm)_{n+1 .. n+1+m};
 Bl := ///|toString Phi#"blowUpIdeal"|///;
-phi := rationalMap map(R,S,F);///|
+phi := legacyRationalMap map(R,S,F);///|
 (if Phi#"maps" =!= null then newline|///phi#"maps" = for i to #mF-1 list map(R,S,mF_i)///|";" else "")|///
 phi#"isDominant" = ///|toString(Phi#"isDominant")|///;
 phi#"isBirational" = ///|toString(Phi#"isBirational")|///;
@@ -2160,7 +2160,7 @@ PmPn := tensor(Pm,Pn,MonomialOrder=>{GRevLex,Position=>Up});
 y = (gens PmPn)_{0 .. m};
 x = (gens PmPn)_{m+1 .. m+1+n};
 Bl' := ///|toString Psi#"blowUpIdeal"|///;
-psi := rationalMap map(S,R,G);///|
+psi := legacyRationalMap map(S,R,G);///|
 (if Psi#"maps" =!= null then newline|///psi#"maps" = for i to #mG-1 list map(S,R,mG_i)///|";" else "")|///
 psi#"isDominant" = ///|toString(Psi#"isDominant")|///;
 psi#"isBirational" = ///|toString(Psi#"isBirational")|///;
@@ -2174,17 +2174,25 @@ forceInverseMap(phi,psi);///;
 phi))()///
 );
 
-isMorphism RationalMap := isMorphism MultihomogeneousRationalMap := Phi -> (
+isMorphism LegacyRationalMap := isMorphism LegacyMultihomogeneousRationalMap := Phi -> (
     B := ideal Phi; 
     dimB := max(dim B - (# heft ambient source Phi),-1);
     dimB == -1
 );
 
-isIsomorphism RationalMap := Phi -> (
+isIsomorphism LegacyRationalMap := Phi -> (
     if Phi#"dimTarget" != Phi#"dimSource" or Phi#"isBirational" === false or Phi#"isDominant" === false then return false;
     if not isMorphism Phi then return false;
     isMorphism inverse Phi
 );
+
+-------------------------------------------------------------------------------
+-- Up to version 5.2.1, the internal classes LegacyMultihomogeneousRationalMap and LegacyWeightedHomogeneousRationalMap
+-- (not exported) were called MultihomogeneousRationalMap and WeightedHomogeneousRationalMap;
+-- the old names are kept for code that uses them via "debug Cremona" (e.g., older versions of MultiprojectiveVarieties).
+MultihomogeneousRationalMap = LegacyMultihomogeneousRationalMap;
+WeightedHomogeneousRationalMap = LegacyWeightedHomogeneousRationalMap;
+-------------------------------------------------------------------------------
 
 load "./Cremona/documentation.m2"
 

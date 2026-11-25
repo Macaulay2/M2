@@ -12,7 +12,7 @@ CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
      -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)/include
 CXXFLAGS += -std=gnu++17 -Wno-sign-conversion
 
-LOADLIBES += @BUILTLIBS@ @LINALGLIBS@ @LIBS@ @FCLIBS@ -lgtest -pthread
+LOADLIBES += @BUILTLIBS@ @LINALGLIBS@ @LIBS@ @FCLIBS@ -lgtest -pthread @OPENMP_CXXFLAGS@ @OPENMP_LIBS@
 
 .PHONY: runtests
 

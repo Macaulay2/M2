@@ -602,10 +602,10 @@ S = ZZ/101[a,b,c];
       assert(isCommutative g1)
       assert(isCommutative f1)
       assert(degree f1 == 0)
-      --f2 = randomSimplicialMap(D, C, Cycle => true);
-      --isCommutative f2
-      --assert(degree f2 == 0)
-      --assert isSimplicialMorphism f2
+      f2 = randomSimplicialMap(D, C, Cycle => true);
+      assert isCommutative f2
+      assert(degree f2 == 0)
+      assert isSimplicialMorphism f2
 ///
 
 TEST ///
@@ -1128,7 +1128,7 @@ Q = QQ[x_1..x_3];
   K = koszulComplex {x_1,x_2}
   assert isWellDefined (Sc = schurMap({1,1}, K))
   prune extPower(2, K)
-  --assert isWellDefined prune schurMap({2,1}, K, TopDegree => 4)
+  assert isWellDefined prune schurMap({2,1}, K, TopDegree => 4)
 ///
 
 
@@ -1146,32 +1146,24 @@ Q = ZZ/2[a,b]
 ///
 
 
--- commented out: this test takes ~6 minutes due to extPower/wedgeProduct at top degree 6
--*
+-- simplicialTensor of two length-1 complexes.  A lightweight revival of a test
+-- block that was silenced for performance; its heavier extPower/wedgeProduct
+-- half at top degree 6 is already covered by the test block immediately below.
 TEST ///
 Q = ZZ/101[x_1,x_2];
-	    K1 = complex {matrix{{x_1}}};
-	    K2 = complex {matrix{{x_2}}};
-	    T1 = K1**K2
-	    T1.dd
-	    T2 = prune simplicialTensor({K1,K2})
-	    T2.dd
-	    phi1 = extend(T1,T2,id_(T1_0))
-	    phi2 = extend(T2,T1,id_(T1_0))
-	    assert(phi1*phi2 == id_T1)
-	    assert isNullHomotopic(phi2*phi1 - id_T2)
-	    Q = ZZ/101[a,b];
-	    K = koszulComplex vars Q
-	    SK = simplicialModule(K,6) --want top degree 6 since the resulting complexes should have length 6
-	    w21K = extPower(2, SK) ** SK
-	    w3K = extPower(3, SK)
-	    assert isWellDefined w3K
-	    H = hashTable for i from 0 to 6 list i => dual wedgeProduct(2,1, dual SK_i);
-	    inclusion = map(w21K, w3K, H);
-	    assert isWellDefined inclusion
-	    assert isCommutative inclusion
+    K1 = complex {matrix{{x_1}}};
+    K2 = complex {matrix{{x_2}}};
+    T1 = K1 ** K2
+    T2 = prune simplicialTensor({K1, K2})
+    assert isWellDefined T2
+    -- the (Complex,Complex) dispatch agrees with the (List) dispatch
+    assert(simplicialTensor(K1, K2) == simplicialTensor({K1, K2}))
+    -- the simplicial tensor product is homotopy equivalent to the classical one
+    phi1 = extend(T1, T2, id_(T1_0))
+    phi2 = extend(T2, T1, id_(T1_0))
+    assert(phi1 * phi2 == id_T1)
+    assert isNullHomotopic(phi2 * phi1 - id_T2)
 ///
-*-
 
 TEST ///
 R = ZZ/101[x_1..x_3];
@@ -1344,5 +1336,32 @@ TEST ///
     C = simplicialModule(complex {g}, 3, Degeneracy => true);
     D = phi C;
     assert isWellDefined D
+///
+
+TEST ///
+-- tensorLES: the long exact sequence of homology from the canonical
+-- short exact sequence 0 -> wedge^2 C -> C ** C -> Sym^2 C -> 0
+Q = ZZ/2[a,b]
+K = koszulComplex vars Q
+les = tensorLES(K, 4)
+assert isWellDefined les
+assert instance(les, Complex)
+-- a long exact sequence is exact, so it has no homology
+assert(prune HH les == 0)
+///
+
+TEST ///
+-- symmetricQuotient: the surjection C ** C -> Sym^2 C
+Q = ZZ/2[a,b]
+K = koszulComplex vars Q
+phi = prune symmetricQuotient(K, 4)
+assert isWellDefined phi
+assert isCommutative phi
+-- symmetricQuotient is a surjection onto the second symmetric power
+assert(prune coker phi == 0)
+-- 0 -> wedge^2 K -> K ** K -> Sym^2 K -> 0 is a short exact sequence
+assert isShortExactSequence(symmetricQuotient(K, 4), exteriorInclusion(K, 4))
+-- the Module dispatch
+assert isWellDefined symmetricQuotient(Q^2)
 ///
 

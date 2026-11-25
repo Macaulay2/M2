@@ -7,8 +7,8 @@
  *   version 2 of the License, or any later version.                         *
  *****************************************************************************/
 
-#ifndef BIBASIS_PCOMPARATOR_HPP
-#define BIBASIS_PCOMPARATOR_HPP
+#ifndef M2_BIBASIS_PCOMPARATOR_HPP
+#define M2_BIBASIS_PCOMPARATOR_HPP
 
 #include <string>
 #include "error.h"

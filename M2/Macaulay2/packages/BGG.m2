@@ -3,12 +3,12 @@ newPackage(
     	Version => "1.4.2", 
     	Date => "Jan 11, 2016",
     	Authors => {
-	     {Name => "Hirotachi Abo", Email => "abo@uidaho.edu", HomePage => "http://www.webpages.uidaho.edu/~abo/"},
-	     {Name => "Wolfram Decker", Email => "decker@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/decker/"},
-	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},	     
-	     {Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
-	     {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith/"},
-	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}
+	     {Name => "Hirotachi Abo", Email => "abo@uidaho.edu", HomePage => "https://sites.google.com/view/hirotachiabo/home"},
+	     {Name => "Wolfram Decker", Email => "wolfram.decker@rptu.de", HomePage => "https://math.rptu.de/en/decker"},
+	     {Name => "David Eisenbud", Email => "de@math.berkeley.edu", HomePage => "https://eisenbud.github.io"},
+	     {Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "https://www.math.uni-sb.de/ag/schreyer/"},
+	     {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "https://ggsmith.ca"},
+	     {Name => "Mike Stillman", Email => "mikestillman1@gmail.com", HomePage => "https://mikestillman.github.io"}
 	     },
     	Headline => "Bernstein-Gelfand-Gelfand correspondence",
 	Keywords => {"Commutative Algebra"},
@@ -1357,13 +1357,17 @@ TEST///
   assert(betti L == ans)
 ///
 
--*
+--Old comments:
 --I don't see why the following doesn't work. The output of the left side sure LOOKS like that on the right
 TEST///
 A = ZZ/11[a,b]
-(projectiveProduct(A,{1,1}))_0 === A[x_(0,0), x_(0,1)][x_(1,0), x_(1,1)]
+---(projectiveProduct(A,{1,1}))_0 === A[x_(0,0), x_(0,1)][x_(1,0), x_(1,1)]
+---This does not work since the variable x_(-,-) on the left hand side is NOT the symbol x_(-,-) on the right hand side
+assert(numgens(projectiveProduct(A,{1,1}))_0 == 2)
+assert(numgens coefficientRing (projectiveProduct(A,{1,1}))_0 == 2)
+assert(coefficientRing coefficientRing (projectiveProduct(A,{1,1}))_0 === A)
 ///
-*-
+
 
 TEST///
 A = QQ[a,b]

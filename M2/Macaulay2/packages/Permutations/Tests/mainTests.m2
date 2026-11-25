@@ -290,3 +290,48 @@ TEST ///
     -- The poset is Sperner.
     assert(isSperner P)
 ///
+
+TEST ///
+    -- weakBruhatOrder: the Side option (left vs. right weak Bruhat order)
+    Sn = n -> apply(permutations n, p -> permutation apply(p, i -> i+1))
+    S3 = Sn 3
+    S4 = Sn 4
+
+    -- the default side is "right"
+    assert all(S3, w -> all(S3, v ->
+        weakBruhatOrder(w, v) == weakBruhatOrder(w, v, Side => "right")))
+
+    -- the left and right weak orders are interchanged by inversion:
+    --     w <=_L v   iff   w^-1 <=_R v^-1
+    assert all(S4, w -> all(S4, v ->
+        weakBruhatOrder(w, v, Side => "left") ==
+        weakBruhatOrder(inverse w, inverse v, Side => "right")))
+
+    -- the left weak order is reflexive, with the identity as its minimum and
+    -- the longest element as its maximum
+    assert all(S4, w -> weakBruhatOrder(w, w, Side => "left"))
+    assert all(S4, v -> weakBruhatOrder(permutation {1,2,3,4}, v, Side => "left"))
+    assert all(S4, v -> weakBruhatOrder(v, permutation {4,3,2,1}, Side => "left"))
+
+    -- left and right can disagree: {1,3,2} <=_R {3,1,2}, but {1,3,2} is not
+    -- below {3,1,2} in the left weak order
+    assert(weakBruhatOrder(permutation {1,3,2}, permutation {3,1,2}, Side => "right"))
+    assert(not weakBruhatOrder(permutation {1,3,2}, permutation {3,1,2}, Side => "left"))
+
+    -- an unrecognized Side value raises an error
+    assert(try (weakBruhatOrder(permutation {1,2}, permutation {2,1}, Side => "bogus"); false) else true)
+///
+
+TEST ///
+    -- randomPermutation n produces a random element of the symmetric group S_n
+    assert(class randomPermutation 5 === Permutation)
+    -- the result is a well-defined permutation of length n on the letters 1..n
+    scan({1, 2, 5, 10, 25}, n -> (
+        w := randomPermutation n;
+        assert(isWellDefined w);
+        assert(#w == n);
+        assert(sort toList w == toList(1..n));
+    ))
+    -- there is only one permutation on a single letter
+    assert(randomPermutation 1 == permutation {1})
+///

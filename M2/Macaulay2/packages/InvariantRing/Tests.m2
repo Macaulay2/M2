@@ -25,7 +25,7 @@ assert(not isInvariant(1 + x_1^5 + x_1^4, G))
 -- Test 1
 TEST ///
 R = QQ[x_1..x_3]
-L = apply(2, i -> permutationMatrix(3, [i + 1, i + 2] ) )
+L = apply(2, i -> permutationMatrix(3, {[i + 1, i + 2]} ) )
 S3 = finiteAction(L,R)
 assert(#(group S3) === 6)
 assert(not isAbelian S3)
@@ -65,6 +65,7 @@ R = QQ[x_1]
 T = diagonalAction(matrix{{1}}, {2}, R)
 invariants0 = set {R_0^2}
 assert(set invariants T === invariants0)
+assert(set invariants(T,Strategy=>"DerkesenGandini") === invariants0)
 assert(isInvariant(R_0^2, T))
 ///
 
@@ -74,6 +75,7 @@ R = QQ[x_1..x_3]
 T = diagonalAction(matrix{{1,0,1},{0,1,1}}, {3,3}, R)
 invariants1 = set {x_3^3, x_2^3, x_1^3, x_1*x_2*x_3^2, x_1^2*x_2^2*x_3}
 assert(set invariants T === invariants1)
+assert(set invariants(T,Strategy=>"DerkesenGandini") === invariants1)
 ///
 
 -- Test 6
@@ -97,10 +99,22 @@ assert(set invariants T0 === invariants0)
 -- Test 8
 TEST ///
 R1 = QQ[x_1..x_4]
+-- torus only
 T1 = diagonalAction(matrix {{-3, -1, 1, 2}}, R1)
 invariants1 =  set {x_2*x_3, x_2^2*x_4, x_1*x_3*x_4, x_1*x_2*x_4^2, x_1^2*x_4^3, x_1*x_3^3}
 assert(first weights T1 === matrix{{-3, -1, 1, 2}})
 assert(set invariants T1 === invariants1)
+assert(set invariants(T1,UsePolyhedra=>true) === invariants1)
+m = product apply(gens R1,{2,3,4,1}, (v,d) -> v^d)
+assert(not isInvariant(m, T1))
+-- abelian group only
+T2 = diagonalAction(matrix{{1,1,1,1},{1,1,0,0}}, {5,5}, R1)
+invariants2 =  set {x_4^5, x_3*x_4^4, x_3^2*x_4^3, x_3^3*x_4^2, x_3^5, x_3^4*x_4, x_2^5,
+    x_1*x_2^4, x_1^2*x_2^3, x_1^3*x_2^2, x_1^5, x_1^4*x_2}
+assert(last weights T2 === matrix{{1,1,1,1},{1,1,0,0}})
+assert(set invariants T2 === invariants2)
+assert(set invariants(T2,Strategy=>"DerksenGandini") === invariants2)
+assert(isInvariant(m, T2))
 ///
 
 -- Test 9
@@ -109,6 +123,8 @@ R2 = QQ[x_1..x_4]
 T2 = diagonalAction(matrix{{0,1,-1,1},{1,0,-1,-1}}, R2)
 invariants2 = set {x_1*x_2*x_3,x_1^2*x_3*x_4}
 assert(set invariants T2 === invariants2)
+assert(set invariants(T2,UsePolyhedra=>true) === invariants2)
+assert(isInvariant(x_1^4*x_2^2*x_3^3*x_4 + x_1^5*x_2*x_3^3*x_4^2,T2))
 ///
      
      
@@ -451,7 +467,149 @@ R = QQ[x_1..x_3]
 W = matrix{{1,0,1},{0,1,1}}
 L = {p,p}
 T = diagonalAction(W,L,R)
-inv = invariants T
-einv = invariants(T, Strategy => "Elementary")
+inv = invariants(T,Strategy=>"DerksenGandini")
+einv = invariants T
 assert(set inv == set einv)
+///
+
+------------------------------------------------------------------------
+--- Tests for PermutationAction (August 2026) --------------------------
+------------------------------------------------------------------------
+
+-- Test 25
+-- checks the orbit sum method for the defining action of S_3 gives
+-- a complete minimal set of generating invariants
+-- First, we check the permutations are correctly saved as matrix
+-- Next, we check the invariants are homogeneous of degrees 1, 2, and 3
+-- Then, we check they are actually invariant; note that this uses the
+-- method inherited from FiniteGroupAction of checking invariants under
+-- the generators of the matrix groups, so it is useful here because
+-- the invariants were generated from orbit sums
+-- Finally, we check the defining ideal of the invariant ring is the
+-- zero ideal, which implies the invariant ring is a polynomial ring
+-- as expected
+TEST ///
+L = {[2,1,3],[2,3,1]}
+S3 = permutationAction(3,L)
+matrixGens = set {(id_(QQ^3))_{1,0,2}, (id_(QQ^3))_{1,2,0}}
+assert( set gens S3 == matrixGens )
+inv = invariants S3
+assert( all(inv,isHomogeneous) )
+t = tally apply(inv, f -> first degree f)
+assert( t === new Tally from {1 => 1, 2 => 1, 3 => 1} )
+assert( all(inv, f -> isInvariant(f,S3)) )
+assert( zero definingIdeal invariantRing S3 )
+///
+
+-- Test 26
+-- Similar to the one above but uses the dihedral group D4 over ZZ/3
+-- We also check cycle notation is correctly converted to one-line
+-- In this case, the Hilbert series of the invariant ring computed with
+-- two different strategies should be the same
+-- Also, tests cycle entry mode
+TEST ///
+F = ZZ/3
+R = F[w,x,y,z]
+L = {{[1,4],[1,3],[1,2]},{[1,3]}}
+D4 = permutationAction(L,R)
+perms = set {{2,3,4,1},{3,2,1,4}}
+assert( set D4.permutations == perms )
+matrixGens = set {(id_(F^4))_{1,2,3,0}, (id_(F^4))_{2,1,0,3}}
+assert( set gens D4 == matrixGens )
+inv = invariants D4
+assert( all(inv,isHomogeneous) )
+t = tally apply(inv, f -> first degree f)
+assert( t === new Tally from {1 => 1, 2 => 2, 3 => 1, 4 => 1} )
+assert( all(inv, f -> isInvariant(f,D4)) )
+H1 = reduceHilbert hilbertSeries invariantRing D4
+H2 = reduceHilbert hilbertSeries invariantRing(D4,Strategy=>"King")
+assert( H1 === H2 )
+///
+
+------------------------------------------------------------------------
+--- Tests for previously untested exports ------------------------------
+--- (added at 2026 Atlanta workshop)      ------------------------------
+------------------------------------------------------------------------
+
+-- Test 27
+-- invariantRing produces a RingOfInvariants; action/ambient/generators/definingIdeal accessors
+TEST ///
+R = QQ[x_1..x_4]
+W = matrix{{0,1,-1,1},{1,0,-1,-1}}
+T = diagonalAction(W, R)
+assert instance(T, GroupAction)
+S = invariantRing T
+assert instance(S, RingOfInvariants)
+assert(action S === T)
+assert(ambient S === R)
+assert(set gens S === set invariants T)
+assert instance(definingIdeal S, Ideal)
+assert(definingIdeal S == 0)
+assert instance(R^T, RingOfInvariants)
+///
+
+-- Test 28
+-- schreierGraph and words of a finite group action
+TEST ///
+R = QQ[x_1..x_3]
+L = {matrix{{0,1,0},{1,0,0},{0,0,1}}, matrix{{0,0,1},{0,1,0},{1,0,0}}}
+G = finiteAction(L, R)
+sg = schreierGraph G
+assert instance(sg, HashTable)
+assert(#keys sg == 2)
+w = words G
+assert instance(w, HashTable)
+assert(#keys w == #(group G))
+///
+
+-- Test 29
+-- cyclicFactors of an abelian action; the equivariantHilbert cache key
+TEST ///
+R = QQ[x_1..x_3]
+A = diagonalAction(matrix{{1,0,1},{0,1,1}}, {3,3}, R)
+assert(cyclicFactors A === {3,3})
+T = diagonalAction(matrix{{-1,0,1},{0,-1,1}}, R)
+assert(not T.cache.?equivariantHilbert)
+equivariantHilbertSeries(T, Order => 5);
+assert(T.cache.?equivariantHilbert)
+///
+
+-- Test 30
+-- actionMatrix and groupIdeal recover the data of a linearly reductive action
+TEST ///
+S = QQ[z]
+I = ideal(z^2 - 1)
+M = matrix{{(z+1)/2, (1-z)/2},{(1-z)/2, (z+1)/2}}
+R = QQ[x,y]
+L = linearlyReductiveAction(I, M, R)
+assert instance(L, LinearlyReductiveAction)
+assert(actionMatrix L == M)
+assert(groupIdeal L == I)
+///
+
+-- Test 31
+-- UsePolyhedra and UseCoefficientRing options for invariants of a torus
+TEST ///
+R = QQ[x_1..x_4]
+T = diagonalAction(matrix{{0,1,-1,1},{1,0,-1,-1}}, R)
+assert(set invariants(T, UsePolyhedra => true) === set invariants T)
+assert instance(invariantRing(T, UseCoefficientRing => true), RingOfInvariants)
+///
+
+-- Test 32
+-- DegreeBound, DegreeVector, and PrintDegreePolynomial options for finite group actions
+TEST ///
+S3 = finiteAction({permutationMatrix [3,1,2], permutationMatrix [2,1,3]}, QQ[a,b,c])
+assert(set invariants(S3, DegreeBound => 3) === set invariants S3)
+A = matrix{{0,1,0},{0,0,1},{1,0,0}}
+B = matrix{{0,1,0},{1,0,0},{0,0,1}}
+G = finiteAction({A,B}, QQ[x,y,z])
+P = primaryInvariants(G, DegreeVector => {3,3,4})
+assert(sort(P / degree / first) === {3,3,4})
+assert(dim((ring first P)/ideal P) == 0)
+K = toField(QQ[d]/(d^2+d+1))
+RK = K[s,t]
+D6 = finiteAction({matrix{{d,0},{0,d^2}}, sub(matrix{{0,1},{1,0}}, K)}, RK)
+Pd = {s^3+t^3, -(s^3-t^3)^2}
+assert(secondaryInvariants(Pd, D6, PrintDegreePolynomial => true) === secondaryInvariants(Pd, D6))
 ///

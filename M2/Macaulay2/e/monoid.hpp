@@ -1,5 +1,6 @@
 // Copyright 2004.  Michael E. Stillman
-#pragma once
+#ifndef M2_MONOID_HPP
+#define M2_MONOID_HPP
 
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>  // for alloca
@@ -8,8 +9,8 @@
 #include <string>    // for string
 #include <vector>    // for vector
 
-#include "ExponentList.hpp"
-#include "ExponentVector.hpp"
+#include "monomials/ExponentList.hpp"
+#include "monomials/ExponentVector.hpp"
 #include "hash.hpp"
 #include "imonorder.hpp"
 #include "newdelete.hpp"
@@ -122,6 +123,7 @@ class Monoid : public MutableEngineObject
   const MonomialOrdering *getMonomialOrdering() const { return mo_; }
   const PolynomialRing *get_degree_ring() const { return mDegreeRing; }
   const Monoid *degree_monoid() const { return mDegreeMonoid; }
+  const std::vector<std::string> &variableNames() const { return mVariableNames; }
   const_monomial degree_of_var(int v) const { return mDegreeOfVar[v]; }
   int primary_degree_of_var(int v) const { return mHeftDegrees[v]; }
   const std::vector<int> &primary_degree_of_vars() const { return mHeftDegrees; }
@@ -284,6 +286,7 @@ inline void Monoid::divide(const_monomial m,
   for (int i = monomial_size_; i > 0; i--) *result++ = *m++ - *n++;
 }
 
+#endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

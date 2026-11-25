@@ -208,22 +208,27 @@ captureExamples := (pkg, fkey) -> (
 	UserMode       => false,
 	PackageExports => pkg))
 
-getExampleOutputFilename := (pkg, fkey) -> (
-    if pkg#?"package prefix" and pkg#"package prefix" =!= null then (
-	packageLayout := detectCurrentLayout pkg#"package prefix";
-	if packageLayout === null then error "internal error: package layout not detected";
-	pkg#"package prefix" | replace("PKG", pkg#"pkgname", Layout#packageLayout#"packageexampleoutput") | toFilename fkey | ".out")
-    else error "internal error: package prefix is undefined")
+getExampleDirectory = (layout, pre, pkg) -> pre | replace("PKG", pkg, layout#"packageexampleoutput")
+getExampleFilename  = (layout, pre, pkg, fkey) -> getExampleDirectory(layout, pre, pkg) | toFilename fkey | ".out"
 
-getExampleOutput := (pkg, fkey) -> (
+getExampleOutput = method()
+getExampleOutput(Package, String) := (pkg, fkey) -> (
+    pkg#"example results"#fkey ??= getExampleOutput(pkg#"package prefix", pkg#"pkgname", fkey))
+getExampleOutput(String, String) := (pkgname, fkey) -> (
+    if (pkginfo := getPackageInfo pkgname) =!= null then (
+	getExampleOutput(pkginfo#"prefix", pkgname, fkey))
+    else error("could not locate package ", format pkgname, " under current prefixPath"))
+getExampleOutput(String, String, String) := (prefix, pkgname, fkey) -> (
+    filename := if (layoutID := detectCurrentLayout prefix) =!= null then (
+	getExampleFilename(Layout#layoutID, prefix, pkgname, fkey))
+    else error("could not detect layout for package ", format pkgname, " under ", prefix);
+    --
     -- TODO: only get from cache if the hash hasn't changed
-    if pkg#"example results"#?fkey then return pkg#"example results"#fkey;
-    verboseLog := if debugLevel > 1 then printerr else identity;
-    filename := getExampleOutputFilename(pkg, fkey);
+    verboseLog := if notify then printerr else identity;
     output := if fileExists filename
-    then ( verboseLog("info: reading cached example results from ", filename); get filename )
-    else ( verboseLog("info: capturing example results for ", fkey); captureExamples(pkg, fkey) );
-    pkg#"example results"#fkey = if output === null then {} else separateM2output output)
+    then ( verboseLog("info: reading cached example results from ", minimizeFilename filename); get filename )
+    else ( verboseLog("info: capturing example results for ", fkey); captureExamples(pkgname, fkey) );
+    if output === null then {} else separateM2output output)
 
 -- used in installPackage.m2
 -- TODO: store in a database instead

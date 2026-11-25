@@ -10,21 +10,21 @@
 #include <utility>    // for pair, make_pair
 #include <vector>     // for vector
 
-#include "ExponentList.hpp"    // for index_varpower, varpower, const_v...
-#include "ExponentVector.hpp"  // for exponents
+#include "monomials/ExponentList.hpp"    // for index_varpower, varpower, const_v...
+#include "monomials/ExponentVector.hpp"  // for exponents
 #include "interface/m2-mem.h"             // for freemem
 #include "buffer.hpp"          // for buffer
 #include "error.h"             // for ERROR
-#include "freemod.hpp"         // for FreeModule
+#include "free-modules/freemod.hpp"         // for FreeModule
 #include "int-bag.hpp"         // for Bag, int_bag
 #include "interrupted.hpp"     // for system_interrupted
-#include "matrix.hpp"          // for Matrix
+#include "matrices/matrix.hpp"          // for Matrix
 #include "mem.hpp"             // for stash
-#include "monideal.hpp"        // for MonomialIdeal, operator!=, Nmi_node
+#include "monomials/monideal.hpp"        // for MonomialIdeal, operator!=, Nmi_node
 #include "monoid.hpp"          // for Monoid
-#include "polyring.hpp"        // for PolynomialRing
-#include "relem.hpp"           // for RingElement
-#include "ring.hpp"            // for Ring
+#include "rings/polyring.hpp"        // for PolynomialRing
+#include "ring-elements/ring-element.hpp"           // for RingElement
+#include "rings/ring.hpp"            // for Ring
 
 int partition_table::representative(int x)
 {
@@ -709,33 +709,26 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
   // exp[0]=deg.
   const PolynomialRing *P = h->get_ring()->cast_to_PolynomialRing();
 
-  exponents_t exp = newarray_atomic(int, P->n_vars());
+  exponents_t exp = new int[P->n_vars()];
   int result = 0;
   for (Nterm& f : h->get_value())
     {
       P->getMonoid()->to_expvector(f.monom, exp);
       if (exp[0] < deg)
         {
-          ERROR("incorrect Hilbert function given");
-          fprintf(
-              stderr,
-              "internal error: incorrect Hilbert function given, aborting\n");
-          fprintf(
-              stderr,
-              "exp[0]: %d   deg: %d\n", exp[0], deg);    
-          abort();
+          throw exc::engine_error("incorrect Hilbert function given");
         }
       else if (exp[0] == deg)
         {
           std::pair<bool, long> res =
               P->getCoefficientRing()->coerceToLongInteger(f.coeff);
-          assert(res.first &&
-                 std::abs(res.second) < std::numeric_limits<int>::max());
+          if (not res.first or std::abs(res.second) > std::numeric_limits<int>::max())
+            throw exc::engine_error("Hilbert function value too large to use with Groebner basis computation");
           int n = static_cast<int>(res.second);
           result += n;
         }
     }
-  freemem(exp);
+  delete [] exp;
   return result;
 }
 

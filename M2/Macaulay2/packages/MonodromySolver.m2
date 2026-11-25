@@ -4,14 +4,14 @@ newPackage(
     	Version => "1.16", 
     	Date => "May 2023",
     	Authors => {
-	     {Name => "Timothy Duff", Email => "timduff@uw.edu"},
-	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
+	     {Name => "Timothy Duff", Email => "tduff@missouri.edu"},
+	     {Name => "Cvetelina Hill"},
 	     {Name => "Anders Nedergaard Jensen", Email => "jensen@math.au.dk"},
-	     {Name => "Kisun Lee", Email => "klee669@math.gatech.edu"},
+	     {Name => "Kisun Lee", Email => "kisunl@kaist.ac.kr"},
 	     {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
 	     {Name => "Jeff Sommars", Email => "sommars1@uic.edu"}
 	     },
-    	HomePage => "http://www.math.gatech.edu/~leykin",
+    	HomePage => "https://antonleykin.math.gatech.edu/MonodromySolver/",
     	Headline => "solving polynomial systems via monodromy",
 	Keywords => {"Numerical Algebraic Geometry"},
 	PackageImports => {"gfanInterface","NAGtypes"},

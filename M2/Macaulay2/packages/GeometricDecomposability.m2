@@ -2,8 +2,8 @@
 
 newPackage(
         "GeometricDecomposability",
-        Version => "1.4.3",
-        Date => "June 10, 2025",
+        Version => "1.4.4",
+        Date => "November 15, 2026",
         Headline => "checking whether ideals are geometrically vertex decomposable",
         Authors => {
                 {
@@ -13,7 +13,7 @@ newPackage(
                 },
                 {
                 Name => "Adam Van Tuyl",
-                Email => "vantuyl@math.mcmaster.ca",
+                Email => "vantuyla@mcmaster.ca",
                 HomePage => "https://ms.mcmaster.ca/~vantuyl/"
                 }
                 },
@@ -57,9 +57,11 @@ export {
         "CheckUnmixed",
         "IsIdealHomogeneous",
         "IsIdealUnmixed",
+        "MaxNumTerms",
         "OnlyDegenerate",
         "OnlyNondegenerate",
-        "SquarefreeOnly",
+        "OnlyPrefix",
+        "OnlySquarefree",
         "UniversalGB"
         };
 
@@ -71,28 +73,90 @@ export {
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
-
 findLexCompatiblyGVDOrders = method(
-        Options => {CheckUnmixed => true}
+        Options => {
+		CheckUnmixed => true, 
+                MaxNumTerms => infinity,
+                OnlyPrefix => true,
+                UniversalGB => false,
+                Verbose => false
+		}
         )
 findLexCompatiblyGVDOrders(Ideal) := List => opts -> I -> (
+
+        if I == 0 or I == 1 then return {{}};
+
         if isGVDBaseCase I then (
-                return permutations gens ring I;
-                );
-        try (
-                orders := sort lexOrderHelper({I}, {}, CheckUnmixed=>opts.CheckUnmixed);
-                truncatedOrders := recursiveFlatten orders;
+                if opts.OnlyPrefix then return apply(support I, x -> {x}) else return permutations gens ring I
+        );
+
+	supp := support I;
+
+	-- compute the valid "prefixes" (that is, any linear extension gives a gvd-compatible lex ordering)
+	orderPrefixes := delete({}, removeNesting findLexGVDOrders({I}, supp, opts.MaxNumTerms, {}, 
+		CheckUnmixed => opts.CheckUnmixed, 
+                UniversalGB => opts.UniversalGB,
+                Verbose => opts.Verbose
+                ));
+
+        if opts.OnlyPrefix then return orderPrefixes;
+
+        -- now extend each prefix
+        printIf(opts.Verbose, "computing extensions");
+        if opts.MaxNumTerms == infinity then (
+	        flatten apply(orderPrefixes, L -> apply(permutations(supp - set L), join_L))
+                ) else (
+                flatten apply(orderPrefixes, L -> apply(flatten apply(subsets(supp - set L, opts.MaxNumTerms - #L), permutations), join_L))
+                -- should always have opts.MaxNumTerms >= #L from the check in findLexGVDOrders
                 )
-        then (
-                allLexOrders := permutations gens ring I;
-                validLexOrders := select(allLexOrders, lexOrder -> inTruncatedList(lexOrder, truncatedOrders) );
-                return validLexOrders;
+        )
+
+
+findLexGVDOrders = method(
+        Options => {
+		CheckUnmixed => true, 
+                UniversalGB => false,
+                Verbose => false
+		}
+        )
+findLexGVDOrders(List, List, Number, List) := List => opts -> (ideals, givenSupport, maxNumTerms, termOrder) -> (
+	-- ideals is a list of ideals (various C_{-,-} and N_{-,-} ideals) that have been obtained 
+	-- by <-compatibly geometrically vertex decomposing with respect to the lex 
+	-- order of the variables given by termOrder
+
+	-- this function continues this process recursively to find all <-compatibly-GVD lex orders
+
+        if #termOrder >= maxNumTerms then return termOrder;
+
+	if #ideals == 0 then error "empty list given as input";
+
+	if all(ideals, I -> isGVDBaseCase I) then return termOrder;
+        nontrivialIdeals := select(ideals, I -> not isGVDBaseCase I);
+
+        variablesToCheck := givenSupport - set termOrder;
+        oneSteps := new HashTable from apply(variablesToCheck, y -> {y, apply(nontrivialIdeals, I -> (
+                oneStep := if not isMember(y, support I) then (true, I) else oneStepGVD(I, y, CheckUnmixed => opts.CheckUnmixed, UniversalGB => opts.UniversalGB, Verbose => opts.Verbose);
+                if not first oneStep then break {oneStep};
+                oneStep
+                ))});
+
+        -- for each variable, check whether all of its one-steps were valid
+        nextVariables := select(variablesToCheck, y -> all(oneSteps#y, first));
+
+        if #nextVariables == 0 then return {};
+
+        join apply(nextVariables, y -> (findLexGVDOrders(
+                flatten apply(oneSteps#y, seq -> toList drop(seq, 1)), 
+                givenSupport, 
+                maxNumTerms,
+                join(termOrder, {y}),
+                CheckUnmixed => opts.CheckUnmixed, 
+                UniversalGB => opts.UniversalGB,
+                Verbose => opts.Verbose
                 )
-        else (
-                return {};
+            ))
         )
-        )
+
 
 --------------------------------------------------------------------------------
 
@@ -101,7 +165,7 @@ findOneStepGVD = method(
                 CheckUnmixed => true, 
                 OnlyDegenerate => false,
                 OnlyNondegenerate => false, 
-                SquarefreeOnly => false,
+                OnlySquarefree => false,
                 UniversalGB => false,
                 Verbose => false
                 }
@@ -117,7 +181,7 @@ findOneStepGVD(Ideal) := List => opts -> I -> (
         R := ring I;
         indets := support I;
 
-        if opts.SquarefreeOnly then (
+        if opts.OnlySquarefree then (
                 if (opts.CheckUnmixed or opts.OnlyDegenerate or opts.OnlyNondegenerate) then (
                         printIf(opts.Verbose, "ignoring unmixedness/degeneracy checks");
                 );
@@ -126,11 +190,10 @@ findOneStepGVD(Ideal) := List => opts -> I -> (
                 -- first get the indets with respect to which the ideal is "clearly" squarefree 
                 -- the variables y such that y^2 does not divide any term of any generator of I
                 gensTerms := flatten apply(I_*, terms);
-                isSquarefreeIndet := (termsList, y) -> ( 
-                        L := apply(gensTerms, m -> degree(y, m));
-                        return max L <= 1;
-                        );
-                return select(indets, z -> isSquarefreeIndet(gensTerms, z));
+                return select(indets, z -> (
+                        L := apply(gensTerms, degree_z);
+                        max L <= 1
+                        ))
                 );
 
         -- in this case, we compute a Gröbner basis for each indeterminate in support I
@@ -222,7 +285,7 @@ isGVD(Ideal) := Boolean => opts -> I -> (
         if not instance(opts.CheckCM, String) then (
                 error "value of CheckCM must be a string";
                 ) else (
-                if not isSubset({opts.CheckCM}, {"always", "once", "never"}) then error ///unknown value of CheckCM; options are "once" (default), "always", "never"///;
+                if not isSubset({opts.CheckCM}, {"always", "once", "never"}) then error ///unknown value of CheckCM; allowable options are "once" (default), "always", "never"///;
                 );
 
         R := ring I;
@@ -259,7 +322,7 @@ isGVD(Ideal) := Boolean => opts -> I -> (
                 };
 
         -- iterate over all indeterminates, first trying the ones which appear squarefree in the given generators for I
-        squarefreeIndets := findOneStepGVD(I, SquarefreeOnly=>true, UniversalGB=>opts.UniversalGB);
+        squarefreeIndets := findOneStepGVD(I, OnlySquarefree=>true, UniversalGB=>opts.UniversalGB);
         remainingIndets := (support I) - set(squarefreeIndets);
         iterIndets := join(squarefreeIndets, remainingIndets);
         for y in iterIndets do (
@@ -303,7 +366,7 @@ isLexCompatiblyGVD(Ideal, List) := Boolean => opts -> (I, indetOrder) -> (
         if not instance(opts.CheckCM, String) then (
                 error "value of CheckCM must be a string";
                 ) else (
-                if not isSubset({opts.CheckCM}, {"always", "once", "never"}) then error ///unknown value of CheckCM, options are "once" (default), "always", "never"///;
+                if not isSubset({opts.CheckCM}, {"always", "once", "never"}) then error ///unknown value of CheckCM; allowable options are "once" (default), "always", "never"///;
                 );
 
         printIf(opts.Verbose, "I = " | toString I);
@@ -319,11 +382,15 @@ isLexCompatiblyGVD(Ideal, List) := Boolean => opts -> (I, indetOrder) -> (
 
         -- run recursive definition [KR, Definition 2.11] on the initial ideal [KR, Proposition 2.14]
         recursiveLexGVD(initIdeal, indetOrder, 
-                CheckCM=>opts.CheckCM, CheckUnmixed=>opts.CheckUnmixed, 
-                IsIdealHomogeneous=>true, IsIdealUnmixed=>opts.IsIdealUnmixed,
-                UniversalGB=>true, Verbose=>opts.Verbose
+                CheckCM => opts.CheckCM, 
+                CheckUnmixed => opts.CheckUnmixed, 
+                IsIdealHomogeneous => true, 
+                IsIdealUnmixed => opts.IsIdealUnmixed,
+                UniversalGB => true,
+                Verbose => opts.Verbose
                 )
         )
+
 
 -- recursive definition of <-compatibly geometrically vertex decomposable [KR, Definition 2.11]
 recursiveLexGVD = method(
@@ -337,10 +404,12 @@ recursiveLexGVD = method(
                 }
         )
 recursiveLexGVD(Ideal, List) := Boolean => opts -> (I, indetOrder) -> (
+        if #indetOrder == 0 then error "not enough terms specified in order";
+
         if not instance(opts.CheckCM, String) then (
                 error "value of CheckCM must be a string";
                 ) else (
-                if not isSubset({opts.CheckCM}, {"always", "once", "never"}) then error ///unknown value of CheckCM, options are "once" (default), "always", "never"///;
+                if not isSubset({opts.CheckCM}, {"always", "once", "never"}) then error ///unknown value of CheckCM; allowable options are "once" (default), "always", "never"///;
                 );
 
         R := ring I;
@@ -384,7 +453,7 @@ recursiveLexGVD(Ideal, List) := Boolean => opts -> (I, indetOrder) -> (
         remainingOrder := take(trimmedOrder, {1, #trimmedOrder});
 
         printIf(opts.Verbose, "-- decomposing with respect to " | toString y);
-
+        
         (isValid, C, N) := oneStepGVD(I, y, CheckUnmixed=>opts.CheckUnmixed, UniversalGB=>opts.UniversalGB, Verbose=>opts.Verbose);
         if not isValid then return false;  -- order didn't work
 
@@ -419,6 +488,7 @@ isUnmixed(Ideal) := Boolean => I -> (
 
 --------------------------------------------------------------------------------
 
+
 -- [KR, Definition 4.6]
 isWeaklyGVD = method( 
         Options => {
@@ -443,7 +513,7 @@ isWeaklyGVD(Ideal) := Boolean => opts -> I -> (
                 );
 
         -- iterate over all indeterminates, first trying the ones which appear squarefree in the given generators for I
-        squarefreeIndets := findOneStepGVD(I, SquarefreeOnly=>true, UniversalGB=>opts.UniversalGB);
+        squarefreeIndets := findOneStepGVD(I, OnlySquarefree=>true, UniversalGB=>opts.UniversalGB);
         remainingIndets := (support I) - set(squarefreeIndets);
         iterIndets := join(squarefreeIndets, remainingIndets);
 
@@ -516,7 +586,7 @@ oneStepGVD(Ideal, RingElement) := Sequence => opts -> (I, y) -> (
         CyI := ideal apply(G, g -> getQ(g, z));
 
         -- check whether the intersection condition holds
-        isValid := if opts.UniversalGB then isValidOneStepFromUGB(G, CyI, NyI, z) else isValidOneStep(G, z);
+        isValid := if opts.UniversalGB then isValidOneStepFromUGB(G, (CyI, NyI), z) else isValidOneStep(G, z);
         if not isValid then (
                 printIf(opts.Verbose, "Warning: not a valid geometric vertex decomposition");
                 );
@@ -607,7 +677,7 @@ getQ(RingElement, RingElement) := RingElement => (f, y) -> (
 
 isGVDBaseCase = method()
 isGVDBaseCase(Ideal) := Boolean => I -> (
-        return (I == 1 or I == 0 or isGeneratedByIndeterminates(I));
+        return (I == 1 or I == 0 or isGeneratedByIndeterminates I);
         )
 
 
@@ -629,32 +699,15 @@ isIdealSquarefreeInY(Ideal, RingElement) := Boolean => (I, y) -> (
         )
 
 
-intersectLists = method()
-intersectLists(List) := List => L -> (
-        -- L is a list of lists
-        S := for l in L list (set l);
-        return toList fold(intersectSets, S)
-        )
-
-
-intersectSets = method()
-intersectSets(Set, Set) := Set => (S1, S2) -> (
-        return S1 * S2;
-        )
-
-
 inTruncatedList = method()
 inTruncatedList(List, List) := Boolean => (L, LL) -> (
         -- LL is a list of lists
-        -- return True if: for some list l of length n in LL, the first n terms of L are exactly l
-        for l in LL do (
-                n := #l ;
-                for i from 0 to n-1 do (
-                        if L_i != l_i then break;
-                        return true;
-                        );
+        -- return true when some nonempty list in LL is a prefix of L
+        return any(LL, l -> 
+                #l > 0
+                and #l <= #L
+                and all(#l, i -> L_i == l_i)
                 );
-        return false;
         )
 
 
@@ -674,52 +727,25 @@ isValidOneStep(List, RingElement) := Boolean => (G, y) -> (
 
         -- analyze the powers of y appearing in the Gröbner basis
         gbTerms := G / terms;
-        yDegreesByTerm := apply(gbTerms, L -> apply(L, m -> degree(y, m)));
-        yDegrees := unique flatten yDegreesByTerm;
+        yDegrees := unique flatten apply(gbTerms, L -> apply(L, m -> degree(y, m)));
         yMaxDegree := max yDegrees;
         return yMaxDegree <= 1;
         )
 
 
 isValidOneStepFromUGB = method()
-isValidOneStepFromUGB(List, Ideal, Ideal, RingElement) := Boolean => (G, C, N, y) -> (
+isValidOneStepFromUGB(List, Sequence, RingElement) := Boolean => (G, S, y) -> (
         -- G is a UGB for the ideal I it generates; C = C_{y, I} and N_{y, I}
         -- the previous check may not work for UGBs because it requires the GB to be reduced
+        C := first S;
+        N := last S; 
         currentRing := ring y;
+
         C1 := sub(C, currentRing);
         N1 := sub(N, currentRing);
 
         initYForms := sub(initialYForms(ideal G, y, UniversalGB=>true), currentRing);
         return initYForms == intersect(C1, N1 + ideal(y));
-        )
-
-
-lexOrderHelper = method(Options => {CheckUnmixed => true})
-lexOrderHelper(List, List) := List => opts -> (idealList, order) -> (
-        -- remove ideals that are trivially GVD
-        nontrivialIdeals := select(idealList, i -> not isGVDBaseCase i);
-        -- if there are none left, return the order
-        if (#nontrivialIdeals) == 0 then (
-                return order;
-                );
-
-        -- for each ideal, get the indets which form a oneStepGVD
-        possibleIndets := apply(nontrivialIdeals, i -> findOneStepGVD(i, CheckUnmixed=>opts.CheckUnmixed));
-        commonPossibleIndets := intersectLists possibleIndets;
-        if commonPossibleIndets == {} then return;
-
-        -- for each variable, compute the C and N ideals
-        nextIdeals := for y in commonPossibleIndets list (
-                flatten apply( nontrivialIdeals, i -> (
-                        oneStep := oneStepGVD(i, y);
-                        {oneStep_1, oneStep_2}
-                        ))
-                );
-
-        L := for m from 0 to (#commonPossibleIndets)-1 list (
-                lexOrderHelper(nextIdeals#m, append(order, commonPossibleIndets#m))
-                );
-        return L;
         )
 
 
@@ -758,16 +784,36 @@ printIf(Boolean, String) := (bool, str) -> (
         if bool then print str;
         )
 
-        recursiveFlatten = method(TypicalValue => List)
-        recursiveFlatten(List) := L -> (
-                Lstr := toString L;
-                if Lstr#2 == "{" then (
-                        return recursiveFlatten flatten L;
-                        )
-                else (
-                        return L;
-                        )
+
+removeNesting = L -> (
+        if not instance(L, List) then return {L};
+
+        iteratorStack := new MutableList from {iterator L};
+        depth := 0;
+
+        while depth >= 0 list (
+                entry := next iteratorStack#depth;
+
+                -- case: no further nesting
+                if entry === StopIteration then (
+                        depth = depth - 1;
+                        continue;
+                        );
+
+                -- case: another layer of nesting 
+                if (instance(entry, List)
+                        and #entry > 0
+                        and instance(entry#0, List)) then (
+                        depth = depth + 1;
+                        iteratorStack#depth = iterator entry;
+                        continue;
+                        );
+
+                -- now return 
+                entry
                 )
+        )
+
 
 
 unmixedCheck = method()
@@ -777,18 +823,18 @@ unmixedCheck(Ideal, Ideal, Boolean) := Boolean => (C, N, verb) -> (
         NisCM := isHomogeneous N and (pdim((ring N)^1/N) == codim N);
 
         isUnmixedC := CisCM or isUnmixed C;
-        isUnmixedN := NisCM or isUnmixed N;
-
-        bothUnmixed := (isUnmixedC and isUnmixedN);
-
         if not isUnmixedC then (
                 printIf(verb, "Warning: CyI is not unmixed");
+                printIf(verb, "Unmixedness of NyI not checked");
+                return false;
                 );
+
+        isUnmixedN := NisCM or isUnmixed N;
         if not isUnmixedN then (
                 printIf(verb, "Warning: NyI is not unmixed");
                 );
 
-        return bothUnmixed;
+        return isUnmixedN;
         )
 
 
@@ -872,7 +918,6 @@ doc///
                         matroidal ideals. Arch. Math. 114 (2020), no. 3 299–-304.
 
                 Subnodes
-                        oneStepGVDNyI
                         findLexCompatiblyGVDOrders
                         findOneStepGVD
                         getGVDIdeal
@@ -882,16 +927,19 @@ doc///
                         isLexCompatiblyGVD
                         isUnmixed
                         isWeaklyGVD
-                        oneStepGVDCyI
                         oneStepGVD
+                        oneStepGVDCyI
+                        oneStepGVDNyI
                         CheckCM
                         CheckDegenerate
                         CheckUnmixed
                         IsIdealHomogeneous
                         IsIdealUnmixed
+                        MaxNumTerms
                         OnlyDegenerate
                         OnlyNondegenerate
-                        SquarefreeOnly
+                        OnlyPrefix
+                        OnlySquarefree
                         UniversalGB
 ///
 
@@ -906,6 +954,7 @@ doc///
                 Key
                         findLexCompatiblyGVDOrders
                         (findLexCompatiblyGVDOrders, Ideal)
+                        [findLexCompatiblyGVDOrders, Verbose]
                 Headline
                         finds all lexicographic monomial orders $<$ such that the ideal is $<$-compatibly geometrically vertex decomposable
                 Usage
@@ -928,8 +977,13 @@ doc///
                                 to $<$ [KR, Definition 2.11].
                                 For the definition of a (one-step) geometric vertex decomposition, see @TO oneStepGVD@.
 
-                                This method computes all possible lex orders $<$ for which the ideal $I$ is $<$-compatibly
+                                This method computes all possible lex orderings $<$ on the variables with respect to which the ideal $I$ is $<$-compatibly
                                 geometrically vertex decomposable.
+                                The code ignores any variables in the ring that do not appear in the support of the ideal.
+                                By default, it computes only the prefix of the lex ordering necessary to geometrically vertex 
+                                decompose the given ideal into one of the @TO isGVD@ base cases.
+                                To obtain all of the orderings (that is, all extensions of the prefix), set {\tt OnlyPrefix=>false}.
+                                See @TO OnlyPrefix@ for more details and an example.
 
 			Example
                                 R = QQ[x,y,z];
@@ -957,6 +1011,12 @@ doc///
                 SeeAlso
                         CheckUnmixed
                         isLexCompatiblyGVD
+                        MaxNumTerms
+                        OnlyDegenerate
+                        OnlyNondegenerate
+                        OnlyPrefix
+                        OnlySquarefree
+                        UniversalGB
 ///
 
 
@@ -979,7 +1039,7 @@ doc///
                         Text
                                 Returns a list containing the $y$ for which there exists a @TO oneStepGVD@.  In other words, a list
 				of all the variables $y$ that satisfy ${\rm in}_y(I) = C_{y,I} \cap (N_{y,I} + \langle y \rangle)$.
-                                All indeterminates $y$ which appear in the ideal are checked.
+                                All indeterminates $y$ which appear in the support of the ideal are checked.
 
                                 The results [KR, Lemma 2.6] and [KR, Lemma 2.12] are used to check whether $I$ has a geometric vertex 
                                 decomposition with respect to each indeterminate $y$.
@@ -990,7 +1050,7 @@ doc///
                                 with respect to a $z$-compatible monomial order, and repeat the squarefree-check for the entries of this
                                 Gröbner basis.
 
-                                {\bf Warning:} if {\tt SquarefreeOnly=>true}, then the options @TO CheckUnmixed@, @TO OnlyDegenerate@, and 
+                                {\bf Warning:} if {\tt OnlySquarefree=>true}, then the options @TO CheckUnmixed@, @TO OnlyDegenerate@, and 
                                 @TO OnlyNondegenerate@ are ignored.
 
                         Example
@@ -1016,7 +1076,7 @@ doc///
                         oneStepGVD
                         OnlyDegenerate
                         OnlyNondegenerate
-                        SquarefreeOnly
+                        OnlySquarefree
                         UniversalGB
 ///
 
@@ -1538,7 +1598,7 @@ doc///
                         (oneStepGVDCyI, Ideal, RingElement)
                         (link, Ideal, RingElement)
                 Headline
-                        computes the ideal $C_{y,I}$
+                        computes the geometric link ideal $C_{y,I}$
                 Usage
                         oneStepGVDCyI(I, y)
                         link(I, y)
@@ -1548,14 +1608,6 @@ doc///
                                 an indeterminate in the ring
                 Outputs
                         :Ideal
-
-                Caveat
-                        This method is a shortcut to extract the ideal $C_{y,I}$ as computed
-                        in @TO oneStepGVD@. That is, to compute $C_{y,I}$, {\tt oneStepGVD} is called in the background.
-                        As a result, work is also done in the background to compute $N_{y,I}$ at
-                        the same time, and as such, we encourage calling {\tt oneStepGVD}
-                        directly if we want both the $C_{y,I}$ and $N_{y,I}$ ideals to avoid
-                        performing the same computation twice.
 
 	        Description
 	                Text
@@ -1567,8 +1619,9 @@ doc///
                                 Given an ideal $I$ and a $y$-compatible monomial ordering $<$, let $G(I) = \{ g_1,\ldots,g_m\}$ be a Gröbner basis of $I$ with respect to this
                                 ordering.  For $i=1,\ldots,m$, write $g_i$ as $g_i = y^{d_i}q_i + r_i$, where $y$ does not divide any term of $q_i$;
                                 that is, ${\rm in}_y(g_i) = y^{d_i}q_i$.   Given this setup, the ideal $C_{y,I}$ is given by
-                                $$C_{y,I} = \langle q_1,\ldots,q_m\rangle$$
-			        This functions  takes an ideal $I$ and variable $y$, and returns $C_{y,I}$.
+                                $$C_{y,I} = \langle q_1,\ldots,q_m\rangle,$$
+                                and is called the {\bf geometric link of $I$ at $y$} in [FKRS, Section 4.1].
+			        This function takes an ideal $I$ and variable $y$, and returns $C_{y,I}$.
 
                                 The ideal $C_{y,I}$ does not depend upon the choice of the Gröbner basis or
                         	a particular $y$-compatible order (see comment after [KR, Definition 2.3]).
@@ -1584,9 +1637,28 @@ doc///
                                 oneStepGVDCyI(I, b)
 				L = oneStepGVD(I, b);
 			        L_1 == oneStepGVDCyI(I, b) -- CyI is the second element in the list given by oneStepGVD
+
+                Caveat
+                        (1) This method is a shortcut to extract the ideal $C_{y,I}$ as computed
+                        in @TO oneStepGVD@. That is, to compute $C_{y,I}$, {\tt oneStepGVD} is called in the background.
+                        As a result, work is also done in the background to compute $N_{y,I}$ at
+                        the same time, and as such, we encourage calling {\tt oneStepGVD}
+                        directly if we want both the $C_{y,I}$ and $N_{y,I}$ ideals to avoid
+                        performing the same computation twice.
+
+                        (2) The ideal $C_{y, I}$ is called the {\bf geometric link} in [FKRS, Section 4.1], so this package 
+                        has {\tt link} as an alias for the method {\tt oneStepGVDCyI}.
+                        This conflicts with the (topological) link function in the SimplicialComplexes package, although 
+                        it takes different inputs.
+
     	    	References
+                        [FKRS] Sara Faridi, Patricia Klein, Jenna Rajchgot, and Alexandra Seceleanu.
+                        Polarization and Gorenstein liaison.
+                        J. Lond. Math. Soc. (2) 112 (2025), no. 6, Paper No. e70319, 34 pp.
+
 		        [KR] Patricia Klein and Jenna Rajchgot. Geometric vertex decomposition and
                         liaison. Forum Math. Sigma, 9 (2021) Paper No. e70, 23pp.
+
                 SeeAlso
                         deletion
                         CheckUnmixed
@@ -1605,7 +1677,7 @@ doc///
                         (oneStepGVDNyI, Ideal, RingElement)
                         (deletion, Ideal, RingElement)
                 Headline
-                        computes the ideal $N_{y,I}$
+                        computes the geometric deletion ideal $N_{y,I}$
                 Usage
                         oneStepGVDNyI(I, y)
                         deletion(I, y)
@@ -1634,8 +1706,9 @@ doc///
                                 Given an ideal $I$ and a $y$-compatible monomial ordering $<$, let $G(I) = \{ g_1,\ldots,g_m\}$ be a Gröbner basis of $I$ with respect to this
                                 ordering.  For $i=1,\ldots,m$, write $g_i$ as $g_i = y^{d_i}q_i + r_i$, where $y$ does not divide any term of $q_i$;
                                 that is, ${\rm in}_y(g_i) = y^{d_i}q_i$.   Given this setup, the ideal $N_{y,I}$ is given by
-                                $$N_{y,I} = \langle q_i ~|~ d_i = 0\rangle$$
-                                This functions  takes an ideal $I$ and variable $y$, and returns $N_{y,I}$
+                                $$N_{y,I} = \langle q_i ~|~ d_i = 0\rangle,$$
+                                and is called the {\bf geometric deletion of $I$ at $y$} in [FKRS, Section 4.1].
+                                This function takes an ideal $I$ and variable $y$, and returns $N_{y,I}$
 
                                 The ideal $N_{y,I}$ does not depend upon the choice of the Gröbner basis or
                         	a particular $y$-compatible order (see comment after [KR, Definition 2.3]).
@@ -1652,6 +1725,10 @@ doc///
                                 L = oneStepGVD(I, b);
                                 L_2 == oneStepGVDNyI(I, b) -- NyI is the second element in the list given by oneStepGVD
 		References
+                        [FKRS] Sara Faridi, Patricia Klein, Jenna Rajchgot, and Alexandra Seceleanu.
+                        Polarization and Gorenstein liaison.
+                        J. Lond. Math. Soc. (2) 112 (2025), no. 6, Paper No. e70319, 34 pp.
+
 		        [KR] Patricia Klein and Jenna Rajchgot. Geometric vertex decomposition and
                         liaison. Forum Math. Sigma, 9 (2021) Paper No. e70, 23pp.
 
@@ -1894,6 +1971,35 @@ doc///
 doc///
         Node
                 Key
+                        MaxNumTerms
+                        [findLexCompatiblyGVDOrders, MaxNumTerms]
+                Headline
+                        number of terms to provide in findLexCompatiblyGVDOrders
+                Description
+                        Text
+                                When an ideal has large support, it can be computationally taxing to find all of the lexicographic orderings 
+                                on the variables with respect to which the given ideal is $<$-compatibly geometrically vertex decomposable.
+                                This parameter provides a limit on the number of variables to specify in this computation.
+                        Example 
+                                R = QQ[x, y];
+                                I = ideal(x*y^2)
+                                findLexCompatiblyGVDOrders(I, MaxNumTerms=>1)
+                                isGVD I
+
+                Caveat
+                                As the above example demonstrates, when a finite value of {\tt MaxNumTerms} is specified,
+                                it is not guaranteed that an order in the output necessarily gives rise to an ordering $<$
+                                such that the ideal is $<$-compatibly geometrically vertex decomposable.
+
+                        
+                SeeAlso
+                        findLexCompatiblyGVDOrders
+///
+
+
+doc///
+        Node
+                Key
                         OnlyDegenerate
                         [findOneStepGVD, OnlyDegenerate]
                 Headline
@@ -1938,8 +2044,33 @@ doc///
 doc///
         Node
                 Key
-                        SquarefreeOnly
-                        [findOneStepGVD, SquarefreeOnly]
+                        OnlyPrefix
+                        [findLexCompatiblyGVDOrders, OnlyPrefix]
+                Headline
+                        only return the prefix of lex orderings of variables 
+                Description
+                        Text
+                                Whether to return only the sufficient prefix of lex orderings of variables to compatibly geometrically 
+                                vertex decompose the given ideal.
+                                If one sets {\tt OnlyPrefix=>false}, then all extensions of these prefixes are also returned.
+                        Example
+                                R = QQ[x, y];
+                                I = ideal(x, y);
+                                findLexCompatiblyGVDOrders I
+                                findLexCompatiblyGVDOrders(I, OnlyPrefix=>false)
+                        Text
+                                Prior to version 1.26.11 {\em Macaulay2}, the default behaviour of @TO findLexCompatiblyGVDOrders@ 
+                                is equivalent to setting {\tt OnlyPrefix=>false}.
+                SeeAlso
+                        findLexCompatiblyGVDOrders
+///
+
+
+doc///
+        Node
+                Key
+                        OnlySquarefree
+                        [findOneStepGVD, OnlySquarefree]
                 Headline
                         only return the squarefree variables from the generators
                 Description
@@ -1953,7 +2084,7 @@ doc///
                                 then we have a geometric vertex decomposition, and $y$ is appended to the list of 
                                 indeterminates.
 
-                                If {\tt SquarefreeOnly=>true}, then only the first half of the algorithm runs.
+                                If {\tt OnlySquarefree=>true}, then only the first half of the algorithm runs.
                                 This option is used by the @TO isGVD@ and @TO isWeaklyGVD@ functions to avoid 
                                 unnecessary duplicate computations of Gröbner bases.
                 SeeAlso
@@ -1966,6 +2097,7 @@ doc///
                 Key
                         UniversalGB
                         [deletion, UniversalGB]
+                        [findLexCompatiblyGVDOrders, UniversalGB]
                         [findOneStepGVD, UniversalGB]
                         [getGVDIdeal, UniversalGB]
                         [initialYForms, UniversalGB]
@@ -2043,7 +2175,19 @@ assert(findLexCompatiblyGVDOrders I == {})
 TEST///
 R = QQ[x..z];
 I = ideal(x-y, x-z);
-assert( findLexCompatiblyGVDOrders I == {{x, y, z}, {x, z, y}, {y, x, z}, {y, z, x}, {z, x, y}, {z, y, x}} )
+assert( set findLexCompatiblyGVDOrders(I, OnlyPrefix=>false) == set {{x, y, z}, {x, z, y}, {y, x, z}, {y, z, x}, {z, x, y}, {z, y, x}} )
+///
+
+
+TEST///
+I = ideal 0 
+assert(findLexCompatiblyGVDOrders I == {{}})
+///
+
+
+TEST///
+I = ideal 1
+assert(findLexCompatiblyGVDOrders I == {{}})
 ///
 
 
@@ -2290,6 +2434,96 @@ TEST///  -- [KR, Example 4.10]
 R = QQ[x..z,w,r,s];
 I = ideal( y*(z*s - x^2), y*w*r, w*r*(x^2 + s^2 + z^2 + w*r) );
 assert( sub(oneStepGVDNyI(I, y), R) == ideal(x^2*w*r+w*r*s^2+z^2*w*r+w^2*r^2) )
+///
+
+
+--------------------------------------------------------------------------------
+-- Regression: inTruncatedList checks the full prefix, not just the first
+-- element.  An earlier version of the function had the `return true` inside
+-- the inner loop and so returned true whenever the first elements matched.
+--------------------------------------------------------------------------------
+TEST///
+debug GeometricDecomposability
+assert(not inTruncatedList({1,2,3}, {}))
+assert(inTruncatedList({1,2,3}, {{1,2,3}}))
+assert(inTruncatedList({1,2,3}, {{1,2}}))
+-- first elements match but later do not -- the buggy version returned true
+assert(not inTruncatedList({1,2,3}, {{1,5}}))
+assert(inTruncatedList({1,2,3}, {{5,5},{1,2}}))
+assert(not inTruncatedList({1,2,3}, {{2}}))
+///
+
+
+--------------------------------------------------------------------------------
+-- Test the deletion and link aliases
+--------------------------------------------------------------------------------
+TEST///
+-- the exported names deletion and link are aliases for oneStepGVDNyI and
+-- oneStepGVDCyI respectively
+assert(deletion === oneStepGVDNyI)
+assert(link === oneStepGVDCyI)
+R = QQ[a,b,c,d];
+J = ideal(a*b - c*d, a*c - b*d);
+assert(deletion(J, a) == oneStepGVDNyI(J, a))
+assert(link(J, a) == oneStepGVDCyI(J, a))
+///
+
+
+--------------------------------------------------------------------------------
+-- Test findOneStepGVD option overrides (OnlySquarefree, OnlyDegenerate,
+-- OnlyNondegenerate)
+--------------------------------------------------------------------------------
+TEST///
+S = QQ[a,b,c,d];
+J = ideal(a*b - c*d, a*c - b^2);
+assert(findOneStepGVD J == {a, c, d})
+-- OnlySquarefree takes the fast path and accepts the same indeterminates here
+assert(findOneStepGVD(J, OnlySquarefree => true) == {a, c, d})
+-- OnlyNondegenerate keeps all the nondegenerate one-step indeterminates
+assert(findOneStepGVD(J, OnlyNondegenerate => true) == {a, c, d})
+-- OnlyDegenerate is empty for this ideal
+assert(findOneStepGVD(J, OnlyDegenerate => true) == {})
+-- using both options simultaneously is an error
+assert(try (findOneStepGVD(J, OnlyDegenerate => true, OnlyNondegenerate => true); false) else true)
+///
+
+
+--------------------------------------------------------------------------------
+-- Test isGVD option overrides (CheckCM values, IsIdealHomogeneous,
+-- IsIdealUnmixed, CheckUnmixed, UniversalGB)
+--------------------------------------------------------------------------------
+TEST///
+R = QQ[x..z,w,r,s];
+I = ideal(y*(z*s - x^2), y*w*r, w*r*(z^2 + z*x + w*r + s^2));
+-- I is GVD ([KR, Example 2.16])
+gvd = isGVD I;
+assert(gvd)
+-- The three CheckCM values "always", "once", "never" all agree on this ideal
+assert(isGVD(I, CheckCM => "always") == gvd)
+assert(isGVD(I, CheckCM => "once") == gvd)
+assert(isGVD(I, CheckCM => "never") == gvd)
+-- An unrecognized CheckCM value is an error
+assert(try (isGVD(I, CheckCM => "bogus"); false) else true)
+-- IsIdealHomogeneous and IsIdealUnmixed bypass internal checks; same answer
+assert(isGVD(I, IsIdealHomogeneous => true) == gvd)
+assert(isGVD(I, IsIdealUnmixed => true) == gvd)
+-- CheckUnmixed => false skips the unmixed check
+assert(isGVD(I, CheckUnmixed => false) == gvd)
+-- UniversalGB => true on a monomial ideal, whose generators are a UGB
+J = ideal(x*y, x*z);
+assert(isGVD(J, UniversalGB => true) == isGVD J)
+///
+
+
+--------------------------------------------------------------------------------
+-- The chain isLexCompatiblyGVD => isGVD => isWeaklyGVD on a concrete ideal
+--------------------------------------------------------------------------------
+TEST///
+R = QQ[x..z];
+I = ideal(x-y, x-z);
+assert(isLexCompatiblyGVD(I, {x,y,z}))
+assert(isGVD I)
+assert(isWeaklyGVD I)
 ///
 
 

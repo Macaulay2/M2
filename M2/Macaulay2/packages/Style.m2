@@ -3,7 +3,8 @@ newPackage( "Style",
      AuxiliaryFiles => true,
      Headline => "style sheets and images for the documentation",
      Keywords => {"Documentation"},
-     Version => "1.1"
+     Version => "1.2",
+     Date => "August 6, 2026"
      )
 
 ---------------------------------------------
@@ -87,7 +88,7 @@ generateGrammar(String, String, Function) := (template, outfile, demarkf) -> (
 	    " does not exist; skipping generation of ", outfile);
 	return);
     printerr("generating ", outfile);
-    directory := replace("/[^/].*$", "", outfile);
+    directory := replace("/[^/]*$", "", outfile);
     if not isDirectory directory then makeDirectory directory;
     output := get template;
     if #cachedSymbols == 0 then generateSymbols();

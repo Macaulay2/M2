@@ -5,11 +5,10 @@ newPackage("NumericalImplicitization",
     Date => "November 24, 2020",
     Authors => {
         {Name => "Justin Chen",
-	 Email => "justin.chen@math.gatech.edu",
-         HomePage => "https://people.math.gatech.edu/~jchen646/"},
+	 HomePage => "https://sites.google.com/view/justinchenmath/home"},
         {Name => "Joe Kileel",
-	 Email => "jkileel@math.princeton.edu",
-	 HomePage => "https://web.math.princeton.edu/~jkileel/"}
+	 Email => "jkileel@math.utexas.edu",
+	 HomePage => "https://web.ma.utexas.edu/users/jkileel/"}
         },
     Keywords => {"Numerical Algebraic Geometry"},
     PackageExports => {"NumericalAlgebraicGeometry"},

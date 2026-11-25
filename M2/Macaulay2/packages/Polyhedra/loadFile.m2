@@ -97,6 +97,7 @@ load "./extended/tests/stanleyReisner.m2"
 load "./other/tests/legacy_tests_working.m2"
 load "./other/tests/shouldFail.m2"
 load "./other/tests/isWellDefined.m2"
+load "./other/tests/coverage_and_stress.m2"
 
 
 -------------------------------------------------------------------------------

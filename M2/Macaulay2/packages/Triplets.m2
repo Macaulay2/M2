@@ -4,7 +4,7 @@ newPackage(
    	Version => "0.1", 
    	Date => "January 24, 2013",
 	Authors => {
-	     {Name => "Gunnar Floystad", Email => "nmagf@uib.no"}
+	     {Name => "Gunnar Floystad", Email => "gunnar.floystad@uib.no"}
 	      },
      	PackageImports => {"BoijSoederberg"},
    	Headline => "triplets of degree sequences and associated Betti diagrams and cohomology tables",
@@ -719,7 +719,15 @@ document {
      the compatibility conditions for degree and homology triplets, respectively.
      
      The routine ", TO toHomology, " converts from a degree triplet to a homology triplet, and
-     the routine ", TO toDegree, " converts from a homology triplet to a degree triplet."
+     the routine ", TO toDegree, " converts from a homology triplet to a degree triplet.",
+     EXAMPLE lines ///
+          T = triplet({1,2,3}, {0,2}, {0,2,3})
+          instance(T, Triplet)
+          isDegreeTriplet T
+          Th = toHomology T
+          instance(Th, Triplet)
+          isHomologyTriplet Th
+          ///
      
      }
      

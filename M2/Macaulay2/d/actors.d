@@ -1368,6 +1368,7 @@ isInfinite(e:Expr):Expr := (
 setupfun("isInfinite",isInfinite).Protected=false;
 
 gcIsVisible(e:Expr):Expr := (
+     Ccode(void, "(void)", e);
      Ccode(void, "assert(GC_is_visible(",e,"))");
      nullE);
 setupfun("gcIsVisible",gcIsVisible);

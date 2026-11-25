@@ -17,19 +17,19 @@ newPackage(
     Headline => "routines for working with affine and projective varieties and coherent sheaves on them",
     Authors  => {
 	{   Name => "Devlin Mallory",
-	    Email => "malloryd@math.utah.edu",
-	    HomePage => "https://www.math.utah.edu/~malloryd/" },
+	    Email => "dmallory@bcamath.org",
+	    HomePage => "https://devlin-mallory.github.io/" },
 	{   Name => "Ritvik Ramkumar",
-	    Email => "ritvikr@cornell.edu",
+	    Email => "rramkuma@nd.edu",
 	    HomePage => "https://sites.google.com/view/ritvikramkumar/" },
 	{   Name => "Mahrud Sayrafi",
-	    Email => "mahrud@umn.edu",
-	    HomePage => "https://math.umn.edu/~mahrud/" },
+	    Email => "msayrafi2@unl.edu",
+	    HomePage => "https://mahrud.github.io" },
 	{   Name => "Gregory G. Smith",
 	    Email => "ggsmith@mast.queensu.ca",
-	    HomePage => "https://www.mast.queensu.ca/~ggsmith"},
+	    HomePage => "https://ggsmith.ca"},
 	{   Name => "Keller VandeBogert",
-	    Email => "kvandebo@nd.edu",
+	    Email => "keller.v@uky.edu",
 	    HomePage => "https://sites.google.com/view/kellervandebogert/home"},
 	{   Name => "John Cobb",
 	    Email => "jdcobb3@gmail.com",
@@ -496,15 +496,6 @@ checkVariety := (X, F) -> (
 -- these synonyms are added to avoid a merge conflict
 flattenModule   = liftModule
 flattenMorphism = liftMorphism
-
--- pushforward the complex to PP^n via S/I <-- S
--- TODO: move to Complexes?
-flattenComplex = C -> C.cache#"flattenComplex" ??= (
-    if instance(ring C, PolynomialRing) then return C;
-    (lo, hi) := C.concentration;
-    if lo === hi
-    then complex(flattenModule C_lo, Base => lo)
-    else complex applyValues(C.dd.map, flattenMorphism))
 
 -- TODO: this is called twice
 -- TODO: implement for multigraded ring

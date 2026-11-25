@@ -1,12 +1,12 @@
 // Copyright 1996  Michael E. Stillman
-#ifndef _hermite_hh_
-#define _hermite_hh_
+#ifndef M2_HERMITE_HH_
+#define M2_HERMITE_HH_
 
-#include "relem.hpp"
-#include "matrix.hpp"
-#include "polyring.hpp"
-#include "comp-gb.hpp"
-#include "ZZ.hpp"
+#include "ring-elements/ring-element.hpp"
+#include "matrices/matrix.hpp"
+#include "rings/polyring.hpp"
+#include "groebner-computations/comp-gb.hpp"
+#include "rings/ZZ.hpp"
 #include <vector>
 
 struct hm_elem : public our_new_delete

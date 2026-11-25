@@ -257,32 +257,34 @@ gbGetPartialComputation := (m, type) -> (
 	null))
 
 -- handle the Hilbert numerator later, which might be here:
-checkHilbertHint = m -> (
-    R := ring m;
-    -- Needed for using Hilbert functions to aid in Groebner basis computation:
-    --    Ring is poly ring over a field (or skew commutative, or quotient ring of such, or both)
-    --    Ring is singly graded, every variable is positive
-    --    Ring is homogeneous in this grading
-    --    Matrix is homogeneous in this grading
-    isHomogeneous m
-    and degreeLength R === 1
+canUseHilbertHint = method()
+
+canUseHilbertHint Ring := Boolean => R -> (
+    degreeLength R === 1
     and (instance(R, PolynomialRing) or isQuotientOf(PolynomialRing, R))
     and isField coefficientRing R
     and (isCommutative R or isSkewCommutative R)
-    and all(degree \ generators(R, CoefficientRing => ZZ), deg -> deg#0 > 0)
+    and all(degree \ generators R, deg -> deg#0 > 0)
     )
+canUseHilbertHint Ideal :=
+canUseHilbertHint Module :=
+canUseHilbertHint Matrix := Boolean => m -> canUseHilbertHint ring m and isHomogeneous m
 
 gbGetHilbertHint := (m, opts) -> (
     if opts.Hilbert =!= null then (
+        if not canUseHilbertHint m then (
+            --<< "warning: Hilbert hint given, but is being ignored" << endl;
+            return null;
+            );
 	if ring opts.Hilbert === degreesRing ring m then opts.Hilbert
 	else error "expected Hilbert option to be in the degrees ring of the ring of the matrix")
     else if m.cache.?cokernel and m.cache.cokernel.cache.?poincare
-    and   checkHilbertHint m then m.cache.cokernel.cache.poincare
+    and canUseHilbertHint m then m.cache.cokernel.cache.poincare
     else if m.?generators then (
 	g := m.generators;
 	if g.cache.?image then (
 	    M := g.cache.image;
-	    if M.cache.?poincare and checkHilbertHint m
+	    if M.cache.?poincare and canUseHilbertHint m
 	    then poincare target g - poincare M)))
 
 checkArgGB := m -> (

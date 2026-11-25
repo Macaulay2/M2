@@ -27,14 +27,12 @@ newPackage("Polyhedra",
     Keywords => {"Convex Geometry"},
     Authors => {
       {
-         Name => "René Birkner",
-        HomePage => "http://page.mi.fu-berlin.de/rbirkner/index.htm",
-        Email => "rbirkner@mi.fu-berlin.de"
+         Name => "René Birkner"
         },
      {
         Name => "Lars Kastner", -- Maintaining author
-        HomePage => "http://page.mi.fu-berlin.de/lkastner/",
-        Email => "k.l@fu-berlin.de"
+        HomePage => "https://lkastner.codeberg.page",
+        Email => "kastner@math.tu-berlin.de"
      }
      },
     PackageImports=>{"LLLBases"}

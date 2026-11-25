@@ -1,4 +1,5 @@
-#pragma once
+#ifndef M2_INTERFACE_M2_TYPES_H
+#define M2_INTERFACE_M2_TYPES_H
 // IWYU pragma: private, include "engine-includes.hpp"
 
 #ifndef _GNU_SOURCE
@@ -182,4 +183,4 @@ extern int M2_numericalAlgebraicGeometryTrace;
 typedef struct gmp_CC_struct * gmp_CC;
 
 #endif // !defined(SAFEC_EXPORTS)
-
+#endif

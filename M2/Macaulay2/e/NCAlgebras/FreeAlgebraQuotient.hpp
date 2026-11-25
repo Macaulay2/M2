@@ -1,12 +1,12 @@
-#ifndef _free_algebra_quotient_hpp_
-#define _free_algebra_quotient_hpp_
+#ifndef M2_NCALGEBRAS_FREE_ALGEBRA_QUOTIENT_HPP_
+#define M2_NCALGEBRAS_FREE_ALGEBRA_QUOTIENT_HPP_
 
 #include "NCAlgebras/FreeAlgebra.hpp" // for FreeAlgebra
 #include "NCAlgebras/FreeMonoid.hpp"  // for FreeMonoid
 #include "NCAlgebras/NCGroebner.hpp"  // for NCGroebner
 #include "Polynomial.hpp"             // for Poly, ConstPolyList
 #include "newdelete.hpp"              // for our_new_delete
-#include "ringelem.hpp"               // for ring_elem
+#include "rings/ringelem.hpp"               // for ring_elem
 
 #include <vector>                     // for vector
 

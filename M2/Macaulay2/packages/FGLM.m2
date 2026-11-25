@@ -3,8 +3,8 @@ newPackage(
     Version => "1.1.0",
     Date => "September 3, 2019",
     Authors => {
-        { Name => "Dylan Peifer",   Email => "djp282@cornell.edu", HomePage => "https://math.cornell.edu/~djp282" },
-        { Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",     HomePage => "https://math.umn.edu/~mahrud" }
+        { Name => "Dylan Peifer" },
+        { Name => "Mahrud Sayrafi", Email => "msayrafi2@unl.edu",     HomePage => "https://mahrud.github.io" }
         },
     Keywords => {"Groebner Basis Algorithms"},
     Headline => "Groebner bases via the FGLM algorithm"
@@ -450,6 +450,40 @@ TEST ///
   R = newRing(ring I, MonomialOrder=>Lex)
   G2 = elapsedTime fglm(I, R)
   assert(sub(gens G2, ring G1) == gens G1)
+///
+
+-- Precondition error paths for fglm. The implementation explicitly checks
+-- for these at lines 56-57 of fglm(GroebnerBasis, Ring), but no previous
+-- TEST exercised the error branches.
+TEST ///
+-- Different number of generators on source vs target ring.
+R1 := QQ[x,y,z];
+R2 := QQ[a,b];
+I := ideal(x*y - 1, y*z - 1, x*z - 1);
+assert(dim I == 0);
+assert(try (fglm(I, R2); false) else true);
+-- Positive-dimensional ideal.
+S := QQ[x,y,z];
+Sl := newRing(S, MonomialOrder => Lex);
+Ipos := ideal(x*y);
+assert(dim Ipos > 0);
+assert(try (fglm(Ipos, Sl); false) else true);
+///
+
+-- Direct test of fglm(GroebnerBasis, Ring): previous TESTs all pass an
+-- Ideal and rely on the internal Ideal dispatch (which itself calls the
+-- GroebnerBasis dispatch via `fglm(gb I1, R2)`); this hits the
+-- GroebnerBasis dispatch explicitly from a precomputed GB.
+TEST ///
+S1 := QQ[x, y, MonomialOrder => GRevLex];
+S2 := QQ[x, y, MonomialOrder => Lex];
+J := ideal(x^2 + y^2 - 1, x*y - 1);
+G1 := gb J;
+assert(class G1 === GroebnerBasis);
+G2 := fglm(G1, S2);
+assert(class G2 === GroebnerBasis);
+-- The result should match the lex-Gröbner basis of (the image of) J.
+assert(gens G2 == gens gb sub(J, S2));
 ///
 
 end--

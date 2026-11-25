@@ -1,5 +1,5 @@
-#ifndef _ringelement_h_
-#  define _ringelement_h_
+#ifndef M2_INTERFACE_RINGELEMENT_H_
+#define M2_INTERFACE_RINGELEMENT_H_
 
 #  include "engine-includes.hpp"
 

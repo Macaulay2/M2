@@ -9,10 +9,10 @@
 
 newPackage(
     "K3Surfaces",
-    Version => "1.1", 
-    Date => "August 13, 2022",
-    Authors => {{Name => "Michael Hoff", 
-                 Email => "hahn@math.uni-sb.de"},
+    Version => "1.2", 
+    Date => "November 22, 2026",
+    Authors => {{Name => "Michael Hoff",
+                 HomePage => "https://sites.google.com/view/michael-hoff/"},
                 {Name => "Giovanni Staglianò", 
                  Email => "giovanni.stagliano@unict.it"}},
     PackageExports => {"SpecialFanoFourfolds"},
@@ -21,22 +21,16 @@ newPackage(
     DebuggingMode => false
 )
 
-if SpecialFanoFourfolds.Options.Version < "2.8" then (
-    <<endl<<"Your version of the SpecialFanoFourfolds package is outdated (required version 2.8 or newer);"<<endl;
-    <<"you can manually download the latest version from"<<endl;
-    <<"https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages."<<endl;
-    <<"To automatically download the latest version of SpecialFanoFourfolds in your current directory,"<<endl;
-    <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
-    <<///run "curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2";///<<endl<<endl<<"***"<<endl;
-    error "required SpecialFanoFourfolds package version 2.8 or newer";
-);
+if SpecialFanoFourfolds.Options.Version < "2.8.1" then error "the package SpecialFanoFourfolds is outdated (required version 2.8.1 or newer); see updatePackage";
 
 export{"K3","LatticePolarizedK3surface","EmbeddedK3surface","project","mukaiModel",
        "trigonalK3","tetragonalK3","pentagonalK3"}
 
 debug SpecialFanoFourfolds;
+debug SparseResultants;
 needsPackage "Truncations";
 needsPackage "MinimalPrimes";
+importFrom(MultiprojectiveVarieties, {"netTexDescription"});
 
 LatticePolarizedK3surface = new Type of HashTable;
 
@@ -60,16 +54,27 @@ net LatticePolarizedK3surface := S -> (
 );
 texMath LatticePolarizedK3surface := texMath @@ net;
 
-? EmbeddedK3surface := S -> "K3 surface of genus "|toString(genus S)|" and degree "|toString(degree S)|" in PP^"|toString(dim ambient S);
+netTexDescription EmbeddedK3surface := o -> S -> (
+    if o#"UseName" and hasAttribute(S,ReverseDictionary) then return (
+        toString getAttribute(S,ReverseDictionary),
+        texMath getAttribute(S,ReverseDictionary)
+    );
+    g := genus S;
+    if o#"Short" then return (
+        "embedded K3 surface of genus " | (toString g),
+        "\\text{embedded K3 surface of genus }" | (texMath g)
+    );
+    d := degree S;
+    n := dim ambient S;
+    (
+        "K3 surface of genus " | (toString g) | " and degree " | (toString d) | " in PP^" | (toString n),
+        "\\text{K3 surface of genus }" | (texMath g) | "\\text{ and degree }" | (texMath d) | "\\text{ in }\\mathbb{P}^{" | (texMath n) | "}"
+    )
+);
 
 LatticePolarizedK3surface#{WebApp,AfterPrint} = LatticePolarizedK3surface#{WebApp,AfterNoPrint} = 
 LatticePolarizedK3surface#{Standard,AfterPrint} = LatticePolarizedK3surface#{Standard,AfterNoPrint} = S -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Lattice-polarized K3 surface" << endl;
-);
-
-EmbeddedK3surface#{WebApp,AfterPrint} = EmbeddedK3surface#{WebApp,AfterNoPrint} = 
-EmbeddedK3surface#{Standard,AfterPrint} = EmbeddedK3surface#{Standard,AfterNoPrint} = S -> (
-    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Embedded K3 surface of genus " << sectionalGenus S << endl;
 );
 
 map (LatticePolarizedK3surface,ZZ,ZZ) := o -> (S,a,b) -> (
@@ -128,7 +133,9 @@ LatticePolarizedK3surface Sequence := (S,ab) -> (
     if f#"image" === null and char coefficientRing S <= 65521 and genus(S,1,0) > 3 then image(f,"F4");
     T := new EmbeddedK3surface from image f;
     if dim ambient T <= 2 then error "the linear system is not very ample";
-    -- (???) this fixes a bug in conversion of output to net, but it is a bit dangerous.
+    -- TODO: this fixes a bug in conversion of output to net by manually setting "dimVariety" = 2,
+    -- but the assignment is fragile (it pokes at an internal cache key). A regression test pinning
+    -- the net / texMath round-trip would make the danger observable if the internals change.
     T#"dimVariety" = 2;
     T.cache#"sectionalGenus" = genus(S,a,b);
     -- if degrees T =!= {({2},binomial(genus(T)-2,2))} then <<"--warning: the degrees for the generators are not as expected"<<endl;
@@ -276,10 +283,10 @@ trigonalK3 ZZ := o -> g -> (
     S := if n == 2 then random({2,3},0_P) else 
          if n == 3 then random({{1,1},{1,3}},0_P) else 
          if n == 4 then random({{0,3},{1,1},{1,1}},0_P);
-    f := rationalMap((0_P)%S,{a,1});
+    f := rationalMap((0_S)%S,{a,1});
     T := image f;  
     assert(dim ambient T == g and dim T == 2 and degree T == 2*g-2 and sectionalGenus T == g);
-    pr1 := multirationalMap first projections S;
+    pr1 := rationalMap first projections S;
     C := f(pr1^* point target pr1);
     assert(dim C == 1 and degree C == 3);
     latticePolarizedK3surface(T,C,{g,3,0})
@@ -484,7 +491,7 @@ randomPointedMukaiThreefold ZZ := o -> g -> (
         return (X,p);
     );
     if g == 7 then (
-        quinticDelPezzoSurface := Var image rationalMap(ring PP_K^2,{3,4});
+        quinticDelPezzoSurface := Var image legacyRationalMap(ring PP_K^2,{3,4});
         psi = rationalMap(quinticDelPezzoSurface * random(1,0_quinticDelPezzoSurface),2);
         p = psi point source psi;
         j = parametrize random({{1},{1}},p);
@@ -547,7 +554,7 @@ randomMukaiThreefoldContainingLine ZZ := o -> g -> (
         return (X,L);
     );
     if g == 7 then (
-        mapDP5 := multirationalMap rationalMap(ring PP_K^2,{3,4});
+        mapDP5 := rationalMap legacyRationalMap(ring PP_K^2,{3,4});
         pt := mapDP5 point source mapDP5;
         psi = rationalMap((image mapDP5) * random(1,pt),2);
         L = psi linearSpan {pt,point source psi};
@@ -631,9 +638,9 @@ pointLineAndConicOnMukaiThreefoldOfGenus10 = (K,withLine,withConic) -> (
     -- psi is the map Q --> PP^11 defined by the quintic hypersurfaces with double points along C
     psi := rationalMap(C_Q,5,2);
     if dim target psi != 11 then error "something went wrong";
-    psi = toRationalMap psi;
+    psi = toLegacyRationalMap psi;
     if K === ZZ/(char K) then interpolateImage(psi,toList(28:2),2) else forceImage(psi,image(2,psi));
-    psi = multirationalMap psi;
+    psi = rationalMap psi;
     X := psi#"image";
     assert(X =!= null);
     q = psi q;
@@ -651,11 +658,11 @@ pointLineAndConicOnMukaiThreefoldOfGenus10 = (K,withLine,withConic) -> (
         conic = F;
     );
     if withLine then (
-        psi = toRationalMap rationalMap(psi,Dominant=>true);
+        psi = toLegacyRationalMap rationalMap(psi,Dominant=>true);
         -- B is the base locus of psi^-1, B-Supp(B) is a line.
         B := trim lift(ideal matrix approximateInverseMap(psi,Verbose=>false),ambient target psi);
-        j := parametrize ideal matrix rationalMap(B,1);
-        pr := rationalMap for i to 3 list random(1,source j);
+        j := parametrize ideal matrix legacyRationalMap(B,1);
+        pr := legacyRationalMap for i to 3 list random(1,source j);
         B' := pr j^* B;
         E' := B' : radical B';
         E := j radical trim (j^* ideal X + pr^* E');
@@ -667,23 +674,23 @@ pointLineAndConicOnMukaiThreefoldOfGenus10 = (K,withLine,withConic) -> (
 
 pointLineAndConicOnMukaiThreefoldOfGenus12 = (K,withLine,withConic) -> (
     line := null; conic := null;
-    f := rationalMap veronese(1,6,K);
-    f = f * rationalMap(target f,ring PP_K^4,for i to 4 list random(1,target f));
+    f := legacyRationalMap veronese(1,6,K);
+    f = f * legacyRationalMap(target f,ring PP_K^4,for i to 4 list random(1,target f));
     p := ideal point PP_K^4;    
     C := trim sub(image f,quotient ideal random(2,Var intersect(p,image f)));
-    psi := rationalMap(saturate(C^2),5);
+    psi := legacyRationalMap(saturate(C^2),5);
     if numgens target psi != 14 then error "something went wrong";
     if K === ZZ/(char K) then interpolateImage(psi,toList(45:2),2) else forceImage(psi,image(2,psi));
     X := psi#"idealImage";
     assert(X =!= null);
     p = psi p;
-    if ? p != "one-point scheme in PP^13" then error "something went wrong";
+    if not(dim Var p == 0 and degree Var p == 1) then error "something went wrong";
     if withConic then (
-        psi = rationalMap(psi,Dominant=>true);
+        psi = legacyRationalMap(psi,Dominant=>true);
         -- B is the base locus of psi^-1, B-Supp(B) is a conic.
         B := trim lift(ideal matrix approximateInverseMap(psi,Verbose=>false),ambient target psi);
-        j := parametrize ideal matrix rationalMap(B,1);
-        pr := rationalMap for i to 3 list random(1,source j);
+        j := parametrize ideal matrix legacyRationalMap(B,1);
+        pr := legacyRationalMap for i to 3 list random(1,source j);
         B' := pr j^* B;
         E' := B' : radical B';
         E := j radical trim (j^* X + pr^* E');
@@ -719,12 +726,12 @@ power0 (Ideal,ZZ) := (p,d) -> (
 );
 
 projectionInt = method();
-projectionInt (VisibleList,RationalMap,ZZ,ZZ) := (L,phi,D,g) -> (
+projectionInt (VisibleList,LegacyRationalMap,ZZ,ZZ) := (L,phi,D,g) -> (
    try assert(ring matrix{L} === ZZ and #L>0) else error "expected a list of integers";
    E := invProjection(L,D,g,g);
    d := max flatten degrees ideal matrix phi;
-   J := rationalMap(intersect apply(L,i -> power0(point source phi,i)),d);   
-   f := rationalMap(intersect(ideal matrix phi,ideal matrix J),d);
+   J := legacyRationalMap(intersect apply(L,i -> power0(point source phi,i)),d);   
+   f := legacyRationalMap(intersect(ideal matrix phi,ideal matrix J),d);
    X := if char coefficientRing phi <= 65521 then Var image(f,"F4") else Var image f;
    <<endl;
    if E != (degree X,sectionalGenus X,dim ambient X) then <<"--warning: output is not as expected"<<endl else <<"-- (degree and genus are as expected)"<<endl;
@@ -732,9 +739,9 @@ projectionInt (VisibleList,RationalMap,ZZ,ZZ) := (L,phi,D,g) -> (
 );
 
 project = method();
-project (VisibleList,LatticePolarizedK3surface,ZZ,ZZ) := (L,S,a,b) -> projectionInt(L,toRationalMap map(S,a,b),degree(S,a,b),genus(S,a,b));
+project (VisibleList,LatticePolarizedK3surface,ZZ,ZZ) := (L,S,a,b) -> projectionInt(L,toLegacyRationalMap map(S,a,b),degree(S,a,b),genus(S,a,b));
 project (VisibleList,EmbeddedK3surface) := (L,S) -> (
-    if S.cache#?"GeneralK3" and S.cache#"GeneralK3" then return projectionInt(L,toRationalMap map S,degree S,genus S);
+    if S.cache#?"GeneralK3" and S.cache#"GeneralK3" then return projectionInt(L,toLegacyRationalMap map S,degree S,genus S);
     (T,ab) := construction S;
     project(L,T,ab_0,ab_1)
 );
@@ -779,7 +786,7 @@ randomEllipticCurve = method(Options => {CoefficientRing => ZZ/65521});
 randomEllipticCurve (ZZ,ZZ) := o -> (d,n) -> (
     K := o.CoefficientRing;
     C := randomEllipticNormalCurve(d,CoefficientRing=>K);
-    f := rationalMap(ring PP_K^(d-1),ring PP_K^n,for i to n list random(1,ring PP_K^(d-1)));
+    f := legacyRationalMap(ring PP_K^(d-1),ring PP_K^n,for i to n list random(1,ring PP_K^(d-1)));
     f C
 );
 
@@ -787,7 +794,7 @@ randomRationalCurve = method(Options => {CoefficientRing => ZZ/65521});
 randomRationalCurve (ZZ,ZZ) := o -> (d,n) -> (
     K := o.CoefficientRing;
     C := PP_K^(1,d);
-    f := rationalMap(ring ambient C,ring PP_K^n,for i to n list random(1,ring ambient C));
+    f := legacyRationalMap(ring ambient C,ring PP_K^n,for i to n list random(1,ring ambient C));
     f C
 );
 
@@ -835,7 +842,7 @@ mukaiModel ZZ := o -> g -> (
                      {-w_0,-w_1,-w_2,-w_3,-w_4,-w_5,0}};
         X = projectiveVariety pfaffians(4,M);
         assert(dim X == 5 and codim X == 8 and degree X == 18 and sectionalGenus X == 10);
-        psi = inverse((rationalMap {w_1,w_5,w_8,w_9,w_13,w_12})|X);
+        psi = inverse((legacyRationalMap {w_1,w_5,w_8,w_9,w_13,w_12})|X);
         X.cache#"rationalParametrization" = psi;        
         return X;
     );
@@ -857,7 +864,7 @@ beginDocumentation()
 document {Key => K3Surfaces, 
 Headline => "construction of explicit examples of K3 surfaces",
 "This package is for constructing explicit examples of K3 surfaces.",
-References => UL{{"M. H. and G. S., ",EM"Explicit constructions of K3 surfaces and unirational Noether-Lefschetz divisors",", available at ",HREF{"https://arxiv.org/abs/2110.15819","arXiv:2110.15819"}," (2021)."}}}
+References => UL{{"M. Hoff and G. Staglianò, ",EM"Explicit constructions of K3 surfaces and unirational Noether-Lefschetz divisors",", available at ",HREF{"https://arxiv.org/abs/2110.15819","arXiv:2110.15819"}," (2021)."}}}
 
 document {Key => {LatticePolarizedK3surface}, 
 Headline => "the class of all lattice-polarized K3 surfaces",
@@ -939,8 +946,8 @@ project({i,j,k,...},S(a,b))",
 Inputs => {VisibleList => {"a list ",TEX///$\{i,j,k,\ldots\}$///," of nonnegative integers"},
            LatticePolarizedK3surface => "S" => {"a lattice-polarized K3 surface with rank 2 lattice spanned by ",TEX///$H,C$///},
            ZZ => "a",
-           ZZ => "b"}, 
-Outputs => {EmbeddedProjectiveVariety => {"the projection of ", TEX///$S$///," embedded by the complete linear system ",TEX///$|a H + b C|$///," from ",TEX///$i$///," random points of multiplicity 1, ",TEX///$j$///," random points of multiplicity 2, ",TEX///$k$///," random points of multiplicity 3, and so on until the last integer in the given list."}}, 
+           ZZ => "b"},
+Outputs => {EmbeddedProjectiveVariety => {"the projection of ", TEX///$S$///," embedded by the complete linear system ",TEX///$|a H + b C|$///," from one random point of multiplicity ",TEX///$i$///,", one random point of multiplicity ",TEX///$j$///,", one random point of multiplicity ",TEX///$k$///,", and so on."}}, 
 EXAMPLE {"S = K3(8,2,-2)", "project({5,3,1},S,2,1); -- (5th + 3rd + simple)-projection of S(2,1)"}, 
 SeeAlso => {(symbol SPACE,LatticePolarizedK3surface,Sequence)}} 
 
@@ -970,7 +977,7 @@ Outputs => {{"the ",TO2{RationalMap,"birational morphism"}," defined by the comp
 EXAMPLE {"S = K3(3,1,-2)", "f = map(S,2,1);", "isMorphism f", "degree f", "assert(image f == S(2,1))"}, 
 SeeAlso => {(symbol SPACE,LatticePolarizedK3surface,Sequence)}} 
 
-undocumented {(texMath,LatticePolarizedK3surface),(net,LatticePolarizedK3surface),(symbol ?,EmbeddedK3surface),(map,EmbeddedK3surface),(genus,EmbeddedK3surface),(degree,EmbeddedK3surface)}
+undocumented {(texMath,LatticePolarizedK3surface),(net,LatticePolarizedK3surface),(map,EmbeddedK3surface),(genus,EmbeddedK3surface),(degree,EmbeddedK3surface)}
 
 document {Key => {trigonalK3,(trigonalK3,ZZ),[trigonalK3,CoefficientRing]}, 
 Headline => "trigonal K3 surface", 
@@ -1125,9 +1132,50 @@ for g from 3 to 7 do (
 ///
 
 TEST ///
-for g in {3,4,5,6,7,8,9} do (<<"g = "<<g<<endl; time K3 g); 
+for g in {3,4,5,6,7,8,9} do (<<"g = "<<g<<endl; time K3 g);
 ///;
 
+TEST ///
+-- LatticePolarizedK3surface / EmbeddedK3surface type instances, and the map+image assertion previously held only inside the doc EXAMPLE at :970
+S = K3(3,1,-2);
+assert(instance(S, LatticePolarizedK3surface));
+assert(instance(S(1,0), EmbeddedK3surface));
+f = map(S,2,1);
+assert(isMorphism f);
+assert(image f == S(2,1));
+///
+
+TEST ///
+-- project returns an EmbeddedProjectiveVariety
+S = K3(5,2,-2);
+P = project({1}, S, 1, 0);
+assert(instance(P, EmbeddedProjectiveVariety));
+///
+
+TEST ///
+-- mukaiModel g has degree 2g-2 and sectional genus g for the documented range
+X = mukaiModel 7;
+assert(degree X == 12);
+assert(sectionalGenus X == 7);
+Y = mukaiModel 8;
+assert(degree Y == 14);
+assert(sectionalGenus Y == 8);
+///
+
+TEST ///
+-- trigonalK3, tetragonalK3, pentagonalK3 each return a LatticePolarizedK3surface
+assert(instance(trigonalK3 6, LatticePolarizedK3surface));
+assert(instance(tetragonalK3 7, LatticePolarizedK3surface));
+assert(instance(pentagonalK3 8, LatticePolarizedK3surface));
+///
+
+-- TODO: this `end;` silently demotes every TEST block below to unreachable code -- they are
+-- never seen by `check`. Decide whether to (a) revive them as live tests (some compute K3s of
+-- genus 20-22 and need a slow-test gate), or (b) delete them as stale.
+-- TODO: two of the dead TESTs below are duplicates of live ones already in this file --
+--   `-- randomMukaiThreefoldContainingLine` (live at line 1097, dead clone below)
+--   `-- randomPointedMukaiThreefold`        (live at line 1082, dead clone below)
+-- If the post-`end;` region is revived, those duplicates should be reconciled first.
 end;
 
 -- Hard tests

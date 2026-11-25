@@ -1,9 +1,9 @@
 // Copyright 1997  Michael E. Stillman
 
-#ifndef _fractionfreeLU_hpp_
-#define _fractionfreeLU_hpp_
+#ifndef M2_FRACTIONFREELU_HPP_
+#define M2_FRACTIONFREELU_HPP_
 
-#include "mat.hpp"
+#include "basic-mutable-matrices/mat.hpp"
 
 class FF_LUComputation
 {

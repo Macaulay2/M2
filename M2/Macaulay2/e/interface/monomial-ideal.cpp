@@ -4,18 +4,18 @@
 
 #include <frobby.h> // TODO: move Frobby routines elsewhere?
 
-#include "ExponentList.hpp"
-#include "assprime.hpp"
+#include "monomials/ExponentList.hpp"
+#include "computations/assprime.hpp"
 #include "buffer.hpp"
 #include "error.h"
 #include "exceptions.hpp"
 #include "finalize.hpp"
 #include "hilb.hpp"
 #include "int-bag.hpp"
-#include "matrix.hpp"
-#include "monideal-minprimes.hpp"
-#include "monideal.hpp"
-#include "monomial.hpp"
+#include "matrices/matrix.hpp"
+#include "monomials/monideal-minprimes.hpp"
+#include "monomials/monideal.hpp"
+#include "monomials/monomial.hpp"
 #include "newdelete.hpp"
 #include "text-io.hpp"
 

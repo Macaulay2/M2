@@ -4,8 +4,8 @@ newPackage(
         Date => "24 May 2019",
         Authors => {
             {Name => "Michael E. Stillman", 
-             Email => "mike@math.cornell.edu", 
-             HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"
+             Email => "mikestillman1@gmail.com",
+             HomePage => "https://mikestillman.github.io"
              }},
         Headline => "interface to cohomCalg software for computing sheaf cohomology of line bundles on toric varieties",
 	Keywords => {"Toric Geometry", "Interfaces"},

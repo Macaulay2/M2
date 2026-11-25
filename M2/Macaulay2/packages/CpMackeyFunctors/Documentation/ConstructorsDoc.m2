@@ -62,7 +62,7 @@ doc ///
             makeRandomCpMackeyFunctor(7,{2,2,3,3})
 
         Text
-            If we don't want to specify this data, $n$ and $m$ will be chosen randomly between 1 and 10. To randomly choose between 1 and a higher number, we can use the @TT("GenBound")@ option.
+            If we don't want to specify this data, $n$ and $m$ will be chosen randomly between 1 and the value of the @TT("GenBound")@ option (default 5). To randomly choose between 1 and a higher number, set @TT("GenBound")@ to that value.
 
         Example
             makeRandomCpMackeyFunctor(3)

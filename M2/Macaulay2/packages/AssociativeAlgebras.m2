@@ -4,10 +4,10 @@ newPackage(
     Date => "23 Oct 2024",
     Authors => {{Name => "Frank Moore", 
 	   Email => "moorewf@wfu.edu",
-	   HomePage => "https://math.wfu.edu/moore"},
+	   HomePage => "https://users.wfu.edu/moorewf/"},
 	{Name => "Mike Stillman",  
-            Email => "mike@math.cornell.edu", 
-            HomePage => "http://www.math.cornell.edu/~mike"}
+            Email => "mikestillman1@gmail.com",
+            HomePage => "https://mikestillman.github.io"}
         },
     Headline => "Noncommutative algebra",
     Keywords => {"Noncommutative Algebra"},
@@ -2028,7 +2028,7 @@ ncEngine Pull Request todo (2/22/2021)
 
 -- Make sure F4 works with new vectorArithmetic
 Faster nonminimal resolution code working with VA
--- Double check that faster arithmetic is in aring-zzp
+-- Double check that faster arithmetic is in aring-ZZp
 -- Remove vectorArithmetic2
 -- (partly) Find memory leaks in NCF4 code (?)
 Remove gausser files (in both f4 and res-f4) once they are no longer used

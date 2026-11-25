@@ -1,3 +1,6 @@
+#ifndef XML_C_H
+#define XML_C_H
+
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -20,6 +23,8 @@ extern xmlAttr *xml_NewProp(xmlNode *, M2_string name, M2_string value);
 extern xmlNode *xml_NewChild(xmlNode *parent, M2_string name);
 extern xmlNode *xml_NewText(xmlNode *parent, M2_string content);
 M2_string xml_toString(xmlNode *);
+
+#endif /* XML_C_H */
 
 /*
  Local Variables:

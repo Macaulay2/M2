@@ -3,9 +3,9 @@
 #include "buffer.hpp"
 #include "error.h"
 #include "exceptions.hpp"
-#include "freemod.hpp"
-#include "mat.hpp"
-#include "matrix.hpp"
+#include "free-modules/freemod.hpp"
+#include "basic-mutable-matrices/mat.hpp"
+#include "matrices/matrix.hpp"
 #include "ringmap.hpp"
 
 class Ring;

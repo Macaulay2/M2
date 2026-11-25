@@ -15,10 +15,10 @@ newPackage(
         Authors => {
             {Name => "Frank-Olaf Schreyer", 
 		        Email => "schreyer@math.uni-sb.de",
-		        HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
+		        HomePage => "https://www.math.uni-sb.de/ag/schreyer/"},
 	        {Name => "Mike Stillman", 
-                Email => "mike@math.cornell.edu", 
-                HomePage => "http://www.math.cornell.edu/~mike"}
+                Email => "mikestillman1@gmail.com",
+                HomePage => "https://mikestillman.github.io"}
             },
         Headline => "SVD (singular value decomposition) of a complex over the reals and related functions",
 	Keywords => {"Homological Algebra", "Commutative Algebra"},

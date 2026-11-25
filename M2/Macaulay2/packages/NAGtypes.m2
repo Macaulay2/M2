@@ -5,7 +5,7 @@ newPackage(
      Version => "1.21",
      Date => "Nov 2022",
      Headline => "types used in Numerical Algebraic Geometry",
-     HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
+     HomePage => "https://antonleykin.math.gatech.edu/NAG4M2/",
      AuxiliaryFiles => true,
      Authors => {
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
@@ -231,6 +231,28 @@ assert(round (10000*residual(S,p)) == 4173)
 p2 =  point {{1.001,2.3+ii}}
 p3 =  point {{.999,2.3+ii}}
 assert areEqual(sortSolutions {p,p2,p3}, {p3,p,p2})
+///
+
+-- Cover several previously-untested accessor methods on PolySystem
+-- and helpers that previous TESTs did not exercise: numParameters,
+-- realPoints, toAffineChart, numericalVariety, numericalAffineSpace.
+TEST ///
+R := CC[x, y];
+F := polySystem {x^2 - 1, y - x};
+-- numParameters is zero for a vanilla PolySystem.
+assert(numParameters F == 0);
+assert(numVariables F == 2);
+assert(numFunctions F == 2);
+-- realPoints filters out non-real points.
+p1 := point {{1.0_CC, 2.0_CC}};
+p2 := point {{0.5_CC, 1.0_CC + 0.0001 * ii}};
+rp := realPoints {p1, p2};
+assert(#rp == 1);
+-- numericalAffineSpace and numericalVariety: trivial-input shape.
+assert(class numericalAffineSpace R === NumericalVariety);
+assert(class numericalVariety {} === NumericalVariety);
+-- toAffineChart on coordinates of a projective point.
+assert(toAffineChart(0, {1.0_CC, 2.0_CC, 0.5_CC}) == {2.0_CC, 0.5_CC});
 ///
 
 load "./NAGtypes/PolyDualSpaces.m2"

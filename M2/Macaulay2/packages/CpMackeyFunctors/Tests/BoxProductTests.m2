@@ -10,7 +10,7 @@ assert(rank R.Fixed == rank (A**R).Fixed)
 assert(rank R.Fixed == rank (R**A).Fixed)
 
 -- Verify that fixed modules of A and A ** R are isomorphic
-isIsomorphic(R.Fixed, (A ** R).Fixed)
+assert(isIsomorphic(R.Fixed, (A ** R).Fixed))
 
 -- Verifying that induced maps on box products are well-defined
 L = complexLinearizationMap(7)

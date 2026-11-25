@@ -91,9 +91,10 @@ assert Equation(g, 7)
 assert Equation(h, 8)
 
 -- null
-(a, , , b) = (9, 10, 11, 12)
+assert Equation((a, , , b) = (9, 10, 11, 12), (9, 10, 11, 12))
 assert Equation(a, 9)
 assert Equation(b, 12)
+assert Equation((a,) ??= (13, 14), (9, 14))
 
 -- augmented
 (x, y, z) = (1, 2, 3)

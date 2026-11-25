@@ -9,8 +9,8 @@
 
 newPackage(
         "InvariantRing",
-        Version => "2.4", 
-        Date => "May 1, 2026",
+        Version => "2.6", 
+        Date => "October 27, 2026",
         Authors => {
 	    {Name => "Luigi Ferraro", 
 		 Email => "luigi.ferraro@utrgv.edu", 
@@ -22,20 +22,20 @@ newPackage(
 		 },
              {Name => "Francesca Gandini", 
 		 Email => "fra.gandi.phd@gmail.com", 
-		 HomePage => "https://sites.google.com/a/umich.edu/gandini/home"
+		 HomePage => "https://fragandi.github.io/web/"
 		 },
 	     {Name => "Hang Huang", 
 		 Email => "hhuang235@tamu.edu", 
-		 HomePage => "https://math.tamu.edu/~hhuang"
+		 HomePage => "https://artsci.tamu.edu/mathematics/contact/profiles/hang-huang.html"
 		 },
-	     {Name => "Thomas Hawes", Email => "thomas.hawes@maths.ox.ac.uk"},
+	     {Name => "Thomas Hawes"},
 	     {Name => "Matthew Mastroeni", 
-		 Email => "mmastro@iastate.edu", 
-		 HomePage => "https://mnmastro.github.io/"
+		 Email => "mastromn@sunypoly.edu", 
+		 HomePage => "https://sunypoly.edu/faculty-and-staff/matthew-mastroeni.html"
 		 },
              {Name => "Xianglong Ni", 
-		 Email => "xlni@berkeley.edu", 
-		 HomePage => "https://math.berkeley.edu/~xlni/"}
+		 Email => "xni3@nd.edu",
+		 HomePage => "https://math.nd.edu/people/faculty/xianglong-ni/"}
              },
         Headline => "invariants of group actions",
 	Keywords => {"Representation Theory", "Group Theory"},
@@ -55,9 +55,8 @@ newPackage(
 	     },
 	AuxiliaryFiles => true,
         DebuggingMode => false,
-	PackageExports => {
-	    "Graphs"
-	    }
+	PackageImports => {"Elimination","Normaliz","Polyhedra"},
+	PackageExports => {"Graphs"}
         )
 
 
@@ -68,12 +67,14 @@ export {
     "FiniteGroupAction",
     "DiagonalAction",
     "LinearlyReductiveAction",
+    "PermutationAction",
     
     --FiniteGroups.m2    	      	  
     "finiteAction",    	       	      	  
     "group",	    	    	  
     "isAbelian",    	    	  
-    "permutationMatrix",          
+    "permutationMatrix",
+    "permutationAction",
     "schreierGraph",	    	  
     "words",
     
@@ -111,10 +112,6 @@ export {
     "DegreeVector",    	       	  
     "PrintDegreePolynomial"    	  
     }
-
-needsPackage("Elimination")
-needsPackage("Normaliz")
-needsPackage("Polyhedra")
 
 GroupAction = new Type of HashTable
 

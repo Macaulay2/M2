@@ -1,25 +1,23 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Macaulay2: Simplicial Complex Visualization</title>
-    <link href="css/common.css" rel="stylesheet">
+    <link href="css/common.css" rel="stylesheet" />
     <style>
-
       polygon.face {
-        opacity: .4;
+        opacity: 0.4;
       }
-        
+
       #canvasElement2d:not(.active):not(.shift) polygon.face {
         cursor: pointer;
       }
-        
+
       polygon.face.highlighted {
         opacity: 1;
-        fill: #FF0000;
+        fill: #ff0000;
         stroke-width: 4px;
       }
-        
     </style>
     <script>
       //global variables
@@ -41,26 +39,47 @@
   </head>
 
   <body>
+    <div id="side">
+      <h2>&#8202;&#8202;Menu</h2>
+      <div class="list-group" id="menuList">
+        <div class="list-group-item" id="sliderDiv">
+          <div style="height: 25px">Force variables</div>
+          <span style="display: inline-block; width: 60px"
+            >&#8202; Charge:</span
+          >
+          <div
+            class="noUi-extended"
+            id="charge-slider"
+            style="vertical-align: middle"
+          ></div>
+          <br />
+          <span style="display: inline-block; width: 60px">&#8202; Links:</span>
+          <div
+            class="noUi-extended"
+            id="linkdist-slider"
+            style="vertical-align: middle"
+          ></div>
+        </div>
+        <a id="editToggle" href="#" class="list-group-item">Enable editing</a>
+        <a id="labelToggle" href="#" class="list-group-item">Hide labels</a>
+        <a id="highlightToggle" href="#" class="list-group-item"
+          >Highlight faces</a
+        >
+        <a id="reset" href="#" class="list-group-item">Reset nodes</a>
+        <a id="forceToggle" href="#" class="list-group-item">Turn off force</a>
+        <a id="exportTikz" href="#" class="list-group-item"
+          >Generate TikZ code</a
+        >
 
-        <div id="side">
-          <h2>&#8202;&#8202;Menu</h2>
-          <div class="list-group" id="menuList">
-            <div class="list-group-item" id="sliderDiv"><div style="height:25px;">Force variables</div>
-            <span style="display:inline-block; width:60px;">&#8202; Charge:</span><div class="noUi-extended" id="charge-slider" style="vertical-align:middle;"></div><br>
-            <span style="display:inline-block; width:60px;">&#8202; Links:</span><div class="noUi-extended" id="linkdist-slider" style="vertical-align:middle;"></div>
-            </div>
-            <a id="editToggle" href="#" class="list-group-item">Enable editing</a>
-            <a id="labelToggle" href="#" class="list-group-item">Hide labels</a>
-            <a id="highlightToggle" href="#" class="list-group-item">Highlight faces</a>
-            <a id="reset" href="#" class="list-group-item">Reset nodes</a>
-            <a id="forceToggle" href="#" class="list-group-item">Turn off force</a>
-            <a id="exportTikz" href="#" class="list-group-item">Generate TikZ code</a>
-            
-            <a href="#collapse1" data-bs-toggle="collapse" class="list-group-item">Boolean tests &#9662;</a>
-                <div id="collapse1" class="panel-collapse collapse">
-                    <a id="isPure" href="#" class="list-group-item"> &nbsp;&nbsp; isPure</a>
-                </div>
-            <!--
+        <a href="#collapse1" data-bs-toggle="collapse" class="list-group-item"
+          >Boolean tests &#9662;</a
+        >
+        <div id="collapse1" class="panel-collapse collapse">
+          <a id="isPure" href="#" class="list-group-item">
+            &nbsp;&nbsp; isPure</a
+          >
+        </div>
+        <!--
             <a href="#collapse2" data-bs-toggle="collapse" class="list-group-item">Numerical invariants &#9662;</a>
                 <div id="collapse2" class="panel-collapse collapse">
                     <a id="chromaticNumber" href="#" class="list-group-item"> &nbsp;&nbsp; chromaticNumber</a>
@@ -78,17 +97,15 @@
                     <a id="vertexCoverNumber" href="#" class="list-group-item"> &nbsp;&nbsp; vertexCoverNumber</a>
                 </div>
                 -->
-             <a id="endSession" href="#" class="list-group-item">End session</a>            
-          </div>
-        </div>
-  
-  <div class="container">
-    <div id="canvasElement2d"></div>
-  </div>
+        <a id="endSession" href="#" class="list-group-item">End session</a>
+      </div>
+    </div>
 
-  <script src="js/visCommon.js"></script>
-  <script src="js/visSimplicialComplex2d.js"></script>
+    <div class="container">
+      <div id="canvasElement2d"></div>
+    </div>
+
+    <script src="js/visCommon.js"></script>
+    <script src="js/visSimplicialComplex2d.js"></script>
   </body>
-
-
 </html>

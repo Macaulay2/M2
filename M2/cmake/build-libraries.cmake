@@ -38,14 +38,23 @@ endforeach()
 # General compile flags
 string(REPLACE ";" " " COMPILEFLAGS "${COMPILE_OPTIONS}")
 
+string(TOUPPER "${CMAKE_BUILD_TYPE}" BUILD_TYPE)
+
 # C compiler flags
-set(CFLAGS   "${CMAKE_C_FLAGS}")
+set(CFLAGS   "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_${BUILD_TYPE}}")
 
 # C++ compiler flags
-set(CXXFLAGS "${CMAKE_CXX_FLAGS}")
+set(CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${BUILD_TYPE}}")
 
 # Linker flags
 string(REPLACE ";" " " LDFLAGS "${LINK_OPTIONS}")
+
+# SDK flags (CMake passes -isysroot to its own targets, but not to these)
+if(CMAKE_OSX_SYSROOT)
+  set(CFLAGS   "${CFLAGS} -isysroot ${CMAKE_OSX_SYSROOT}")
+  set(CXXFLAGS "${CXXFLAGS} -isysroot ${CMAKE_OSX_SYSROOT}")
+  set(LDFLAGS  "${LDFLAGS} -isysroot ${CMAKE_OSX_SYSROOT}")
+endif()
 
 # Linear algebra library flags
 if(APPLE)
@@ -243,7 +252,7 @@ ExternalProject_Add(build-mpfr
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT MPFR_ROOT)
+if(NOT MPFR_FOUND)
   set(MPFR_ROOT ${M2_HOST_PREFIX})
 endif()
 set(MPFR_INCLUDE_DIR ${MPFR_INCLUDE_DIRS}) # TODO: make this unnecessary in d/CMakeLists.txt
@@ -252,8 +261,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries mpfr gmp MPFR_FOUND)
 
 # http://perso.ens-lyon.fr/nathalie.revol/software.html
 ExternalProject_Add(build-mpfi
-  URL               ${M2_SOURCE_URL}/mpfi-1.5.4.tar.gz
-  URL_HASH          SHA256=32e6ad529c97aa5ce03e28d01c921d1bce1a464fb4c57fbc248d7be21e652782
+  URL               https://gitlab.inria.fr/mpfi/mpfi/-/archive/1.5.5/mpfi-1.5.5.tar.gz
+  URL_HASH          SHA256=47df389d0a529f98fec4c8d400c3f18e1d292c59efd91dd6fcab840da38cc5b9
   PREFIX            libraries/mpfi
   SOURCE_DIR        libraries/mpfi/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -330,7 +339,7 @@ ExternalProject_Add_Step(build-ntl wizard
   EXCLUDE_FROM_MAIN ON
   USES_TERMINAL ON
   )
-if(NOT NTL_ROOT)
+if(NOT NTL_FOUND)
   set(NTL_ROOT ${M2_HOST_PREFIX})
 endif()
 if(AUTOTUNE)
@@ -367,7 +376,7 @@ ExternalProject_Add(build-flint
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT FLINT_ROOT)
+if(NOT FLINT_FOUND)
   set(FLINT_ROOT ${M2_HOST_PREFIX})
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries flint "gmp;mpfr;ntl" FLINT_FOUND)
@@ -415,10 +424,17 @@ ExternalProject_Add(build-factory
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(GFTABLESDIR AND NOT EXISTS ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
+# Copy again when GFTABLESDIR moves, so that building factory ourselves replaces
+# the tables copied from the version already on the system.
+set(GFTABLES_DEST ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory)
+if(GFTABLESDIR AND (NOT EXISTS ${GFTABLES_DEST}/gftables
+    OR NOT "${GFTABLESDIR}" STREQUAL "${GFTABLES_COPIED_FROM}"))
   message(STATUS "Copying gftables from ${GFTABLESDIR}/gftables")
-  file(COPY ${GFTABLESDIR}/gftables
-    DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory FOLLOW_SYMLINK_CHAIN)
+  # clear the previous copy first; file(COPY) skips files whose timestamps match
+  file(REMOVE_RECURSE ${GFTABLES_DEST}/gftables)
+  file(COPY ${GFTABLESDIR}/gftables DESTINATION ${GFTABLES_DEST} FOLLOW_SYMLINK_CHAIN)
+  set(GFTABLES_COPIED_FROM "${GFTABLESDIR}"
+    CACHE INTERNAL "directory the distributed gftables were copied from")
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries factory "gmp;ntl;flint" FACTORY_FOUND)
 
@@ -431,6 +447,7 @@ ExternalProject_Add(build-frobby
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
+                    -DGMP_ROOT=${GMP_ROOT}
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
@@ -475,7 +492,7 @@ ExternalProject_Add(build-cddlib
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT CDDLIB_ROOT)
+if(NOT CDDLIB_FOUND)
   set(CDDLIB_ROOT ${M2_HOST_PREFIX})
   set(CDDLIB_LIBRARY_DIR ${CDDLIB_ROOT}/lib)
   set(CDDLIB_INCLUDE_DIR ${CDDLIB_ROOT}/include/cddlib)
@@ -485,8 +502,8 @@ endif()
 
 # https://github.com/algebraic-solving/msolve
 ExternalProject_Add(build-msolve
-  URL               https://github.com/algebraic-solving/msolve/archive/refs/tags/v0.9.5.tar.gz
-  URL_HASH          SHA256=92b94775cd5a046de307e2ad0fc576d2631e43fbd0eb7749517a033d7e77ddf4
+  URL               https://github.com/algebraic-solving/msolve/archive/refs/tags/v0.11.0.tar.gz
+  URL_HASH          SHA256=0f4e8276cacc26eb6abef47982dcb39a6d98d17c5a20b34488d6fd8676d4822d
   PREFIX            libraries/msolve
   SOURCE_DIR        libraries/msolve/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -498,7 +515,7 @@ ExternalProject_Add(build-msolve
                       $<$<BOOL:${OpenMP_FOUND}>:--enable-openmp>
                       "CPPFLAGS=${CPPFLAGS} -I${GMP_INCLUDE_DIRS} -I${MPFR_INCLUDE_DIRS} -I${FLINT_INCLUDE_DIR}"
                       CFLAGS=${CFLAGS}
-		      "LDFLAGS=${LDFLAGS} -L${GMP_LIBRARY_DIRS} -L${MPFR_LIBRARIES} -L${FLINT_LIBRARIES}"
+		      "LDFLAGS=${LDFLAGS} -L${GMP_LIBRARY_DIRS} -L${MPFR_LIBRARY_DIRS} -L${FLINT_LIBRARY_DIR}"
                       CC=${CMAKE_C_COMPILER}
 		      "OPENMP_CFLAGS=${OpenMP_C_FLAGS} ${OpenMP_C_LDLIBS}"
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
@@ -598,13 +615,17 @@ _ADD_COMPONENT_DEPENDENCY(libraries givaro gmp GIVARO_FOUND)
 # https://linbox-team.github.io/fflas-ffpack/
 # NOTE: fflas_ffpack is just header files, so we don't build it
 # instead we add an extra autotune target for generating fflas-ffpack-thresholds.h
+# autogen.sh and the patch below write into the source tree, so build from a copy
 string(REGEX REPLACE
-  "./configure$" "${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/autogen.sh" fflas_ffpack_AUTOGEN "${CONFIGURE}")
+  "./configure$" "<SOURCE_DIR>/autogen.sh" fflas_ffpack_AUTOGEN "${CONFIGURE}")
 set(fflas_ffpack_LICENSEFILES ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/COPYING)
 ExternalProject_Add(build-fflas_ffpack
   PREFIX            libraries/fflas_ffpack
-  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack
+  SOURCE_DIR        libraries/fflas_ffpack/source
   BINARY_DIR        libraries/fflas_ffpack/build
+  DOWNLOAD_COMMAND  ${CMAKE_COMMAND} -E copy_directory
+                      ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack <SOURCE_DIR>
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/fflas_ffpack/patch-2.5.0
   CONFIGURE_COMMAND ${fflas_ffpack_AUTOGEN} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       # --enable-precompilation # build errors
@@ -672,7 +693,7 @@ ExternalProject_Add(build-glpk
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT GLPK_ROOT)
+if(NOT GLPK_FOUND)
   set(GLPK_ROOT ${M2_HOST_PREFIX})
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries glpk gmp GLPK_FOUND)
@@ -771,8 +792,8 @@ set(4ti2_PROGRAMS
   qsolve rays walk zbasis zsolve hilbert graver ppi genmodel gensymm output)
 list(TRANSFORM 4ti2_PROGRAMS PREPEND ${M2_HOST_PREFIX}/bin/ OUTPUT_VARIABLE 4ti2_PROGRAMS)
 ExternalProject_Add(build-4ti2
-  URL               https://github.com/4ti2/4ti2/releases/download/Release_1_6_15/4ti2-1.6.15.tar.gz
-  URL_HASH          SHA256=070e639398fda1a4665b3291e5ea80f2ba280d9bffd50656ad8482d471b96965
+  URL               https://github.com/4ti2/4ti2/releases/download/Release_1_6_16/4ti2-1.6.16.tar.gz
+  URL_HASH          SHA256=a45629835ac138bb17896c509278b956c11917ec58e57165a2ee0c54ed0307cb
   PREFIX            libraries/4ti2
   SOURCE_DIR        libraries/4ti2/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -837,22 +858,22 @@ _ADD_COMPONENT_DEPENDENCY(programs cohomcalg "" COHOMCALG)
 # https://users-math.au.dk/~jensen/software/gfan/gfan.html
 # gfan needs cddlib and is used by the packages gfanInterface and StatePolytopes
 # TODO: would gfan benefit from enabling the USEFACTORY option?
+# We pass the cddlib lib path via CDD_LINKOPTIONS.
 ExternalProject_Add(build-gfan
-  URL               ${M2_SOURCE_URL}/gfan0.6.2.tar.gz
-  URL_HASH          SHA256=a674d5e5dc43634397de0d55dd5da3c32bd358d05f72b73a50e62c1a1686f10a
+  URL               https://users-math.au.dk/~jensen/software/gfan/gfan0.8beta.tar.gz
+  URL_HASH          SHA256=fa7884e5f317c50f8fb4f37bcf5d419f0fd5f7b90d6037349d1957ea73cebbee
   PREFIX            libraries/gfan
   SOURCE_DIR        libraries/gfan/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/gfan/patch-0.6.2
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/gfan/patch-0.8beta
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
                       cddnoprefix=yes
                       "GMP_LINKOPTIONS=-L${GMP_LIBRARY_DIRS} -lgmp"
                       "GMP_INCLUDEOPTIONS=-I${GMP_INCLUDE_DIRS}"
-                      "OPTFLAGS=${CPPFLAGS} -DGMPRATIONAL -I${CDDLIB_INCLUDE_DIR}"
-                      "CCLINKER=${CMAKE_CXX_COMPILER} ${LDFLAGS} -L${CDDLIB_LIBRARY_DIR}"
-                      "CXX=${CMAKE_CXX_COMPILER}"
+                      "OPTFLAGS=${CPPFLAGS} -DGMPRATIONAL -O2 -ffast-math -I${CDDLIB_INCLUDE_DIR}"
+                      "CDD_LINKOPTIONS=-L${CDDLIB_LIBRARY_DIR} -lcddgmp"
   INSTALL_COMMAND   ${CMAKE_STRIP} gfan
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/gfan
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE COPYING ${M2_INSTALL_LICENSESDIR}/gfan
@@ -898,8 +919,6 @@ _ADD_COMPONENT_DEPENDENCY(programs lrslib gmp LRSLIB)
 
 
 # https://github.com/coin-or/Csdp
-# TODO: what to do when OpenMP is not found
-# TODO: set CFLAGS instead of CC, this is tricky due to csdp's Makefile
 ExternalProject_Add(build-csdp
   URL               https://github.com/coin-or/Csdp/archive/releases/6.2.0.tar.gz
   URL_HASH          SHA256=3d341974af1f8ed70e1a37cc896e7ae4a513375875e5b46db8e8f38b7680b32f
@@ -911,9 +930,14 @@ ExternalProject_Add(build-csdp
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/csdp/patch-6.2.0
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
-                      "CC=${CMAKE_C_COMPILER} ${OpenMP_C_FLAGS} ${CFLAGS}"
-                      LDLIBS=${OpenMP_C_LDLIBS}
-                      "LIBS=-L../lib -lsdp ${LA_LIBRARIES} -lm"
+                      CC=${CMAKE_C_COMPILER}
+                      AR=${CMAKE_AR}
+                      CFLAGS=${CFLAGS}
+                      CPPFLAGS=${CPPFLAGS}
+                      LDFLAGS=${LDFLAGS}
+                      OPENMP_CFLAGS=${OpenMP_C_FLAGS}
+                      OPENMP_LIBS=${OpenMP_C_LDLIBS}
+                      BLAS_LIBS=${LA_LIBRARIES}
   INSTALL_COMMAND   ${CMAKE_STRIP} solver/csdp
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/csdp
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE README ${M2_INSTALL_LICENSESDIR}/csdp
@@ -935,7 +959,7 @@ set(nauty_BINARIES
   genspecialg gentourng gentreeg hamheuristic labelg linegraphg listg multig newedgeg pickg
   planarg ranlabg shortg showg subdivideg twohamg vcolg watercluster2)
 ExternalProject_Add(build-nauty
-  URL               https://pallini.di.uniroma1.it/nauty2_9_3.tar.gz
+  URL               https://macaulay2.com/Downloads/OtherSourceCode/nauty2_9_3.tar.gz
   URL_HASH          SHA256=9fc4edae04f88a0f5883985be3b39cf7f898fd6cc96e96b9ee25452743cc1b5b
   PREFIX            libraries/nauty
   SOURCE_DIR        libraries/nauty/build
@@ -1165,6 +1189,41 @@ ExternalProject_Add(build-bertini
   STEP_TARGETS      install test
   )
 #_ADD_COMPONENT_DEPENDENCY(libraries bertini "gmp;mpfr" BERTINI)
+
+# https://hep.itp.tuwien.ac.at/~kreuzer/CY/CYpalp.html
+set(palp_PROGRAMS
+  class-11d.x  class.x    cws-6d.x    mori-5d.x  nef-4d.x  poly-11d.x  poly.x
+  class-4d.x   cws-11d.x  cws.x       mori-6d.x  nef-5d.x  poly-4d.x
+  class-5d.x   cws-4d.x   mori-11d.x  mori.x     nef-6d.x  poly-5d.x
+  class-6d.x   cws-5d.x   mori-4d.x   nef-11d.x  nef.x     poly-6d.x)
+list(TRANSFORM palp_PROGRAMS PREPEND ${CMAKE_BINARY_DIR}/libraries/palp/build/ OUTPUT_VARIABLE palp_PROGRAMS)
+# PALP does real work inside assert(), so it must not be compiled with NDEBUG,
+# which both CFLAGS (release build types) and CPPFLAGS (M2's own definitions)
+# may contain.  GNU make puts CPPFLAGS after CFLAGS, so -UNDEBUG there wins.
+set(palp_CPPFLAGS "${CPPFLAGS} -UNDEBUG")
+ExternalProject_Add(build-palp
+  URL               https://hep.itp.tuwien.ac.at/~kreuzer/CY/palp/palp-2.21.tar.gz
+  URL_HASH          SHA256=7e4a7bf219998a844c0bcce0a176e49d0743cb4b505a0e195329bf2ec196ddd7
+  PREFIX            libraries/palp
+  SOURCE_DIR        libraries/palp/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND ${CMAKE_COMMAND} -E true
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} all-dims
+                      CC=${CMAKE_C_COMPILER}
+                      CPPFLAGS=${palp_CPPFLAGS}
+                      CFLAGS=${CFLAGS}
+                      LDFLAGS=${LDFLAGS}
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E true
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/palp
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/palp
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${palp_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
+  )
+_ADD_COMPONENT_DEPENDENCY(programs palp "" PALP)
 
 
 ###############################################################################

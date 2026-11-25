@@ -20,6 +20,7 @@ option(LINTING		"Enable linting source files"		OFF)
 option(MEMDEBUG		"Enable memory allocation debugging"	OFF)
 option(PROFILING	"Enable profiling build flags"		OFF)
 option(COVERAGE		"Enable Clang code coverage test"	OFF)
+option(GCOV		"Enable gcc/gcov code coverage"		OFF)
 option(GIT_SUBMODULE	"Update submodules during build"	ON)
 option(BUILD_NATIVE	"Use native SIMD instructions"		ON)
 option(BUILD_SHARED_LIBS "Build shared libraries"		OFF)
@@ -106,6 +107,7 @@ message("## Configure Macaulay2
      BUILD_TESTING     = ${BUILD_TESTING}
      BUILD_DOCS        = ${BUILD_DOCS}\n
      COVERAGE          = ${COVERAGE}
+     GCOV              = ${GCOV}
      MEMDEBUG          = ${MEMDEBUG}
      PROFILING         = ${PROFILING}\n
      DEVELOPMENT       = ${DEVELOPMENT}
@@ -220,30 +222,14 @@ elseif(CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
   # INIT: -O2 -g
 endif()
 
-# Flags based on compiler
-if(CMAKE_C_COMPILER_ID STREQUAL GNU)
-  add_compile_options(-g3)
-  add_link_options(-g3)
-elseif(CMAKE_C_COMPILER_ID STREQUAL AppleClang)
-  add_compile_options(-g)
-  add_link_options(-g)
-  if(CMAKE_OSX_SYSROOT)
-    add_compile_options(--sysroot=${CMAKE_OSX_SYSROOT})
-    add_link_options(--sysroot=${CMAKE_OSX_SYSROOT})
-  endif()
-else()
-  add_compile_options(-g)
-  add_link_options(-g)
-endif()
-
 # TODO: look into compiler features:
 # https://cmake.org/cmake/help/latest/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html
 
 # Common flags
 # TODO: reduce these if possible
 add_link_options(-L${M2_HOST_PREFIX}/lib)
+include_directories(BEFORE SYSTEM ${M2_HOST_PREFIX}/include)
 add_compile_options(
-  -I${M2_HOST_PREFIX}/include
   -I${CMAKE_SOURCE_DIR}/include
   -I${CMAKE_BINARY_DIR}/include
   )

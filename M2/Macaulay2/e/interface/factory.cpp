@@ -23,15 +23,15 @@
 #include "buffer.hpp"
 #include "error.h"
 #include "exceptions.hpp"
-#include "matrix.hpp"
+#include "matrices/matrix.hpp"
 #include "monoid.hpp"
-#include "poly.hpp"
-#include "polyring.hpp"
-#include "relem.hpp"
-#include "ring.hpp"
-#include "ringelem.hpp"
+#include "rings/poly.hpp"
+#include "rings/polyring.hpp"
+#include "ring-elements/ring-element.hpp"
+#include "rings/ring.hpp"
+#include "rings/ringelem.hpp"
 #include "text-io.hpp"
-#include "tower.hpp"
+#include "rings/tower.hpp"
 #include "util.hpp"
 
 const bool notInExtension = false;
@@ -48,7 +48,8 @@ enum factoryCoeffMode {
   modeGF,
   modeUnknown
 };
-static enum factoryCoeffMode coeffMode(const PolynomialRing *P)
+static enum factoryCoeffMode coeffMode(const PolynomialRing *P,
+                                       bool reportErrors = true)
 {
   const Ring *F = P->getCoefficientRing();
   // if (F->cast_to_QQ()) return modeQQ;
@@ -56,12 +57,13 @@ static enum factoryCoeffMode coeffMode(const PolynomialRing *P)
   if (F->cast_to_RingZZ()) return modeZZ;
   // factory will abort if the characteristic is too large
   if (F->characteristic() > 536870909) {
-    ERROR("characteristic is too large (max is 2^29)");
+    if (reportErrors) ERROR("characteristic is too large (max is 2^29)");
     return modeError;
   }
   if (F->isFinitePrimeField()) return modeZn;
   if (F->isGaloisField()) return modeGF;
-  ERROR("expected coefficient ring of the form ZZ/n, ZZ, QQ, or GF");
+  if (reportErrors)
+    ERROR("expected coefficient ring of the form ZZ/n, ZZ, QQ, or GF");
   return modeError;
 }
 
@@ -478,11 +480,10 @@ void displayCF(const PolynomialRing *R, const CanonicalForm &h)  // for debuggin
   emit(o.str());
 }
 
-// TODO: figure out where this should be used
-bool factoryGoodRing(const PolynomialRing *P)
+// Check coefficient support without setting the engine error state.
+M2_bool factoryGoodRing(const PolynomialRing *P)
 {
-  struct enter_factory foo(P);
-  return foo.mode != modeError;
+  return coeffMode(P, false) != modeError;
 }
 
 const RingElement /* or null */ *rawGCDRingElement(const RingElement *f,

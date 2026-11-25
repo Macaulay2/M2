@@ -12,7 +12,7 @@ newPackage(
         Version => "1.2", 
         Date => "July 8, 2021",
         Headline => "computations with sparse resultants",
-        Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
+        Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it"}},
 	Keywords => {"Commutative Algebra"},
         PackageExports => {"Resultants"},
         DebuggingMode => false,
@@ -909,7 +909,7 @@ degreeDeterminant (List) := (L) -> (
     S := 1 - sum(1..n,i -> (i-1) * (-1)^i * coefficient(X^(n-i),P));
     m := product(1..n,i -> x_i^(L_(i-1)));
     R' := R/ideal(apply(1..n,i -> x_i^(1+L_(i-1))));
-    coefficient(m,(sub(S,R'))^(-2))
+    coefficient(m_R',(sub(S,R'))^(-2))
 );
 
 symmetricMultidimensionalMatrix = method(TypicalValue => MultidimensionalMatrix);

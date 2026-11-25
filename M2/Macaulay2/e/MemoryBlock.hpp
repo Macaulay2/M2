@@ -1,5 +1,5 @@
-#ifndef __memory_block_hpp__
-#define __memory_block_hpp__
+#ifndef M2__MEMORY_BLOCK_HPP__
+#define M2__MEMORY_BLOCK_HPP__
 
 #include <memtailor/Arena.h>  // for Arena
 #include <iostream>           // for operator<<, endl, basic_ostream, cout

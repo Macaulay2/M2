@@ -17,6 +17,10 @@ assert( a_R^2 == 0 )
 R = ZZ/41
 assert(sqrt(5_R)^2 == 5_R)
 
+-- issue #4486
+assert Equation(#unique apply(20,i->promote(i,ZZ/4)), 4)
+assert Equation(#unique apply(20,i->promote(i,ZZ/5)), 5)
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test quotientring.out"

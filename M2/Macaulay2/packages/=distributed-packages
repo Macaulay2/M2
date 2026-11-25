@@ -91,10 +91,6 @@ VersalDeformations
 CharacteristicClasses
 RandomIdeals
 RandomObjects
-RandomPlaneCurves
-RandomSpaceCurves
-RandomGenus14Curves
-RandomCanonicalCurves
 RandomCurves
 TensorComplexes
 MonomialAlgebras
@@ -175,6 +171,7 @@ Tropical
 SymbolicPowers
 Complexes
 OldChainComplexes
+CanonicalMaps
 GroebnerWalk
 RandomMonomialIdeals
 Matroids
@@ -247,6 +244,7 @@ OnlineLookup
 MergeTeX
 Probability
 Isomorphism
+DirectSummands
 CodingTheory
 WhitneyStratifications
 JSON
@@ -294,3 +292,17 @@ MRDI
 EliminationTemplates
 WittVectors
 Padic
+WeierstrassSemigroups
+ResultantComplexes
+EuclideanDistanceDegree
+NeuralIdeals
+TestAudit
+LanguageServer
+NongeneralTypeSurfacesInP4
+HilbertSchemeStrata
+HookPieri
+KacMoody
+ComprehensiveGBs
+PALPInterface
+KoszulFiltrations
+CotangentCohomology

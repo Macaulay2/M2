@@ -19,8 +19,8 @@ newPackage(
     	Version => "1.7", 
     	Date => "May 10, 2013",
     	Authors => {
-	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},
-	     {Name => "Branden Stone", Email => "branden.stone@gtri.gatech.edu", HomePage => "http://bstone.github.io/"}
+	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu"},
+	     {Name => "Branden Stone", Email => "branden.stone@gtri.gatech.edu", HomePage => "http://stonebranden.com/"}
 	     },
     	Headline => "the Quillen-Suslin algorithm for bases of projective modules",
 	Keywords => {"Commutative Algebra"},
@@ -1967,7 +1967,15 @@ document {
 	  {"A. Logar and B. Sturmfels.", EM " Algorithms for the Quillen-Suslin theorem.", " J. Algebra, 145(1):231-239, 1992."},
 	  {"A. Fabianska and A. Quadrat." , EM " Applications of the Quillen-Suslin theorem to multidimensional systems theory.", " Grobner bases in control theory and signal processing.", " Radon Series Comp. Appl. Math (3):23-106, 2007."}
 	},
-     
+	     PARA{}, "A first example computes a free basis for the kernel of a unimodular row.",
+	     EXAMPLE {
+		  "R = QQ[x,y]",
+		  "f = matrix{{x^2*y+1,x+y-2,2*x*y}}",
+		  "P = ker f",
+		  "B = computeFreeBasis P",
+		  "image B == P"
+	     },
+	     SeeAlso => { "computeFreeBasis", "qsAlgorithm", "qsIsomorphism", CheckProjective, CheckUnimodular }
      }
 
 document {
@@ -2508,11 +2516,26 @@ document {
 document {
      Key => {CheckProjective},
      Headline => "optional input which gives the user the option to check whether the given module is projective",
+     EXAMPLE {
+	  "R = QQ[x,y]",
+	  "f = matrix{{x^2*y+1,x+y-2,2*x*y}}",
+	  "P = ker f",
+	  "phi = qsIsomorphism(P, CheckProjective => true)",
+	  "isIsomorphism phi"
+     },
+     SeeAlso => { "qsIsomorphism", "computeFreeBasis" }
 }
 
 document {
      Key => {CheckUnimodular},
      Headline => "optional input which gives the user the option to check whether the given matrix is unimodular",
+     EXAMPLE {
+	  "R = QQ[x,y]",
+	  "f = matrix{{x^2*y+1,x+y-2,2*x*y}}",
+	  "U = qsAlgorithm(f, CheckUnimodular => true)",
+	  "f*U"
+     },
+     SeeAlso => { "qsAlgorithm", "horrocks" }
 }
 
 

@@ -3,28 +3,27 @@ newPackage( "FrobeniusThresholds",
     Date => "June 15th, 2020",
     Authors => {
 	 {Name => "Juliette Bruce",
-	 Email => "juliette.bruce@math.wisc.edu",
-	 HomePage => "https://juliettebruce.github.io/"
+	 Email => "juliette.bruce@dartmouth.edu",
+	 HomePage => "https://www.juliettebruce.xyz/"
 	 },
 	 {Name => "Daniel Hernández",
 	 Email => "hernandez@ku.edu",
-	 HomePage => "https://hernandez.faculty.ku.edu"
+	 HomePage => "https://hernandez.ku.edu"
 	 },
 	 {Name => "Karl Schwede",
 	  Email => "schwede@math.utah.edu",
-	 HomePage => "http://math.utah.edu/~schwede/"
+	 HomePage => "https://kschwede.github.io/"
 	 },
 	 {Name => "Dan Smolkin",
-	 Email => "smolkin@math.utah.edu",
-	 HomePage => "http://dan.smolk.in"
+	 Email => "dan.smolkin@gmail.com",
+	 HomePage => "https://dan.smolk.in/"
 	 },
 	 {Name => "Pedro Teixeira",
-	 Email => "pteixeir@knox.edu",
-	 HomePage => "https://www.knox.edu/academics/majors-and-minors/mathematics/faculty/teixeira-pedro"
+	 Email => "pteixeir@knox.edu"
 	 },
 	 {Name => "Emily Witt",
 	 Email => "witt@ku.edu",
-	 HomePage => "https://witt.faculty.ku.edu"
+	 HomePage => "https://witt.ku.edu"
 	 }
     },
     Headline => "F-thresholds",

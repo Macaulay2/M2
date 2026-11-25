@@ -3,10 +3,9 @@ newPackage("DeterminantalRepresentations",
 	Version => "1.3.1",
 	Date => "November 8, 2021",
 	Authors => {
-		{Name => "Justin Chen",
-		Email => "jchen646@gatech.edu"},
+		{Name => "Justin Chen"},
 		{Name => "Papri Dey",
-		Email => "papridey@berkeley.edu"}
+		Email => "yedirpap@gmail.com"}
 	},
 	Headline => "determinantal representations",
 	Keywords => {"Representation Theory", "Commutative Algebra"},
@@ -1516,7 +1515,7 @@ assert(isOrthogonal(O, Tolerance=>1e-5) and isDoublyStochastic A and clean(1e-8,
 ///
 
 TEST /// -- cholesky, randomPSD
-eps = 1e-15
+eps = 1e-14
 A = randomPSD 5
 E = eigenvectors(A, Hermitian => true)
 assert(clean(eps, A - E#1*diagonalMatrix(E#0)*transpose E#1) == 0)

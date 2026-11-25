@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
     "LieAlgebraRepresentations",
-    Version => "1.01",
-    Date => "May 1, 2026",
+    Version => "1.02",
+    Date => "October 27, 2026",
     AuxiliaryFiles=>true,
     Headline => "Lie algebra representations and characters",
     Authors => {
@@ -14,7 +14,7 @@ newPackage(
 	  {
 	      Name => "Paul Zinn-Justin", -- starting with version 0.6
 	      Email => "pzinn@unimelb.edu.au",
-	      HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}
+	      HomePage => "https://blogs.unimelb.edu.au/paul-zinn-justin/"}
 	  },
     Keywords => {"Lie Groups and Lie Algebras"},
     PackageImports => {"ReesAlgebra"},

@@ -2,7 +2,7 @@
 # https://src.fedoraproject.org/rpms/Macaulay2/blob/rawhide/f/Macaulay2.spec
 
 Name:    Macaulay2
-Version: 1.26.05
+Version: 1.26.06
 
 # release convention: 0.x.m2 (so official fedora package will take precedence)
 # increment x as needed, reset to 1 with each new m2 release
@@ -92,6 +92,8 @@ BuildRequires: nauty
 Requires:      nauty
 BuildRequires: normaliz
 Requires:      normaliz
+BuildRequires: palp
+Requires:      palp
 %endif
 
 Obsoletes: Macaulay2-common < %{version}-%{release}
@@ -141,6 +143,7 @@ rm -fv %{buildroot}%{_infodir}/dir
 %files
 %{_bindir}/M2
 %{_bindir}/M2-binary
+%{_bindir}/M2-language-server
 %{_prefix}/lib/Macaulay2/
 %{_libexecdir}/Macaulay2/
 %{_datadir}/emacs/site-lisp/macaulay2/
@@ -150,6 +153,13 @@ rm -fv %{buildroot}%{_infodir}/dir
 %{_mandir}/man1/*
 
 %changelog
+* Wed Nov 25 2026 Doug Torrance <dtorrance9@gatech.edu> - 1.26.11-0.1.m2
+- New release.
+
+* Tue Jun 09 2026 Doug Torrance <dtorrance9@gatech.edu> - 1.26.06-0.1.m2
+- New release.
+- Install language server.
+
 * Sat May 09 2026 Doug Torrance <dtorrance@piedmont.edu> - 1.26.05-0.1.m2
 - New release.
 

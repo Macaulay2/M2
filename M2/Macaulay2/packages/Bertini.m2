@@ -2,21 +2,21 @@ bertiniPresent := run ("type bertini >/dev/null 2>&1") === 0
 
 newPackage(
   "Bertini",
-  Version => "2.1.2.3",
-  Date => "Feb 6 2024",
+  Version => "2.1.2.4",
+  Date => "June 13, 2026",
   Authors => {
     {Name => "Elizabeth Gross",
-     Email=> "elizabeth.gross@sjsu.edu",
-     HomePage => "http://math.sjsu.edu/~egross"},
+     Email=> "egross@hawaii.edu",
+     HomePage => "https://egross-uh.github.io/"},
     {Name => "Jose Israel Rodriguez",
      Email => "Jose@math.wisc.edu",
-     HomePage =>"https://www.math.wisc.edu/~jose/"},
+     HomePage =>"https://people.math.wisc.edu/~jrodriguez43/"},
     {Name => "Dan Bates",
-     Email => "bates@math.colostate.edu",
-     HomePage => "http://www.math.colostate.edu/~bates"},
+     Email => "dbates@usna.edu",
+     HomePage => "https://www.usna.edu/Users/math/dbates/"},
     {Name => "Anton Leykin",
      Email => "leykin@math.gatech.edu",
-     HomePage => "http://www.math.gatech.edu/~leykin"}
+     HomePage => "https://antonleykin.math.gatech.edu/"}
   },
   Headline => "interface to Bertini",
   Keywords => {"Numerical Algebraic Geometry", "Interfaces"},
@@ -1643,7 +1643,7 @@ makeB'InputFile(String) := o ->(IFD)->(
        openedInputFile << toString(thePathVariable_(-1)) << " ; "<< endl);
      openedInputFile <<endl;
 --If userdefined homotopy then we write the parameters and in terms of the path variable.
-     if #o.PathVariable=!=0 then(
+     if #o.PathVariable=!=0 and #o.SetParameterGroup=!=0 then(
      if #o.SetParameterGroup=!=0 and not member( class((o.SetParameterGroup)_0 ),pairTypes) then error"Parameters should be set in terms of the pathvariable, e.g., x=>t,y=>t^2. ";
      oneGroupNames:=for i in o.SetParameterGroup list if class i ===List then first i else if class i===Option then first toList i;
      writeNamedListToB'InputFile("parameter",oneGroupNames,openedInputFile);

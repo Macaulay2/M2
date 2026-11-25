@@ -130,7 +130,7 @@ doc ///
 		   special cases.  The method 
 		   @TO "quotient(LieIdeal,FGLieSubAlgebra)"@ has
 		   @TO "annihilator(FGLieSubAlgebra)"@ and 
-		   @TO center@ as special cases. 
+		   @TO (center, LieAlgebra)@ as special cases. 
 		Example
 		   L = lieAlgebra{a,b,c}
 		   I = lieIdeal{a a c+b a c-a b a,c c a-b b a }

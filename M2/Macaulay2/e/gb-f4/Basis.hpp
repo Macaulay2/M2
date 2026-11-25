@@ -1,8 +1,9 @@
-#pragma once
+#ifndef M2_GB_F4_BASIS_HPP
+#define M2_GB_F4_BASIS_HPP
 
-#include "MonomialHashTable.hpp"
-#include "PolynomialList.hpp"
-#include "../VectorArithmetic.hpp"
+#include "gb-f4/MonomialHashTable.hpp"
+#include "gb-f4/PolynomialList.hpp"
+#include "basic-rings/vector-arithmetic.hpp"
 
 namespace newf4 {
 
@@ -51,6 +52,7 @@ public:
 
 }
 
+#endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

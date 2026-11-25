@@ -8,9 +8,9 @@
 #include <gtest/gtest.h>
 #include <mpfr.h>
 
-#include "RingTest.hpp"
-#include "tower.hpp"
-#include "../util.hpp"
+#include "unit-tests/RingTest.hpp"
+#include "rings/tower.hpp"
+#include "util.hpp"
 
 // First: we need a routine to read a polynomial from a string.
 // Format:  variables are a..zA..Z, and then [1], [2], ...

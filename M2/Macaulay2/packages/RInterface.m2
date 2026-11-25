@@ -16,13 +16,13 @@
 
 newPackage("RInterface",
     Headline => "interface to R for statistical computing",
-    Version => "0.2",
-    Date => "May 7, 2026",
+    Version => "0.4",
+    Date => "November 12, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
-	    Email => "dtorrance@piedmont.edu",
-	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
-    Keywords => {"Interfaces"},
+	    Email => "dtorrance9@gatech.edu",
+	    HomePage => "https://d-torrance.github.io"}},
+    Keywords => {"Interfaces", "Algebraic Statistics"},
     OptionalComponentsPresent => run("command -v R > /dev/null") == 0,
     AuxiliaryFiles => true,
     PackageImports => {"ForeignFunctions"})
@@ -32,6 +32,13 @@ newPackage("RInterface",
 ---------------
 
 -*
+
+0.4 (2026-11-12, M2 1.26.11)
+* turn off R's signal handlers
+
+0.3 (2026-06-05, M2 1.26.05)
+* update my contact info
+* add "Algebraic Statistics" keyword
 
 0.2 (2026-05-07, M2 1.26.05)
 * Release under GPL
@@ -102,10 +109,12 @@ if not ZZ#?"Rinitialized" then (
     initializeR := foreignFunction(Rlib, "Rf_initialize_R", int,
 	{int, charstarstar});
     RCStackLimit := foreignSymbol(Rlib, "R_CStackLimit", uint);
+    RSignalHandlers := foreignSymbol(Rlib, "R_SignalHandlers", int);
     setupRmainloop := foreignFunction(Rlib, "setup_Rmainloop", void, void);
     putenv concatenate("R_HOME=", RHOME);
     initializeR(3, {"M2::RInterface", "--silent", "--vanilla"});
     *address RCStackLimit = -1;
+    *address RSignalHandlers = 0;
     setupRmainloop();
     ZZ#"Rinitialized" = true)
 
