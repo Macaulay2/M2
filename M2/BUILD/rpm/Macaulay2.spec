@@ -48,6 +48,9 @@ BuildRequires: zlib-devel
 %if 0%{?rhel} >= 9 || 0%{?fedora}
 BuildRequires: flexiblas-devel
 %endif
+%if 0%{?rhel} == 8
+BuildRequires: openblas-devel
+%endif
 %if 0%{?fedora}
 BuildRequires: cddlib-devel
 BuildRequires: eigen3-devel
@@ -155,6 +158,7 @@ rm -fv %{buildroot}%{_infodir}/dir
 %changelog
 * Wed Nov 25 2026 Doug Torrance <dtorrance9@gatech.edu> - 1.26.11-0.1.m2
 - New release.
+- Use OpenBLAS in RHEL 8 rather than building the reference BLAS/LAPACK.
 
 * Tue Jun 09 2026 Doug Torrance <dtorrance9@gatech.edu> - 1.26.06-0.1.m2
 - New release.
