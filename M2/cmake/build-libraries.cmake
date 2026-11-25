@@ -49,6 +49,13 @@ set(CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${BUILD_TYPE}}")
 # Linker flags
 string(REPLACE ";" " " LDFLAGS "${LINK_OPTIONS}")
 
+# SDK flags (CMake passes -isysroot to its own targets, but not to these)
+if(CMAKE_OSX_SYSROOT)
+  set(CFLAGS   "${CFLAGS} -isysroot ${CMAKE_OSX_SYSROOT}")
+  set(CXXFLAGS "${CXXFLAGS} -isysroot ${CMAKE_OSX_SYSROOT}")
+  set(LDFLAGS  "${LDFLAGS} -isysroot ${CMAKE_OSX_SYSROOT}")
+endif()
+
 # Linear algebra library flags
 if(APPLE)
   set(LA_LIBRARIES "-framework Accelerate")
@@ -440,6 +447,7 @@ ExternalProject_Add(build-frobby
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
+                    -DGMP_ROOT=${GMP_ROOT}
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
@@ -784,8 +792,8 @@ set(4ti2_PROGRAMS
   qsolve rays walk zbasis zsolve hilbert graver ppi genmodel gensymm output)
 list(TRANSFORM 4ti2_PROGRAMS PREPEND ${M2_HOST_PREFIX}/bin/ OUTPUT_VARIABLE 4ti2_PROGRAMS)
 ExternalProject_Add(build-4ti2
-  URL               https://github.com/4ti2/4ti2/releases/download/Release_1_6_15/4ti2-1.6.15.tar.gz
-  URL_HASH          SHA256=070e639398fda1a4665b3291e5ea80f2ba280d9bffd50656ad8482d471b96965
+  URL               https://github.com/4ti2/4ti2/releases/download/Release_1_6_16/4ti2-1.6.16.tar.gz
+  URL_HASH          SHA256=a45629835ac138bb17896c509278b956c11917ec58e57165a2ee0c54ed0307cb
   PREFIX            libraries/4ti2
   SOURCE_DIR        libraries/4ti2/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles

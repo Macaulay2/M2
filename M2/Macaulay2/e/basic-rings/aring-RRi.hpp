@@ -30,7 +30,8 @@ class ARingRRi : public SimpleARing<ARingRRi>
   typedef __mpfi_struct elem;
   typedef elem ElementType;
 
-  ARingRRi(unsigned long precision) : mPrecision(precision) {}
+  ARingRRi(unsigned long precision) : mPrecision(checkPrecision(precision)) {}
+
   // ring informational
   size_t characteristic() const { return 0; }
   unsigned long get_precision() const { return mPrecision; }

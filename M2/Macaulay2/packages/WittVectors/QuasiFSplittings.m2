@@ -30,7 +30,10 @@ fSplittingHeight(Ideal) := ZZ => opts-> I0-> (
     A := dim S-1;
     ff := product I0_*;
     Frob := map(S, S, matrix{apply(gens S, u -> u^p)});
-    (FS, GS, transformS) := pushFwd(Frob);
+    FS := pushFwd(Frob);
+    GS := pushFwdGens(FS);
+    transformS := (b) -> pushforward(FS, b);
+
 
     M := ideal (gens S);
     MP := frobenius(1, M);

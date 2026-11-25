@@ -7,7 +7,11 @@ needs "quotient.m2"
 -----------------------------------------------------------------------------
 
 module RingFamily :=
-module Ring := Module => (cacheValue symbol module)(R -> R^1)
+module Ring := Module => (cacheValue symbol module)(R -> (
+    result := R^1;
+    result.cache.formation = FunctionApplication {module, (R)};
+    result
+))
 
 matrix(RingFamily,List) := Matrix => opts -> (R,m) -> matrix(default R, m, opts)
 

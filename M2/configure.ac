@@ -267,15 +267,15 @@ AC_SUBST(M2_CPPFLAGS)
 AC_SUBST(M2_CFLAGS)
 AC_SUBST(M2_CXXFLAGS)
 
+AC_PROG_CC()
+AC_SUBST(GCC)			# gets set to yes or no by AC_PROG_CC
+
+AC_PROG_CXX()
+AC_SUBST(GXX)			# gets set to yes or no by AC_PROG_CXX
+
 dnl Fix standards, apply everywhere
 CXXFLAGS="-std=gnu++17 $CXXFLAGS"
 CFLAGS="-std=gnu11 $CFLAGS"
-
-AC_PROG_CC() 			# set CFLAGS before this
-AC_SUBST(GCC)			# gets set to yes or no by AC_PROG_CC
-
-AC_PROG_CXX()			# set CXXFLAGS before this
-AC_SUBST(GXX)			# gets set to yes or no by AC_PROG_CXX
 
 AC_PROG_YACC()
 AS_IF([test "$YACC" != "bison -y"], [AC_MSG_ERROR([bison is required])])
@@ -291,16 +291,6 @@ AS_IF([test "$LEX" != "flex"], [AC_MSG_ERROR([flex is required])])
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_AWK()
-
-dnl always compile with "-g", so we can debug even optimized versions
-if test "$GCC" = yes
-then CFLAGS="$CFLAGS -g3"
-     CXXFLAGS="$CXXFLAGS -g3"
-     LDFLAGS="$LDFLAGS -g3"
-else CFLAGS="$CFLAGS -g"
-     CXXFLAGS="$CXXFLAGS -g"
-     LDFLAGS="$LDFLAGS -g"
-fi
 
 AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
 if test "$DEBUG" = yes
@@ -382,6 +372,11 @@ AC_DEFUN([BREW_ADD_FLAGS],
 BREW_ADD_FLAGS
 
 export PKG_CONFIG_PATH
+
+AC_PROG_FC
+AC_FC_LIBRARY_LDFLAGS
+AC_PROG_F77
+AC_F77_LIBRARY_LDFLAGS
 
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h elf.h execinfo.h syscall.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
 AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
@@ -827,8 +822,6 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      fi
 fi
 
-AC_PROG_FC
-AC_FC_LIBRARY_LDFLAGS
 AS_IF([test $BUILD_lapack = no],
     [AX_BLAS
      AX_LAPACK

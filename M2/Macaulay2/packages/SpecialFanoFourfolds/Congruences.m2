@@ -35,8 +35,8 @@ detectCongruenceInt (EmbeddedProjectiveVariety,HodgeSpecialFourfold) := o -> (p,
     if o.Verbose then <<"number lines contained in the image of the "<<(if a == 2 then "quadratic" else (if a == 3 then "cubic" else ""))<<" map and passing through a general point: "<<degree E<<endl;
     if degree E == 1 then return detectCongruence(X,degree phi^* E);
     pr := rationalMap phip;
-    v := (rationalMap {random(1,ring target pr),random(1,ring target pr)});
-    pr' := toRationalMap((pr * v)|E);
+    v := (legacyRationalMap {random(1,ring target pr),random(1,ring target pr)});
+    pr' := toLegacyRationalMap((pr * v)|E);
     E' := Var kernel(map pr',SubringLimit=>1);
     if not(dim E' == 0 and degree E' == degree E) then error "something went wrong";
     local n; local C;
@@ -83,8 +83,8 @@ congruenceOfCurves (HodgeSpecialFourfold,ZZ) := (X,e) -> (
             return makeSubvariety(D,Y);
         );
         pr := rationalMap phip;
-        v := (rationalMap {random(1,ring target pr),random(1,ring target pr)});
-        pr' := toRationalMap((pr * v)|E);
+        v := (legacyRationalMap {random(1,ring target pr),random(1,ring target pr)});
+        pr' := toLegacyRationalMap((pr * v)|E);
         E' := Var kernel(map pr',SubringLimit=>1);
         if not(dim E' == 0 and degree E' == degree E) then error "something went wrong";
         decE' := select(decompose E',q -> (dim q == 0 and degree q == 1));
@@ -108,7 +108,6 @@ congruenceOfCurves (HodgeSpecialFourfold,ZZ) := (X,e) -> (
 toString CongruenceOfCurves := net CongruenceOfCurves := f -> if hasAttribute(f,ReverseDictionary) then toString getAttribute(f,ReverseDictionary) else "a congruence "|f#"string";
 texMath CongruenceOfCurves := texMath @@ net;
 
-CongruenceOfCurves#{WebApp,AfterPrint} = CongruenceOfCurves#{WebApp,AfterNoPrint} =
 CongruenceOfCurves#{Standard,AfterPrint} = CongruenceOfCurves#{Standard,AfterNoPrint} = f -> (
     S := surface f#"fourfold";
     Y := ambientFivefold f#"fourfold";
@@ -120,6 +119,18 @@ CongruenceOfCurves#{Standard,AfterPrint} = CongruenceOfCurves#{Standard,AfterNoP
     if S.cache#?("fanoMap",Y) and ((S.cache#("fanoMap",Y))#"map").cache#"multiplicityFanoMap" == e
     then << "; parameter space: " << Var target S.cache#("fanoMap",Y);
     << endl;
+);
+CongruenceOfCurves#{WebApp,AfterPrint} = CongruenceOfCurves#{WebApp,AfterNoPrint} = f -> (
+    S := surface f#"fourfold";
+    Y := ambientFivefold f#"fourfold";
+    e := f#"degree";
+    Sdescr := if hasAttribute(S,ReverseDictionary) then getAttribute(S,ReverseDictionary) else "surface";
+    Ydescr := if hasAttribute(Y,ReverseDictionary) then getAttribute(Y,ReverseDictionary) else (if codim Y > 0 then shortTeX("\\text{a fivefold in }\\mathbb{P}^{" | (texMath dim ambient Y) | "}") else shortTeX "\\mathbb{P}^{5}");
+    if S.cache#?("fanoMap",Y) and ((S.cache#("fanoMap",Y))#"map").cache#"multiplicityFanoMap" == e then (
+        customWebAppAfterPrint("Congruence ", f#"string", " to ", Sdescr, " in ", Ydescr, "; parameter space: ", Var target S.cache#("fanoMap",Y));
+    ) else (
+        customWebAppAfterPrint("Congruence ", f#"string", " to ", Sdescr, " in ", Ydescr);
+    );
 );
 
 CongruenceOfCurves EmbeddedProjectiveVariety := (f,p) -> f#"function" p;
@@ -136,7 +147,7 @@ map CongruenceOfCurves := o -> f -> (
     mu := fanoMap(X,e);
     e' := (mu#"map").cache#"multiplicityFanoMap";
     if e' =!= e then error("the congruence seems not valid; try the command: detectCongruence(...,"|toString(e')|")");
-    multirationalMap mu
+    rationalMap mu
 );
 
 check (ZZ,CongruenceOfCurves) := o -> (n,f) -> (

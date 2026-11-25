@@ -9,8 +9,8 @@
 
 newPackage(
         "InvariantRing",
-        Version => "2.5", 
-        Date => "May 25, 2026",
+        Version => "2.6", 
+        Date => "October 27, 2026",
         Authors => {
 	    {Name => "Luigi Ferraro", 
 		 Email => "luigi.ferraro@utrgv.edu", 
@@ -22,16 +22,16 @@ newPackage(
 		 },
              {Name => "Francesca Gandini", 
 		 Email => "fra.gandi.phd@gmail.com", 
-		 HomePage => "https://sites.google.com/a/umich.edu/gandini/home"
+		 HomePage => "https://fragandi.github.io/web/"
 		 },
 	     {Name => "Hang Huang", 
 		 Email => "hhuang235@tamu.edu", 
-		 HomePage => "https://math.tamu.edu/~hhuang"
+		 HomePage => "https://artsci.tamu.edu/mathematics/contact/profiles/hang-huang.html"
 		 },
 	     {Name => "Thomas Hawes", Email => "thomas.hawes@maths.ox.ac.uk"},
 	     {Name => "Matthew Mastroeni", 
-		 Email => "mmastro@iastate.edu", 
-		 HomePage => "https://mnmastro.github.io/"
+		 Email => "mastromn@sunypoly.edu", 
+		 HomePage => "https://sunypoly.edu/faculty-and-staff/matthew-mastroeni.html"
 		 },
              {Name => "Xianglong Ni", 
 		 Email => "xlni@berkeley.edu", 
@@ -67,12 +67,14 @@ export {
     "FiniteGroupAction",
     "DiagonalAction",
     "LinearlyReductiveAction",
+    "PermutationAction",
     
     --FiniteGroups.m2    	      	  
     "finiteAction",    	       	      	  
     "group",	    	    	  
     "isAbelian",    	    	  
-    "permutationMatrix",          
+    "permutationMatrix",
+    "permutationAction",
     "schreierGraph",	    	  
     "words",
     

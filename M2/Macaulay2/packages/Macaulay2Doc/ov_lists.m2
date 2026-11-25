@@ -823,13 +823,28 @@ doc ///
       t#4 = e
       peek t
     Text
-      When working with mutable lists, be careful not to turn a linear algorithm into
-      a quadratic one by repeatedly appending to it.  Compare the following:
+      Functions that iterate over a mutable list, such as @TO apply@,
+      @TO scan@, @TO select@, @TO any@, and @TO symbol for@ loops, work with a
+      snapshot of its entries taken when the iteration begins.  So if the list
+      is modified during the iteration, e.g., by growing or shrinking it, the
+      iteration still visits exactly the original entries, while the
+      modifications take effect in the list itself.
     Example
-      s = new MutableList
-      elapsedTime scan(1000, i -> s#i = i^2) -- quadratic, since we grow s at each step
-      t = new MutableList from 1000
-      elapsedTime scan(1000, i -> t#i = i^2) -- linear
+      u = new MutableList from {1, 2, 3};
+      for i in u list (u##u = 10 * i; i)
+      peek u
+    Text
+      A mutable list may have room for more entries than it currently holds;
+      the number of entries it has room for is its @EM "capacity"@, which is reported
+      by @TO (size, BasicList)@.  When an assignment makes the list longer than
+      its capacity, the capacity is doubled until the list fits, so appending
+      entries one at a time takes linear time overall.  When the list becomes
+      shorter than a quarter of its capacity, e.g., after using @TO remove@,
+      the capacity is halved (but never below 4).
+    Example
+      s = new MutableList;
+      for i to 8 list (s#i = i; (#s, size s))
+      for i to 8 list (remove(s, 0); (#s, size s))
   SeeAlso
     BasicList
   Subnodes

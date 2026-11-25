@@ -291,7 +291,6 @@ trimPID := M -> if M.?relations then (if M.?generators then trimPID image genera
     (g,ch) := smithNormalForm(f, ChangeMatrix => {true, false});
     isunit := r -> r != 0 and degree r === {0};
     rows := select(min(rank source g,rank target g),i->isunit g_(i,i));
-    rows = rows | toList(rank target f..<rank target g); -- temporary fix for #3017
     ch = submatrix'(ch,rows,);
     p:=id_(target ch)//ch;
     q:=generators M*p;
@@ -440,18 +439,22 @@ addHook((quotient, Matrix, Matrix), Strategy => "Reflexive", (opts, f, g) -> (
 	  )))
 
 addHook((quotient, Matrix, Matrix), Strategy => InexactField, (opts, f, g) ->
-    if instance(ring target f, InexactField)
-    -- TODO: c.f. https://github.com/Macaulay2/M2/issues/3252
-    and numRows g === numColumns g
-    and isFreeModule source g
-    and isFreeModule source f
-    then solve(g, f))
+    if (
+        instance(ring target f, InexactField)
+        -- TODO: c.f. https://github.com/Macaulay2/M2/issues/3252
+        and numRows g === numColumns g
+        and isFreeModule source g
+        and isFreeModule source f
+    ) then if (quot := solve(g, f)) =!= null then map(source g, source f, quot)
+)
 
 addHook((quotient, Matrix, Matrix), Strategy => ZZ, (opts, f, g) ->
-    if isQuotientOf(ZZ, ring target f)
-    and isFreeModule source g
-    and isFreeModule source f
-    then solve(g, f))
+    if (
+        isQuotientOf(ZZ, ring target f)
+        and isFreeModule source g
+        and isFreeModule source f
+    ) then if (quot := solve(g, f)) =!= null then map(source g, source f, quot)
+)
 
 quotient'(Matrix, Matrix) := Matrix => opts -> (f, g) -> (
     -- given f: A-->C and g: A-->B, then finds (g\\f): B-->C such that (g\\f) o g + r = f
