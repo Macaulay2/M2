@@ -27,13 +27,13 @@ newPackage(
 	       },
 	  Authors => {{
 		    Name => "Steven V Sam",
-		    Email => "ssam@math.mit.edu",
-		    HomePage => "http://math.mit.edu/~ssam/"
+		    Email => "ssam@ucsd.edu",
+		    HomePage => "https://mathweb.ucsd.edu/~ssam/"
 		    },
 		   {
 		    Name => "Keller VandeBogert",
 		    Email => "keller.v@uky.edu",
-		    HomePage => "https://sites.nd.edu/kellerv/"
+		    HomePage => "https://sites.google.com/view/kellervandebogert/home"
 		    }},
 	  Headline => "Pieri inclusions and projections between Schur modules with multiple basis conventions",
 	  Keywords => {"Representation Theory"},

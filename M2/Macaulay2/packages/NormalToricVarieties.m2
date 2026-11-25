@@ -23,7 +23,7 @@ newPackage(
     Authors => {{
         Name => "Gregory G. Smith", 
         Email => "ggsmith@mast.queensu.ca", 
-        HomePage => "http://www.mast.queensu.ca/~ggsmith"}},
+        HomePage => "https://ggsmith.ca"}},
     Headline => "routines for working with normal toric varieties and related objects",
     Keywords => {"Toric Geometry"},
     PackageExports => {"Polyhedra", "Schubert2", "Varieties","Truncations"},

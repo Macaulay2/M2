@@ -19,8 +19,8 @@ newPackage (
   "MonomialIntegerPrograms",
   Version=>"1.0",
   Authors => {
-      {Name => "Lily Silverstein", Email => "lsilverstein@cpp.edu", HomePage => "https://cpp.edu/faculty/lsilverstein"},
-      {Name => "Jay White", Email => "jay.white@uky.edu", HomePage => "https://math.as.uky.edu/users/jwh245"}
+      {Name => "Lily Silverstein", Email => "lsilverstein@cpp.edu"},
+      {Name => "Jay White"}
       },
   Headline => "using integer programming for fast computations with monomial ideals",
   Configuration => {

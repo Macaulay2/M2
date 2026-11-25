@@ -19,8 +19,8 @@ newPackage(
         Date => "13 Nov 2022",
         Authors => {{
                 Name => "Mike Stillman", 
-                Email => "mike@math.cornell.edu", 
-                HomePage=>"http://www.math.cornell.edu/~mike"
+                Email => "mikestillman1@gmail.com",
+                HomePage=>"https://mikestillman.github.io"
                 }},
         Headline => "interface to the topcom software package which in particular computes triangulations",
         Keywords => {"Interfaces"},

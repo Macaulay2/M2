@@ -13,11 +13,11 @@ newPackage("GKMVarieties",
 	Date => "August 1, 2020",
 	Authors => {
 	    {Name => "Chris Eur",
-       	     Email => "chriseur@stanford.edu",
-       	     HomePage => "https://web.stanford.edu/~chriseur"},
+       	     Email => "ceur@cmu.edu",
+       	     HomePage => "https://www.math.cmu.edu/~ceur"},
 	    {Name => "Ritvik Ramkumar",
-	     Email => "ritvik@math.berkeley.edu",
-	     HomePage => "https://math.berkeley.edu/~ritvik"}
+	     Email => "rramkuma@nd.edu",
+	     HomePage => "https://sites.google.com/view/ritvikramkumar/"}
 	    },
 	Headline => "computations with GKM manifolds and moment graphs",
 	HomePage => "https://github.com/chrisweur/GKMVarieties",

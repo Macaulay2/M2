@@ -5,7 +5,7 @@ newPackage(
 	Authors => {
    		{
         Name => "Alessio Borzì",
-        Email => "Alessio.Borzi@warwick.ac.uk",
+        Email => "alessioborzi.math@gmail.com",
         HomePage=>"https://alessioborzi.github.io"
       }
   },

@@ -3,8 +3,8 @@ newPackage (
      "Benchmark",
      Headline => "standard Macaulay2 benchmarks",
      Authors => {
-	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
-	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
+	  {Name => "Daniel R. Grayson", HomePage => "https://www.graysonfamily.org/dan/"},
+	  {Name => "Michael E. Stillman", Email => "mikestillman1@gmail.com", HomePage => "https://mikestillman.github.io"}
 	  },
      Keywords => {"Miscellaneous"},
      HomePage => "https://macaulay2.com/",

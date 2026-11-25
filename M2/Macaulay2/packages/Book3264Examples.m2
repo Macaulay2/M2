@@ -7,9 +7,7 @@ newPackage(
      "Book3264Examples",
      Version => "0.1",
      Date => "July 20, 2010",
-     Authors => {{Name => "Charley Crissman",
-	       Email => "charleyc@math.berkeley.edu",
-	       HomePage => "http://math.berkeley.edu/~charleyc/"}},
+     Authors => {{Name => "Charley Crissman"}},
      PackageExports => {"Schubert2", "SchurRings"},
      Keywords => {"Intersection Theory"},
      Headline => "examples to accompany the eponymous book by Eisenbud and Harris"

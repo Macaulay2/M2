@@ -20,7 +20,7 @@ newPackage(
     	Date => "10 December 2008",
     	Authors => {{
 		  Name => "Gregory G. Smith", 
-		  HomePage => "http://www.mast.queensu.ca/~ggsmith",
+		  HomePage => "https://ggsmith.ca",
 		  Email => "ggsmith@mast.queensu.ca"}},
     	Headline => "convex hulls and polar cones",
 	Keywords => {"Convex Geometry"},

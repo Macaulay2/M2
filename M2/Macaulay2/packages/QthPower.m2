@@ -4,7 +4,7 @@ newPackage(
     Date => "January 17, 2014",
     Authors => {{Name => "Douglas A. Leonard",
                  Email => "leonada@auburn.edu",
-                 HomePage => "http://www.dms.auburn.edu/~leonada"}},
+                 HomePage => "https://webhome.auburn.edu/~leonada/"}},
     Headline => 
     "An implementation of the Qth-Power algorithm for computing integral closures",
     Keywords => {"Commutative Algebra"},

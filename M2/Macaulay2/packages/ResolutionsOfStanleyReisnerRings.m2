@@ -11,7 +11,7 @@ newPackage(
     "ResolutionsOfStanleyReisnerRings",
     Version => "0.1",
     Date => "July 15, 2020",
-    	Authors => {{Name => "Ashleigh Adams", Email => "adams869@umn.edu", HomePage => "http://www.ashleigh-adams.com"}},
+    	Authors => {{Name => "Ashleigh Adams", Email => "ashleigh.adams@oist.jp", HomePage => "http://www.ashleigh-adams.com"}},
     Headline => "Comparing resolutions of Stanley-Reisner rings and computing various systems of parameters",
     PackageImports => { "Complexes" },
     PackageExports => {"SimplicialComplexes", "Posets", "SimplicialDecomposability"},

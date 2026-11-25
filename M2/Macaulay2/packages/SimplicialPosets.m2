@@ -20,7 +20,7 @@ newPackage(
     	Date => "December 3, 2019",
 	Authors => {{
 		    Name => "Nathan Nichols",
-		    Email => "nicho997@umn.edu"}},
+		    Email => "nathannichols454@gmail.com"}},
         Headline => "constructing Stanley simplicial poset rings",
 	Keywords => {"Combinatorial Commutative Algebra"},
 	DebuggingMode => false,

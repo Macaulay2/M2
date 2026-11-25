@@ -9,8 +9,8 @@ newPackage(
      HomePage => "https://antonleykin.math.gatech.edu/NAG4M2/",
      AuxiliaryFiles => true,
      Authors => {
-	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu", HomePage => "https://people.math.gatech.edu/~aleykin3"},
-	  {Name => "Robert Krone", Email => "krone@math.gatech.edu"}
+	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu", HomePage => "https://antonleykin.math.gatech.edu/"},
+	  {Name => "Robert Krone", Email => "rckrone@gmail.com"}
 	  },
      Keywords => {"Numerical Algebraic Geometry"},
      Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	

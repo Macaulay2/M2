@@ -5,9 +5,9 @@ newPackage(
   Authors => {
     {Name => "Jose Israel Rodriguez",
     Email => "Jose@Math.wisc.edu",
-    HomePage => "http://www.math.wisc.edu/~jose/"},
+    HomePage => "https://people.math.wisc.edu/~jrodriguez43/"},
     {Name => "Will Huang",
-    Email => "whuang259@wisc.edu",
+    Email => "williamhuang5120@gmail.com",
     HomePage => ""}
   },
   Headline => "produce critical equations and compute ED degrees",

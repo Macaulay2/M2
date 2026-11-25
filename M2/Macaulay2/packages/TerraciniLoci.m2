@@ -34,7 +34,7 @@ newPackage("TerraciniLoci",
     Authors => {
 	{
 	    Name => "Francesco Galuppi",
-	    Email => "f.galuppi@uw.edu.pl",
+	    Email => "galuppi@mimuw.edu.pl",
 	    HomePage => "https://www.mimuw.edu.pl/~galuppi/"},
 	{
 	    Name => "Pierpaola Santarsiero",

@@ -4,7 +4,7 @@ newPackage( "Seminormalization",
 	Authors => {
 		{Name => "Karl Schwede",
 		Email => "schwede@math.utah.edu",
-		HomePage => "http://math.utah.edu/~schwede/"
+		HomePage => "https://kschwede.github.io/"
 		},
 		{Name => "Bernard Serbinowski",
 		Email => "bserbinowski@gmail.com"

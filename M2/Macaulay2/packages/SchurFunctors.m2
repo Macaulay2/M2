@@ -4,8 +4,8 @@ newPackage(
 	  Date => "April 18, 2026",
 	  Authors => {
 	       {Name => "Michael E. Stillman",
-		    Email => "mike@math.cornell.edu",
-		    HomePage => "http://www.math.cornell.edu/~mike"},
+		    Email => "mikestillman1@gmail.com",
+		    HomePage => "https://mikestillman.github.io"},
 	       {Name => "Anton Leykin"},
 	       {Name => "Mauricio Velasco"},
 	       {Name => "Keller VandeBogert",

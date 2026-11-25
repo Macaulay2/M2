@@ -13,8 +13,8 @@ newPackage(
         {Name => "Kristian Ranestad"},
         {Name => "Hal Schenck"},  
         {Name => "Mike Stillman",  
-            Email => "mike@math.cornell.edu", 
-            HomePage => "http://www.math.cornell.edu/~mike"},
+            Email => "mikestillman1@gmail.com",
+            HomePage => "https://mikestillman.github.io"},
         {Name => "Beihui Yuan"}
         },
     PackageExports => {

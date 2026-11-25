@@ -6,11 +6,9 @@ newPackage(
                   Email => "schreyer@math.uni-sb.de", 
                   HomePage => "https://www.math.uni-sb.de/ag/schreyer/"},
 	      {Name => "Mike Stillman", 
-                  Email => "mike@math.cornell.edu", 
-                  HomePage => "http://www.math.cornell.edu/~mike/"},
-	      {Name => "Mengyuan Zhang", 
-                  Email => "myzhang@berkeley.edu", 
-                  HomePage => "https://math.berkeley.edu/~myzhang/"}
+                  Email => "mikestillman1@gmail.com",
+                  HomePage => "https://mikestillman.github.io"},
+	      {Name => "Mengyuan Zhang"}
 	      },
         Headline => "space curves",
 	Keywords => {"Examples and Random Objects"},

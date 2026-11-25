@@ -19,8 +19,8 @@ newPackage(
     	Version => "1.7", 
     	Date => "May 10, 2013",
     	Authors => {
-	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},
-	     {Name => "Branden Stone", Email => "branden.stone@gtri.gatech.edu", HomePage => "http://bstone.github.io/"}
+	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu"},
+	     {Name => "Branden Stone", Email => "branden.stone@gtri.gatech.edu", HomePage => "http://stonebranden.com/"}
 	     },
     	Headline => "the Quillen-Suslin algorithm for bases of projective modules",
 	Keywords => {"Commutative Algebra"},

@@ -21,7 +21,7 @@ newPackage(
 	    Email => "alaclair2@unl.edu",
 	    HomePage=> "https://sites.google.com/view/adamlaclair/home"},
         {Name => "Yuyuan Luo",
-            Email => "yuyuan.luo@princeton.edu",
+            Email => "luo.yuyuan@princeton.edu",
             HomePage=> "https://yuyuan-luo.github.io/"},
 	{Name => "Joseph McDonough",
 	    Email => "mcdo1248@umn.edu",

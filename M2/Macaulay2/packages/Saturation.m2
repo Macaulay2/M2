@@ -19,9 +19,9 @@ newPackage(
     Date => "November 29, 2021",
     Headline => "quotient, saturation, and annihilator routines for ideals and modules",
     Authors => {
-	{Name => "Justin Chen",    Email => "justin.chen@math.gatech.edu"},
-	{Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud"},
-	{Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}},
+	{Name => "Justin Chen"},
+	{Name => "Mahrud Sayrafi", Email => "msayrafi2@unl.edu",        HomePage => "https://mahrud.github.io"},
+	{Name => "Mike Stillman",  Email => "mikestillman1@gmail.com", HomePage => "https://mikestillman.github.io"}},
     Keywords => {"Commutative Algebra"},
     PackageExports => { HomologicalAlgebraPackage, "Elimination" },
     AuxiliaryFiles => true,

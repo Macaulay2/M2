@@ -9,8 +9,8 @@ newPackage(
         Date => "10 June 2017",
         Authors => {
             {Name => "Mike Stillman", 
-                Email => "mike@math.cornell.edu", 
-                HomePage => "http://www.math.cornell.edu/~mike"}
+                Email => "mikestillman1@gmail.com",
+                HomePage => "https://mikestillman.github.io"}
             },
         Headline => "links abstract simplicial (normal) toric varieties to Schubert2",
 	Keywords => {"Toric Geometry", "Intersection Theory"},

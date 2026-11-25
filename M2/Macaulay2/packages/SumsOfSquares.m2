@@ -4,17 +4,15 @@ newPackage(
     Date => "May 2021",
     Authors => {
      {Name => "Diego Cifuentes",
-      Email => "diegcif@mit.edu",
-      HomePage => "http://www.mit.edu/~diegcif/"},
+      Email => "diego.cifuentes@isye.gatech.edu",
+      HomePage => "https://diegcif.github.io"},
      {Name => "Thomas Kahle",
       Email => "thomas.kahle@ovgu.de",
       HomePage => "https://thomas-kahle.de/"},
      {Name => "Pablo A. Parrilo",
       Email => "parrilo@mit.edu",
       HomePage => "http://www.mit.edu/~parrilo/"},
-     {Name => "Helfried Peyrl",
-      Email => "peyrl@control.ee.ethz.ch",
-      HomePage => "https://scholar.google.com/citations?user=cFOV7nYAAAAJ&hl=de"}
+     {Name => "Helfried Peyrl"}
     },
     Headline => "sums of squares",
     Keywords => {"Real Algebraic Geometry"},

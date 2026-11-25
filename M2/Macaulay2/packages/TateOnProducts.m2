@@ -31,11 +31,11 @@ newPackage(
     Date => "January 30, 2020",
     Headline => "Tate resolutions on products of projective spaces",
     Authors => {
-	{ Name => "Daniel Erman",        Email => "derman@math.wisc.edu",    HomePage => "http://www.math.wisc.edu/~derman/" },
-	{ Name => "David Eisenbud",      Email => "de@msri.org",             HomePage => "http://www.msri.org/~de/" },
-	{ Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/schreyer/" },
-	{ Name => "Michael E. Stillman", Email => "mike@math.cornell.edu",   HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html" },
-	{ Name => "Yeongrak Kim",     	 Email => "kim@math.uni-sb.de",      HomePage => "http://sites.google.com/view/yeongrak/"}
+	{ Name => "Daniel Erman",        Email => "erman@hawaii.edu",    HomePage => "https://math.hawaii.edu/~erman/" },
+	{ Name => "David Eisenbud",      Email => "de@math.berkeley.edu",             HomePage => "https://eisenbud.github.io" },
+	{ Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "https://www.math.uni-sb.de/ag/schreyer/" },
+	{ Name => "Michael E. Stillman", Email => "mikestillman1@gmail.com",   HomePage => "https://mikestillman.github.io" },
+	{ Name => "Yeongrak Kim",     	 Email => "yeongrak.kim@pusan.ac.kr",      HomePage => "http://sites.google.com/view/yeongrak/"}
 	},
     Keywords => {"Commutative Algebra"},
     PackageImports => {"Truncations"},

@@ -30,18 +30,17 @@ newPackage(
 	Authors => {
 		{
 			Name => "Chris Francisco", 
-			Email => "chris@math.okstate.edu",
-			HomePage => "http://www.math.okstate.edu/~chris/"
+			Email => "chris.francisco@okstate.edu",
+			HomePage => "https://math.okstate.edu/people/chris/"
 			},
 		{
 			Name => "Andrew Hoefel", 
-			Email => "handrew@mathstat.dal.ca",
-			HomePage => "http://www.mathstat.dal.ca/~handrew/"
+			Email => "andrew.hoefel@gmail.com"
 		},
 		{
 			Name => "Adam Van Tuyl", 
-			Email => "avantuyl@lakeheadu.ca",
-			HomePage => "http://flash.lakeheadu.ca/~avantuyl/"
+			Email => "vantuyla@mcmaster.ca",
+			HomePage => "https://ms.mcmaster.ca/~vantuyl/"
 		}
 	},
 	Headline => "edge ideals",

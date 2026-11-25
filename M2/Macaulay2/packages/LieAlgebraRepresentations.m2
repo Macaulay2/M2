@@ -14,7 +14,7 @@ newPackage(
 	  {
 	      Name => "Paul Zinn-Justin", -- starting with version 0.6
 	      Email => "pzinn@unimelb.edu.au",
-	      HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}
+	      HomePage => "https://blogs.unimelb.edu.au/paul-zinn-justin/"}
 	  },
     Keywords => {"Lie Groups and Lie Algebras"},
     PackageImports => {"ReesAlgebra"},

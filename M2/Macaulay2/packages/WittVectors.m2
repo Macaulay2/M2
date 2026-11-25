@@ -4,9 +4,9 @@ newPackage(
     Date => "April 29, 2026",
     Authors => {
     	{Name => "Anne Fayolle", Email => "anne.fayolle@utah.edu", HomePage => "https://annefayolle.github.io/"},
-	{Name => "Abhay Goel", Email => "u1421426@utah.edu", HomePage => "https://abhayg11.github.io/"},
+	{Name => "Abhay Goel", Email => "abhay.goel.127@gmail.com", HomePage => "https://abhayg11.github.io/"},
 	{Name => "Devlin Mallory", Email => "dmallory@bcamath.org", HomePage => "https://devlin-mallory.github.io/"},
-	{Name => "Eamon Quinlan-Gallego", Email => "eamon.quinlan@utah.edu", HomePage => "https://eamonqg.github.io/"},
+	{Name => "Eamon Quinlan-Gallego", Email => "equinlan@us.es", HomePage => "https://eamonqg.github.io/"},
     	{Name => "Teppei Takamatsu", Email => "teppeitakamatsu.math@gmail.com", HomePage => "https://sites.google.com/view/teppei-takamatsu/home"}
     },
     PackageImports => {

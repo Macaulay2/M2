@@ -6,13 +6,13 @@ newPackage(
 	    {Name => "Katie Ansaldi",
 		Email => "kansaldi@gmail.com"},
 	    {Name => "David Eisenbud",
-         	Email => "de@msri.org",
-         	HomePage => "http://www.msri.org/~de"},
+         	Email => "de@math.berkeley.edu",
+         	HomePage => "https://eisenbud.github.io"},
      	    {Name => "Robert Krone",
 	 	Email => "rckrone@gmail.com",
 	 	HomePage => "http://rckr.one"},
 	    {Name => "Jay Yang",
-		Email => "jkelleyy@gmail.com"}
+		Email => "jay.k.yang@vanderbilt.edu"}
 	    },
     	Headline => "creating random ideals of various sorts",
 	Keywords => {"Examples and Random Objects"},

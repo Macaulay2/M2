@@ -3,8 +3,7 @@
 newPackage( "SectionRing",
      Version => "0.2", Date => "September 21 2016", Authors => {
      	  {Name=> "Andrew Bydlon",
-     	       Email=> "thelongdivider@gmail.com",
-     	       HomePage => "http://www.math.utah.edu/~bydlon/"
+     	       Email=> "thelongdivider@gmail.com"
      	       }
 	  },
      PackageImports => { "WeilDivisors", "Varieties" },

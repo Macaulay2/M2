@@ -3,8 +3,8 @@ newPackage(
     Version => "1.1.0",
     Date => "September 3, 2019",
     Authors => {
-        { Name => "Dylan Peifer",   Email => "djp282@cornell.edu", HomePage => "https://math.cornell.edu/~djp282" },
-        { Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",     HomePage => "https://math.umn.edu/~mahrud" }
+        { Name => "Dylan Peifer" },
+        { Name => "Mahrud Sayrafi", Email => "msayrafi2@unl.edu",     HomePage => "https://mahrud.github.io" }
         },
     Keywords => {"Groebner Basis Algorithms"},
     Headline => "Groebner bases via the FGLM algorithm"

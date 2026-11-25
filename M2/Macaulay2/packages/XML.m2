@@ -3,7 +3,7 @@
 newPackage("XML",
     	Version => "1.1", 
     	Date => "September 1, 2010",
-    	Authors => {{Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}},
+    	Authors => {{Name => "Daniel R. Grayson", HomePage => "https://www.graysonfamily.org/dan/"}},
     	Headline => "an XML parser",
 	Keywords => {"Miscellaneous"},
     	DebuggingMode => false)

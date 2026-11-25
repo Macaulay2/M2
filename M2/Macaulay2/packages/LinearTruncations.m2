@@ -3,9 +3,9 @@ newPackage(
     Version => "1.0",
     Date => "May 5, 2021",
     Authors => {
-	{Name => "Lauren Cranton Heller", Email => "lch@math.berkeley.edu"},
-	{Name => "David Eisenbud", Email => "de@msri.org"},
-	{Name => "Navid Nemati", Email => "Navid.Nemati@inria.fr"}},
+	{Name => "Lauren Cranton Heller", Email => "lheller2@unl.edu"},
+	{Name => "David Eisenbud", Email => "de@math.berkeley.edu"},
+	{Name => "Navid Nemati"}},
     Headline => "find the multigraded truncations that give linear resolutions",
     PackageExports => {"Complexes", "TateOnProducts", "Truncations"},
     DebuggingMode => false,

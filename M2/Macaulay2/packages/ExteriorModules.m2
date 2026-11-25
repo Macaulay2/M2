@@ -3,7 +3,7 @@ newPackage(
     "ExteriorModules",
     Version => "1.0", 
     Date => "May 05, 2020",
-    Authors => {{Name => "Luca Amata", Email => "lamata@unime.it", HomePage => "http://mat521.unime.it/amata"},
+    Authors => {{Name => "Luca Amata", Email => "luca.amata@scuola.istruzione.it", HomePage => "https://lucamata.github.io"},
                 {Name => "Marilena Crupi", Email => "mcrupi@unime.it", HomePage => "http://www.unime.it/it/persona/marilena-crupi"}
                 },
     Headline => "monomial modules over exterior algebras",

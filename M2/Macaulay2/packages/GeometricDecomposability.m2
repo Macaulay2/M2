@@ -13,7 +13,7 @@ newPackage(
                 },
                 {
                 Name => "Adam Van Tuyl",
-                Email => "vantuyl@math.mcmaster.ca",
+                Email => "vantuyla@mcmaster.ca",
                 HomePage => "https://ms.mcmaster.ca/~vantuyl/"
                 }
                 },

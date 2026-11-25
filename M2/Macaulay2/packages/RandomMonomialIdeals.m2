@@ -8,7 +8,7 @@ newPackage(
 	    {
 		Name => "Sonja Petrovic",
 		Email => "sonja.petrovic@iit.edu",
-		HomePage => "http://math.iit.edu/~spetrov1/"
+		HomePage => "https://www.sonjapetrovicstats.com"
 	    },
 	    {
 		Name => "Despina Stasi",
@@ -16,35 +16,27 @@ newPackage(
 		HomePage => "http://math.iit.edu/~stasdes/"
 	    },
 	    {
-		Name => "Dane Wilburne",
-		Email => "dwilburn@hawk.iit.edu",
-		HomePage => "http://mypages.iit.edu/~dwilburn/"
+		Name => "Dane Wilburne"
 	    },
 	    {
-		Name => "Tanner Zielinski",
-		Email => "tzielin1@hawk.iit.edu",
-		HomePage => "https://www.linkedin.com/in/tannerzielinski/"
+		Name => "Tanner Zielinski"
 	    },
 	    {
 		Name => "Daniel Kosmas",
-		Email => "dkosmas@hawk.iit.edu",
-		HomePage => "https://www.linkedin.com/in/daniel-kosmas-03160988/"
+		Email => "Daniel_Kosmas@uml.edu",
+		HomePage => "https://www.uml.edu/engineering/mechanical-industrial/faculty/kosmas-daniel.aspx"
 	    },
 	    {
-		Name => "Parker Joncus", 
-		Email => "pjoncus@hawk.iit.edu"
+		Name => "Parker Joncus"
 	    },
 	    {
-		Name => "Richard Osborn", 
-		Email => "rosborn@hawk.iit.edu"
+		Name => "Richard Osborn"
 	    },
 	    {
-	    	Name => "Monica Yun", 
-	    	Email => "myun1@hawk.iit.edu"
+	    	Name => "Monica Yun"
 	    },
 	    {
-	    	Name => "Genevieve Hummel", 
-	    	Email => "ghummel1@hawk.iit.edu"
+	    	Name => "Genevieve Hummel"
 	    }
 	},
     	Headline => "Erdos-Renyi-type random monomial ideals",

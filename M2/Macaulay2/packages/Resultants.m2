@@ -11,7 +11,7 @@ newPackage(
        "Resultants",
 	Version => "1.2.2", 
     	Date => "May 10, 2019",
-    	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
+    	Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it"}},
     	Headline => "resultants, discriminants, and Chow forms",
 	Keywords => {"Commutative Algebra"},
 	PackageExports => { "Elimination" },

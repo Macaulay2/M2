@@ -28,14 +28,14 @@ newPackage(
 		 Email => "hhuang235@tamu.edu", 
 		 HomePage => "https://artsci.tamu.edu/mathematics/contact/profiles/hang-huang.html"
 		 },
-	     {Name => "Thomas Hawes", Email => "thomas.hawes@maths.ox.ac.uk"},
+	     {Name => "Thomas Hawes"},
 	     {Name => "Matthew Mastroeni", 
 		 Email => "mastromn@sunypoly.edu", 
 		 HomePage => "https://sunypoly.edu/faculty-and-staff/matthew-mastroeni.html"
 		 },
              {Name => "Xianglong Ni", 
-		 Email => "xlni@berkeley.edu", 
-		 HomePage => "https://math.berkeley.edu/~xlni/"}
+		 Email => "xni3@nd.edu",
+		 HomePage => "https://math.nd.edu/people/faculty/xianglong-ni/"}
              },
         Headline => "invariants of group actions",
 	Keywords => {"Representation Theory", "Group Theory"},

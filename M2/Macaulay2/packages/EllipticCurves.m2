@@ -4,9 +4,9 @@ newPackage(
     	Version => "0.1", 
     	Date => "May 3, 2014",
     	Authors => {{Name => "Alessandro Oneto", 
-		  Email => "oneto@math.su.se"},
+		  Email => "alessandro.oneto@unige.it"},
 	    {Name => "Stefano Marseglia", 
-		  Email => "stefanom@math.su.se"}},
+		  Email => "stefano.marseglia@ovgu.de"}},
 	PackageImports => {"Varieties"},
 	Keywords => {"Algebraic Number Theory"},
     	Headline => "group law on elliptic curves (and counting points with brute force methods)"

@@ -3,7 +3,7 @@
                Version => "0.2", 
                Date => "Jan 4, 2017",
                Authors => {{Name => "David Eisenbud", 
-                         Email => "de@msri.org"}},
+                         Email => "de@math.berkeley.edu"}},
                Headline => "sym2, wedge2, chi2 of a ChainComplex",
 	       Keywords => {"Homological Algebra"},
                PackageExports => {"Complexes"},

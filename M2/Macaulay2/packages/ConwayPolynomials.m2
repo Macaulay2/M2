@@ -4,7 +4,7 @@ newPackage(
     	Version => "1.0", 
     	Date => "October 23, 2008",
     	Authors => {
-	     {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu"}
+	     {Name => "Daniel R. Grayson", HomePage => "https://www.graysonfamily.org/dan/"}
 	     },
 	Keywords => {"Group Theory"},
     	Headline => "a database of Conway polynomials"

@@ -8,8 +8,8 @@ newPackage(
      Version => "0.9.3", 
      Date => "Sept, 2010",
      Authors => {
-	  {Name => "Bart Snapp", Email => "snapp@math.ohio-state.edu", HomePage => "http://www.math.ohio-state.edu/~snapp/"},
-	  {Name => "Nathaniel Stapleton", Email => "nstaple2@math.uiuc.edu"}
+	  {Name => "Bart Snapp", Email => "snapp.14@osu.edu", HomePage => "https://people.math.osu.edu/snapp.14/"},
+	  {Name => "Nathaniel Stapleton", Email => "nat.j.stapleton@gmail.com"}
 	  },
      Headline => "place an ideal in Noether normal position",
      Keywords => {"Commutative Algebra"},

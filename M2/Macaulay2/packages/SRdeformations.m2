@@ -5,7 +5,7 @@ newPackage(
     	Date => "July 12, 2010",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@mathematik.uni-kl.de", 
-		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}
+		  HomePage => "https://agag-jboehm.math.rptu.de/~boehm/"}
                   },
     	Headline => "deformations of Stanley-Reisner rings and related computations",
 	Keywords => {"Combinatorial Commutative Algebra"},

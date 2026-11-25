@@ -5,7 +5,7 @@ newPackage(
         Date => "July 4, 2024", -- "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
-                  HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
+                  HomePage => "https://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "producing SVG graphics",
 	Keywords => {"Graphics"},
         DebuggingMode => false,

@@ -40,10 +40,10 @@ newPackage("SchurVeronese",
     Date => "13 May 2019",
     Headline => "Data for Veronese embeddings of projective space",
     Authors => {
-        {Name => "Juliette Bruce",           Email => "jebruce2@wisc.edu",       HomePage => "https://juliettebruce.github.io"},
-        {Name => "Daniel Erman",             Email => "derman@math.wisc.edu",    HomePage => "http://www.math.wisc.edu/~derman/"},	     
-        {Name => "Steve Goldstein",          Email => "sgoldstein@wisc.edu",   HomePage => ""},
-	{Name => "Jay Yang",                 Email => "jkyang@umn.edu",   HomePage => "http://www-users.math.umn.edu/~jkyang/"}
+        {Name => "Juliette Bruce",           Email => "juliette.bruce@dartmouth.edu",       HomePage => "https://www.juliettebruce.xyz/"},
+        {Name => "Daniel Erman",             Email => "erman@hawaii.edu",    HomePage => "https://math.hawaii.edu/~erman/"},
+        {Name => "Steve Goldstein",   HomePage => ""},
+	{Name => "Jay Yang",                 Email => "jay.k.yang@vanderbilt.edu",   HomePage => "https://jkyang92.github.io/"}
 	},
    AuxiliaryFiles => true,
    Keywords => {"Projective Algebraic Geometry"},

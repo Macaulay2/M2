@@ -7,10 +7,9 @@ newPackage(
     	Authors => {
                {Name => "Anton Leykin", 
                Email => "leykin@math.gatech.edu"},
-               {Name => "Justin Chen", 
-               Email => "justin.chen@math.gatech.edu"},
+               {Name => "Justin Chen"},
                {Name => "Kelly Maluccio", 
-               Email => "kmaluccio@math.tamu.edu"},
+               Email => "kmaluccio@gmail.com"},
                {Name => "Leah Gold", 
                Email => "L.Gold33@csuohio.edu"}
         },

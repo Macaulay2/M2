@@ -23,8 +23,8 @@ newPackage(
      Authors => {
 	 {
 	     Name => "Federico Galetto",
-	     Email => "galetto.federico@gmail.com",
-	     HomePage => "http://math.galetto.org"
+	     Email => "f.galetto@csuohio.edu",
+	     HomePage => "https://math.galetto.org"
 	     },
 	 {
 	     Name=> "Nicholas Iammarino",

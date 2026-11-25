@@ -4,11 +4,11 @@ newPackage(
     	Version => "3.0", 
     	Date => "29 June 2008, revised by DE June 2016, revised by FG and JWS June 2018",
     	Authors => {
-	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "https://macaulay2.com/"},
-	     {Name => "Stein A. Strømme", Email => "stromme@math.uib.no"},
-	     {Name => "David Eisenbud", Email => "de@msri.org"},
-	     {Name => "Federico Galetto", Email => "galetto.federico@gmail.com", HomePage => "http://math.galetto.org"},
-	     {Name => "Joseph W. Skelton", Email => "jskelton@tulane.edu"}
+	     {Name => "Mike Stillman", Email => "mikestillman1@gmail.com", HomePage => "https://mikestillman.github.io"},
+	     {Name => "Stein A. Strømme"},
+	     {Name => "David Eisenbud", Email => "de@math.berkeley.edu"},
+	     {Name => "Federico Galetto", Email => "f.galetto@csuohio.edu", HomePage => "https://math.galetto.org"},
+	     {Name => "Joseph W. Skelton", Email => "jwskelton@wm.edu", HomePage => "https://sites.google.com/view/joseph-skelton"}
 	     },
     	Headline => "sets of points",
 	Keywords => {"Examples and Random Objects"},
