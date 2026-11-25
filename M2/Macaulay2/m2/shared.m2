@@ -35,6 +35,7 @@ isEmpty Thing := x -> #x == 0
 
 isExact = method(TypicalValue => Boolean, Options => true)
 
+isProper = method()
 isSmooth = method(TypicalValue => Boolean, Options => true)
 isVeryAmple = method(TypicalValue => Boolean, Options => true)
 

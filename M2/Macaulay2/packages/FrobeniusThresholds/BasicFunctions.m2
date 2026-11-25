@@ -192,9 +192,11 @@ isUnitIdeal = method( TypicalValue => Boolean )
 
 isUnitIdeal Ideal := Boolean => I ->  dim I == -1
 
-isProper = method( TypicalValue => Boolean )
+-- isProper is now a shared method name from Core.
+--isProper = method( TypicalValue => Boolean )
 
 isProper Ideal := Boolean => I -> not isUnitIdeal I
+
 
 --===============================================================================
 

@@ -919,7 +919,6 @@ doc ///
 doc ///
     Key
         (isProper, ToricMap)
-    	isProper	
     Headline 
         whether a toric map is proper
     Usage 

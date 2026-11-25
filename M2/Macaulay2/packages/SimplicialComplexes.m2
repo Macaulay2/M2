@@ -62,7 +62,6 @@ export {
     "elementaryCollapse",
     "flagfVector",
     "inducedSubcomplex",
-    "isProper",
     "link",
     "lyubeznikSimplicialComplex", 
     "lyubeznikResolution",

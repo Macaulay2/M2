@@ -513,7 +513,6 @@ flagfVector (List, SimplicialComplex) := ZZ => (m, D) -> (
     hilbertFunction(m, T)
     )
 
-isProper = method()
 isProper SimplicialComplex := Boolean => D -> (
     M := matrix unique degrees ring D;
     if numRows M =!= rank M then return false;
