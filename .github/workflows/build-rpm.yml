@@ -50,7 +50,7 @@ jobs:
         with:
           name: ${{ matrix.os }}-${{ matrix.distribution }}-${{ matrix.release }}
           path: |
-            M2/BUILD/rpm/rpmbuild-*/BUILD/Macaulay2-*/M2/config.log
-            M2/BUILD/rpm/rpmbuild-*/BUILD/Macaulay2-*/M2/libraries/*/build/*/config.log
-            M2/BUILD/rpm/rpmbuild-*/BUILD/Macaulay2-*/M2/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
+            M2/BUILD/rpm/rpmbuild-*/BUILD/**/Macaulay2-*/M2/config.log
+            M2/BUILD/rpm/rpmbuild-*/BUILD/**/Macaulay2-*/M2/libraries/*/build/*/config.log
+            M2/BUILD/rpm/rpmbuild-*/BUILD/**/Macaulay2-*/M2/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
             M2/BUILD/rpm/rpmbuild-*/RPMS/*/*.rpm
