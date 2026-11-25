@@ -524,15 +524,12 @@ kerCohomology(List, List,HashTable, HashTable) := (B, C, oldBoundsB, oldBoundsC)
     -- split into shorter sequences whenever a zero appears and determine linear equation from it
     equations := {};
     subsequence := {};
-    notSolved := {}; -- keeps track of the subsequences with unknowns
     for v in join(les, {0}) do (
         -- continue building subsequence
         if not zero v then subsequence = append(subsequence, v);
         -- finished a (non-empty) subsequence so append and start again
         if zero v and #subsequence > 0 then (
             equations = append(equations, sum(apply(#subsequence, i -> (-1)^i * subsequence_i)));
-            -- if the subsequence has more than one unknown then we save it in notSolved
-            if #(set subsequence * set A) > 1 then notSolved = notSolved | {subsequence};
             subsequence = {};
             );
         );
@@ -540,15 +537,14 @@ kerCohomology(List, List,HashTable, HashTable) := (B, C, oldBoundsB, oldBoundsC)
     -- one ideal for all entries, so that its Groebner basis is computed once
     equationsIdeal := ideal equations;
     toReturn := apply(A, e -> e % equationsIdeal);
-    --notSolved = notSolved /(l -> apply(l, i -> i % ideal equations));
     -- return the resulting coker in a trimmed ring
     appearingVars := select(unique flatten (toReturn / (c -> flatten entries first coefficients(c))), v -> (degree v)_0 > 0);
     y := symbol y;
     S := ZZ[y_0..y_(#appearingVars - 1)];
     substitutions := (for i from 0 to #appearingVars - 1 list appearingVars_i => y_i);
     gensA := generators ring A_0;
-    -- unknowns that cancelled out get a placeholder value (any number works):
-    -- it is never a key of bounds, so the bound updates below skip them
+    -- unknowns that cancelled out get a placeholder value:
+    -- they do not appear in the result, so any number works
     substitutions = substitutions | apply(select(gensA, g -> not member(g, appearingVars)), g -> g => 20000);
     -- substitute in all entries at once: sub builds its ring map from the ring and the list only
     toReturn = flatten entries sub(matrix{toReturn}, substitutions);
@@ -561,69 +557,6 @@ kerCohomology(List, List,HashTable, HashTable) := (B, C, oldBoundsB, oldBoundsC)
             {"max", infinity}
             };
         );
-    -- insert the information we have on the bounds
-    -- to be adapted and improved
-    -*
-    for l in notSolved do (
-        -- case in which B#0 and C#0 are non-zero, i.e. we are at the beginning of the long sequence
-        if not isMember(l_0,C) and not isMember(l_1,C) then (
-            if #l == 6 then (
-                try (bounds#(sub(l_5,substitutions)))#"max" = myMax(l_4,oldBounds);
-                --if (bounds#(substitute((l_4)_R,S)))#"max" == (bounds#(substitute((l_4)_R,S)))#"min" then rels = rels | {(bounds#(substitute((l_4)_R,S))) - (bounds#(substitute((l_4)_R,S)))#"max"};
-                )
-            else if #l%3 == 0 then (
-                try (bounds#(sub(l_(-1),substitutions)))#"max" = myMax(l_(-2),oldBounds);
-                -- could add a condition on the second-to-last unknown
-                )
-            else (
-                try (bounds#(sub(l_(-2),substitutions)))#"min" = myMin(l_(-1),oldBounds);
-                -- could add a condition on the second-to-last unknown
-                );
-            )   
-        -- case in the middle of the long sequence
-        else (
-            if #l == 4 then (
-                try (bounds#(sub((l_3),substitutions)))#"min" = max{0,myMin(l_2 - l_1,oldBounds)};
-                try (bounds#(sub((l_3),substitutions)))#"max" = myMax(l_2,oldBounds);
-                --if (bounds#(substitute((l_3)_R,S)))#"max" == (bounds#(substitute((l_3)_R,S)))#"min" then rels = rels | {(bounds#(substitute((l_3)_R,S))) - (bounds#(substitute((l_3)_R,S)))#"max"};
-                )
-            else if #l == 5 then (
-                if isMember(l_4,C) then (
-                    try (bounds#(sub((l_4),substitutions)))#"min" = max{0,myMin(l_3-l_2,oldBounds)};
-                    try (bounds#(sub((l_4),substitutions)))#"max" = myMax(l_3,oldBounds);
-                    --if (bounds#(substitute((l_4)_R,S)))#"max" == (bounds#(substitute((l_4)_R,S)))#"min" then rels = rels | {(bounds#(substitute((l_4)_R,S))) - (bounds#(substitute((l_4)_R,S)))#"max"};
-                    )
-                else (
-                    try (bounds#(sub((l_3),substitutions)))#"min" = myMin(l_4,oldBounds);
-                    try (bounds#(sub((l_3),substitutions)))#"max" = myMax(l_2 + l_4,oldBounds);
-                    --if (bounds#(substitute((l_3)_R,S)))#"max" == (bounds#(substitute((l_3)_R,S)))#"min" then rels = rels | {(bounds#(substitute((l_3)_R,S))) - (bounds#(substitute((l_3)_R,S)))#"max"};
-                    );
-                )
-            else if #l == 6 then (
-                try (bounds#(sub((l_4),substitutions)))#"min" = max{0,myMin(l_5,oldBounds),myMin(l_5+l_3-l_2,oldBounds)};
-                --if (bounds#(substitute((l_4)_R,S)))#"max" == (bounds#(substitute((l_4)_R,S)))#"min" then rels = rels | {(bounds#(substitute((l_4)_R,S))) - (bounds#(substitute((l_4)_R,S)))#"max"};
-                )
-            else if #l%3 == 1 then (
-                try (bounds#(sub(l_(-1),substitutions)))#"max" = myMax(l_(-2),oldBounds);
-                -- could add a condition on the second-to-last unknown
-                )
-            else if #l%3 == 2 then (
-                if isMember(l_4,C) then (
-                    try (bounds#(sub((l_(-1)),substitutions)))#"max" = myMax(l#(-2),oldBounds);
-                    -- could add a condition on the second-to-last unknown
-                    )
-                else (
-                    try (bounds#(sub((l_(-2)),substitutions)))#"min" = myMin(l#(-1),oldBounds);
-                    -- could add a condition on the second-to-last unknown
-                    );
-                )
-            else (
-                try (bounds#(sub((l_(-2)),substitutions)))#"min" = myMin(l#(-1),oldBounds);
-                -- could add a condition on the second-to-last unknown
-                );
-            );
-        );
-    *-
     bounds = new HashTable from (keys bounds / (v -> v => new HashTable from bounds#v));
     (toReturn, bounds)
     )
