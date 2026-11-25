@@ -1,3 +1,10 @@
+-*
+Written by Boyana Martinova, Marcus Robinson, Karl Schwede, Yuhui (Wei) Yao, last updated 2026.
+   
+You may redistribute this file under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 2 of
+the License, or any later version.
+*-
 newPackage( "FastMinors",
 Version => "1.3.1", Date => "May 13th, 2026", Authors => {
     {
@@ -2479,6 +2486,15 @@ TEST ///--check #18 (doing a projdim check)
     assert((projDim imA == 0) and (projDim imB == 0))
 ///
 
+TEST ///--check #18 (doing a projdim check)
+    R = QQ[x,y];
+    A = matrix {{-2*y+1, x^2+y^2-y, 2*x*y-x}, {2*x, 0, 2*y^2-2*y}};
+    B = matrix {{2*x*y-x, 4*x^2-1}, {2*y^2-2*y, 4*x*y-2*x}};
+    imA = image A;
+    imB = image B;
+    assert((projDim imA == 0) and (projDim imB == 0))
+///
+
 TEST ///--check #19 (checking [regularInCodim, VerifyNonRegular])
     R = QQ[x,y,z]/(x^4+y^4+z^4)
     S = QQ[a,b,c,d,e,f]
@@ -2490,6 +2506,7 @@ TEST ///--check #19 (checking [regularInCodim, VerifyNonRegular])
     C = ZZ/7[u,v,w]/(u^2*w-v^3)
     assert(not regularInCodimension(1, C, VerifyNonRegular=>true))
 ///
+
 
 TEST /// --check #20 (recursiveMinors agrees with the built-in minors)
     -- recursiveMinors is a public-API parallel to "minors"; the two must agree
