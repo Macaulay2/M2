@@ -104,9 +104,17 @@ ZZp Ideal := opts -> (I) -> (
 	  fraction(S,S) := S / S := (x,y) -> if y === 0_S then error "division by zero" else x//y;
 	  S.frac = S;		  -- ZZ/n with n PRIME!
 	  sqrt S := x -> promote(tonelliShanks(lift(x, ZZ), n), S);
+      promote(S, RingElement) := basicPromote;
+      promote(Matrix, S, RingElement) := (m, R, T) -> basicPromoteMatrix(m, T, identity);
+      promote(Module, S, RingElement) := (M, R, T) -> basicPromoteModule(M, T, identity);
+      promote(MutableMatrix, S, RingElement) := (m, R, T) -> basicPromoteMutableMatrix(m, T);
       savedQuotients#(typ, n) = S;
       lift(S,QQ) := opts -> liftZZmodQQ;
 	  S))
+
+isPromotable(QuotientRing, Ring) := (R, S) -> (
+    if isFinitePrimeField R then char R == char S
+    else lookup(promote, R, S) =!= null)
 
 initializeEngineLinearAlgebra = method()
 initializeEngineLinearAlgebra Ring := (R) -> R#"EngineLinearAlgebra" = true

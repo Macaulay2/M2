@@ -316,6 +316,7 @@ set(SRCLIST
   basic-rings/aring-ZZp-flint
   basic-rings/aring-ZZp
   basic-rings/aring
+  basic-rings/ring-structure
   rings/frac
   rings/GF
   rings/localring
@@ -490,6 +491,7 @@ if(BUILD_TESTING)
     unit-tests/MatrixIOTest.cpp
     unit-tests/fromStream.cpp
     unit-tests/LatticePointsTest.cpp
+    unit-tests/RingStructureTest.cpp
     unit-tests/testMain.cpp # not needed, except for GC_INIT
 
     unit-tests/OverflowTest.cpp

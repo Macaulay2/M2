@@ -37,6 +37,7 @@ INTERFACE = \
 	basic-mutable-matrices/lapack \
 	basic-mutable-matrices/mat \
 	basic-rings/aring \
+	basic-rings/ring-structure \
 	basic-rings/aring-CC \
 	basic-rings/aring-CCC \
 	basic-rings/aring-CCi \
