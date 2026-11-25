@@ -214,6 +214,9 @@ $(DOC_DIST_NAME).tar.gz:
 	mkdir -p $(DOC_DIST_NAME)/share/doc
 	cp -r @pre_docdir@ $(DOC_DIST_NAME)/share/doc
 	cp -r @pre_infodir@ $(DOC_DIST_NAME)/share
+	mkdir -p $(DOC_DIST_NAME)/share/Macaulay2/Style
+	cp @pre_packagesdir@/Style/search-data.js \
+		$(DOC_DIST_NAME)/share/Macaulay2/Style
 	mkdir -p $(DOC_DIST_NAME)/dump
 	for PACKAGE_DIR in @pre_libm2dir@/*;                                 \
 	do                                                                   \
