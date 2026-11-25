@@ -1,3 +1,10 @@
+-*
+Written by Boyana Martinova, Marcus Robinson, Karl Schwede, Yuhui (Wei) Yao, last updated 2026.
+   
+You may redistribute this file under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 2 of
+the License, or any later version.
+*-
 newPackage( "FastMinors",
 Version => "1.3.1", Date => "May 13th, 2026", Authors => {
     {
