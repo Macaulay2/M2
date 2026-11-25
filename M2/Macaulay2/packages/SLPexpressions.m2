@@ -13,19 +13,18 @@ newPackage(
      Authors => {
 	  {Name => "Anton Leykin", 
 	      Email => "leykin@math.gatech.edu",
-	      HomePage => "https://people.math.gatech.edu/~aleykin3"
+	      HomePage => "https://antonleykin.math.gatech.edu/"
 	      },
 	  {Name => "Timothy Duff", 
-                Email => "tduff3@gatech.edu",
-                HomePage => "http://people.math.gatech.edu/~tduff3"
+                Email => "tduff@missouri.edu",
+                HomePage => "https://timduff35.github.io/timduff35/"
                 },
 	  {Name => "Justin Chen",
-                Email => "jchen646@math.gatech.edu",
-                HomePage => "https://people.math.gatech.edu/~jchen646"
+                HomePage => "https://sites.google.com/view/justinchenmath/home"
                 },
 	  {Name => "Mike Stillman", 
-                Email => "mike@math.cornell.edu", 
-                HomePage => "http://www.math.cornell.edu/~mike"
+                Email => "mikestillman1@gmail.com",
+                HomePage => "https://mikestillman.github.io"
                 }
 	  },
      Configuration =>  {},	

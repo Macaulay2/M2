@@ -5,7 +5,7 @@ newPackage(
     Date=>"July 4, 2025",
     Authors=>{
         {Name=>"Thomas Brazelton",
-            Email=>"brazelton@math.harvard.edu",
+            Email=>"tbraz@alumni.upenn.edu",
             HomePage=>"https://tbrazel.github.io/"},
         {Name=>"David Chan",
             Email=>"chandav2@msu.edu",
@@ -14,7 +14,7 @@ newPackage(
             Email=>"bmudrak@purdue.edu",
             HomePage=>"https://benjaminmudrak.github.io"},
         {Name=>"Ben Spitz",
-            Email=>"benspitz@virginia.edu",
+            Email=>"bespitz@iu.edu",
             HomePage=>"https://benspitz.com/"},
         {Name=>"Chase Vogeli",
             Email=>"cpv29@cornell.edu",

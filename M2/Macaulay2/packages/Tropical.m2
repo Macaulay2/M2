@@ -3,11 +3,11 @@ newPackage(
 	Version => "1.0",
 	Date => "July 2019",
 	Authors => {
-	    	{Name => "Carlos Amendola", Email => "carlos.amendola@tum.de", HomePage=>""},
-	    	{Name => "Kathlen Kohn", Email => "kathlen.korn@gmail.com", HomePage=>""},
-  		{Name => "Sara Lamboglia", Email => "lamboglia@math.uni-frankfurt.de", HomePage=>""},
-	    	{Name => "Diane Maclagan", Email => "D.Maclagan@warwick.ac.uk", HomePage=>"http://homepages.warwick.ac.uk/staff/D.Maclagan/"},
-   		{Name => "Ben Smith", Email => "benjamin.smith-3@manchester.ac.uk", HomePage=>""},
+	    	{Name => "Carlos Amendola", Email => "amendola@math.tu-berlin.de", HomePage=>""},
+	    	{Name => "Kathlen Kohn", Email => "kathlen@kth.se", HomePage=>""},
+  		{Name => "Sara Lamboglia"},
+	    	{Name => "Diane Maclagan", Email => "D.Maclagan@warwick.ac.uk", HomePage=>"https://dmaclagan.warwick.ac.uk/"},
+   		{Name => "Ben Smith", Email => "b.smith9@lancaster.ac.uk", HomePage=>""},
    		{Name => "Jeff Sommars", Email => "sommars1@uic.edu", HomePage=>"http://homepages.math.uic.edu/~sommars"},
     		{Name => "Paolo Tripoli", Email => "paolo.tripoli@nottingham.ac.uk", HomePage=>"https://sites.google.com/view/paolotripoli/home"},
    		{Name => "Magdalena Zajaczkowska", Email => "Magdalena.A.Zajaczkowska@gmail.com", HomePage=>""}

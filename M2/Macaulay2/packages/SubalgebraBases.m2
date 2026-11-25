@@ -14,7 +14,7 @@ newPackage(
         HomePage => "https://www.oliverclarkemath.com/"
         }, {
         Name => "Timothy Duff",
-        Email => "timduff@uw.edu",
+        Email => "tduff@missouri.edu",
         HomePage => "https://timduff35.github.io/timduff35/"
         }, {
         Name => "Jackson Leaman",
@@ -24,7 +24,7 @@ newPackage(
         Email => "nathannichols454@gmail.com"
         }, {
         Name => "Elise Walker",
-        Email => "elise.walker@tamu.edu",
+        Email => "eawalke@sandia.gov",
         HomePage => "https://sites.google.com/view/elise-walker/home"
         }},
     Headline => "Canonical subalgebra bases (aka SAGBI/Khovanskii bases)",

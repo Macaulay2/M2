@@ -5,10 +5,9 @@ newPackage(
         Date => "29 Aug 2011",
 	    Authors => {
             {Name => "Michael E. Stillman", 
-		        Email => "mike@math.cornell.edu", 
-		        HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"},
+		        Email => "mikestillman1@gmail.com",
+		        HomePage => "https://mikestillman.github.io"},
 	        {Name => "Jakob Kröker", 
-		        Email => "kroeker@math.uni-hannover.de", 
 		        HomePage => "" }
             },
         Headline => "a test suite for the Macaulay2 engine",

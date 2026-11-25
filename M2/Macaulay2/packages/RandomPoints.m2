@@ -4,12 +4,12 @@ newPackage(
     	Version => "1.5.3",
     	Date => "May 17th, 2023",
     	Authors => {
-	     {Name => "Sankhaneel Bisui", Email => "Sankhaneel.Bisui@umanitoba.ca", HomePage=>"https://sites.google.com/view/sankhaneelbisui/home"},
-         {Name => "Zhan Jiang", Email => "zoeng@umich.edu", HomePage => "http://www-personal.umich.edu/~zoeng/"},
-         {Name => "Sarasij Maitra", Email => "maitra@math.utah.edu", HomePage => "https://sarasij93.github.io/"},         
-	     {Name=> "Thai Nguyen", Email =>"nguyt161@mcmaster.ca", HomePage=>"https://sites.google.com/view/thainguyenmath "},
-         {Name=> "Frank-Olaf Schreyer", Email =>"schreyer@math.uni-sb.de", HomePage=>"https://www.math.uni-sb.de/ag/schreyer/index.php/ "},
-	     {Name=>"Karl Schwede", Email=>"schwede@math.utah.edu", HomePage=>"https://www.math.utah.edu/~schwede/" }	     	     
+	     {Name => "Sankhaneel Bisui", Email => "sankhaneel@iiserb.ac.in", HomePage=>"https://sites.google.com/view/sankhaneelbisui/home"},
+         {Name => "Zhan Jiang"},
+         {Name => "Sarasij Maitra", Email => "sarasij.maitra@villanova.edu", HomePage => "https://sarasij93.github.io/"},
+	     {Name=> "Thai Nguyen", Email =>"tnguyen5@udayton.edu", HomePage=>"https://sites.google.com/view/thainguyenmath"},
+         {Name=> "Frank-Olaf Schreyer", Email =>"schreyer@math.uni-sb.de", HomePage=>"https://www.math.uni-sb.de/ag/schreyer/"},
+	     {Name=>"Karl Schwede", Email=>"schwede@math.utah.edu", HomePage=>"https://kschwede.github.io/" }
 	     },
     	Headline => "find a point in a given variety over a finite field",
         PackageImports => {"SwitchingFields", "MinimalPrimes", "ConwayPolynomials"}, 

@@ -14,10 +14,10 @@ newPackage(
         Version => "0.1.0", 
         Date => "27. May 2015",
         Authors => {
-            {Name => "Michael DiPasquale", Email => "mdipasq@okstate.edu", HomePage => "http://math.okstate.edu/people/mdipasq/"},
-            {Name => "Gwyn Whieldon", Email => "whieldon@hood.edu", HomePage => "http://cs.hood.edu/~whieldon"},
-	    {Name => "Eliana Duarte", Email => "emduart2@illinois.edu", HomePage => "https://faculty.math.illinois.edu/~emduart2/"},
-	    {Name => "Daniel Irving Bernstein", Email=> "dibernst@ncsu.edu", HomePage =>"http://www4.ncsu.edu/~dibernst"}
+            {Name => "Michael DiPasquale", Email => "midipasq@nmsu.edu", HomePage => "https://midipasq.github.io/"},
+            {Name => "Gwyn Whieldon", Email => "gwyn.whieldon@gmail.com"},
+	    {Name => "Eliana Duarte", Email => "eliana.gelvez@fc.up.pt", HomePage => "https://emduart2.github.io"},
+	    {Name => "Daniel Irving Bernstein", Email=> "dbernstein1@tulane.edu", HomePage =>"https://dibernstein.github.io"}
         },
         Headline => "splines on simplicial complexes, polytopal complexes, and graphs",
 	Keywords => {"Applied Algebraic Geometry"},

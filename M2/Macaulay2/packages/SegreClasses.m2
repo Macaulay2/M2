@@ -3,11 +3,11 @@ newPackage( "SegreClasses",
     Date => "May 22, 2022",
     Authors => {
         {Name => "Martin Helmer",
-         Email => "mhelmer@ncsu.edu",
+         Email => "martin.helmer@swansea.ac.uk",
          HomePage => "http://martin-helmer.com"},
         {Name => "Corey Harris",
-         Email => "Corey.Harris@mis.mpg.de",
-         HomePage => "http://coreyharris.name"}
+         Email => "coreyh@math.uio.no",
+         HomePage => "https://www.coreyharris.name/"}
     },
     Headline => "Segre class computations for containment of varieties and Fulton-MacPherson intersection products",
     Keywords => {"Intersection Theory"},

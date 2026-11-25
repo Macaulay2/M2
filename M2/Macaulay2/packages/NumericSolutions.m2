@@ -27,7 +27,7 @@ newPackage (
  Keywords => {"Numerical Algebraic Geometry"},
  Authors => {
   {Name => "Laura Menini", Email => "menini@disp.uniroma2.it"},
-  {Name => "Corrado Possieri", Email => "possieri@ing.uniroma2.it"},
+  {Name => "Corrado Possieri", Email => "corrado.possieri@uniroma2.it"},
   {Name => "Antonio Tornambe", Email => "tornambe@disp.uniroma2.it"}
  }
 )

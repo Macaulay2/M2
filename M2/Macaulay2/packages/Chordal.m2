@@ -5,8 +5,8 @@ newPackage(
     Date => "May 15, 2021",
     Authors => {
       {Name => "Diego Cifuentes",
-       Email => "diegcif@mit.edu",
-       HomePage => "http://www.mit.edu/~diegcif"},
+       Email => "diego.cifuentes@isye.gatech.edu",
+       HomePage => "https://diegcif.github.io"},
       {Name => "Pablo A. Parrilo", 
        Email => "parrilo@mit.edu",
        HomePage => "http://www.mit.edu/~parrilo/"}

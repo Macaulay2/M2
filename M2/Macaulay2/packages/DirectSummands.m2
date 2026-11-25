@@ -20,8 +20,8 @@ newPackage(
     Date => "May 8th 2026",
     Headline => "decompositions of modules and coherent sheaves",
     Authors => {
-	{ Name => "Devlin Mallory", Email => "malloryd@math.utah.edu", HomePage => "https://math.utah.edu/~malloryd/"},
-	{ Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",         HomePage => "https://math.umn.edu/~mahrud/"}
+	{ Name => "Devlin Mallory", Email => "dmallory@bcamath.org", HomePage => "https://devlin-mallory.github.io/"},
+	{ Name => "Mahrud Sayrafi", Email => "msayrafi2@unl.edu",         HomePage => "https://mahrud.github.io"}
 	},
     Keywords => { "Commutative Algebra" },
     PackageImports => {

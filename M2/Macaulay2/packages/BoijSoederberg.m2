@@ -4,11 +4,11 @@ newPackage(
     	Date => "April 01, 2015",
     	Authors => { -- This Package was originally written by D. Eisenbud, F. Schreyer, and M. Stillman. 
 	             -- Various revisions and updates were made by C. Gibbons and B. Stone.
-	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
+	     {Name => "David Eisenbud", Email => "de@math.berkeley.edu", HomePage => "https://eisenbud.github.io"},
 	     {Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de"},
-	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"},
-	     {Name => "Courtney Gibbons", Email => "crgibbon@hamilton.edu", HomePage => "http://people.hamilton.edu/cgibbons/"},
-	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelphi.edu/~bstone/"}
+	     {Name => "Mike Stillman", Email => "mikestillman1@gmail.com", HomePage => "https://mikestillman.github.io"},
+	     {Name => "Courtney Gibbons", Email => "crgibbon@hamilton.edu", HomePage => "https://people.hamilton.edu/cgibbons/index.html"},
+	     {Name => "Branden Stone", Email => "branden.stone@gtri.gatech.edu", HomePage => "http://stonebranden.com/"}
 	     }, 
     	Headline => "Betti diagram operations useful for investigating the Boij-Soederberg conjectures",
 	Keywords => {"Commutative Algebra"},

@@ -4,7 +4,7 @@ newPackage(
     	Version => "0.9", 
     	Date => "11 Nov 2021",
     	Authors => {
-	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"},
+	     {Name => "Mike Stillman", Email => "mikestillman1@gmail.com", HomePage => "https://mikestillman.github.io"},
 	     {Name => "Kristine Jones", Email => "kejones84@gmail.com"}},
 	Headline => "computing Groebner loci in Hilbert schemes",
         PackageImports => {"Elimination"},

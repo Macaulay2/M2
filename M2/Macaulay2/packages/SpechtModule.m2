@@ -4,8 +4,7 @@ newPackage(
         Version => "1.0", 
         Date => "October 22, 2019",
         Authors => {{Name => "Jonathan Niño", 
-                  Email => "ja.nino937@uniandes.edu.co", 
-                  HomePage => "http://www.uniandes.edu.co"}},
+                  Email => "ja.nino937@uniandes.edu.co"}},
 	Keywords => {"Representation Theory"},
         Headline => "invariants for permutation groups",
         DebuggingMode => false

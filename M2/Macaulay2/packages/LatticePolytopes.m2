@@ -14,12 +14,8 @@ newPackage("LatticePolytopes",
     Version => "1.0",
     Date => "May 4, 2015",
     Authors => {
-	{Name => "Anders Lundman",
-	    HomePage => "http://www.math.kth.se/~alundman",
-	    Email => "alundman@math.kth.se"},
-	{Name => "Gustav Sædén Ståhl",
-	    HomePage => "http://www.math.kth.se/~gss",
-	    Email => "gss@math.kth.se"}
+	{Name => "Anders Lundman"},
+	{Name => "Gustav Sædén Ståhl"}
       	},
     Keywords => {"Convex Geometry"},
     PackageExports => {"Polyhedra","NormalToricVarieties"}

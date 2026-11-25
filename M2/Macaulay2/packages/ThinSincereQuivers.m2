@@ -9,7 +9,7 @@ newPackage(
          HomePage => "https://github.com/marybarker"}, 
         {Name => "Patricio Gallardo",
          Email => "pgallard@ucr.edu",
-         HomePage => "http://patriciogallardo.com/"
+         HomePage => "https://sites.google.com/site/patriciogallardomath/"
         }
     },
     PackageImports => {"Graphs", "Polyhedra", "LatticePolytopes"},

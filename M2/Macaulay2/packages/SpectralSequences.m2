@@ -35,13 +35,11 @@ newPackage(
   Date => "9 March 2026",
   Authors => {
        {
-      Name => "David Berlekamp", 
-      Email => "daffyd@math.berkeley.edu", 
-      HomePage => "http://www.math.berkeley.edu/~daffyd"},
+      Name => "David Berlekamp"},
     {
       Name => "Adam Boocher", 
-      Email => "boocher@math.utah.edu", 
-      HomePage => "http://www.math.utah.edu/~boocher"},
+      Email => "aboocher@sandiego.edu",
+      HomePage => "https://aboocher.github.io"},
        {
       Name => "Nathan Grieve", 
       Email => "nathan.m.grieve@gmail.com",
@@ -53,11 +51,10 @@ newPackage(
     {
       Name => "Gregory G. Smith", 
       Email => "ggsmith@mast.queensu.ca", 
-      HomePage => "http://www.mast.queensu.ca/~ggsmith"},
+      HomePage => "https://ggsmith.ca"},
  {
       Name => "Thanh Vu", 
-      Email => "vqthanh@math.berkeley.edu",
-      HomePage => "http://math.berkeley.edu/~thanh"}},
+      Email => "vuqthanh@gmail.com"}},
   Headline => "spectral sequences",
   Keywords => {"Homological Algebra"},
   PackageImports => {},

@@ -4,8 +4,8 @@ newPackage(
     Date => "September 28th, 2025",
     Authors => {
         {Name => "Trung Chau", Email => "chauchitrung1996@gmail.com", HomePage => "https://trungchaumath.github.io/"}, 
-        {Name => "Karl Schwede", Email => "schwede@math.utah.edu", HomePage => "https://www.math.utah.edu/~schwede/"},
-        {Name => "Hunter Simper", Email => "hunter.simper@utah.edu", HomePage => "https://www.huntersimper.com/"}},    
+        {Name => "Karl Schwede", Email => "schwede@math.utah.edu", HomePage => "https://kschwede.github.io/"},
+        {Name => "Hunter Simper", Email => "hsimpermath@gmail.com", HomePage => "https://www.huntersimper.com/"}},
     Headline => "singularities of pairs with non-principal ideals",
     Keywords => {"Commutative Algebra", "Singularities"},
     DebuggingMode => false,

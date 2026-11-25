@@ -5,11 +5,11 @@ newPackage(
     Authors => {
 	{ Name => "Paul Goerlach",           Email => "paul.goerlach@ovgu.de",              HomePage => "" },
 	{ Name => "Joris Koefler",           Email => "joris.koefler@mis.mpg.de",           HomePage => "" },
-	{ Name => "Mahrud Sayrafi",          Email => "mahrud@fields.utoronto.ca",          HomePage => "https://math.umn.edu/~mahrud/" },
+	{ Name => "Mahrud Sayrafi",          Email => "msayrafi2@unl.edu",          HomePage => "https://mahrud.github.io" },
 	{ Name => "Anna-Laura Sattelberger", Email => "anna-laura.sattelberger@mis.mpg.de", HomePage => "" },
 	{ Name => "Hendrik Schroeder",       Email => "h.schroeder@tu-berlin.de",           HomePage => "" },
 	{ Name => "Nicolas Weiss",           Email => "nicolas.weiss@mis.mpg.de",           HomePage => "" },
-	{ Name => "Francesca Zaffalon",      Email => "francesca.zaffalon@mis.mpg.de",      HomePage => "" }
+	{ Name => "Francesca Zaffalon",      Email => "francesca.zaffalon@univie.ac.at",      HomePage => "https://sites.google.com/view/francescazaffalon/home" }
     },
     Headline => "connection matrices and integrable systems from D-ideals",
     Keywords => { "D-modules" },

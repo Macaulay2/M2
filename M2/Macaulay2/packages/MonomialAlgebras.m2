@@ -3,9 +3,9 @@ newPackage(
     	Version => "2.3",
     	Date => "May 11, 2013",
     	Authors => {
-         {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
-         {Name => "Janko Boehm", Email => "boehm@mathematik.uni-kl.de", HomePage => "http://www.mathematik.uni-kl.de/~boehm/"},
-         {Name => "Max Nitsche", Email => "nitsche@mis.mpg.de", HomePage => ""}
+         {Name => "David Eisenbud", Email => "de@math.berkeley.edu", HomePage => "https://eisenbud.github.io"},
+         {Name => "Janko Boehm", Email => "boehm@mathematik.uni-kl.de", HomePage => "https://agag-jboehm.math.rptu.de/~boehm/"},
+         {Name => "Max Nitsche", HomePage => ""}
          },
     	Headline => "monomial algebras",
 	Keywords => {"Commutative Algebra"},

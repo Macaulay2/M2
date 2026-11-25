@@ -30,9 +30,9 @@ newPackage(
     Version => "2.1",
     Date => "May 08, 2021",
     Authors => {
-        {Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud/"},
-        {Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"},
-        {Name => "David Eisenbud", Email => "de@msri.org",           HomePage => "http://www.msri.org/~de/"}
+        {Name => "Mahrud Sayrafi", Email => "msayrafi2@unl.edu",        HomePage => "https://mahrud.github.io"},
+        {Name => "Mike Stillman",  Email => "mikestillman1@gmail.com", HomePage => "https://mikestillman.github.io"},
+        {Name => "David Eisenbud", Email => "de@math.berkeley.edu",           HomePage => "https://eisenbud.github.io"}
         },
     Headline => "operations over a local ring R_p",
     Keywords => {"Commutative Algebra"},

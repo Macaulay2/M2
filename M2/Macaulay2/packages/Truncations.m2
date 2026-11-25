@@ -17,9 +17,9 @@ newPackage(
     Date => "22 May 2021",
     Headline => "truncation of a module",
     Authors => {
-        { Name => "David Eisenbud", Email => "de@msri.org",           HomePage => "https://www.msri.org/~de" },
-        { Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "https://www.math.cornell.edu/~mike" },
-        { Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud" }
+        { Name => "David Eisenbud", Email => "de@math.berkeley.edu",           HomePage => "https://eisenbud.github.io" },
+        { Name => "Mike Stillman",  Email => "mikestillman1@gmail.com", HomePage => "https://mikestillman.github.io" },
+        { Name => "Mahrud Sayrafi", Email => "msayrafi2@unl.edu",        HomePage => "https://mahrud.github.io" }
         },
     Keywords => { "Commutative Algebra" },
     PackageExports => { "Polyhedra" },

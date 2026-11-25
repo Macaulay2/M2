@@ -5,8 +5,8 @@ newPackage(
     Date => "2 September 2017",
     Authors => {
       {Name => "Diego Cifuentes",
-       Email => "diegcif@mit.edu",
-       HomePage => "http://www.mit.edu/~diegcif"}
+       Email => "diego.cifuentes@isye.gatech.edu",
+       HomePage => "https://diegcif.github.io"}
     },
     Headline => "triangular decompositions of ideals",
     Keywords => {"Commutative Algebra"},

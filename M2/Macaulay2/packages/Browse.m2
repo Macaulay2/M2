@@ -2,7 +2,7 @@
 --		Copyright 1996 by Daniel R. Grayson
 newPackage ( "Browse",
      Authors => {
-	  { Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/" }
+	  { Name => "Daniel R. Grayson", HomePage => "https://www.graysonfamily.org/dan/" }
 	  },
      Date => "1996",
      Version => "1.0",

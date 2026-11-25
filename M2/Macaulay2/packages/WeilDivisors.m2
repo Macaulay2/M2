@@ -4,7 +4,7 @@ newPackage( "WeilDivisors",
      Version => "0.3", 
      Date => "May 30th, 2018",
      Authors => {
-	  {Name => "Karl Schwede", Email=> "kschwede@gmail.com", HomePage=> "http://www.math.utah.edu/~schwede"},
+	  {Name => "Karl Schwede", Email=> "schwede@math.utah.edu", HomePage=> "https://kschwede.github.io/"},
      	  {Name=> "Zhaoning Yang", Email=> "zyy5054@gmail.com"}},
      Headline => "Weil divisors",
      Keywords => {"Commutative Algebra"},

@@ -3,7 +3,7 @@ newPackage(
 "TSpreadIdeals",
 Version => "1.0",
 Date => "February 01, 2021",
-Authors => {{Name => "Luca Amata", Email => "lamata@unime.it", HomePage => "http://mat521.unime.it/amata"}
+Authors => {{Name => "Luca Amata", Email => "luca.amata@scuola.istruzione.it", HomePage => "https://lucamata.github.io"}
            },
 Headline => "t-spread ideals of a polynomial ring",
 Keywords => {"Commutative Algebra"},

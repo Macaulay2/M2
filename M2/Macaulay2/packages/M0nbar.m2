@@ -7,7 +7,7 @@ newPackage(
 	   Email => "hmoon8@fordham.edu"},
           {Name=> "Dave Swinarski", 
 	   Email=> "dswinarski@fordham.edu",
-	   HomePage=>"http://faculty.fordham.edu/dswinarski"}
+	   HomePage=>"https://faculty.fordham.edu/dswinarski/"}
 	  },
      Keywords => {"Commutative Algebra"},
      Headline => "calculations for divisors and F-curves on the moduli space of stable n-pointed genus zero curves"

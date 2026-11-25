@@ -5,7 +5,7 @@ newPackage(
     Headline => "an interface to the PALP software for lattice polytopes",
     Authors => {
         {Name => "Mike Stillman",
-            Email => "mike@math.cornell.edu",
+            Email => "mikestillman1@gmail.com",
             HomePage => "https://mikestillman.github.io"}
         },
     Keywords => {"Interfaces", "Toric Geometry"},

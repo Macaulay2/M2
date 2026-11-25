@@ -5,8 +5,8 @@ newPackage(
 	Date => "13 October 2008",
 	Authors => {
 		{Name => "Chris Francisco", 
-		     Email => "chris@math.okstate.edu", 
-		     HomePage => "http://www.math.okstate.edu/~chris"}
+		     Email => "chris.francisco@okstate.edu",
+		     HomePage => "https://math.okstate.edu/people/chris/"}
 	},
 	Headline => "lexicographic-type monomial ideals",
     PackageImports => {"Complexes"},

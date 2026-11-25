@@ -14,10 +14,10 @@ newPackage(
         Date => "4 April 2018",
         Authors => {{Name => "Frank-Olaf Schreyer", 
                         Email => "schreyer@math.uni-sb.de",
-		        HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
+		        HomePage => "https://www.math.uni-sb.de/ag/schreyer/"},
                     {Name => "Michael E. Stillman", 
-		        Email => "mike@math.cornell.edu", 
-		        HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
+		        Email => "mikestillman1@gmail.com",
+		        HomePage => "https://mikestillman.github.io"}
                     },
         Headline => "random complexes over fields or the integers",
 	Keywords => {"Examples and Random Objects"},

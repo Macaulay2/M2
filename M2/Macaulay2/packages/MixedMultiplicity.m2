@@ -21,8 +21,7 @@ newPackage(
 	    HomePage => "https://web.iitd.ac.in/~vmukunda"
 	    },
 	{    Name => "Sudeshna Roy", 
-	    Email => "sudeshnaroy@math.iitb.ac.in",
-	    HomePage => "https://sites.google.com/site/sudeshnaroy11"
+	    Email => "sudeshnaroy@math.iitb.ac.in"
 	    },
 	{    Name => "J. K. Verma", 
 	    Email => "jkv@math.iitb.ac.in", 

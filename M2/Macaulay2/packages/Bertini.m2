@@ -6,17 +6,17 @@ newPackage(
   Date => "June 13, 2026",
   Authors => {
     {Name => "Elizabeth Gross",
-     Email=> "elizabeth.gross@sjsu.edu",
-     HomePage => "http://math.sjsu.edu/~egross"},
+     Email=> "egross@hawaii.edu",
+     HomePage => "https://egross-uh.github.io/"},
     {Name => "Jose Israel Rodriguez",
      Email => "Jose@math.wisc.edu",
-     HomePage =>"https://www.math.wisc.edu/~jose/"},
+     HomePage =>"https://people.math.wisc.edu/~jrodriguez43/"},
     {Name => "Dan Bates",
-     Email => "bates@math.colostate.edu",
-     HomePage => "http://www.math.colostate.edu/~bates"},
+     Email => "dbates@usna.edu",
+     HomePage => "https://www.usna.edu/Users/math/dbates/"},
     {Name => "Anton Leykin",
      Email => "leykin@math.gatech.edu",
-     HomePage => "http://www.math.gatech.edu/~leykin"}
+     HomePage => "https://antonleykin.math.gatech.edu/"}
   },
   Headline => "interface to Bertini",
   Keywords => {"Numerical Algebraic Geometry", "Interfaces"},

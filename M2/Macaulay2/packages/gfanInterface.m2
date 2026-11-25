@@ -8,10 +8,10 @@ newPackage(
 	Version => "0.5",
 	Date => "May 15, 2021",
 	Authors => {
-		{Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => ""},
-		{Name => "Andrew Hoefel", Email => "andrew.hoefel@gmail.com", HomePage =>"http://www.mast.queensu.ca/~ahhoefel/"},
-	    { Name => "Diane Maclagan", Email => "D.Maclagan@warwick.ac.uk", HomePage => "http://homepages.warwick.ac.uk/staff/D.Maclagan/", Maintainer => true },
-	    {Name => "Josephine Yu", Email => "jyu@math.gatech.edu", HomePage => "http://people.math.gatech.edu/~jyu67/"}},
+		{Name => "Mike Stillman", Email => "mikestillman1@gmail.com", HomePage => ""},
+		{Name => "Andrew Hoefel", Email => "andrew.hoefel@gmail.com"},
+	    { Name => "Diane Maclagan", Email => "D.Maclagan@warwick.ac.uk", HomePage => "https://dmaclagan.warwick.ac.uk/", Maintainer => true },
+	    {Name => "Josephine Yu", Email => "jyu@math.gatech.edu", HomePage => "https://sites.gatech.edu/josephineyu/"}},
 	Headline => "interface to Anders Jensen's Gfan software",
 	Keywords => {"Interfaces"},
 	Configuration => {

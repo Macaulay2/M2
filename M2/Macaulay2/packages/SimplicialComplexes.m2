@@ -22,9 +22,9 @@ newPackage(
     Authors => {
 	{Name     => "Gregory G. Smith", 
 	 Email    => "ggsmith@mast.queensu.ca", 
-	 HomePage => "http://www.mast.queensu.ca/~ggsmith"},
+	 HomePage => "https://ggsmith.ca"},
         {Name => "Ben Hersey", 
-	 Email => "b.hersey@queensu.ca"},
+	 Email => "benjamin.hersey@concordia.ca"},
         {Name     => "Sasha Zotine",
 	 Email    => "zotinea@mcmaster.ca",
 	 HomePage => "https://sites.google.com/view/szotine/home" }

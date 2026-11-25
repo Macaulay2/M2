@@ -4,7 +4,7 @@ newPackage("Units",
     	Date => "May 5, 2011",
 	Keywords => {"Miscellaneous"},
     	Authors => {
-	     {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://dangrayson.com/"}
+	     {Name => "Daniel R. Grayson", HomePage => "https://www.graysonfamily.org/dan/"}
 	     }
     	)
 fundamentalUnits = { symbol second, symbol gram, symbol meter, symbol ampere, symbol candela, symbol mole, symbol degreeKelvin }

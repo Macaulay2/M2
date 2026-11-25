@@ -3,7 +3,7 @@ newPackage(
     	Version => "1.1", 
     	Date => "June 27, 2018",
     	Authors => {{Name => "David Eisenbud", 
-		  Email => "de@msri.org"
+		  Email => "de@math.berkeley.edu"
 		  },
 	            {Name => "Mats Boij",
 		     Email => "boij@kth.se"}

@@ -4,7 +4,7 @@ newPackage(
     "VNumber",
     Version => "1.0",
     Date => "September 12, 2024",
-    Authors => {{Name => "Antonino Ficarra", Email => "antficarra@unime.it", HomePage => "https://www.researchgate.net/profile/Antonino-Ficarra"},
+    Authors => {{Name => "Antonino Ficarra", Email => "aficarra@bcamath.org", HomePage => "https://sites.google.com/view/antonino-ficarra/home"},
         {Name => "Emanuele Sgroi", Email => "emasgroi@unime.it", HomePage => "https://www.researchgate.net/profile/Emanuele-Sgroi"}},
     Headline => "compute v-number of homogeneous ideals and v-function of monomial ideals",
     Keywords => {"Documentation"},

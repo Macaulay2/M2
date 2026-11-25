@@ -12,7 +12,7 @@ newPackage(
         Version => "1.2", 
         Date => "July 8, 2021",
         Headline => "computations with sparse resultants",
-        Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
+        Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it"}},
 	Keywords => {"Commutative Algebra"},
         PackageExports => {"Resultants"},
         DebuggingMode => false,

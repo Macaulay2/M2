@@ -5,7 +5,7 @@ newPackage(
         Version => "0.1",
         Date => "December 10, 2013",
         Authors => {{Name => "Hiep Dang",
-                    Email => "hiepdt_tt@dlu.edu.vn"}},
+                    Email => "hiepdt@dlu.edu.vn"}},
         Headline => "Enumeration of rational curves via torus actions",
 	Keywords => {"Commutative Algebra"},
         DebuggingMode => false

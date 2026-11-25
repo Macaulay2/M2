@@ -19,9 +19,9 @@ newPackage(
     	Version => "1.0", 
     	Date => "February 8, 2009",
     	Authors => {
-	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu"},
-	     {Name => "Josephine Yu", Email => "jyu@math.mit.edu"},
-	     {Name => "Sonja Petrovic", Email => "petrovic@psu.edu"}
+	     {Name => "Mike Stillman", Email => "mikestillman1@gmail.com"},
+	     {Name => "Josephine Yu", Email => "jyu@math.gatech.edu"},
+	     {Name => "Sonja Petrovic", Email => "sonja.petrovic@iit.edu"}
 	     },
     	Headline => "Interface to 4ti2",
 	Keywords => {"Interfaces"},

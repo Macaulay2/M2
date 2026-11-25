@@ -4,10 +4,10 @@ newPackage(
     Date => "23 Oct 2024",
     Authors => {{Name => "Frank Moore", 
 	   Email => "moorewf@wfu.edu",
-	   HomePage => "https://math.wfu.edu/moore"},
+	   HomePage => "https://users.wfu.edu/moorewf/"},
 	{Name => "Mike Stillman",  
-            Email => "mike@math.cornell.edu", 
-            HomePage => "http://www.math.cornell.edu/~mike"}
+            Email => "mikestillman1@gmail.com",
+            HomePage => "https://mikestillman.github.io"}
         },
     Headline => "Noncommutative algebra",
     Keywords => {"Noncommutative Algebra"},

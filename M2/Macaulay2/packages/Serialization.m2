@@ -2,7 +2,7 @@ newPackage (
      "Serialization",
      DebuggingMode => false,
      Authors => {
-	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}
+	  {Name => "Daniel R. Grayson", HomePage => "https://www.graysonfamily.org/dan/"}
 	  },
      Version => "0.1",
      Keywords => {"System"},

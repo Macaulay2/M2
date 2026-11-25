@@ -11,7 +11,7 @@ newPackage(
     "Cremona",
     Version => "5.3.0", 
     Date => "November 22, 2026",
-    Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
+    Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "rational maps between projective varieties",
     Keywords => {"Algebraic Geometry"},
     AuxiliaryFiles => true,

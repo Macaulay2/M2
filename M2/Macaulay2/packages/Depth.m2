@@ -12,16 +12,16 @@ newPackage(
      Date => "September 2010, rev May 2016",
      Authors => {
 	  {Name => "Bart Snapp", 
-	      Email => "snapp@math.ohio-state.edu", 
-	      HomePage => "http://www.math.ohio-state.edu/~snapp/"
+	      Email => "snapp.14@osu.edu",
+	      HomePage => "https://people.math.osu.edu/snapp.14/"
 	      },
 	  {Name => "David Eisenbud", 
-	      Email => "de@msri.org",
-	      HomePage => "http://www.msri.org/~de"
+	      Email => "de@math.berkeley.edu",
+	      HomePage => "https://eisenbud.github.io"
 	  },
 	  {Name => "Branden Stone", 
-	      Email => "bstone@adelphi.edu",
-	      HomePage => "http://math.adelphi.edu/~bstone/"
+	      Email => "branden.stone@gtri.gatech.edu",
+	      HomePage => "http://stonebranden.com/"
 	  }
 	  },
      Headline => "aids in computations related to depth",

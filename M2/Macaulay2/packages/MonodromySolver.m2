@@ -5,9 +5,9 @@ newPackage(
     	Date => "May 2023",
     	Authors => {
 	     {Name => "Timothy Duff", Email => "tduff@missouri.edu"},
-	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
+	     {Name => "Cvetelina Hill"},
 	     {Name => "Anders Nedergaard Jensen", Email => "jensen@math.au.dk"},
-	     {Name => "Kisun Lee", Email => "kisunl@clemson.edu"},
+	     {Name => "Kisun Lee", Email => "kisunl@kaist.ac.kr"},
 	     {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
 	     {Name => "Jeff Sommars", Email => "sommars1@uic.edu"}
 	     },

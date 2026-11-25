@@ -5,7 +5,7 @@ newPackage(
         Authors => {
             {
                 Name => "John Cobb", 
-                Email => "jdc0173@auburn.edu", 
+                Email => "jdcobb3@gmail.com",
                 HomePage => "https://johndcobb.github.io"
                 },
             {
@@ -15,8 +15,8 @@ newPackage(
                 },
             {
                 Name => "Michael E. Stillman", 
-                Email => "mike@math.cornell.edu", 
-                HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"
+                Email => "mikestillman1@gmail.com",
+                HomePage => "https://mikestillman.github.io"
                 }
             },
         Headline => "code to analyze graph oscillators",

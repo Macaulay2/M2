@@ -6,7 +6,7 @@ newPackage(
     Date=>"Oct 9, 2020",
     Authors=>{
      	{Name=>"Jordy Lopez Garcia",
-	 Email=>"jordy.lopez@tamu.edu",
+	 Email=>"jlopezga@nd.edu",
 	 HomePage=>"https://jordylopez27.github.io/"},
     	{Name=>"Kelly Maluccio",
 	 Email=>"kmaluccio@gmail.com",

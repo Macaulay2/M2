@@ -4,8 +4,8 @@ newPackage(
      Date => "2014",
      Headline => "Equivariant Groebner bases and related algorithms",
      Authors => {
-    	  {Name => "Chris Hillar", Email => "chillar@msri.org"},
-	  {Name => "Robert Krone", Email => "krone@math.gatech.edu"},
+    	  {Name => "Chris Hillar"},
+	  {Name => "Robert Krone", Email => "rckrone@gmail.com"},
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
      Keywords => {"Groebner Basis Algorithms"},

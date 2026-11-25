@@ -3,14 +3,12 @@ newPackage(
     Version => "0.7", 
     Date => "May 8, 2021",
     Authors => {
-        {Name => "Justin Chen", 
-            Email => "justin.chen@math.gatech.edu"
-        },
+        {Name => "Justin Chen"},
         {Name => "Youngsu Kim", 
             Email => "youngsu.kim@csusb.edu"
         },
         {Name => "Jonathan Montaño", 
-            Email => "jmon@nmsu.edu"
+            Email => "montano@asu.edu"
         }
     },
     Headline => "computing the multiplicity sequence of an ideal",
