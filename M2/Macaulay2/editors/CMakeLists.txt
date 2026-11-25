@@ -6,6 +6,11 @@
 
 set(M2 ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2)
 set(M2_ARGS --script)
+set(_emacs_sources FALSE)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/emacs/M2-symbols.el.in AND
+    EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/emacs/make-M2-emacs-help.m2)
+  set(_emacs_sources TRUE)
+endif()
 
 ###############################################################################
 ## Generating the grammar files is mainly done in make-M2-symbols.m2.
@@ -15,26 +20,25 @@ set(GRAMMAR_FILES
   pygments/macaulay2.py
 #  rouge/macaulay2.rb
   vim/syntax/m2.vim
-  vim/dict/m2.vim.dict
-  emacs/M2-symbols.el)
+  vim/dict/m2.vim.dict)
+if(_emacs_sources)
+  list(APPEND GRAMMAR_FILES emacs/M2-symbols.el)
+endif()
 
 set(GRAMMAR_TEMPLATES ${GRAMMAR_FILES})
 list(TRANSFORM GRAMMAR_TEMPLATES APPEND ".in")
 add_custom_target(M2-editors DEPENDS ${GRAMMAR_FILES})
 add_custom_command(OUTPUT ${GRAMMAR_FILES}
   COMMENT "Generating M2 grammar files for editors"
-  COMMAND ${M2} ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/make-M2-symbols.m2
+  COMMAND ${CMAKE_COMMAND} -E env M2_SKIP_EMACS=$<NOT:$<BOOL:${_emacs_sources}>>
+    ${M2} ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/make-M2-symbols.m2
   MAIN_DEPENDENCY make-M2-symbols.m2
   DEPENDS M2-core ${GRAMMAR_TEMPLATES})
 
 ###############################################################################
 ## Generating the M2-mode package for Emacs
 
-if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/emacs/make-M2-emacs-help.m2)
-  message(WARNING "Macaulay2/editors/emacs submodule is missing; skipping M2-emacs target")
-  return()
-endif()
-
+if(_emacs_sources)
 # TODO: only the emacs target is installed in usr-dist by default
 set(M2_INSTALL_EMACSDIR
   ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs/site-lisp/macaulay2)
@@ -54,6 +58,7 @@ add_custom_command(OUTPUT ${EMACS_FILES}
   MAIN_DEPENDENCY emacs/make-M2-emacs-help.m2
   WORKING_DIRECTORY ${M2_INSTALL_EMACSDIR}
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/emacs/M2-symbols.el make-M2-symbols.m2)
+endif()
 
 ################################################################################
 ## Generating prism.js/highlight.js for syntax highlighting in the html
