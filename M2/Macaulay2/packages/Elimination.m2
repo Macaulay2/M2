@@ -355,7 +355,7 @@ assert(ring d === ring discriminant(x^2,x));
 -- Check univariate discriminants work as expected
 S = ZZ[x];
 d = discriminant(x^4+x^2+1,x);
-assert(d == 114);
+assert(d == 144);
 ///
 end
 loadPackage "Elimination"
