@@ -9,7 +9,8 @@ newPackage(
                   Email => "mike@math.cornell.edu",
                   HomePage => "http://pi.math.cornell.edu/~mike"},
         },
-	PackageExports => {"DGAlgebras","PushForward","PrimaryDecomposition"},
+	PackageExports => {"Complexes","DGAlgebras","PushForward","PrimaryDecomposition","LocalRings"},
+        AuxiliaryFiles => true,
         Headline => "A-infinity structures, duals, and dualizing complexes",
 	Keywords => {"Commutative Algebra"}
 	)
@@ -35,6 +36,10 @@ export {
     "dualAInfinityModule",
     "dualAInfinityStructure",
     "dualizingComplexViaAInfinity",
+    "SAInfAlg", "AInfAlg", "SAInfMod", "AInfMod",
+    "sAInfAlg", "aInfAlg", "sAInfMod", "aInfMod",
+    "sAInfAlgModel", "sAInfModModel", "checkStasheff", "burkeModule",
+    "TensorOrder",
     --symbols
     "Bounded",
     "Check",
@@ -139,15 +144,18 @@ isLocallyAcyclic Complex := Boolean => C -> (
 
 -- function to check whether the multiplication
 -- 
+minimalHigherProducts = (mR,n) -> (
+   red := originMap(mR#"baseRing");
+   mults := select(keys mR,k -> class k === List and #k >= 2 and #k <= n);
+   all(mults,k -> red(mR#k) == 0)
+   )
+
 hasMinimalMultAtOrder = (R,n) -> (
    checkGolodSetup R;
-   mR := aInfinity(R, Order => n);
-   S := mR#"baseRing";
-   red := originMap S;
+   mR := aInfinity(R,Order=>n);
    if mR#?"SResolution" and not isLocallyMinimal mR#"SResolution" then
        error "the cached resolution of R is not minimal at the origin; minimality-dependent A-infinity tests would be meaningless";
-   mults := select(keys mR, k -> class k === List and #k <= n and #k >= 2);
-   all(mults, k -> red(mR#k) == 0)
+   minimalHigherProducts(mR,n)
    )
 
 hasMinimalMult = method()
@@ -158,20 +166,144 @@ hasMinimalMult Ring := Boolean => R -> hasMinimalMult(R,2)
 hasMinimalMult (Ring,InfiniteNumber) := Boolean => (R,n) -> hasMinimalMultAtOrder(R,n)
 hasMinimalMult (Ring,ZZ) := Boolean => (R,n) -> hasMinimalMultAtOrder(R,n)
 
+-- Return the ambient ideal of a k-rational point of the quotient, whether
+-- the caller describes it before or after passing to R.
+rationalModelPoint = (R,p) -> (
+    checkNotLocalRing R;
+    I := ideal presentation R;
+    S := ring I;
+    if not instance(S,PolynomialRing) or not isField coefficientRing S then
+        error "expected a quotient of a polynomial ring over a field";
+    P := if ring p === S then p
+         else if ring p === R then I + ideal lift(gens p,S)
+         else error "expected a point ideal in the quotient or its ambient polynomial ring";
+    if P == ideal(1_S) then error "expected a proper point ideal";
+    if not isSubset(I,P) then error "the selected point is outside the quotient";
+    -- When all variables reduce to constants, S/P is precisely k because
+    -- P is proper. A positive-dimensional or non-rational ideal fails here.
+    if any(gens S,x -> #(support(x % P)) != 0) then
+        error "expected a closed point rational over the coefficient field";
+    P
+)
+
+-- At a rational point the completed regular ambient ring is Q[[z_1,..,z_r]],
+-- where z_1,..,z_r are independent linear parts, lifted to relations, and
+-- Q is the minimal regular ambient ring. Because these parameters act as
+-- zero on R, tensoring a minimal Q-resolution with their Koszul complex
+-- gives P_R^S(t) = (1+t)^r P_R^Q(t).
+intrinsicGolodByBetti = (R,mR,r) -> (
+    A := mR#"SResolution";
+    S := ring A;
+    residue := originMap S;
+    ranks := apply(length A+2,i -> rank mutableMatrix(residue A.dd_i));
+    p := apply(length A+1,i -> rank A_i-ranks#i-ranks#(i+1));
+    p = take(p,1+last positions(p,j -> j != 0));
+    for j from 1 to r do (
+        if #p < 2 then error "inconsistent ambient Betti polynomial";
+        q := new MutableList from take(p,#p-1);
+        for i from 1 to #q-1 do q#i = p#i-q#(i-1);
+        if last p != last q or any(q,u -> u < 0) then
+            error "inconsistent ambient Betti polynomial under elimination";
+        p = toList q;
+    );
+    e := numgens S-r;
+    -- Burke, Corollary 6.10: for M=k it suffices to compare through
+    -- 1+max(pd_Q R, pd_Q k-1). Both projective dimensions are finite.
+    bound := 1+max(#p-1,e-1);
+    kR := coker vars R;
+    mK := aInfinity(mR,kR);
+    predicted := new MutableList from toList(bound+1:0);
+    incomingRank := 0;
+    for i from 0 to bound do (
+        predicted#i = binomial(e,i) +
+            sum(for j from 1 to min(#p-1,i-1) list p#j*predicted#(i-j-1));
+        -- Build only through the next differential so a strict inequality
+        -- in low degree terminates without constructing the rest of the bar.
+        terms := burkeData(mR,mK,i+1);
+        outgoing := burkeDifferentialFromData(mR,mK,terms,i+1);
+        outgoingRank := rank mutableMatrix(residue outgoing);
+        actual := rank terms#i-incomingRank-outgoingRank;
+        if actual != predicted#i then return false;
+        incomingRank = outgoingRank;
+    );
+    true
+)
+
+isGolodAInfAtOrigin = R -> (
+    checkOriginSetup R;
+    I := ideal presentation R;
+    S := ring I;
+    if isSubset(I,(ideal vars S)^2) then (
+        mR := aInfinity R;
+        if isLocallyMinimal mR#"SResolution" then return minimalHigherProducts(mR,infinity);
+        return intrinsicGolodByBetti(R,mR,0);
+    );
+
+    -- Polynomial elimination of c*x+h (x absent from h, c an invertible
+    -- scalar) preserves the origin since every relation vanishes there.
+    J := try minimalPresentation I else null;
+    if J =!= null then (
+        T := ring J;
+        if instance(T,PolynomialRing) and coefficientRing T === coefficientRing S
+           and isSubset(J,(ideal vars T)^2) then return isGolodAInfAtOrigin(T/J);
+    );
+
+    residue := originMap S;
+    linearRank := rank(residue jacobian I);
+    -- The displayed generators bound the local number of generators from above.
+    -- Independent linear parts remove that many parameters after completion.
+    if numgens I-linearRank <= 1 then return true; -- regular or hypersurface
+    intrinsicGolodByBetti(R,aInfinity R,linearRank)
+)
+
+isGolodAInfAtPoint = (R,p) -> (
+    P := rationalModelPoint(R,p);
+    S := ring P;
+    coordinates := apply(gens S,x -> x % P);
+    if all(coordinates,a -> a == 0) then return isGolodAInfAtOrigin R;
+    -- f(x+a) defines the translate whose origin is the requested point a.
+    translate := map(S,S,apply(gens S,coordinates,(x,a) -> x+a));
+    isGolodAInfAtOrigin(S/(translate ideal presentation R))
+)
+
 isGolodAInf = method()
-isGolodAInf Ideal := Boolean => I -> isGolodAInf quotient I
-isGolodAInf Ring := Boolean => R -> hasMinimalMult(R, infinity)
+isGolodAInf Ideal := Boolean => I -> isGolodAInfAtOrigin quotient I
+isGolodAInf Ring := Boolean => R -> isGolodAInfAtOrigin R
+isGolodAInf(Ring,Ideal) := Boolean => (R,p) -> isGolodAInfAtPoint(R,p)
+isGolodAInf(Ideal,Ideal) := Boolean => (I,p) -> isGolodAInfAtPoint(quotient I,p)
 
 burkeResolution = method(Options=>{Check => false})
 
 zeroOrSum = (targetModule,sourceModule,blocks) ->
     if #blocks == 0 then map(targetModule,sourceModule,0) else sum blocks
 
+globalBurkeModuleResolution = (M,limit) -> (
+    R := ring M;
+    S := ring presentation R;
+    RS := map(R,S);
+    homogeneousInput := isHomogeneous R and isHomogeneous M;
+    positiveRegrading := (homogeneousInput and heft S === null)
+        or (not homogeneousInput and coefficientRing S === ZZ);
+    Mres := if homogeneousInput and not positiveRegrading then
+        freeResolution(pushForward(RS,M),LengthLimit=>limit)
+    else (
+        if not homogeneousInput then checkGlobalCoefficientSetup R;
+        N := ambientModule M;
+        if positiveRegrading then freeResolutionAfterPositiveRegrading N
+        else freeResolution(N,LengthLimit=>limit)
+        );
+    (Mres,positiveRegrading))
+
 burkeResolution(Module, ZZ) := Complex => o-> (M,len) ->(
     --put the map components together into a complex.
-    if len < 1 then error "resolution length must be positive";
+    if len < 0 then error "resolution length must be nonnegative";
+    if not instance(o.Check,Boolean) then error "Check must be a Boolean";
     R := ring M;
     checkNotLocalRing R;
+    if len == 0 then (
+        (C0,regraded) := globalBurkeModuleResolution(M,0);
+        V := R ** C0_0;
+        return complex(if V == 0 then V else labeler({0},V)));
     mA := aInfinity R;
     mG := aInfinity(mA,M);
     data := burkeData(mA,mG,len);
@@ -330,20 +462,9 @@ if ring B =!= S then
     error "the supplied A-infinity algebra has the wrong polynomial base ring";
 checkLengthLimit o.LengthLimit;
 checkOrder o.Order;
-RS := map(R,S);
 A := if mR#?"SResolution" then mR#"SResolution" else freeResolution coker presentation R;
 
-homogeneousInput := isHomogeneous R and isHomogeneous M;
-positiveRegrading := (homogeneousInput and heft S === null)
-    or (not homogeneousInput and coefficientRing S === ZZ);
-Mres := if homogeneousInput and not positiveRegrading then
-    freeResolution pushForward(RS,M)
-else (
-    if not homogeneousInput then checkGlobalCoefficientSetup R;
-    N := ambientModule M;
-    if positiveRegrading then freeResolutionAfterPositiveRegrading N
-    else freeResolution N
-    );
+(Mres,positiveRegrading) := globalBurkeModuleResolution(M,infinity);
 	
 G := labeledTensorComplex{Mres};
 m#"resolution" = G;
@@ -465,7 +586,7 @@ B := mA#"resolution";
 G := mG#"resolution";
 BB := {G}|apply(n//2, i->labeledTensorComplex(toList(i+1:B)|{G}, LengthLimit => n));
 C := apply(n+1, i-> select(apply(BB,b-> b_i), c -> c != 0));
-apply(C, c -> if #c == 0 then (ring B)^0 else labeledDirectSum c))
+apply(C, c -> if #c == 0 then (ring B)^0 else burkeLabeledDirectSum c))
 
 burkeData(Module,ZZ) := List => (M,n) ->(
 --F = burkeData(M,n) 
@@ -614,120 +735,12 @@ mapComponents1 = method()
 mapComponents1(HashTable, HashTable, ZZ) := List => (mA,mG,i) ->
     adjacentBurkeComponents(mA,mG,i)
 
-picture = method(Options => {ShowRanks => false})
-
-picture Matrix := o -> (M1) -> (
-    M := flattenBlocks M1;
-    src := indices source M;
-    tar := indices target M;
-    R := ring M1;
-    checkNotLocalRing R;
-    red := if vanishesAtOrigin R then originMap R else null;
-
-    if o#ShowRanks then (
-       src = apply(src,s -> (s,numcols M_[s]));
-       tar = apply(tar,t -> (t,numrows M^[t]));
-    );
-    netList (prepend(
-        prepend("", src),
-        for t in tar list prepend(t, for s in src list (
-                t0 := if o#ShowRanks then t_0 else t;
-		s0 := if o#ShowRanks then s_0 else s;
-		mts := M^[t0]_[s0];
-		cont := ideal M^[t0]_[s0];
-                h := if mts == 0 then
-		       "."
-		     else if (numrows mts == numcols mts and mts == 1) then
-		       "id"
-		     else if cont == ideal(1_(ring mts)) and red =!= null then
-		       toString rank(red mts)
-		     else "*"
-                ))
-        ), Alignment=>Center)
-    )
-
-picture Module := o -> M -> picture(id_M,o)
-picture Complex := o -> C -> netList apply(toList(min C+1..max C), i-> picture(C.dd_i,o))
-
-flattenBlocks = method()
-flattenBlocks Module := (F) -> (
-    if F == 0 then return directSum {null => F};
-    if not isFreeModule F then error "expected a free module";
-    (comps, inds) := componentsAndIndices F;
-    compsLabelled := for i from 0 to #comps-1 list (
-        inds#i => comps#i
-        );
-    directSum compsLabelled
-    )
-
-flattenBlocks Matrix := (M) -> (
-    F := flattenBlocks target M;
-    G := flattenBlocks source M;
-    map(F,G,matrix M)
-    )
-
-displayBlocks = method()
-displayBlocks Matrix := (M1) -> (
-    M := flattenBlocks M1;
-    src := select(indices source M, i-> i =!= null);
-    tar := select(indices target M, i-> i =!= null);
-    netList (prepend(
-        prepend("", src),
-        for t in tar list prepend(t, for s in src list (
-                mts := M^[t]_[s];
-                h := if mts == 0 then "." else if (numrows mts == numcols mts and mts == 1) then "1" else net mts
-                ))
-        ), Alignment=>Center)
-    )
-
-extractBlocks = method()
-extractBlocks(Matrix, List) := Matrix => (phi, src) ->(
-    -- returns the submatrix corresponding to the block or blocks listed in src.
-    -- src is a list of integers or a list of such lists,
-    -- representing block(s) in source phi.
-    -- note that this behavior is DIFFERENT than the function with the same
-    -- name in EagonResolution, where the list is an ordinal list of integers
-    -- representing the blocks (in some order??).
-    if class src_0 === ZZ then 
-       srcList := {src} else srcList = src;
-    phi1 := flattenBlocks phi;
-    matrix {apply(srcList,Ls->
-               phi1_[Ls])
-	   }
-    )
-
-extractBlocks(Matrix, List, List) := Matrix => (phi, tar, src) ->(
-    -- returns the submatrix corresponding to the block or blocks listed in src and tar.
-    -- src and tar are lists of integers or lists of such lists,
-    -- representing block(s) in phi.
-    -- note that this behavior is DIFFERENT than the function with the same
-    -- name in EagonResolution, where the list is an ordinal list of integers
-    -- representing the blocks (in some order??).
-    if class src_0 === ZZ then 
-       srcList := {src} else srcList = src;
-    if class tar_0 === ZZ then
-       tarList := {tar} else tarList = tar;
-    phi1 := flattenBlocks phi;
-    matrix apply(tarList, Lt -> apply(srcList,Ls->
-               phi1_[Ls]^[Lt])
-	   )
-    )
-    
-
-labels := method()
-labels Module := List => M -> (
-    if M.cache#?"label" then M.cache#"label" else
-      if M.cache.?components then (
-	L := M.cache.components;
-	if not (L_0).cache#?"label" then error"no labels" else
-	  apply(M.cache.components, N ->  N.cache#"label"))
-    )
-
 tensor(Ring, List) := {} >> o -> (R,L) -> (
     --note that A**B**C**..**D = (((A**B)**C)**..**D) = tensor(R,{A..D}).
     -- Retain the displayed factor order, which matters for chain complexes.
     if L === {} then return R^1;
-    fold(L,(A,B) -> A ** B)
+    T := fold(L,(A,B) -> A ** B);
+    if ring T === R then T else tensor(R,T)
     )
 
 
@@ -807,8 +820,8 @@ label = method()
 label(Module) := Thing => M-> (indices M)_0
 label(List) := List => L-> apply(L, M ->(indices M)_0)
 
-labeledDirectSum = method()
-labeledDirectSum List := Module => L ->(
+burkeLabeledDirectSum = method()
+burkeLabeledDirectSum List := Module => L ->(
     --L is a list of labeled modules.
     ciL := apply(L, M -> componentsAndIndices M);
     directSum flatten apply(ciL, ci -> apply(#ci_0, i->(ci_1_i => ci_0_i)))
@@ -847,13 +860,19 @@ labeledTensorComplex List := Complex => o -> L -> (
     Min := apply(L, C->min C);
     Max := apply(L, C->max C);
     limit := if o.LengthLimit =!= null then min(o.LengthLimit,sum Max) else sum Max;
-    -- Total degrees run from sum Min to limit; as for a single complex,
-    -- LengthLimit bounds the total degree.  Keep one degree slot even when
-    -- the requested range contains no terms.
-    modules := apply(max(1,limit - sum Min + 1), i ->(
-	    d := i+sum Min;
-	    com := select(compositions(p,d), c ->
-		    all(p, i-> Min_i <= c_i and c_i <= min(limit, Max_i)) and c != {});
+    -- Enumerate only degree tuples meeting the individual factor bounds.
+    -- Varying the last index first preserves the order used by compositions.
+    lower := apply(p,j -> sum(take(Min,j+1)));
+    upper := apply(p,j -> sum(take(Max,j+1)));
+    local degreeTuples;
+    degreeTuples = (j,d) -> (
+        if j == 0 then return {{d}};
+        lo := max(Min_j,d-upper_(j-1));
+        hi := min(Max_j,d-lower_(j-1));
+        flatten for a from lo to hi list apply(degreeTuples(j-1,d-a),u -> append(u,a))
+        );
+    modules := apply(max(0,limit - sum Min + 1), i ->(
+	    com := degreeTuples(p-1,i+sum Min);
 	    apply(com, co -> 
 		    (co => labeler(co, 
 			       tensor(S,apply(p, pp->(L_pp)_(co_pp))))))
@@ -1396,7 +1415,18 @@ dualizingComplexViaAInfinity QuotientRing := opts -> R -> (
 
     (complex boundedDiffs)[-lo]
 );
+load "./AInfinity/labels.m2"
+load "./AInfinity/structures.m2"
+load "./AInfinity/models.m2"
+load "./AInfinity/typed-burke.m2"
+load "./AInfinity/blocks.m2"
+load "./AInfinity/point-golod.m2"
+load "./AInfinity/point-burke.m2"
+load "./AInfinity/table-conversions.m2"
+
 beginDocumentation()
+load "./AInfinity/typed-docs.m2"
+load "./AInfinity/merged-docs.m2"
 
 doc ///
 Key
@@ -1417,6 +1447,11 @@ Description
    construction to compute normalized dualizing complexes.  Higher operations
    may be truncated by total operation degree without truncating the underlying
    free complex.
+  Text
+   Complete tables from @TO aInfinity@ can also be used with @TO sAInfAlg@ and
+   @TO sAInfMod@. These constructors give typed structures whose identities can
+   be checked with @TO checkStasheff@.
+  Text
    Here is an example with the simplest Golod non-hypersurface in 3 variables
   Example
    S = ZZ/101[a,b,c]
@@ -1433,7 +1468,7 @@ Description
    B = betti res(X, LengthLimit => 8)
    A == B
 Contributors
-  Karl Schwede using OpenAI ChatGPT 5.5, Sol 5.6, 6.1, Astra 6.0, Anthropic Claude Opus 5.5
+  Karl Schwede
 SeeAlso
  aInfinity
  oppositeAInfinityAlgebra
@@ -1557,14 +1592,15 @@ SeeAlso
 References
  Jesse Burke, Higher Homotopies and Golod Rings. arXiv:1508.03782v2, October 2015.
 Caveat
-  All A-infinity and Burke data are computed globally over the polynomial
-  ambient ring; rings produced by @TT "localRing"@ are not supported.
+  @TO aInfinity@ computes globally over the polynomial ambient ring. A Burke
+  resolution at a rational point can be requested with @TT "burkeResolution(M,n,p)"@.
+  Rings produced by @TT "localRing"@ are not supported.
   Inhomogeneous input currently requires a coefficient field or @TT "ZZ"@.
   Origin-local Betti numbers further require field coefficients and
-  @TT "I subset (ideal vars S)"@.  Intrinsic Golod tests and bounds require
-  the stronger minimal-presentation condition
-  @TT "I subset (ideal vars S)^2"@; the package rejects rather than
-  automatically minimizes a presentation that fails this condition.
+  @TT "I subset (ideal vars S)"@. The presentation-specific methods
+  @TO hasMinimalMult@, @TO golodRanks@, and @TO golodBetti@ require
+  @TT "I subset (ideal vars S)^2"@. For the intrinsic property of a
+  ring at a rational point use @TO isGolodAInf@.
 ///
 
 doc ///
@@ -1641,15 +1677,19 @@ Inputs
  M:Module
   over a quotient ring R = S/I
  len:ZZ
-  positive length of resolution desired
+  last homological degree to include, a nonnegative integer
  Check => Boolean
 Outputs
  F:Complex
-  resolution of M over R, of length len
+  free complex over R in homological degrees zero through len
 Description
   Text
-   The construction follows the recipe in Jesse Burke's paper.
-   The resolution produced is minimal iff M is a Golod module.
+   This call returns the global Burke resolution of M through degree len.
+   It uses the same construction for every choice made with @TT "setMaxIdeal"@.
+   At length zero it returns only the free term F_0, with the same shifts and
+   summand labels as in a longer prefix. The augmentation to M is understood.
+   For a minimal regular local presentation and minimal ambient resolutions,
+   the Burke resolution is minimal precisely when M is a Golod module.
    If the optional argument Check => true, the program checks that the
    differential squares to zero and that positive homology vanishes below
    the last computed degree. The default is Check => false.
@@ -1662,7 +1702,7 @@ Description
   Text
    If one only wants a single differential, use burkeDifferential
    instead, but one must construct the Ainfinity structures separately.
-   The same syntax also works for burkeResolution.
+   The matrix over the ambient ring induces the corresponding Burke differential over R.
   Example
    mR = aInfinity R
    mG = aInfinity(mR,M)
@@ -1703,8 +1743,8 @@ Subnodes
  displayBlocks
  extractBlocks
 Caveat
-  For inhomogeneous input this returns a global R-free resolution, not a
-  resolution over a localization. Homogeneous input without a positive heft
+  To resolve the stalk at a rational point, pass its ideal p as a third
+  argument, as in @TO (burkeResolution,Module,ZZ,Ideal)@. Homogeneous input without a positive heft
   is temporarily regraded and transported back. Rings produced by
   @TT "localRing"@ are not supported.
 ///
@@ -1758,7 +1798,7 @@ Usage
 Inputs
  M:Module
  len:ZZ
-  positive length of resolution desired
+  last homological degree to include, a nonnegative integer
  Check:Boolean
 Outputs
  F:Complex
@@ -1766,6 +1806,8 @@ Description
   Text
    With Check => true, burkeResolution checks @TT "F.dd^2 == 0"@ and
    verifies vanishing of positive homology below the final computed degree.
+   The explicit point overload checks interior homology after localization at the
+   specified point. Degrees zero and one have no interior positive homology to test.
    The default value is false.
   Example
    R = ZZ/101[a,b,c]/(ideal(a,b,c))^2
@@ -1959,7 +2001,7 @@ doc ///
      Computes the i-th total Betti number by reducing the adjacent Burke
      differentials modulo the ideal of the variables and taking ranks over
      the coefficient field. For inhomogeneous input this is interpreted at
-     the origin. Unlike the Golod interfaces, this only requires the defining
+     the origin. This requires the defining
      ideal to be contained in the ideal of the variables; a minimal regular
      presentation is not required.
      In degree zero this returns the number of generators of
@@ -1978,7 +2020,7 @@ doc ///
      This is a local invariant at the origin, not a global Betti number. It
      requires a coefficient field and @TT "I subset (ideal vars S)"@, but it
      does not require the stronger minimal-presentation hypothesis used by
-     the Golod interfaces.
+     the presentation-specific Golod bounds.
 ///
 
 doc ///
@@ -2152,27 +2194,42 @@ Key
  isGolodAInf
  (isGolodAInf,Ideal)
  (isGolodAInf,Ring)
+ (isGolodAInf,Ring,Ideal)
+ (isGolodAInf,Ideal,Ideal)
 Headline
- Determines if the ring is Golod or not
+ test whether a local ring at a rational point is Golod
 Usage
  h = isGolodAInf R
  h = isGolodAInf I
+ h = isGolodAInf(R,p)
+ h = isGolodAInf(I,p)
 Inputs
  R : Ring
-  the minimally presented quotient ring to test at the origin
+  a polynomial ring or its quotient over a field
  I : Ideal
-  an ideal in a polynomial ring; this tests quotient I
+  the defining ideal of the quotient in its polynomial ambient ring
+ p : Ideal
+  a closed rational point in the ambient ring or its quotient, defaulting to the origin
 Outputs
  h : Boolean
-   Whether or not the ring is Golod
+  whether the local ring of the quotient at the specified point is Golod
 Description
   Text
-   This function computes the A-infinity multiplications to all required
-   orders, and reduces them modulo the maximal ideal.  If all reductions
-   are zero, then the ring R is Golod. The method requires a minimal regular
-   presentation at the origin, equivalently (in the supported setup) a
-   defining ideal contained in the square of the ambient variable ideal.
-  
+   The intrinsic Golod criterion uses a minimal regular local presentation.
+   The method moves the requested point to the origin by translation and
+   eliminates polynomial variables that can be solved for. Once the
+   defining ideal lies in the square of the ambient maximal ideal, it tests
+   all higher algebra operations modulo that ideal. A separate local
+   generator bound recognizes regular local rings and hypersurfaces when
+   at most one equation remains.
+   When the ambient resolution is nonminimal at the point or polynomial
+   elimination leaves nonlinear equations with linear parts, the method
+   uses the finite Betti-number criterion in Burke, Corollary 6.10.
+  Example
+   S=QQ[x,y]
+   R=S/ideal((x-1)^2,(y+2)^2)
+   isGolodAInf(R,ideal(S_0-1,S_1+2))
+  Text
    Below is an example of an artinian ring R (based on an example of Roos
    and Katthan) which has minimal multiplications of order two, but 
    is not Golod.
@@ -2187,8 +2244,9 @@ SeeAlso
  hasMinimalMult
  aInfinity
 Caveat
-  The method rejects a presentation with a nonzero linear part in its
-  defining ideal. It does not eliminate linear equations automatically.
+  The two-argument form computes with the given rational point independently
+  of point choices in other computations. The Betti-number criterion can
+  require larger free modules than the direct test on higher products.
 ///
 
 doc ///
@@ -2621,13 +2679,13 @@ assert(apply(5,i -> totalBetti(M,i)) == {1,2,1,0,0})
 ///
 
 TEST ///
--- Intrinsic Golod interfaces reject nonminimal regular presentations.
+-- Intrinsic Golodness survives polynomial elimination; relative bounds keep the input presentation.
 S = QQ[x,y,z]
 R = S/ideal(x-y^2,y-z^2)
 M = coker vars R
 assert(not isSubset(ideal R,(ideal vars S)^2))
 assert(try (hasMinimalMult R; false) else true)
-assert(try (isGolodAInf R; false) else true)
+assert isGolodAInf R
 assert(try (golodRanks(M,4); false) else true)
 assert(try (golodBetti(M,4); false) else true)
 assert(apply(5,i -> totalBetti(M,i)) == {1,1,0,0,0})
@@ -2642,7 +2700,9 @@ assert(try (aInfinity(R, LengthLimit => -1); false) else true)
 assert(try (aInfinity(R, Order => 0); false) else true)
 assert(try (aInfinity(M, LengthLimit => -1); false) else true)
 assert(try (aInfinity(M, Order => -2); false) else true)
-assert(try (burkeResolution(M, 0); false) else true)
+F0 = burkeResolution(M, 0, Check=>true)
+assert(min F0 == 0 and max F0 == 0 and F0_0 == (burkeResolution(M,1))_0)
+assert(try (burkeResolution(M, -1); false) else true)
 assert(try (golodRanks(M, -1); false) else true)
 assert(try (golodBetti(M, -1); false) else true)
 assert(try (totalBetti(M, -1); false) else true)
@@ -3357,5 +3417,86 @@ assert(ks == sort select(keys large,k->class k === List))
 assert all(ks,k->full#k == large#k)
 assert(large#"lengthLimit" == full#"lengthLimit")
 ///
+
+TEST ///
+-- Distinguish an intrinsic test from the bound for the input presentation.
+S=QQ[x,y,z]
+I=ideal(S_0-S_1^2,S_1-S_2^2)
+assert isGolodAInf I
+assert(try(hasMinimalMult I;false) else true)
+assert isGolodAInf(I+ideal(S_2^3))
+T=QQ[u,v,w]
+J=ideal(T_0-T_1^2,T_1^2,T_2^2)
+assert not isGolodAInf J
+///
+
+TEST ///
+-- Rational points can be supplied in either the quotient or its ambient.
+-- A selected-model computation elsewhere must not change this result.
+S=QQ[x,y]
+P=ideal(S_0-1,S_1+2)
+I=ideal((S_0-1)^2,(S_1+2)^2)
+R=S/I
+assert not isGolodAInf(R,P)
+assert not isGolodAInf(R,substitute(P,R))
+assert not isGolodAInf(I,P)
+assert(try (isGolodAInf R;false) else true)
+assert(try (isGolodAInf(R,ideal vars S);false) else true)
+assert(try (isGolodAInf(R,ideal(1_R));false) else true)
+assert(try (isGolodAInf(S,ideal S_0);false) else true)
+assert(try (isGolodAInf(S,ideal(S_0^2+1,S_1));false) else true)
+T=QQ[a]
+assert(try (isGolodAInf(R,ideal T_0);false) else true)
+///
+
+TEST ///
+-- No global polynomial substitution can split this product into one field.
+-- At either rational point the local ring is a field.
+S=QQ[x]
+I=ideal(S_0*(S_0-1))
+R=S/I
+assert isGolodAInf R
+assert isGolodAInf(R,ideal(S_0-1))
+assert isGolodAInf(R,ideal(R_0-1))
+assert(try (isGolodAInf(R,ideal(S_0-2));false) else true)
+-- The same argument is valid over a finite field.
+T=ZZ/5[a,b]
+assert not isGolodAInf(T/ideal((T_0-2)^2,(T_1+1)^2),ideal(T_0-2,T_1+1))
+///
+
+TEST ///
+-- Two independent nonlinear local equations prevent polynomial elimination.
+-- They become regular parameters after completion. Both answers occur.
+S=QQ[x,y,z]
+f=S_0+S_0^2
+assert isGolodAInf(S/ideal(f,S_1^2))
+assert not isGolodAInf(S/ideal(f,S_1^2,S_2^2))
+assert isGolodAInf(S/(ideal f+(ideal(S_1,S_2))^2))
+T=QQ[a,b,c,d]
+L=ideal(T_0+T_0^2,T_1+T_1^2)
+assert not isGolodAInf(T/(L+ideal(T_2^2,T_3^2)))
+assert isGolodAInf(T/(L+(ideal(T_2,T_3))^2))
+///
+
+TEST ///
+-- A disjoint closed component can make the GLOBAL free S-resolution
+-- nonminimal at the origin, even for an ideal contained in the square.
+S=QQ[x,y]
+D=ideal(1-S_0,S_1)
+H=S/(ideal(S_0^2)*D)
+C=S/(ideal(S_0^2,S_1^2)*D)
+assert not isLocallyMinimal((aInfinity H)#"SResolution")
+assert not isLocallyMinimal((aInfinity C)#"SResolution")
+assert isGolodAInf H
+assert not isGolodAInf C
+assert(try (hasMinimalMult(C,2);false) else true)
+T=QQ[]
+assert isGolodAInf T
+assert isGolodAInf(T,ideal vars T)
+///
+
+load "./AInfinity/typed-tests.m2"
+load "./AInfinity/regressions.m2"
+load "./AInfinity/merged-tests.m2"
 
 end
