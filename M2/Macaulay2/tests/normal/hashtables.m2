@@ -42,6 +42,12 @@ assert(select(2, x, odd) == set {1, 3})
 
 assert(hashTable ((0, 1), (1, 2)) === hashTable {(0, 1), (1, 2)})
 
+-- issue #4822
+NewCacheTable = new Type of CacheTable
+assert Equation(hash new NewCacheTable, 0)
+assert Equation(hash new NewCacheTable from {}, 0)
+assert BinaryOperation(symbol ===, new NewCacheTable, new NewCacheTable)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test hashtables.out"
 -- End:
