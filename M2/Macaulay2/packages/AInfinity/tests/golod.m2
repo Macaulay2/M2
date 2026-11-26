@@ -1,0 +1,40 @@
+debug AInfinity;
+S = QQ[x,y,z];
+assert isGolodAInf S;
+assert isGolodAInf(S/ideal(S_0,S_1^2));
+I = ideal(S_0^2,S_1^2);
+R = S/I;
+assert(not isGolodAInf R);
+assert(not hasMinimalMult(I,infinity));
+assert hasMinimalMult(R,1);
+assert(try (hasMinimalMult(R,0);false) else true);
+assert(try (golodBetti(R^1,-1);false) else true);
+assert(golodBetti(R^0,7) == betti complex {R^0});
+assert(golodRanks(S^1,7) == {1,0,0,0,0,0,0,0});
+assert(golodRanks(R^0,7) == toList(8:0));
+assert(golodBetti(R^{2:-3},0) == betti complex {S^{2:-3}});
+T = S/(ideal vars S)^2;
+-- The residue field of the square-zero ring has beta_i = 3^i.
+assert(golodRanks(coker vars T,40) == apply(41,i -> 3^i));
+assert(isGolodAInf T);
+A = QQ[a,b, Degrees=>{{1,0},{0,1}}];
+V = A/ideal(A_0^2,A_0*A_1);
+K = coker vars V;
+assert(golodBetti(K,6) == betti burkeResolution(K,6));
+-- Inhomogeneous predictions refer to the selected point.
+Q = QQ[u];
+H = Q/ideal(Q_0^2*(Q_0+1));
+assert(try (hasMinimalMultAtPoint H;false) else true);
+setMaxIdeal ideal vars Q;
+assert hasMinimalMultAtPoint H;
+assert(golodRanksAtPoint(coker vars H,5) == toList(6:1));
+setMaxIdeal ideal(Q_0-1);
+assert(try (hasMinimalMultAtPoint H;false) else true);
+assert(try (golodBettiAtPoint(coker vars H,2);false) else true);
+-- The residue field and the Golod bound at a translated complete intersection.
+S = QQ[x,y];
+p = ideal(S_0-1,S_1-1);
+R = S/ideal((S_0-1)^2,(S_1-1)^2);
+setMaxIdeal p;
+assert(not isGolodAInf(R,p));
+assert(golodRanksAtPoint(R^1/(R**p),6) == {1,2,3,5,8,13,21});
