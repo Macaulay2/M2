@@ -224,6 +224,8 @@ document {
      Outputs => {
      	  RingElement => {"the discriminant of ", TT "f", " with respect to ", TT "x"}
 	  },
+     PARA {"Given a polynomial $f$ in a ring $R[x]$, the discriminant returns an element in $R$. Note that if $f$ is constant in $x$, e.g. it is a function in some other variables, then the discrimimant method will return $0\\in R$."
+     },
      EXAMPLE lines ///
 	  R = ZZ/101[x,a,b,c,d]	  
 	  f = x^2+a*x+b
@@ -349,6 +351,11 @@ S = ZZ/3[x,y];
 d = discriminant(x^3+y,x);
 assert(d==0);
 assert(ring d === ring discriminant(x^2,x));
+
+-- Check univariate discriminants work as expected
+S = ZZ[x];
+d = discriminant(x^4+x^2+1,x);
+assert(d == 144);
 ///
 end
 loadPackage "Elimination"
