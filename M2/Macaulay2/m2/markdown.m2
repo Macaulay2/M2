@@ -136,6 +136,9 @@ markdown IMG := x -> (
 
 -- Code and Syntax Highlighting
 markdown PRE  := x -> markdown concatenate x -* TODO: syntax highlighting *-
+markdown KBD  :=
+markdown SAMP :=
+markdown VAR  :=
 markdown TT   := x -> concatenate("`", apply(x, markdown), "`")
 markdown CODE := x -> concatenate(
     newline, "```M2", newline, shorten apply(x, markdown), "```", newline)

@@ -126,6 +126,7 @@ initializeReverseOptionTable := () -> (
 isDocumentableThing = method(Dispatch => Thing)
 isDocumentableThing    String :=
 isDocumentableThing  Sequence := key -> false
+isDocumentableThing   Package := key -> true
 isDocumentableThing   Nothing :=
 isDocumentableThing    Symbol := key -> (d := dictionary key) =!= null and not isMutable d and isGlobalSymbol toString key and getGlobalSymbol toString key === key
 isDocumentableThing     Thing := key -> hasAttribute(key, ReverseDictionary) and isDocumentableMethod getAttribute(key, ReverseDictionary)
@@ -154,7 +155,7 @@ descendants' = T -> flatten prepend(L := subobjects T, apply(L, descendants'))
 
 -- specialized templates for documentation nodes
 documentationValue := method(TypicalValue => Hypertext)
-documentationValue(Symbol, Thing) := (S, X) -> ()
+documentationValue(Symbol, Thing) := (S, X) -> null
 -- e.g. Macaulay2Doc :: MethodFunction
 documentationValue(Symbol, Type)  := (S, T) -> (
     -- catch when an unexported type is documented; TODO: where should this be caught?
@@ -239,10 +240,10 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
     -- other things
     d := toList(set e - set a - set b - set c);
     -- the result
-    DIV nonnull splice (
+    fixup DIV nonnull splice (
 	if #au > 0 then DIV {
 	    SUBSECTION (if #au === 1 then "Author" else "Authors"),
-	    fixup UL apply(au, au -> (
+	    UL apply(au, au -> (
 		    (defs, args) := override(authorDefaults, toSequence au);
 		    LI {
 			if defs.HomePage === null then defs.Name else HREF{defs.HomePage, defs.Name},
@@ -288,7 +289,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	if not isM2Doc and #e + #m > 0 then DIV {
 	    SUBSECTION "Exports",
 	    DIV { "class" => "exports",
-		fixup UL {
+		UL {
 		    if #b > 0 then LI {"Types",                  smenu b},
 		    -- FIXME: this line is displayed empty for Truncations
 		    if #a > 0 then LI {"Functions and commands", smenu a},
@@ -601,13 +602,14 @@ briefDocumentation = key -> (
 	-- TODO: use either "formation" to enhance the result
 	-- or enhance "describe" or "getTechnical" using "formation"
 	-- TODO: add spaces around :=
-	BinaryOperation{symbol :=, key, describe key},
+	M2CODE toString BinaryOperation{symbol :=, key, describe key},
 	getTechnical(getAttribute(key, ReverseDictionary), key) };
-    rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    -- TODO: should it be getGlobalSymbol or getAttribute?
-    tag := getOption(rawdoc, symbol DocumentTag);
+    tag := makeDocumentTag key;
+    rawdoc := fetchAnyRawDocumentation tag;
+    tag = rawdoc.DocumentTag ?? tag;
     title := getOption(rawdoc, Headline);
     synopsis := getSynopsis(key, tag, rawdoc);
+    -- TODO: should it be getGlobalSymbol or getAttribute?
     try symb := getGlobalSymbol toString key then (
 	waystouse := documentationValue(symb, key);
 	technical := getTechnical(symb, key)) else ();
