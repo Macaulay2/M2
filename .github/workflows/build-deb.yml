@@ -64,7 +64,7 @@ jobs:
               libjs-katex libjs-lunr node-nouislider libjs-three node-clipboard  \
               node-css-loader node-expose-loader node-import-local               \
               node-interpret node-prismjs node-prismjs-bibtex node-rechoir       \
-              node-style-loader npm pkg-js-tools webpack
+              node-style-loader pkg-js-tools webpack
           fi
       - name: Clone repository
         run: |
