@@ -708,18 +708,23 @@ isExterior Ring := A -> (
 
 toFreeAlgebraQuotient = method()
 toFreeAlgebraQuotient Ring := FreeAlgebraQuotient => R -> (
-   --- generate the (skew)commutativity relations
+   W := ambient R;
+   weyl := isWeylAlgebra W;
+   if weyl and W.?homogenize then error "conversion of homogenized Weyl algebras is not supported";
    Q := coefficientRing R;
    gensA := new AngleBarList from ((gens R) / baseName | {Degrees=> degrees R});
    A := Q gensA;
    -- if only one generator and no relations, return the free algebra on one variable
    if numgens R == 1 and ideal R == 0 then return A;
-   phi := map(A,ambient R,gens A);
+   phi := map(A,W,gens A);
    skewCommIndices := if R.?SkewCommutative then R.SkewCommutative else {};
    bothExter := (i,j) -> member(i,skewCommIndices) and member(j,skewCommIndices);
-   commRelations := apply(subsets(numgens A,2), s -> A_(s_0)*A_(s_1)+(-1)^(if bothExter(s_0,s_1) then 0 else 1)*A_(s_1)*A_(s_0));
+   commRelations := apply(subsets(numgens A,2), s -> (
+      (i,j) := toSequence s;
+      if weyl then A_i*A_j - A_j*A_i - phi(W_i*W_j - W_j*W_i)
+      else if bothExter(i,j) then A_i*A_j + A_j*A_i
+      else A_i*A_j - A_j*A_i));
    extRelations := apply(skewCommIndices, i -> A_i^2);
-   --- here is the defining ideal of the commutative algebra, inside the tensor algebra
    I := ideal (commRelations | extRelations | ((flatten entries gens ideal R) / phi));
    commIgb := gb ideal R;
    maxDeg := (((flatten entries gens commIgb) / degree) | {{0}}) / sum // max;

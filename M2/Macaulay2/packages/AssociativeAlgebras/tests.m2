@@ -1225,6 +1225,18 @@ hsC = apply(15, i -> numgens source ncBasis(i,C))
 ///
 
 TEST ///
+-- Conversion preserves both the Weyl relations and the commuting pairs.
+W = QQ[x,dx,y,dy,WeylAlgebra=>{x=>dx,y=>dy}];
+A = toFreeAlgebraQuotient W;
+assert(class A === FreeAlgebraQuotient);
+assert(A_1*A_0-A_0*A_1 == 1);
+assert(A_3*A_2-A_2*A_3 == 1);
+assert(all({(0,2),(0,3),(1,2),(1,3)}, (i,j) -> A_i*A_j == A_j*A_i));
+back = map(W,ambient A,gens W);
+assert(all(flatten entries gens ideal A, r -> back r == 0));
+///
+
+TEST ///
 -- The action of gl(2) on the affine chart of P^1 gives an inhomogeneous graph ideal.
 R = QQ<|x,d|>;
 R = R/ideal(d*x-x*d-1);

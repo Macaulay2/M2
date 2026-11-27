@@ -913,15 +913,21 @@ doc ///
      S : FreeAlgebraQuotient
    Description
       Text
-         This function converts commutative rings and quotients of 
-	 exterior algebras (i.e. quotients of @ TO PolynomialRing @) to a ring of
-	 type FreeAlgebraQuotient.  
+         This function converts commutative rings, quotients of exterior algebras,
+	 and ordinary Weyl algebras to a ring of type FreeAlgebraQuotient.
       Example
          R = QQ[a,b,c,d, SkewCommutative=>{2,3}]
 	 I = ideal(a*d-b*c)
          S = R/I
 	 S' = toFreeAlgebraQuotient(S)
 	 ideal S'
+      Text
+	 For an ordinary Weyl algebra, the conversion preserves the coordinate-derivative
+	 commutation relations. Homogenized Weyl algebras are not supported.
+      Example
+	 W = QQ[x,dx,WeylAlgebra=>{x=>dx}]
+	 A = toFreeAlgebraQuotient W
+	 A_1*A_0-A_0*A_1
    SeeAlso
       toCommRing
 ///
