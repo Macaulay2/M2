@@ -1,5 +1,5 @@
-# This workflow builds Debian packages for the last 3 Debian releases
-# (currently trixie, bookworm, and bullseye)
+# This workflow builds Debian packages for the supported Debian releases
+# (currently trixie and bookworm)
 
 # After each Macaulay2 release, a new package is prepared for Debian unstable
 # (and a few days later, it migrates to Debian testing).  The packaging is
@@ -14,10 +14,12 @@
 # Once each branch is ready and pushed to Salsa, run this action using "workflow
 # dispatch" to generate each Debian package.
 
-# Download the artifacts and unzip them.  Push files using dput to
-# Repositories/Debian/mini-dinstall/incoming on the webserver, and then
-# run "mini-install -b -v" on the server.  Finally sign the Release files
-# in each directory (gpg --clearsign -o InRelease Release).
+# Then upload the packages to the apt repository on the webserver using
+# Repositories/upload-debs.sh in the Macaulay2-web-site repository, e.g.,
+#   Repositories/upload-debs.sh -u USER -R OWNER/M2 RUN-ID
+# It downloads the artifacts, signs the .changes files, uploads them with
+# dput, runs mini-dinstall on the server, and signs the Release files.
+# See the comment at the top of that script for details.
 
 name: Build Debian packages
 on: workflow_dispatch
@@ -29,7 +31,6 @@ jobs:
       fail-fast: false
       matrix:
         release:
-          - bullseye
           - bookworm
           - trixie
         os:
@@ -42,9 +43,6 @@ jobs:
         run: |
           apt-get update
           apt-get install -y wget ca-certificates
-          if test ${{ matrix.release }} = "bullseye"; \
-          then wget -O /usr/share/keyrings/macaulay2-archive-key.asc https://macaulay2.com/Repositories/Debian/macaulay2-archive-key.asc; \
-          fi
           wget -O /etc/apt/sources.list.d/macaulay2.sources https://macaulay2.com/Repositories/Debian/${{ matrix.release }}/macaulay2.sources
           apt-get update
           apt-get install -y 4ti2 bison cohomcalg coinor-csdp \
@@ -62,17 +60,13 @@ jobs:
 
           # arch-independent dependencies (amd64 build only)
           if test ${{ matrix.os }} = "ubuntu-latest"; then
-            apt-get install -y faketime gdbmtool jdupes
-
-            # don't need javascript on bullseye (just use the vendored copies)
-            if test ${{ matrix.release }} != "bullseye"; then
-              apt-get install -y node-fortawesome-fontawesome-free                  \
-                fonts-katex node-macaulay2-boot-side-menu node-bootstrap node-d3    \
-                node-jquery libjs-katex node-nouislider libjs-three                 \
-                node-clipboard node-css-loader node-expose-loader node-import-local \
-                node-interpret node-prismjs node-prismjs-bibtex                     \
-                node-rechoir node-style-loader npm pkg-js-tools webpack
-            fi
+            apt-get install -y faketime gdbmtool jdupes                          \
+              node-fortawesome-fontawesome-free fonts-katex                      \
+              node-macaulay2-boot-side-menu node-bootstrap node-d3 node-jquery   \
+              libjs-katex libjs-lunr node-nouislider libjs-three node-clipboard  \
+              node-css-loader node-expose-loader node-import-local               \
+              node-interpret node-prismjs node-prismjs-bibtex node-rechoir       \
+              node-style-loader pkg-js-tools webpack
           fi
       - name: Clone repository
         run: |
@@ -88,6 +82,9 @@ jobs:
           cd macaulay2
           dpkg-buildpackage --build=source
       - name: Build binary package
+        env:
+          # skip the -dbgsym packages; they're big and nobody uses them
+          DEB_BUILD_OPTIONS: noautodbgsym
         run: |
           dpkg-source -x macaulay2_*.dsc
           cd macaulay2-*
