@@ -64,37 +64,43 @@ doc ///
         (nextPrime,Number)
 ///
 
-document { 
-     Key => {isPrime, (isPrime, ZZ), (isPrime, RingElement)},
-     Headline => "whether a integer or polynomial is prime",
-     Usage => "isPrime f",
-     Inputs => {
-	  "f" => {ofClass ZZ, ", or an element in a ", TO2("PolynomialRing", "polynomial ring")}
-	  },
-     Outputs => {
-	  Boolean => {TO "true", " if ", TT "f", " is either a prime integer or an irreducible polynomial and ",
-	       TO "false", " otherwise"}
-	  },
-     EXAMPLE lines ///
-     ZZ/2[t];
-     isPrime(t^2+t+1)
-     isPrime(t^2+1)
-     isPrime 101
-     isPrime 158174196546819165468118574681196546811856748118567481185669501856749
-     isPrime 158174196546819165468118574681196546811856748118567481185669501856749^2
-     ///,
-     PARA {
-	  "Since ", TO "factor", " returns factors guaranteed only to be pseudoprimes, it
-	  may be useful to check their primality, as follows."
-	  },
-     EXAMPLE lines ///
-     f = factor 28752093487520394720397634653456
-     peek'_2 f
-     first \ toList f
-     isPrime \ oo
-     ///,
-     PARA {
-	  "Primality testing for integers is handled by ", TO "FLINT", "."
-	  },
-     SeeAlso => {factor, isPseudoprime, "MinimalPrimes :: isPrime(Ideal)"}
-     }
+doc ///
+  Key
+    isPrime
+    (isPrime, ZZ)
+    (isPrime, RingElement)
+  Headline
+    whether a integer or polynomial is prime
+  Usage
+    isPrime f
+  Inputs
+    f:
+      @ofClass ZZ@, or an element in a
+      @TO2("PolynomialRing", "polynomial ring")@
+  Outputs
+    :Boolean
+      @TO "true"@ if @TT "f"@ is either a prime integer or an irreducible
+      polynomial and @TO "false"@ otherwise
+  Description
+    Example
+      ZZ/2[t];
+      isPrime(t^2+t+1)
+      isPrime(t^2+1)
+      isPrime 101
+      isPrime 158174196546819165468118574681196546811856748118567481185669501856749
+      isPrime 158174196546819165468118574681196546811856748118567481185669501856749^2
+    Text
+      Since @TO "factor"@ returns factors guaranteed only to be pseudoprimes,
+      it may be useful to check their primality, as follows.
+    Example
+      f = factor 28752093487520394720397634653456
+      peek'_2 f
+      first \ toList f
+      isPrime \ oo
+    Text
+      Primality testing for integers is handled by @TO "FLINT"@.
+  SeeAlso
+    factor
+    isPseudoprime
+    "MinimalPrimes :: isPrime(Ideal)"
+///

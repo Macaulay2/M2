@@ -1,88 +1,96 @@
 --authors: Dan Grayson, Lily Silverstein
 
-document {
-    Key => "hash tables",
-    "A hash table is a data structure that can implement a function
-    whose domain is a finite set.  An element of the domain is called
-    a key.  The hash table stores the key-value pairs in such a way
-    that when presented with a key, the corresponding value can be
-    quickly recovered.",
-    PARA{},
-    "A dictionary could be implemented as a hash table: the keys would
-    be the words in the language, and the values could be the definitions
-    of the words.",
-    PARA{},
-    "A phone book could also be implemented as a hash table: the keys would
-    be the names of the subscribers, and the values could be the corresponding
-    phone numbers.  (We exclude the possibility of two subscribers with
-	the same name.)",
-    PARA{},
-    "As an example we implement a phone book.",
-    EXAMPLE {
-	  ///book = new HashTable from {
-     "Joe" => "344-5567",
-     "Sarah" => "567-4223",
-     "John" => "322-1456"}///,
-     },
-    "We use the operator ", TO "#", " to obtain values from the phone book.",
-    EXAMPLE ///book#"Sarah"///,
-    "The operator ", TO "#?", " can be used to tell us whether a given key
-    has an entry in the hash table.",
-    EXAMPLE ///book#?"Mary"///,
-    "We have implemented the notion of set via hash tables in which every value
-    is the number 1.",
-    EXAMPLE {
-	  "x = set {a,b,c,r,t}",
-	  "peek x",
-	  "x#?a",
-	  "x#?4",
-	  },
-    "There is a type of hash table that is mutable, i.e., a hash table
-    whose entries can be changed.  They are changed with assignment
-    statements of the form ", TT "x#key=value", ".",
-    EXAMPLE {
-	  ///x = new MutableHashTable;///,
-	  ///x#"Joe" = "344-5567";///,
-	  ///x#3 = {a,b,c};///,
-	  ///x#{1,2} = 44;///,
-	  ///x#3///,
-	  ///x#?4///,
-	  },
-    "When a mutable hash table is printed, its contents are not displayed.
-    This prevents infinite loops in printing routines.",
-    EXAMPLE "x",
-    "Use ", TO "peek", " to see the contents of a mutable hash table.",
-    EXAMPLE "peek x",
-    "A variant of ", TO "#", " is ", TO ".", ".  It takes only global symbols
-    as keys, and ignores their values.",
-    EXAMPLE {
-	  "p=4;",
-	  "x.p = 444;",
-	  "x.p",
-	  "x#?4"
-	  },
-    Subnodes => {
-	TO "HashTable",
-	TO "MutableHashTable",
-	TO "hashing",
-	TO "hash",
-	TO youngest,
-	"constructing hash tables",
-	TO "hashTable",
-	TO "new HashTable from List",
-	"functions for manipulating hash tables",
-	TO "isMutable",
-	TO "keys",
-	TO "values",
-	TO "pairs",
-	TO "copy",
-	TO "remove",
-	TO "merge",
-	TO "combine",
-	TO "override",
-	TO "mapping over hash tables",
-        },
-    }
+doc ///
+  Key
+    "hash tables"
+  Description
+    Text
+      A hash table is a data structure that can implement a function whose
+      domain is a finite set. An element of the domain is called a key. The
+      hash table stores the key-value pairs in such a way that when presented
+      with a key, the corresponding value can be quickly recovered.
+
+      A dictionary could be implemented as a hash table: the keys would be the
+      words in the language, and the values could be the definitions of the
+      words.
+
+      A phone book could also be implemented as a hash table: the keys would be
+      the names of the subscribers, and the values could be the corresponding
+      phone numbers. (We exclude the possibility of two subscribers with the
+      same name.)
+
+      As an example we implement a phone book.
+    Example
+      book = new HashTable from {
+           "Joe" => "344-5567",
+           "Sarah" => "567-4223",
+           "John" => "322-1456"}
+    Text
+      We use the operator @TO "#"@ to obtain values from the phone book.
+    Example
+      book#"Sarah"
+    Text
+      The operator @TO "#?"@ can be used to tell us whether a given key has an
+      entry in the hash table.
+    Example
+      book#?"Mary"
+    Text
+      We have implemented the notion of set via hash tables in which every
+      value is the number 1.
+    Example
+      x = set {a,b,c,r,t}
+      peek x
+      x#?a
+      x#?4
+    Text
+      There is a type of hash table that is mutable, i.e., a hash table whose
+      entries can be changed. They are changed with assignment statements of
+      the form @TT "x#key=value"@.
+    Example
+      x = new MutableHashTable;
+      x#"Joe" = "344-5567";
+      x#3 = {a,b,c};
+      x#{1,2} = 44;
+      x#3
+      x#?4
+    Text
+      When a mutable hash table is printed, its contents are not displayed.
+      This prevents infinite loops in printing routines.
+    Example
+      x
+    Text
+      Use @TO "peek"@ to see the contents of a mutable hash table.
+    Example
+      peek x
+    Text
+      A variant of @TO "#"@ is @TO "."@. It takes only global symbols as keys,
+      and ignores their values.
+    Example
+      p=4;
+      x.p = 444;
+      x.p
+      x#?4
+  Subnodes
+    "HashTable"
+    "MutableHashTable"
+    "hashing"
+    "hash"
+    youngest
+    :constructing hash tables
+    "hashTable"
+    "new HashTable from List"
+    :functions for manipulating hash tables
+    "isMutable"
+    "keys"
+    "values"
+    "pairs"
+    "copy"
+    "remove"
+    "merge"
+    "combine"
+    "override"
+    "mapping over hash tables"
+///
 
 doc///
  Key
@@ -115,228 +123,210 @@ doc///
    OptionTable
 ///
 
-document {
-    Key => MutableHashTable,
-    Headline => "the class of all mutable hash tables",
-    PARA{},
-    "A mutable hash table is a type of hash table whose entries can be changed.",
-    PARA{},
-    "Normally the entries in a mutable hash table are not printed, to prevent
-    infinite loops in the printing routines.  To print them out, use
-    ", TO "peek", ".",
-    EXAMPLE {
-	"x = new MutableHashTable",
-	"scan(0 .. 30, i -> x#i = i^2)",
-	"x # 20",
-	"x #? 40",
-    },
-    SeeAlso => "HashTable",
-    Subnodes => {
-	TO CacheTable,
-	TO IndexedVariableTable,
-	TO Descent,
-    },
-}
+doc ///
+  Key
+    MutableHashTable
+  Headline
+    the class of all mutable hash tables
+  Description
+    Text
+      A mutable hash table is a type of hash table whose entries can be
+      changed.
 
-document {
-    Key => {
-	hashTable,
-	(hashTable, BasicList),
-	(hashTable, Function, BasicList)},
-    Headline => "make a hash table",
-    TT "hashTable(h,v)", " -- produce a hash table from a list ", TT "v", " of key-value pairs, with an optional collision handler function ", TT "h", ".",
-    PARA{},
-    "The pairs may be of the form ", TT "a=>b", ", ", TT "{a,b}", ",
-    or ", TT "(a,b)", ".",
-    PARA{},
-    "Missing entries in the list, represented by ", TO "null", ", will be silently
-    ignored.",
-    PARA{},
-    EXAMPLE {
-	"x = hashTable {a=>b, c=>d, }",
-	"x#a",
-	"hashTable(plus, {(a,3),(b,4),(a,10)})"
-    },
-}
+      Normally the entries in a mutable hash table are not printed, to prevent
+      infinite loops in the printing routines. To print them out, use
+      @TO "peek"@.
+    Example
+      x = new MutableHashTable
+      scan(0 .. 30, i -> x#i = i^2)
+      x # 20
+      x #? 40
+  SeeAlso
+    "HashTable"
+  Subnodes
+    CacheTable
+    IndexedVariableTable
+    Descent
+///
 
-document {
-     Key => "hashing",
-     "A hash table contains a set of key-value pairs.  The access
-     functions for hash tables accept a key and retrieve the
-     corresponding value.  Here are the details, together with a
-     discussion of how we designed the hash table system seen in
-     Macaulay2.",
-     PARA{},
-     "The keys and values are stored in the hash table.  The hash table consists
-     of a certain number of ", ITALIC "buckets", ", each of which can hold an
-     arbitrary number of key-value pairs.  The number of buckets is chosen
-     to be large enough that typically one may expect each bucket to hold fewer than
-     three key-value pairs.  The key is used  as follows to determine in which
-     bucket the key-value pair is to be stored.  The function ", TO "hash", " 
-     is applied to the key to produce, in a deterministic way, an integer called
-     the hash code, and the remainder of the hash code upon division by the
-     number of buckets tells which bucket will be used.",
-     PARA{},
-     "It is essential that the
-     hash code of a key never change, for otherwise the next 
-     attempt to find the key in the hash table will have an unpredictable 
-     result - the new hash code of the key may or may not lead to 
-     the same bucket, and the value may or may not be located.",
-     PARA{},
-     "Some hash tables and lists are ", TO "mutable", ", i.e., their 
-     contents can be altered by assignment statements.  As explained
-     above, the hash code of a mutable thing is not permitted to
-     change when the contents of the thing change.  Hence, the 
-     algorithm for computing the hash code may not refer to the
-     contents of a mutable thing.",
-     PARA{},
-     "The strong comparison operator ", TO "===", " is provided to 
-     parrot the equality testing that occurs implicitly when 
-     accessing a key in a hash table.  The fundamental requirement for this
-     strong comparison operator is that things with different hash codes must also
-     turn out to be different when tested with this comparison operator.",
-     PARA{},
-     "Here we come to a question of design.  As discussed above, we must assign
-     hash codes to mutable things in such a way that the hash codes don't depend
-     on their contents.  We can do this in various ways.",
-     UL {
-	  {
-     	       "One way to assign hash codes to mutable things is to give 
-     	       the same hash code, say 1000000, to every mutable thing.  We
-	       could then implement a strong comparison operator for mutable
-	       things that would proceed by examining the contents of the
-	       things, so that two mutable things would be equal if and only
-	       if their contents were equal.  A
-	       disadvantage of this approach would be that a hash table in
-	       which many mutable things appear as keys would have all of those
-	       key-value pairs appearing in the same bucket, so that access
-	       to this hash table would be slow.  (Each bucket is implemented
-	       as a linear list, and searching a long linear list is slow.)"
-	       },
-	  {
-     	       "Another way to assign hash codes to mutable things is to
-     	       give different hash codes to each mutable thing; for example, the 
-	       first mutable thing could receive hash code 1000000, the second
-	       could receive the hash code 1000001, and so on.  (Another
-     	       choice for such a hash code is the 
-     	       address in memory of the thing.  But this address can change
-     	       depending on environmental factors not under the control of the
-     	       interpreter, and thus its use as a hash code would lead 
-	       to unpredictable behavior.)  A disadvantage
-	       of this approach is that the strong comparison operator could not
-	       examine the contents of mutable objects!  (Remember that
-	       if the hash codes are different, the strong comparison must declare
-	       the things to be different, too.)  The offsetting advantage is
-	       that a hash table in which many mutable things appear as keys would
-	       typically have the key-value pairs distributed among the buckets,
-	       so that access to this hash table would be fast."
-	       }
-	  },
-     PARA{},
-     "In Macaulay2, we chose the second approach listed above; we expect to
-     have many mutable things appearing as keys in hash tables, and we need
-     the speed.  A counter with initial value 1000000 is incremented each time 
-     a mutable thing is created, and its value is taken as the hash code of the
-     thing and stored within it.  The strong comparison test cannot depend on 
-     the contents of mutable things, and thus such things appear to be 
-     containers with opaque walls.  For mutable things, the test for equality 
-     must be the same as equality of the hash codes.",
-     PARA{},
-     "It is essential to have some hash tables for which equality amounts
-     to equality of the contents.  This cannot be achieved for mutable
-     hash tables, but we do achieve it for non-mutable hash tables -- the
-     hash code is computed directly from the contents
-     of the thing in a deterministic way.  This allows us to
-     implement the notion of polynomial, say, as a hash table -- the 
-     keys can be the monomials (necessarily non-mutable) and the 
-     values can be the coefficients.  The notion of monomial can be
-     implemented as a hash table where the keys are the variables and the
-     values are the corresponding exponents.",
-     PARA{},
-     "One further comforting remark: the routines that compute hash 
-     codes or strong equality do not get into infinite loops, despite 
-     the existence of circular structures: any circular structure 
-     must come into being by means of changing something, and
-     so the circular loop in the structure necessarily involves a 
-     mutable thing, whose contents are not examined by the routines.
-     This provides another argument in favor of taking the second approach listed
-     above.",
-     SeeAlso => "HashTable"
-     }
+doc ///
+  Key
+    hashTable
+    (hashTable, BasicList)
+    (hashTable, Function, BasicList)
+  Headline
+    make a hash table
+  Description
+    Text
+      @TT "hashTable(h,v)"@ -- produce a hash table from a list @TT "v"@ of
+      key-value pairs, with an optional collision handler function @TT "h"@.
 
-document {
-    Key => "mapping over hash tables",
-    Headline => "apply a function to each element of a hash table",
-    "Each entry in a hash table consists of a key and a value.  We provide
-    three ways to map functions over a hash table, depending on whether the
-    function is to receive a value and return a new value, to receive a key
-    and return a new key, or to receive a key-value pair and return a new
-    key-value pair.  The corresponding functions, ", TO "applyValues", ",
-    ", TO "applyKeys", ", and ", TO "applyPairs", " are illustrated in the
-    next example.",
-    EXAMPLE {
-	"x = new HashTable from {a=>1, b=>2}",
-	"applyValues(x, value -> 1000*value)",
-	"applyKeys(x, key -> {key})",
-	"applyPairs(x, (key,value) -> (value,key))",
-    },
-    "The functions, ", TO "scanValues", ", ", TO "scanKeys", ", and 
-    ", TO "scanPairs", " are similar, but the values returned are discarded
-    instead of being assembled into a new hash table.",
-    EXAMPLE {
-	"x = new HashTable from {a=>1, b=>2}",
-	"scanValues(x, print)",
-	"scanKeys(x, print)",
-	"scanPairs(x, print)",
-    },
-    "The function ", TO "merge", " can be used to merge two hash tables.  The
-    result is a hash table whose keys are those occurring in one of the two
-    incoming hash tables.  We must provide a function of two arguments
-    that is used to combine the values when a key occurs in both hash tables.",
-    EXAMPLE {
-	"y = new HashTable from {b=>200, c=>300}",
-	"merge(x, y, plus)",
-    },
-    "The function ", TO "combine", " can be used to combine two hash tables ", TT "x", "
-    and ", TT "y", " into a new hash table.  Three functions must be provided.  The first 
-    one produces new keys from a key of ", TT "x", " and a key of ", TT "y", ".  The
-    second one produces a new values from a value of ", TT "x", " and a value
-    of ", TT "y", ".  The third one is used to combine values when two new keys
-    turn out to be the same.",
-    EXAMPLE {
-	"combine(x,y,identity,times,plus)",
-    },
-    Subnodes => {
-	TO "applyKeys",
-	TO "applyValues",
-	TO "applyPairs",
-	TO "scanKeys",
-	TO "scanValues",
-	TO "scanPairs",
-	TO "selectKeys",
-	TO "selectValues",
-	TO "selectPairs",
-	TO (any, HashTable, Function),
-	TO (all, HashTable, Function),
-    }
-}
+      The pairs may be of the form @TT "a=>b"@, @TT "{a,b}"@, or @TT "(a,b)"@.
 
-document {
-    Key => copy,
-    Headline => "copy an object",
-    TT "copy x", " yields a copy of x.",
-    PARA{},
-    "If x is an hash table, array, list or sequence, then the elements are
-    placed into a new copy. If x is a hash table, the copy is mutable if
-    and only if x is.",
-    PARA{},
-    "It is not advisable to copy such things as modules and rings,
-    for: (1) the operations that have already been installed for them will return
-    values in the original object, rather than in the copy; and (2) the copy
-    operation is shallow, not copying keys and values that happen to be hash tables.",
-    PARA{},
-    SeeAlso => { "newClass" }
-}
+      Missing entries in the list, represented by @TO "null"@, will be silently
+      ignored.
+    Example
+      x = hashTable {a=>b, c=>d, }
+      x#a
+      hashTable(plus, {(a,3),(b,4),(a,10)})
+///
+
+doc ///
+  Key
+    "hashing"
+  Description
+    Text
+      A hash table contains a set of key-value pairs. The access functions for
+      hash tables accept a key and retrieve the corresponding value. Here are
+      the details, together with a discussion of how we designed the hash table
+      system seen in Macaulay2.
+
+      The keys and values are stored in the hash table. The hash table consists
+      of a certain number of @ITALIC "buckets"@, each of which can hold an
+      arbitrary number of key-value pairs. The number of buckets is chosen to
+      be large enough that typically one may expect each bucket to hold fewer
+      than three key-value pairs. The key is used as follows to determine in
+      which bucket the key-value pair is to be stored. The function @TO "hash"@
+      is applied to the key to produce, in a deterministic way, an integer
+      called the hash code, and the remainder of the hash code upon division by
+      the number of buckets tells which bucket will be used.
+
+      It is essential that the hash code of a key never change, for otherwise
+      the next attempt to find the key in the hash table will have an
+      unpredictable result - the new hash code of the key may or may not lead
+      to the same bucket, and the value may or may not be located.
+
+      Some hash tables and lists are @TO "mutable"@, i.e., their contents can
+      be altered by assignment statements. As explained above, the hash code of
+      a mutable thing is not permitted to change when the contents of the thing
+      change. Hence, the algorithm for computing the hash code may not refer to
+      the contents of a mutable thing.
+
+      The strong comparison operator @TO "==="@ is provided to parrot the
+      equality testing that occurs implicitly when accessing a key in a hash
+      table. The fundamental requirement for this strong comparison operator is
+      that things with different hash codes must also turn out to be different
+      when tested with this comparison operator.
+
+      Here we come to a question of design. As discussed above, we must assign
+      hash codes to mutable things in such a way that the hash codes don't
+      depend on their contents. We can do this in various ways.
+
+      @UL {
+          {"One way to assign hash codes to mutable things is to give the same hash code, say 1000000, to every mutable thing.  We could then implement a strong comparison operator for mutable things that would proceed by examining the contents of the things, so that two mutable things would be equal if and only if their contents were equal.  A disadvantage of this approach would be that a hash table in which many mutable things appear as keys would have all of those key-value pairs appearing in the same bucket, so that access to this hash table would be slow.  (Each bucket is implemented as a linear list, and searching a long linear list is slow.)"},
+          {"Another way to assign hash codes to mutable things is to give different hash codes to each mutable thing; for example, the first mutable thing could receive hash code 1000000, the second could receive the hash code 1000001, and so on.  (Another choice for such a hash code is the address in memory of the thing.  But this address can change depending on environmental factors not under the control of the interpreter, and thus its use as a hash code would lead to unpredictable behavior.)  A disadvantage of this approach is that the strong comparison operator could not examine the contents of mutable objects!  (Remember that if the hash codes are different, the strong comparison must declare the things to be different, too.)  The offsetting advantage is that a hash table in which many mutable things appear as keys would typically have the key-value pairs distributed among the buckets, so that access to this hash table would be fast."}
+          }@
+
+      In Macaulay2, we chose the second approach listed above; we expect to
+      have many mutable things appearing as keys in hash tables, and we need
+      the speed. A counter with initial value 1000000 is incremented each time
+      a mutable thing is created, and its value is taken as the hash code of
+      the thing and stored within it. The strong comparison test cannot depend
+      on the contents of mutable things, and thus such things appear to be
+      containers with opaque walls. For mutable things, the test for equality
+      must be the same as equality of the hash codes.
+
+      It is essential to have some hash tables for which equality amounts to
+      equality of the contents. This cannot be achieved for mutable hash
+      tables, but we do achieve it for non-mutable hash tables -- the hash code
+      is computed directly from the contents of the thing in a deterministic
+      way. This allows us to implement the notion of polynomial, say, as a hash
+      table -- the keys can be the monomials (necessarily non-mutable) and the
+      values can be the coefficients. The notion of monomial can be implemented
+      as a hash table where the keys are the variables and the values are the
+      corresponding exponents.
+
+      One further comforting remark: the routines that compute hash codes or
+      strong equality do not get into infinite loops, despite the existence of
+      circular structures: any circular structure must come into being by means
+      of changing something, and so the circular loop in the structure
+      necessarily involves a mutable thing, whose contents are not examined by
+      the routines. This provides another argument in favor of taking the
+      second approach listed above.
+  SeeAlso
+    "HashTable"
+///
+
+doc ///
+  Key
+    "mapping over hash tables"
+  Headline
+    apply a function to each element of a hash table
+  Description
+    Text
+      Each entry in a hash table consists of a key and a value. We provide
+      three ways to map functions over a hash table, depending on whether the
+      function is to receive a value and return a new value, to receive a key
+      and return a new key, or to receive a key-value pair and return a new
+      key-value pair. The corresponding functions, @TO "applyValues"@,
+      @TO "applyKeys"@, and @TO "applyPairs"@ are illustrated in the next
+      example.
+    Example
+      x = new HashTable from {a=>1, b=>2}
+      applyValues(x, value -> 1000*value)
+      applyKeys(x, key -> {key})
+      applyPairs(x, (key,value) -> (value,key))
+    Text
+      The functions, @TO "scanValues"@, @TO "scanKeys"@, and @TO "scanPairs"@
+      are similar, but the values returned are discarded instead of being
+      assembled into a new hash table.
+    Example
+      x = new HashTable from {a=>1, b=>2}
+      scanValues(x, print)
+      scanKeys(x, print)
+      scanPairs(x, print)
+    Text
+      The function @TO "merge"@ can be used to merge two hash tables. The
+      result is a hash table whose keys are those occurring in one of the two
+      incoming hash tables. We must provide a function of two arguments that is
+      used to combine the values when a key occurs in both hash tables.
+    Example
+      y = new HashTable from {b=>200, c=>300}
+      merge(x, y, plus)
+    Text
+      The function @TO "combine"@ can be used to combine two hash tables
+      @TT "x"@ and @TT "y"@ into a new hash table. Three functions must be
+      provided. The first one produces new keys from a key of @TT "x"@ and a
+      key of @TT "y"@. The second one produces a new values from a value of
+      @TT "x"@ and a value of @TT "y"@. The third one is used to combine values
+      when two new keys turn out to be the same.
+    Example
+      combine(x,y,identity,times,plus)
+  Subnodes
+    "applyKeys"
+    "applyValues"
+    "applyPairs"
+    "scanKeys"
+    "scanValues"
+    "scanPairs"
+    "selectKeys"
+    "selectValues"
+    "selectPairs"
+    (any, HashTable, Function)
+    (all, HashTable, Function)
+///
+
+doc ///
+  Key
+    copy
+  Headline
+    copy an object
+  Description
+    Text
+      @TT "copy x"@ yields a copy of x.
+
+      If x is an hash table, array, list or sequence, then the elements are
+      placed into a new copy. If x is a hash table, the copy is mutable if and
+      only if x is.
+
+      It is not advisable to copy such things as modules and rings, for: (1)
+      the operations that have already been installed for them will return
+      values in the original object, rather than in the copy; and (2) the copy
+      operation is shallow, not copying keys and values that happen to be hash
+      tables.
+  SeeAlso
+    "newClass"
+///
 
 doc///
  Key
@@ -873,47 +863,63 @@ doc///
   "lists and sequences"
 ///
 
-document {
-     Key => ".",
-     Headline => "access to elements whose key is a symbol",
-     TT "x.k", " -- the same as ", TT "x#(global k)", ", i.e., treat ", TT "k", " as
-     a global symbol and provide the value stored in the hash table ", TT "x", " 
-     under the key ", TT "k", ".",
-     PARA{},
-     "May also be used in an assignment.",
-     PARA{},
-     EXAMPLE {
-	  "x = new MutableHashTable;",
-      	  "x.k = 444",
-      	  "x.k",
-      	  "peek x",
-	  },
-     SeeAlso => {"#", ".?", "global"}
-     }
-document {
-     Key => ".?",
-     Headline => "check for presence of elements whose key is a symbol",
-     TT "x.?k", " -- the same as ", TT "x#?(global k)", ", tells whether a value is
-     available with ", TT "x.k", ".",
-     PARA{},
-     SeeAlso =>{ ".", "#?" }
-     }
+doc ///
+  Key
+    "."
+  Headline
+    access to elements whose key is a symbol
+  Description
+    Text
+      @TT "x.k"@ -- the same as @TT "x#(global k)"@, i.e., treat @TT "k"@ as a
+      global symbol and provide the value stored in the hash table @TT "x"@
+      under the key @TT "k"@.
 
-document {
-     Key => hash,
-     Headline => "hash code of an object",
-     Usage => "hash x",
-     Inputs => { "x" => Thing },
-     Outputs => { ZZ => { "the hash code of ", TT "x" } },
-     PARA{
-	  "The hash code of ", TT "x", " is an integer produced in a deterministic way
-	  from ", TT "x", ", and perhaps from the hash codes of the contents of ", TT "x", ".
-	  See ", TO "hashing", " for a discussion of the requirements that
-	  the hash codes used here are designed to satisfy."
-	  },
-     PARA {
-	  "Hash codes may change from one version of Macaulay2 to the next, but changes to the hash codes
-	  of the basic types will be avoided, if possible.  That includes lists, sequences, strings, hash 
-	  tables, options, Boolean values, and numbers."
-	  }
-     }
+      May also be used in an assignment.
+    Example
+      x = new MutableHashTable;
+      x.k = 444
+      x.k
+      peek x
+  SeeAlso
+    "#"
+    ".?"
+    "global"
+///
+doc ///
+  Key
+    ".?"
+  Headline
+    check for presence of elements whose key is a symbol
+  Description
+    Text
+      @TT "x.?k"@ -- the same as @TT "x#?(global k)"@, tells whether a value is
+      available with @TT "x.k"@.
+  SeeAlso
+    "."
+    "#?"
+///
+
+doc ///
+  Key
+    hash
+  Headline
+    hash code of an object
+  Usage
+    hash x
+  Inputs
+    x:Thing
+  Outputs
+    :ZZ
+      the hash code of @TT "x"@
+  Description
+    Text
+      The hash code of @TT "x"@ is an integer produced in a deterministic way
+      from @TT "x"@, and perhaps from the hash codes of the contents of
+      @TT "x"@. See @TO "hashing"@ for a discussion of the requirements that
+      the hash codes used here are designed to satisfy.
+
+      Hash codes may change from one version of Macaulay2 to the next, but
+      changes to the hash codes of the basic types will be avoided, if
+      possible. That includes lists, sequences, strings, hash tables, options,
+      Boolean values, and numbers.
+///

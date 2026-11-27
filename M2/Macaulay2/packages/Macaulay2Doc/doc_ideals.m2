@@ -1,217 +1,258 @@
 -- -*- coding: utf-8 -*-
-document {
-     Key => Ideal,
-     Headline => "the class of all ideals",
-     SeeAlso => "ideals",
-     "For basic information about ideals in ", EM "Macaulay2", ", see ",
-     TO "ideals", ".",
-     PARA{},
-     "Common ways to make an ideal:",
-     UL {
-	  TO "ideal",
-	  TO "Saturation :: annihilator",
-	  TO "content",
-	  TO "fittingIdeal",
-	  TO (kernel, RingMap),
-	  TO minors,
-	  TO pfaffians
-  	  },
-     "Common ways to get information about an ideal:",
-     UL {
-	  TO (generators, Ideal),
-	  TO (symbol _*,Ideal),
-	  TO (isSubset, Ideal, Ideal),
-	  TO "MinimalPrimes :: isPrime(Ideal)"
-	  },
-     "Common operations on ideals:",
-     UL {
-	  TO (symbol +,Ideal,Ideal),
-	  TO (symbol *,Ideal,Ideal),
-	  TO (symbol ==,Ideal,Ideal),
-	  TO (symbol ==,Ideal,ZZ),
-	  TO (symbol ^,Ideal,ZZ),
-	  TO (trim, Ideal)
-	  },
-     "Gröbner bases, normal forms, free resolutions",
-     UL {
-	  TO gb,
-	  TO leadTerm,
-	  TO codim,
-	  TO dim,
-	  TO (symbol%,Matrix,Ideal),
-	  TO "Complexes :: freeResolution",
-	  TO betti
-	  },
-     "Numeric information about homogeneous ideals",
-     UL {
-	  TO degree,
-	  TO poincare,
-	  TO hilbertFunction,
-	  TO hilbertPolynomial,
-	  TO hilbertSeries,
-	  TO genera,
-	  TO euler
-	  },
-     "Primary decomposition and components of an ideal",
-     UL {
-	  TO "MinimalPrimes::minimalPrimes",
-	  TO "MinimalPrimes::radical",
-	  TO "PrimaryDecomposition::associatedPrimes",
-	  TO "PrimaryDecomposition::primaryDecomposition",
-	  TO "PrimaryDecomposition::topComponents",
-	  TO "Saturation :: saturate(Ideal,Ideal)",
-	  TO "Saturation :: Ideal : Ideal",
-	  TO intersect
-	  },
-     "Ideals from geometry",
-     UL {
-	  TO Fano,
-	  TO Grassmannian,
-	  TO monomialCurveIdeal,
-	  TO singularLocus
-	  },
-     "Common ways to use an ideal:",
-     UL {
-	  TO (symbol /, Ring, Ideal),
-	  },
-     PARA{},
-     "An ideal ", TT "I", " is an immutable object, so if you want to 
-     cache information about it, put it in the hash table ", TT "I.cache", ".",
-    Subnodes => {
-	TO MonomialIdeal,
-	TO isMonomialIdeal,
-	TO isSquareFree,
-	TO (symbol *, Ideal, Ideal),
-        TO (symbol +, Ideal, Ideal),
-        TO (symbol ^, Ideal, ZZ),
-        TO (symbol ^, Ideal, Array),
-        TO (leadTerm, Ideal),
-        TO (leadTerm, ZZ, Ideal),
-        TO (codim, Ideal),
-        TO (degree, Ideal),
-        TO (dim, Ideal),
-	TO (generator, Ideal),
-        TO (generators, Ideal),
-        TO (hilbertPolynomial, Ideal),
-        TO (hilbertSeries, Ideal),
-        TO (intersect, Ideal, Ideal),
-        TO (isSubset, Ideal, Ideal),
-        TO (jacobian, Ideal),
-        TO (isMember, RingElement, Ideal),
-        TO (minimalPresentation, Ideal),
-        TO (numgens, Ideal),
-        TO (support, Ideal),
-        TO (symbol /, Ideal, Function),
-        TO (symbol /, Ideal, Ideal),
-	TO irreducibleCharacteristicSeries,
-	TO decompose,
-        },
-     }
+doc ///
+  Key
+    Ideal
+  Headline
+    the class of all ideals
+  Description
+    Text
+      For basic information about ideals in @EM "Macaulay2"@, see
+      @TO "ideals"@.
 
-document {
-     Key => (symbol *,Ideal,Ideal),
-     Headline => "product of ideals",
-     Usage => "I * J",
-     Inputs => { "I", "J" => {"in the same ring as ", TT "I"},
-	  },
-     Outputs => {
-	  {"the product of the two ideals ", TT "I", " and ", TT "J", ""}
-	  },
-     EXAMPLE {
-	  "R = QQ[t][a..d];",
-	  "I = ideal(a,(t+1)*c) * ideal(a^2,b^2)"
-	  },
-     "The generators produced are not generally minimal.  Use ",
-     TO (trim,Ideal), " or ", TO (mingens,Ideal), " to find a smaller
-     generating set.",
-     SeeAlso => {"ideals"}
-     }
-document {
-     Key => (symbol +,Ideal,Ideal),
-     Headline => "sum of ideals",
-     Usage => "I + J",
-     Inputs => { "I", "J" => {"in the same ring as ", TT "I"}, },
-     Outputs => {
-	  {"the sum of the two ideals ", TT "I", " and ", TT "J", ""}
-	  },
-     EXAMPLE {
-	  "R = QQ[t][a..d];",
-	  "I = ideal(a,(t+1)*c) + ideal(a^2,b^2)"
-	  },
-     "The generators produced are not generally minimal.  Use ",
-     TO (trim,Ideal), " or ", TO (mingens,Ideal), " to find a smaller
-     generating set.",
-     EXAMPLE {
-	  "trim I"
-	  },
-     SeeAlso => {"ideals"}
-     }
-document {
-     Key => {(symbol ^,Ideal,ZZ),
-	  (symbol ^,MonomialIdeal,ZZ)
-	  },
-     Headline => "power of an ideal",
-     Usage => "I^n",
-     Inputs => { "I", "n" => {"at least zero"}, },
-     Outputs => { {"the ideal ", TT "I^n"} },
-     EXAMPLE {
-	  "R = QQ[a..d];",
-	  "I = ideal(a^2, b^2-c*d);",
-	  "I^3"
-	  },
-     "The generators produced are often not minimal.  Use ",
-     TO (trim,Ideal), " or ", TO (mingens,Ideal), " to find a smaller
-     generating set.",
-     EXAMPLE {
-	  "trim I^3"
-	  },
-     SeeAlso => {"ideals"}
-     }
-document {
-     Key => {(symbol ^,Ideal,Array),
-	     (symbol ^,MonomialIdeal,Array)
-	  },
-     Headline => "bracket power of an ideal",
-     Usage => "I^e",
-     Inputs => { "I", "e" => {"array of positive integers"}, },
-     Outputs => { {"the ideal ", TT "I^e"} },
-     "The bracket power of an ideal is defined to be the
-     ideal generated by the image of the generators under the ring
-     homomorphism given by sending a variable to the corresponding power.
-     The array may either be a singleton, as follows:",
-     EXAMPLE {
-	  "R = QQ[a..d];",
-	  "I = ideal(a^2*b, a*b^2,c^3,d^5);",
-	  "I^[3]"
-	  },
-     "One may also give an array that is the same length as the number
-     of variables in the ring, as follows:",
-     EXAMPLE {
-	 "I^[2,3,4,5]"
-     },
-     "If your ring is a tower, then the bracket power will raise the outermost
-     variables to powers.",
-     EXAMPLE {
-     	 "S = QQ[x,y];",
-	 "T = S[z,w];",
-	 "I = ideal gens T;",
-	 "I^[3]",
-	 "I^[2,3]"
-     },
-     "No check is made to determine whether the function given by exponentiating
-     the generators is a ring homomorphism.  Of course, this only is an issue when
-     taking bracket powers of ideals in a quotient ring.  One important case where the bracket
-     power is useful is when studying Frobenius powers of ideals, which corresponds to the
-     image of the ideal under the Frobenius automorphism.",
-     EXAMPLE {
-        "R = ZZ/5[a..d];",
-	"I = minors(2,matrix {{a,b,c},{b,c,d}});",
-	"S = R/I;",
-    	"J = ideal vars S",
-	"J^[5]"
-     },
-     SeeAlso => {"ideals"}
-     }
+      Common ways to make an ideal:
+
+      @UL {
+          TO "ideal",
+          TO "Saturation :: annihilator",
+          TO "content",
+          TO "fittingIdeal",
+          TO (kernel, RingMap),
+          TO minors,
+          TO pfaffians
+          }@
+
+      Common ways to get information about an ideal:
+
+      @UL {
+          TO (generators, Ideal),
+          TO (symbol _*, Ideal),
+          TO (isSubset, Ideal, Ideal),
+          TO "MinimalPrimes :: isPrime(Ideal)"
+          }@
+
+      Common operations on ideals:
+
+      @UL {
+          TO (symbol +, Ideal, Ideal),
+          TO (symbol *, Ideal, Ideal),
+          TO (symbol ==, Ideal, Ideal),
+          TO (symbol ==, Ideal, ZZ),
+          TO (symbol ^, Ideal, ZZ),
+          TO (trim, Ideal)
+          }@
+
+      Gröbner bases, normal forms, free resolutions
+
+      @UL {
+          TO gb,
+          TO leadTerm,
+          TO codim,
+          TO dim,
+          TO (symbol%, Matrix, Ideal),
+          TO "Complexes :: freeResolution",
+          TO betti
+          }@
+
+      Numeric information about homogeneous ideals
+
+      @UL {
+          TO degree,
+          TO poincare,
+          TO hilbertFunction,
+          TO hilbertPolynomial,
+          TO hilbertSeries,
+          TO genera,
+          TO euler
+          }@
+
+      Primary decomposition and components of an ideal
+
+      @UL {
+          TO "MinimalPrimes::minimalPrimes",
+          TO "MinimalPrimes::radical",
+          TO "PrimaryDecomposition::associatedPrimes",
+          TO "PrimaryDecomposition::primaryDecomposition",
+          TO "PrimaryDecomposition::topComponents",
+          TO "Saturation :: saturate(Ideal,Ideal)",
+          TO "Saturation :: Ideal : Ideal",
+          TO intersect
+          }@
+
+      Ideals from geometry
+
+      @UL {TO Fano, TO Grassmannian, TO monomialCurveIdeal, TO singularLocus}@
+
+      Common ways to use an ideal:
+
+      @UL {TO (symbol /, Ring, Ideal)}@
+
+      An ideal @TT "I"@ is an immutable object, so if you want to cache
+      information about it, put it in the hash table @TT "I.cache"@.
+  SeeAlso
+    "ideals"
+  Subnodes
+    MonomialIdeal
+    isMonomialIdeal
+    isSquareFree
+    (symbol *, Ideal, Ideal)
+    (symbol +, Ideal, Ideal)
+    (symbol ^, Ideal, ZZ)
+    (symbol ^, Ideal, Array)
+    (leadTerm, Ideal)
+    (leadTerm, ZZ, Ideal)
+    (codim, Ideal)
+    (degree, Ideal)
+    (dim, Ideal)
+    (generator, Ideal)
+    (generators, Ideal)
+    (hilbertPolynomial, Ideal)
+    (hilbertSeries, Ideal)
+    (intersect, Ideal, Ideal)
+    (isSubset, Ideal, Ideal)
+    (jacobian, Ideal)
+    (isMember, RingElement, Ideal)
+    (minimalPresentation, Ideal)
+    (numgens, Ideal)
+    (support, Ideal)
+    (symbol /, Ideal, Function)
+    (symbol /, Ideal, Ideal)
+    irreducibleCharacteristicSeries
+    decompose
+///
+
+doc ///
+  Key
+    (symbol *,Ideal,Ideal)
+  Headline
+    product of ideals
+  Usage
+    I * J
+  Inputs
+    I:
+    J:
+      in the same ring as @TT "I"@
+  Outputs
+    :
+      the product of the two ideals @TT "I"@ and @TT "J"@
+  Description
+    Example
+      R = QQ[t][a..d];
+      I = ideal(a,(t+1)*c) * ideal(a^2,b^2)
+    Text
+      The generators produced are not generally minimal. Use @TO (trim, Ideal)@
+      or @TO (mingens, Ideal)@ to find a smaller generating set.
+  SeeAlso
+    "ideals"
+///
+doc ///
+  Key
+    (symbol +,Ideal,Ideal)
+  Headline
+    sum of ideals
+  Usage
+    I + J
+  Inputs
+    I:
+    J:
+      in the same ring as @TT "I"@
+  Outputs
+    :
+      the sum of the two ideals @TT "I"@ and @TT "J"@
+  Description
+    Example
+      R = QQ[t][a..d];
+      I = ideal(a,(t+1)*c) + ideal(a^2,b^2)
+    Text
+      The generators produced are not generally minimal. Use @TO (trim, Ideal)@
+      or @TO (mingens, Ideal)@ to find a smaller generating set.
+    Example
+      trim I
+  SeeAlso
+    "ideals"
+///
+doc ///
+  Key
+    (symbol ^,Ideal,ZZ)
+    (symbol ^,MonomialIdeal,ZZ)
+  Headline
+    power of an ideal
+  Usage
+    I^n
+  Inputs
+    I:
+    n:
+      at least zero
+  Outputs
+    :
+      the ideal @TT "I^n"@
+  Description
+    Example
+      R = QQ[a..d];
+      I = ideal(a^2, b^2-c*d);
+      I^3
+    Text
+      The generators produced are often not minimal. Use @TO (trim, Ideal)@ or
+      @TO (mingens, Ideal)@ to find a smaller generating set.
+    Example
+      trim I^3
+  SeeAlso
+    "ideals"
+///
+doc ///
+  Key
+    (symbol ^,Ideal,Array)
+    (symbol ^,MonomialIdeal,Array)
+  Headline
+    bracket power of an ideal
+  Usage
+    I^e
+  Inputs
+    I:
+    e:
+      array of positive integers
+  Outputs
+    :
+      the ideal @TT "I^e"@
+  Description
+    Text
+      The bracket power of an ideal is defined to be the ideal generated by the
+      image of the generators under the ring homomorphism given by sending a
+      variable to the corresponding power. The array may either be a singleton,
+      as follows:
+    Example
+      R = QQ[a..d];
+      I = ideal(a^2*b, a*b^2,c^3,d^5);
+      I^[3]
+    Text
+      One may also give an array that is the same length as the number of
+      variables in the ring, as follows:
+    Example
+      I^[2,3,4,5]
+    Text
+      If your ring is a tower, then the bracket power will raise the outermost
+      variables to powers.
+    Example
+      S = QQ[x,y];
+      T = S[z,w];
+      I = ideal gens T;
+      I^[3]
+      I^[2,3]
+    Text
+      No check is made to determine whether the function given by
+      exponentiating the generators is a ring homomorphism. Of course, this
+      only is an issue when taking bracket powers of ideals in a quotient ring.
+      One important case where the bracket power is useful is when studying
+      Frobenius powers of ideals, which corresponds to the image of the ideal
+      under the Frobenius automorphism.
+    Example
+      R = ZZ/5[a..d];
+      I = minors(2,matrix {{a,b,c},{b,c,d}});
+      S = R/I;
+      J = ideal vars S
+      J^[5]
+  SeeAlso
+    "ideals"
+///
 
 doc ///
 Node

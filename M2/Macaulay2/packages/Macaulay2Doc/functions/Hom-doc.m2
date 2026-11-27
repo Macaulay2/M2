@@ -270,20 +270,30 @@ undocumented {
     [(dual, Matrix), DegreeLimit],
     [(dual, Matrix), MinimalGenerators],
 }
-document {
-    Key => dual,
-    Headline => "dual module or map",
-}
-document {
-    Key => (dual, Module),
-    Headline => "dual module",
-    TT "dual M", " -- the dual of a module."
-}
-document {
-    Key => (dual, Matrix),
-    Headline => "dual of a map",
-    TT "dual f", " -- the dual (transpose) of a homomorphism."
-}
+doc ///
+  Key
+    dual
+  Headline
+    dual module or map
+///
+doc ///
+  Key
+    (dual, Module)
+  Headline
+    dual module
+  Description
+    Text
+      @TT "dual M"@ -- the dual of a module.
+///
+doc ///
+  Key
+    (dual, Matrix)
+  Headline
+    dual of a map
+  Description
+    Text
+      @TT "dual f"@ -- the dual (transpose) of a homomorphism.
+///
 
 -----------------------------------------------------------------------------
 

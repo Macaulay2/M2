@@ -431,20 +431,29 @@ Node
       f ** S
 ///
 
-document {
-    Key => (symbol ^**, Module, ZZ),
-    Headline => "tensor power",
-    Usage => "M^**i",
-    Inputs => { "M", "i" },
-    Outputs => {Module => { "the ", TT "i", "-th tensor power of ", TT "M"}},
-    "The second symmetric power of the canonical module of the rational quartic:",
-    EXAMPLE lines ///
-         R = QQ[a..d];
-         I = monomialCurveIdeal(R,{1,3,4})
-	 M = Ext^1(I,R^{-4})
-	 M^**2
-	 ///
-    }
+doc ///
+  Key
+    (symbol ^**, Module, ZZ)
+  Headline
+    tensor power
+  Usage
+    M^**i
+  Inputs
+    M:
+    i:
+  Outputs
+    :Module
+      the @TT "i"@-th tensor power of @TT "M"@
+  Description
+    Text
+      The second symmetric power of the canonical module of the rational
+      quartic:
+    Example
+      R = QQ[a..d];
+      I = monomialCurveIdeal(R,{1,3,4})
+      M = Ext^1(I,R^{-4})
+      M^**2
+///
 
 doc ///
   Key

@@ -13,16 +13,21 @@ undocumented {
     (symbol **, Thing, InexactFieldFamily),
 }
 
-document {
-    Key => symbol **,
-    Headline => "a binary operator, usually used for tensor product or Cartesian product",
-    SeeAlso => {symbol ^**}
-}
+doc ///
+  Key
+    symbol **
+  Headline
+    a binary operator, usually used for tensor product or Cartesian product
+  SeeAlso
+    symbol ^**
+///
 
-document {
-    Key => symbol ^**,
-    Headline => "a binary operator, usually used for tensor or Cartesian power",
-}
+doc ///
+  Key
+    symbol ^**
+  Headline
+    a binary operator, usually used for tensor or Cartesian power
+///
 
 doc ///
 Node
@@ -35,12 +40,16 @@ Node
       {1, 2} ** {10, 20, 30}
 ///
 
-document {
-    Key => symbol ⊠,
-    Headline => "a binary operator, usually used for exterior product",
-}
+doc ///
+  Key
+    symbol ⊠
+  Headline
+    a binary operator, usually used for exterior product
+///
 
-document {
-    Key => symbol ⧢,
-    Headline => "a binary operator, usually used for shuffle product",
-}
+doc ///
+  Key
+    symbol ⧢
+  Headline
+    a binary operator, usually used for shuffle product
+///

@@ -109,64 +109,75 @@ undocumented {(promote,CC,CC_*),
      (promote,ZZ,RRi')
      }
 
-document { 
-     Key => {promote,
-	  (symbol _, RingElement, Ring),(symbol _,Number,Ring)},
-     Headline => "promote to another ring",
-     Usage => "promote(f,R)",
-     Inputs => {
-	  "f" => {ofClass{RingElement, Ideal, Matrix}, " over some base ring of R"},
-	  "R" => Ring
-	  },
-     Outputs => {
-	  RingElement => {"or ", ofClass Matrix, ", over R"},
-	  },
-     PARA {
-     	  "Promote the given ring element or matrix ", TT "f", " to an element or matrix of ", TT "R", ", via the natural map to ", TT "R", ".
-     	  This is semantically equivalent to creating the natural ring map from ", TT "ring f --> R", " and mapping f via this map."
-	  },
-     EXAMPLE lines ///
-     R = QQ[a..d]; f = a^2;
-     S = R/(a^2-b-1);
-     promote(2/3,S)
-     F = map(R,QQ);  F(2/3)
-     promote(f,S)
-     G = map(S,R); G(f)
-     ///,
-     PARA {
-	  "For promotion of ring elements, there is the following shorter notation."
-	  },
-     EXAMPLE ///13_R///,
-     PARA{
-	  "If you wish to promote a module to another ring, either promote the corresponding matrices,
-	  use the natural ring map, or use tensor product of matrices or modules.",
-	  },
-     EXAMPLE lines ///
-     use R;
-     I = ideal(a^2,a^3,a^4)
-     promote(I,S)
-     m = image matrix{{a^2,a^3,a^4}}
-     promote(gens m,S)
-     G m
-     m ** S
-     ///,
-     "A special feature is that if ", TT "f", " is rational, and ", TT "R", " is not
-     an algebra over ", TO "QQ", ", then an element of ", TT "R", " is provided
-     by attempting the evident division.",
-     PARA {
-	 "Prior to version 1.26.05, promotion of real numbers to rational numbers was accomplished by using all of the bits of
-	 the internal representation.  This feature was removed since there is no natural map from $\\RR\\to\\QQ$.
-	 However, this functionality is still available using the unexported function ", CODE "internalRepresentation", "."
-	 },
-     EXAMPLE lines ///
-     debug Core
-     internalRepresentation 101.
-     internalRepresentation .101
-     factor denominator oo
-     ooo + 0.
-     oo === .101
-     ///,
-     SeeAlso => {baseRings, lift, liftable, "substitution and maps between rings",
-	  substitute, (symbol**,Matrix,Ring) },
-     Subnodes => { TO setupPromote },
-     }
+doc ///
+  Key
+    promote
+    (symbol _, RingElement, Ring)
+    (symbol _,Number,Ring)
+  Headline
+    promote to another ring
+  Usage
+    promote(f,R)
+  Inputs
+    f:
+      @ofClass{RingElement, Ideal, Matrix}@ over some base ring of R
+    R:Ring
+  Outputs
+    :RingElement
+      or @ofClass Matrix@, over R
+  Description
+    Text
+      Promote the given ring element or matrix @TT "f"@ to an element or matrix
+      of @TT "R"@, via the natural map to @TT "R"@. This is semantically
+      equivalent to creating the natural ring map from @TT "ring f --> R"@ and
+      mapping f via this map.
+    Example
+      R = QQ[a..d]; f = a^2;
+      S = R/(a^2-b-1);
+      promote(2/3,S)
+      F = map(R,QQ);  F(2/3)
+      promote(f,S)
+      G = map(S,R); G(f)
+    Text
+      For promotion of ring elements, there is the following shorter notation.
+    Example
+      13_R
+    Text
+      If you wish to promote a module to another ring, either promote the
+      corresponding matrices, use the natural ring map, or use tensor product
+      of matrices or modules.
+    Example
+      use R;
+      I = ideal(a^2,a^3,a^4)
+      promote(I,S)
+      m = image matrix{{a^2,a^3,a^4}}
+      promote(gens m,S)
+      G m
+      m ** S
+    Text
+      A special feature is that if @TT "f"@ is rational, and @TT "R"@ is not an
+      algebra over @TO "QQ"@, then an element of @TT "R"@ is provided by
+      attempting the evident division.
+
+      Prior to version 1.26.05, promotion of real numbers to rational numbers
+      was accomplished by using all of the bits of the internal representation.
+      This feature was removed since there is no natural map from $\RR\to\QQ$.
+      However, this functionality is still available using the unexported
+      function @CODE "internalRepresentation"@.
+    Example
+      debug Core
+      internalRepresentation 101.
+      internalRepresentation .101
+      factor denominator oo
+      ooo + 0.
+      oo === .101
+  SeeAlso
+    baseRings
+    lift
+    liftable
+    "substitution and maps between rings"
+    substitute
+    (symbol**,Matrix,Ring)
+  Subnodes
+    setupPromote
+///

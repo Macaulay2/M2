@@ -1,20 +1,32 @@
-document { Key => "Core",
-    Headline => "the core of Macaulay2",
-    PARA {
-	"This package contains the core functionality of Macaulay2, without the documentation,
-	which is in the package ", TO "Macaulay2Doc", "."
-    },
-    Subnodes => {
-	TO "how Macaulay2 finds its files",
-    }
-}
+doc ///
+  Key
+    "Core"
+  Headline
+    the core of Macaulay2
+  Description
+    Text
+      This package contains the core functionality of Macaulay2, without the
+      documentation, which is in the package @TO "Macaulay2Doc"@.
+  Subnodes
+    "how Macaulay2 finds its files"
+///
 
 -- FIXME: this causes warning: ambiguous reference "User :: User" and "Macaulay2Doc :: User"
-document { Key => "User",
-    Headline => "default package for interpreter interactions",
-    PARA { "This package contains the symbols defined by the user during interactive interactions." },
-    SeeAlso => { getSymbol, listUserSymbols, showUserStructure, debug }
-}
+doc ///
+  Key
+    "User"
+  Headline
+    default package for interpreter interactions
+  Description
+    Text
+      This package contains the symbols defined by the user during interactive
+      interactions.
+  SeeAlso
+    getSymbol
+    listUserSymbols
+    showUserStructure
+    debug
+///
 
 -- TODO: merge this with the node above.
 doc ///
@@ -44,25 +56,29 @@ Node
     "applicationDirectorySuffix"
 ///
 
-document {
-    Key => "the interpreter of Macaulay2",
-    PARA {
-	"This part is in charge of interpreting the top-level language of Macaulay2 ",
-	"and calling the requested functions in ", TO "the engine of Macaulay2", "."
-    }
-}
+doc ///
+  Key
+    "the interpreter of Macaulay2"
+  Description
+    Text
+      This part is in charge of interpreting the top-level language of
+      Macaulay2 and calling the requested functions in
+      @TO "the engine of Macaulay2"@.
+///
 
-document {
-    Key => "the engine of Macaulay2",
-    "The engine is the part of the program that is dedicated to
-    performing the computation of Gröbner bases with Buchberger's
-    algorithm.  It is coded directly in C++ for speed.",
-    PARA{},
-    "The Macaulay2 engine provides fast polynomial and matrix operations,
-    and Gröbner bases, syzygies, Hilbert functions, resolutions and
-    other operations that we feel need to be implemented directly for
-    efficiency reasons.",
-    Subnodes => {
-	TO "parallelism in engine computations",
-    },
-}
+doc ///
+  Key
+    "the engine of Macaulay2"
+  Description
+    Text
+      The engine is the part of the program that is dedicated to performing the
+      computation of Gröbner bases with Buchberger's algorithm. It is coded
+      directly in C++ for speed.
+
+      The Macaulay2 engine provides fast polynomial and matrix operations, and
+      Gröbner bases, syzygies, Hilbert functions, resolutions and other
+      operations that we feel need to be implemented directly for efficiency
+      reasons.
+  Subnodes
+    "parallelism in engine computations"
+///

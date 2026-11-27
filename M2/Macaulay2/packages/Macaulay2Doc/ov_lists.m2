@@ -533,207 +533,259 @@ doc///
     subsets
 ///
 
-document {
-     Key => BasicList,
-     Headline => "the class of all basic lists",
-     PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},
-     "A basic list is a sequence of expressions indexed by a sequence of consecutive integers of the form
-     ", TT "0", ", ", TT "1", ", ..., ", TT "N-1", ".  The number ", TT "N", " is called the length of the list.",
-     PARA{},
-     "There are various types of basic lists, depending on the application, and they are displayed in different ways.
-     The types first encountered are those of type ", TO "VisibleList", ", but new types are easy to introduce.
-     In the following example we introduce a new type of basic list called ", TT "L", ".",
-     EXAMPLE {
-	  "L = new Type of BasicList",
-	  "x = new L from {a,b,c,d}",
-	  "join(x,x)"
-	  },
-     "Here are the core types that inherit from ", TT "BasicList", ":",
-     Subnodes => TO \ {
-	 FilePosition,
-	 --Eliminate,
-	 Command,
-	 --VisibleList,
-	 --ProductOrder,
-	 URL,
-	 --MutableList,
-	 RingElement,
-	 --Time,
-	 Option,
-	 Vector,
-	 --Partition,
-	 Expression,
-	 Manipulator,
-	 IndexedVariable
-         },
-     }
+doc ///
+  Key
+    BasicList
+  Headline
+    the class of all basic lists
+  Description
+    Text
+      For an overview of lists and sequences, see @TO "lists and sequences"@.
 
-document {
-     Key => VisibleList,
-     Headline => "the class of all visible lists",
-     "There are three types of lists that can be entered directly from
-     the keyboard, as follows.",
-     EXAMPLE {
-	  "{a,b,c}",
-	  "[a,b,c]",
-	  "(a,b,c)",
-	  },
-     "We introduce the class of visible lists as a convenience for
-     referring to lists of these types.",
-     Subnodes => {
-	  TO List,
-	  TO Sequence,
-	  TO Array,
-	  TO AngleBarList,
-	  }
-     }
+      A basic list is a sequence of expressions indexed by a sequence of
+      consecutive integers of the form @TT "0"@, @TT "1"@, ..., @TT "N-1"@. The
+      number @TT "N"@ is called the length of the list.
 
-document {
-     Key => List,
-     Headline => "the class of all lists -- {...}",
-     "Lists in Macaulay2 consist of elements of any type, enclosed in braces, and separated by commas.",
-     EXAMPLE "L = {a,1,b,2}",
-     "The length of a list has two notations, the version with the ",  TT "#", " is faster when writing programs.",
-     EXAMPLE "#L, length L",
-     "The first entry of the list has index 0.  Indexing is performed using ", TO symbol#, ".",
-     EXAMPLE "L#2",
-     PARA{
-	  "Lists in Macaulay2 are immutable. See ", TO MutableList, " for making and using lists that you may modify."
-	  },
-     PARA {
-	  "To convert lists to and from other types of ", TO "BasicList", ", in addition to ", TO "toList", ", one may use ", TO "new", "."
-	  },
-     EXAMPLE lines ///
-     new Array from {a,b,c}
-     new List from [a,b,c]
-     ///,
-     PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},
-     Subnodes => {
-	 -- TO Hybrid, -- this is documented in MinimalPrimes
-	 TO VerticalList,
-     }
-}
+      There are various types of basic lists, depending on the application, and
+      they are displayed in different ways. The types first encountered are
+      those of type @TO "VisibleList"@, but new types are easy to introduce. In
+      the following example we introduce a new type of basic list called
+      @TT "L"@.
+    Example
+      L = new Type of BasicList
+      x = new L from {a,b,c,d}
+      join(x,x)
+    Text
+      Here are the core types that inherit from @TT "BasicList"@:
+  Subnodes
+    FilePosition
+    --Eliminate,
+    Command
+    --VisibleList,
+    --ProductOrder,
+    URL
+    --MutableList,
+    RingElement
+    --Time,
+    Option
+    Vector
+    --Partition,
+    Expression
+    Manipulator
+    IndexedVariable
+///
 
-document { Key => VerticalList,
-     Headline => "a type of visible self-initializing list that prints vertically",
-     Usage => "VerticalList x",
-     Inputs => { "x" => List },
-     Outputs => { VerticalList },
-     "All operations on lists apply to vertical lists, since they inherit from the type ", TO VisibleList, ".  The
-     only difference is the way that a vertical list is displayed vertically.",
-     EXAMPLE lines ///
-	 a .. e
-	 v = VerticalList oo
-	 v_1
-	 length v
-	 ///,
-     "One may get a normal list back from a vertical list as follows.",
-     EXAMPLE lines ///
-	 toList v
-     ///,
-     Subnodes => TO NumberedVerticalList,
-     }
+doc ///
+  Key
+    VisibleList
+  Headline
+    the class of all visible lists
+  Description
+    Text
+      There are three types of lists that can be entered directly from the
+      keyboard, as follows.
+    Example
+      {a,b,c}
+      [a,b,c]
+      (a,b,c)
+    Text
+      We introduce the class of visible lists as a convenience for referring to
+      lists of these types.
+  Subnodes
+    List
+    Sequence
+    Array
+    AngleBarList
+///
 
-document { Key => NumberedVerticalList,
-     Headline => "a type of visible self-initializing list that prints vertically",
-     Usage => "NumberedVerticalList x",
-     Inputs => { "x" => List },
-     Outputs => { NumberedVerticalList },
-     "All operations on lists apply to numbered vertical lists, since they inherit from the type ", TO VisibleList, ".  The
-     only difference is the way that a numbered vertical list is displayed vertically, with index numbers labelling the entries.",
-     EXAMPLE lines ///
-	 a .. e
-	 v = NumberedVerticalList oo
-	 v_1
-	 length v
-	 ///,
-     "One may get a normal list back from a vertical list as follows.",
-     EXAMPLE lines ///
-	 toList v
-     ///,
-     SeeAlso => { VerticalList }
-     }
+doc ///
+  Key
+    List
+  Headline
+    the class of all lists -- {...}
+  Description
+    Text
+      Lists in Macaulay2 consist of elements of any type, enclosed in braces,
+      and separated by commas.
+    Example
+      L = {a,1,b,2}
+    Text
+      The length of a list has two notations, the version with the @TT "#"@ is
+      faster when writing programs.
+    Example
+      #L, length L
+    Text
+      The first entry of the list has index 0. Indexing is performed using
+      @TO symbol#@.
+    Example
+      L#2
+    Text
+      Lists in Macaulay2 are immutable. See @TO MutableList@ for making and
+      using lists that you may modify.
 
-document {
-     Key => AngleBarList,
-     Headline => "the class of lists delimited by <| ... |>",
-     PARA {
-	  "An angle bar list can be created by enclosing elements of any type between angle bars."
-	  },
-     EXAMPLE lines ///
-     x = <|a,b,c|>
-     # x
-     x#1
-     ///,
-     PARA {
-	  "To convert angle bar lists to and from other types of ", TO "BasicList", ", one may use ", TO "new", "."
-	  },
-     EXAMPLE lines ///
-     new AngleBarList from {a,b,c}
-     new Sequence from <|a,b,c|>
-     ///,
-     PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."}
-     }     
+      To convert lists to and from other types of @TO "BasicList"@, in addition
+      to @TO "toList"@, one may use @TO "new"@.
+    Example
+      new Array from {a,b,c}
+      new List from [a,b,c]
+    Text
+      For an overview of lists and sequences, see @TO "lists and sequences"@.
+  Subnodes
+    -- TO Hybrid, -- this is documented in MinimalPrimes
+    VerticalList
+///
 
-document {
-     Key => Array,
-     Headline => "the class of all arrays -- [...]",
-     PARA {
-	  "An array can be created by enclosing elements of any type in brackets."
-	  },
-     EXAMPLE lines ///
-     x = [a,b,c]
-     # x
-     x#1
-     ///,
-     PARA {
-	  "To convert arrays to and from other types of ", TO "BasicList", ", one may use ", TO "new", "."
-	  },
-     EXAMPLE lines ///
-     new Array from {a,b,c}
-     new Sequence from [a,b,c]
-     ///,
-     PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."}
-     }
+doc ///
+  Key
+    VerticalList
+  Headline
+    a type of visible self-initializing list that prints vertically
+  Usage
+    VerticalList x
+  Inputs
+    x:List
+  Outputs
+    :VerticalList
+  Description
+    Text
+      All operations on lists apply to vertical lists, since they inherit from
+      the type @TO VisibleList@. The only difference is the way that a vertical
+      list is displayed vertically.
+    Example
+      a .. e
+      v = VerticalList oo
+      v_1
+      length v
+    Text
+      One may get a normal list back from a vertical list as follows.
+    Example
+      toList v
+  Subnodes
+    NumberedVerticalList
+///
 
-document {
-     Key => Sequence,
-     Headline => "the class of all sequences -- (...)",
-     PARA {
-	  "A sequence is an ordered collection of things enclosed by parentheses
-	  and separated by commas.  Use ", TO "#", " to get the length of a
-	  sequence of to get one of the elements."
-	  },
-     EXAMPLE {
-	  "v = (a,b,c)",
-	  "#v",
-	  "v#2"
-	  },
-     PARA {
-	  "To convert sequences to and from other types of ", TO "BasicList", ", in addition to ", TO "toSequence", ", one may use ", TO "new", "."
-	  },
-     EXAMPLE lines ///
-     new Array from (a,b,c)
-     new Sequence from [a,b,c]
-     ///,
-     PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},
-     }
+doc ///
+  Key
+    NumberedVerticalList
+  Headline
+    a type of visible self-initializing list that prints vertically
+  Usage
+    NumberedVerticalList x
+  Inputs
+    x:List
+  Outputs
+    :NumberedVerticalList
+  Description
+    Text
+      All operations on lists apply to numbered vertical lists, since they
+      inherit from the type @TO VisibleList@. The only difference is the way
+      that a numbered vertical list is displayed vertically, with index numbers
+      labelling the entries.
+    Example
+      a .. e
+      v = NumberedVerticalList oo
+      v_1
+      length v
+    Text
+      One may get a normal list back from a vertical list as follows.
+    Example
+      toList v
+  SeeAlso
+    VerticalList
+///
 
-document {
-     Key => (symbol :, ZZ, Thing),
-     Headline => "repeat an item",
-     TT "n : x", " repetition ", TT "n", " times of ", TT "x", " in a sequence",
-     PARA{},
-     "If ", TT "n", " is an integer and ", TT "x", " is anything, return a
-     sequence consisting of ", TT "x", " repeated ", TT "n", " times.  A negative 
-     value for ", TT "n", " will silently be treated as zero.",
-     PARA{},
-     "Warning: such sequences do not get automatically spliced into lists
-     containing them.",
-     PARA{},
-     EXAMPLE { "{5:a,10:b}", "splice {5:a,10:b}" },
-     SeeAlso => {splice, (symbol..,ZZ,ZZ), "lists and sequences"}
-     }
+doc ///
+  Key
+    AngleBarList
+  Headline
+    the class of lists delimited by <| ... |>
+  Description
+    Text
+      An angle bar list can be created by enclosing elements of any type
+      between angle bars.
+    Example
+      x = <|a,b,c|>
+      # x
+      x#1
+    Text
+      To convert angle bar lists to and from other types of @TO "BasicList"@,
+      one may use @TO "new"@.
+    Example
+      new AngleBarList from {a,b,c}
+      new Sequence from <|a,b,c|>
+    Text
+      For an overview of lists and sequences, see @TO "lists and sequences"@.
+///     
+
+doc ///
+  Key
+    Array
+  Headline
+    the class of all arrays -- [...]
+  Description
+    Text
+      An array can be created by enclosing elements of any type in brackets.
+    Example
+      x = [a,b,c]
+      # x
+      x#1
+    Text
+      To convert arrays to and from other types of @TO "BasicList"@, one may
+      use @TO "new"@.
+    Example
+      new Array from {a,b,c}
+      new Sequence from [a,b,c]
+    Text
+      For an overview of lists and sequences, see @TO "lists and sequences"@.
+///
+
+doc ///
+  Key
+    Sequence
+  Headline
+    the class of all sequences -- (...)
+  Description
+    Text
+      A sequence is an ordered collection of things enclosed by parentheses and
+      separated by commas. Use @TO "#"@ to get the length of a sequence of to
+      get one of the elements.
+    Example
+      v = (a,b,c)
+      #v
+      v#2
+    Text
+      To convert sequences to and from other types of @TO "BasicList"@, in
+      addition to @TO "toSequence"@, one may use @TO "new"@.
+    Example
+      new Array from (a,b,c)
+      new Sequence from [a,b,c]
+    Text
+      For an overview of lists and sequences, see @TO "lists and sequences"@.
+///
+
+doc ///
+  Key
+    (symbol :, ZZ, Thing)
+  Headline
+    repeat an item
+  Description
+    Text
+      @TT "n : x"@ repetition @TT "n"@ times of @TT "x"@ in a sequence
+
+      If @TT "n"@ is an integer and @TT "x"@ is anything, return a sequence
+      consisting of @TT "x"@ repeated @TT "n"@ times. A negative value for
+      @TT "n"@ will silently be treated as zero.
+
+      Warning: such sequences do not get automatically spliced into lists
+      containing them.
+    Example
+      {5:a,10:b}
+      splice {5:a,10:b}
+  SeeAlso
+    splice
+    (symbol..,ZZ,ZZ)
+    "lists and sequences"
+///
 
 doc ///
   Key
@@ -763,33 +815,55 @@ doc ///
       toSequence (1, 2, 3)
 ///
 
-document {
-     Key => sequence,
-     Headline => "make a sequence",
-     Usage => "sequence v",
-     Inputs => { "v" => Thing },
-     Outputs => { Sequence => {TT "v", " if ", TT "v", " is a sequence, otherwise a sequence of length 1 containing ", TT "v"}},
-     PARA { "Such a function is needed occasionally to restore uniformity, because a nonempty parenthesized expression with no commas is not parsed as a sequence." },
-     EXAMPLE {
-	  "sequence()",
-	  "sequence(4)",
-      	  "sequence(4,5)",
-	  "identity()",
-	  "identity(4)",
-      	  "identity(4,5)",
-	  },
-     SeeAlso => { unsequence }
-     }
+doc ///
+  Key
+    sequence
+  Headline
+    make a sequence
+  Usage
+    sequence v
+  Inputs
+    v:Thing
+  Outputs
+    :Sequence
+      @TT "v"@ if @TT "v"@ is a sequence, otherwise a sequence of length 1
+      containing @TT "v"@
+  Description
+    Text
+      Such a function is needed occasionally to restore uniformity, because a
+      nonempty parenthesized expression with no commas is not parsed as a
+      sequence.
+    Example
+      sequence()
+      sequence(4)
+      sequence(4,5)
+      identity()
+      identity(4)
+      identity(4,5)
+  SeeAlso
+    unsequence
+///
 
-document {
-    Key => unsequence,
-    Headline => "extract the single element from a sequence of length 1",
-    Usage => "unsequence x",
-    Inputs => { "x" => Thing },
-    Outputs => { { TT "x#0", ", if ", TT "x", " is a sequence of length 1, otherwise ", TT "x", "" } },
-    EXAMPLE { "unsequence (2:a)", "unsequence (1:a)", "unsequence (0:a)" },
-    SeeAlso => sequence
-}
+doc ///
+  Key
+    unsequence
+  Headline
+    extract the single element from a sequence of length 1
+  Usage
+    unsequence x
+  Inputs
+    x:Thing
+  Outputs
+    :
+      @TT "x#0"@, if @TT "x"@ is a sequence of length 1, otherwise @TT "x"@
+  Description
+    Example
+      unsequence (2:a)
+      unsequence (1:a)
+      unsequence (0:a)
+  SeeAlso
+    sequence
+///
 
 doc ///
   Key
@@ -851,60 +925,84 @@ doc ///
     Bag
 ///
 
-document {
-    Key => {
-	 rotate,
-	(rotate, ZZ, VisibleList)
-    },
-    Headline => "rotate a list",
-    Usage => "rotate(n,v)",
-    Inputs => {"n","v"},
-    Outputs => {{"the list obtained by rotating the list ", TT "v", " leftward ", TT "n", " places"}},
-    EXAMPLE lines ///
-        p = 0 .. 20
-	rotate(3,p)
-	rotate(-3,p)
-    ///}
+doc ///
+  Key
+    rotate
+    (rotate, ZZ, VisibleList)
+  Headline
+    rotate a list
+  Usage
+    rotate(n,v)
+  Inputs
+    n:
+    v:
+  Outputs
+    :
+      the list obtained by rotating the list @TT "v"@ leftward @TT "n"@ places
+  Description
+    Example
+      p = 0 .. 20
+      rotate(3,p)
+      rotate(-3,p)
+///
 
-document {
-    Key => {
-	runLengthEncode,
-       (runLengthEncode, VisibleList)
-    },
-    Headline => "run length encoding",
-    Usage => "runLengthEncode x",
-    Inputs => { "x" },
-    Outputs => {{ "a list equivalent to ", TT "x", ", in which runs and sequences have been expressed symbolically as ", TO2{Expression,"expressions"}}},
-    PARA {"The result is useful in printed displays, as a way of making them more compact. ",
-	"The original list can be recovered by applying ", TO "value", " to the elements of the result, and then using ", TO "deepSplice",
-	", provided that ", TT "x", " contains no entries that are sequences."},
-    EXAMPLE lines ///
+doc ///
+  Key
+    runLengthEncode
+    (runLengthEncode, VisibleList)
+  Headline
+    run length encoding
+  Usage
+    runLengthEncode x
+  Inputs
+    x:
+  Outputs
+    :
+      a list equivalent to @TT "x"@, in which runs and sequences have been
+      expressed symbolically as @TO2{Expression, "expressions"}@
+  Description
+    Text
+      The result is useful in printed displays, as a way of making them more
+      compact. The original list can be recovered by applying @TO "value"@ to
+      the elements of the result, and then using @TO "deepSplice"@, provided
+      that @TT "x"@ contains no entries that are sequences.
+    Example
       x = {1,2,3,a,b,c,a,b,c,4,4,4,"asdf"};
       y = runLengthEncode x
       peek y
       value \ y
       deepSplice \\ oo
       x === oo
-    ///,
-    SeeAlso => {BinaryOperation, Holder}
-}
+  SeeAlso
+    BinaryOperation
+    Holder
+///
 
-document {
-     Key => {(symbol |, List, List),
-	  (symbol |, Array, Array),
-	  (symbol |, Sequence, Sequence)},
-     Headline => "join lists, sequences or arrays",
-     Usage => "v | w",
-     Inputs => {"v" => Nothing =>  {ofClass List, ", ",
-	       ofClass Array, ", or ",
-	       ofClass Sequence},
-	  "w" => Nothing => {"of the same type as ", TT "v"}},
-     Outputs => {
-	  Nothing => "The join of the lists, sequences or arrays."},
-     EXAMPLE "{1,2,3}|{4,5,6}",
-     EXAMPLE "(a,b,c)|(1,2)",
-     SeeAlso => {join}
-     }
+doc ///
+  Key
+    (symbol |, List, List)
+    (symbol |, Array, Array)
+    (symbol |, Sequence, Sequence)
+  Headline
+    join lists, sequences or arrays
+  Usage
+    v | w
+  Inputs
+    v:Nothing
+      @ofClass List@, @ofClass Array@, or @ofClass Sequence@
+    w:Nothing
+      of the same type as @TT "v"@
+  Outputs
+    :Nothing
+      The join of the lists, sequences or arrays.
+  Description
+    Example
+      {1,2,3}|{4,5,6}
+    Example
+      (a,b,c)|(1,2)
+  SeeAlso
+    join
+///
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -264,31 +264,41 @@ Node
     setRandomSeed
 ///
 
-document { Key => {(randomMutableMatrix, ZZ, ZZ, RR, ZZ),
-	  [randomMutableMatrix,Dense],
-	  randomMutableMatrix},
-     Headline => "a random mutable matrix of integers",
-     Usage => "randomMutableMatrix(nrows,ncols,zerof,max)",
-     Inputs => {
-	  "nrows",
-	  "ncols",
-	  "zerof" => { "between 0 and 1" },
-	  "max",
-	  Dense => {"whether the encoding of the matrix should be dense or not: see ", TO MutableMatrix}
-	  },
-     Outputs => {
-	  {"a random mutable ", TT "nrows", " by ", TT "ncols", " matrix of integers.
-	       The absolute value of the
-	       entries is less than ", TT "max", ", and
-	       the frequency of entries equal to zero is given by ", TT "zerof", "." }
-	  },
-     "This function has been superseded by ", TO fillMatrix, ", which works over
-     more rings, is much faster for large matrices, and is more flexible.",
-     EXAMPLE lines ///
-       randomMutableMatrix(10,15,.9,100)
-     ///,
-     SeeAlso => {mutableMatrix, fillMatrix, setRandomSeed, random}
-     }
+doc ///
+  Key
+    (randomMutableMatrix, ZZ, ZZ, RR, ZZ)
+    [randomMutableMatrix,Dense]
+    randomMutableMatrix
+  Headline
+    a random mutable matrix of integers
+  Usage
+    randomMutableMatrix(nrows,ncols,zerof,max)
+  Inputs
+    nrows:
+    ncols:
+    zerof:
+      between 0 and 1
+    max:
+    Dense =>
+      whether the encoding of the matrix should be dense or not: see
+      @TO MutableMatrix@
+  Outputs
+    :
+      a random mutable @TT "nrows"@ by @TT "ncols"@ matrix of integers. The
+      absolute value of the entries is less than @TT "max"@, and the frequency
+      of entries equal to zero is given by @TT "zerof"@.
+  Description
+    Text
+      This function has been superseded by @TO fillMatrix@, which works over
+      more rings, is much faster for large matrices, and is more flexible.
+    Example
+      randomMutableMatrix(10,15,.9,100)
+  SeeAlso
+    mutableMatrix
+    fillMatrix
+    setRandomSeed
+    random
+///
 
 document {
      Headline => "fill a mutable matrix with random numbers",
