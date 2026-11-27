@@ -779,6 +779,31 @@ TEST ///
 ///
 
 TEST ///
+-- A bounded basis may not yet include all of the original generators.
+A = QQ<|x,y|>;
+I = ideal(x,y^3);
+assert(NCGB(I,1,Strategy=>"Naive") == matrix{{x}});
+assert(NCReductionTwoSided(y^3,NCGB(I,4,Strategy=>"Naive")) == 0);
+J = ideal(x,y^3);
+NCGB(J,1,Strategy=>"Naive");
+B = A/J;
+assert(B_0 == 0 and B_1 != 0 and B_1^3 == 0);
+
+-- The cutoff uses heft, including for inhomogeneous generators.
+C = QQ<|u,v,Degrees=>{{1,-1},{1,-2}},Heft=>{2,0}|>;
+L = ideal(u^2-v);
+assert(NCGB(L,3,Strategy=>"Naive") == 0);
+D = C/L;
+assert(D_0^2 == D_1 and D_1 != 0);
+
+-- A reduction can also turn an input relation into one of higher heft.
+E = QQ<|a,b,c,Weights=>{1,0,0}|>;
+H = ideal(a-b^2,a^2-c);
+NCGB(H,2,Strategy=>"Naive");
+assert(NCReductionTwoSided(a^2-c,NCGB(H,3,Strategy=>"Naive")) == 0);
+///
+
+TEST ///
 -*
   restart
   needsPackage "AssociativeAlgebras"

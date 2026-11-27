@@ -350,12 +350,23 @@ setNCGBStrategy := stratStr -> (
    else error "Unknown NCGB strategy provided."
 )
 
+ncgbMaxGeneratorHeft = I -> (
+    h := (ring I).Heft;
+    -- The engine queues each generator at the maximum heft of its terms.
+    max(0, max flatten apply(flatten entries gens I, f -> apply(terms f, t -> sum(degree t, h, times))))
+    )
+
+ncgbCacheCoversGenerators = I -> I.cache.?NCGB and (
+    I.cache.NCGB#0 === infinity or I.cache.NCGB#0 >= ncgbMaxGeneratorHeft I)
+
 NCGB = method(Options => {Strategy=>"F4Parallel"})
 NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
     if I == 0 then return gens I;
     strat := opts#Strategy;
     if not I.cache.?NCGB or I.cache.NCGB#0 < maxdeg then (
-	tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else compress gens I;
+	input := compress gens I;
+	-- A cached basis can omit inputs or replace them by relations of higher heft.
+	if I.cache.?NCGB then input = I.cache.NCGB#1 | input;
 	possField := ZZ/(char ultimate(coefficientRing, ring I));
 	f4Allowed := (possField === (coefficientRing ring I)); -- or instance(coefficientRing ring I, GaloisField) or coefficientRing ring I === QQ;
 	if not isHomogeneous I or (not f4Allowed and (strat == "F4" or strat == "F4Parallel")) then (
@@ -365,18 +376,15 @@ NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
 	   strat = "Naive";
 	   << "Converting to " << strat << " algorithm." << endl;
 	);
-    	gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg, setNCGBStrategy(strat)));
+	gbI := map(ring I, rawNCGroebnerBasisTwoSided(raw input, maxdeg, setNCGBStrategy(strat)));
         I.cache.NCGB = {maxdeg, gbI};
         );
     I.cache.NCGB#1
     )
 NCGB Ideal := opts -> (I) -> (
     if I == 0 then return gens I;
-    if I.cache.?NCGB then I.cache.NCGB#1
-    else (
-        maxdegI := max((degrees source gens I) / sum); -- TODO: change once multidegrees are allowed.
-        NCGB(I, 2*maxdegI, opts)
-        )
+    if ncgbCacheCoversGenerators I then I.cache.NCGB#1
+    else NCGB(I, 2*ncgbMaxGeneratorHeft I, opts)
     )
 
 NCReductionTwoSided = method()
@@ -1168,8 +1176,8 @@ ncGraphIdeal RingMap := phi -> (
    psiA := map(C,ambA,drop(gens C, numgens B));
    psiB := map(C,ambB,take(gens C, numgens B));
    liftToAmbB := map(ambB,B,gens ambB);
-   Igb := flatten entries if I.cache.?NCGB then last I.cache.NCGB else gens I;
-   Jgb := flatten entries if J.cache.?NCGB then last J.cache.NCGB else gens J;
+   Igb := flatten entries if ncgbCacheCoversGenerators I then last I.cache.NCGB else gens I;
+   Jgb := flatten entries if ncgbCacheCoversGenerators J then last J.cache.NCGB else gens J;
    K := (ideal (Igb / psiA)) + (ideal (Jgb / psiB)) + 
          ideal apply(numgens A, i -> (psiA ambA_i) - psiB liftToAmbB phi A_i);
    K

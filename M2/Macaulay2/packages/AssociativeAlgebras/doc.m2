@@ -1513,9 +1513,12 @@ doc ///
      Text
        This method performs a two-sided Groebner basis calculation of the ideal
        $I$ to the degree $n$ given.  Possible strategies are "Naive", "F4" and "F4Parallel".
-       If no integer is given, the Groebner basis is computed to twice the maximal degree
-       of a generator.  As usual, one must take care not to provide too high of
-       a degree here, as Groebner bases may be infinite in the noncommutative case.
+       The bound is measured using the heft vector of the ring. A generator whose
+       maximum term heft exceeds the bound is not processed. With no bound, the
+       method reuses a cached result only if its cutoff covered all generators.
+       Otherwise it computes to twice the maximum generator heft. As usual, one
+       must take care not to provide too high a bound, as Groebner bases may be
+       infinite in the noncommutative case.
        
        The current state of the algorithm requires the FreeAlgebra to be defined over
        a field, and the "F4" or "F4Parallel" strategies require the base ring to be
