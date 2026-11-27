@@ -804,6 +804,22 @@ assert(NCReductionTwoSided(a^2-c,NCGB(H,3,Strategy=>"Naive")) == 0);
 ///
 
 TEST ///
+-- xyx has two reductions, giving x-1. Its leading word is contained in xy.
+A = QQ<|x,y|>;
+I = ideal(x*y-1,y*x-y);
+G = NCGB(I,4,Strategy=>"Naive");
+assert(NCReductionTwoSided(y-1,G) == 0);
+B = A/I;
+assert(1_B != 0 and B_0 == 1 and B_1 == 1);
+assert(B_0*B_1 == 1 and B_1*B_0 == B_1);
+
+-- An inclusion can also have a nonempty prefix and suffix.
+C = QQ<|a,b,c,t|>;
+J = ideal(a*b*c-1,b*t^2-1,t^2*b-t^2);
+assert(NCReductionTwoSided(a*c-1,NCGB(J,4,Strategy=>"Naive")) == 0);
+///
+
+TEST ///
 -*
   restart
   needsPackage "AssociativeAlgebras"
