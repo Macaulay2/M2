@@ -70,8 +70,6 @@ gmp_CCi rawRandomCCi(unsigned long prec);
 
 double randomDouble();
 
-int system_randomint();
-
 #  if defined(__cplusplus)
 }
 #  endif

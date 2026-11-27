@@ -286,20 +286,6 @@ gmp_CCi rawRandomCCi(unsigned long precision)
   return reinterpret_cast<gmp_CCi>(result);
 }
 
-
-int system_randomint()
-{
-#if 0
-  extern long random();
-  return random();
-#elif 0
-  extern long random00();
-  return random00();
-#else
-  return rawRandomInt((int32_t)~0 >> 1);
-#endif
-}
-
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil
