@@ -151,9 +151,10 @@ doc ///
       : RingMap
    Description
       Text
-         Let x be a homogeneous element in a noncommutative ring R. If x is normal then x determines
-	 a graded ring automorphism f of R by x*a = f(x)*a.  This method returns this 
-	 automorphism as a RingMap. 
+         A homogeneous regular normal element $x$ determines a unique graded
+	 automorphism $f$ by $xa = f(a)x$. For a normal zero divisor, the method
+	 returns an automorphism only if the computed maps preserve the defining
+	 relations and are inverse to each other. Otherwise it reports an error.
       Example
          A = QQ<|a,b,c|>
 	 I = ideal {a*b+b*a,a*c+c*a,b*c+c*b}
@@ -188,8 +189,9 @@ doc ///
       : Boolean
    Description
       Text
-         Given an element x in a noncommutative ring R, this method returns
-	 true if Rx=xR.
+         Given a homogeneous element $x$ in a graded free algebra or quotient
+	 $R$ over a commutative coefficient ring, this method returns true if
+	 $Rx=xR$. The element need not be regular.
       Example
          A = QQ<|a,b,c|>
 	 I = ideal {a*b+b*a,a*c+c*a,b*c+c*b}

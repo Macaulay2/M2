@@ -583,32 +583,51 @@ centralElements(Ring,ZZ) := (B,n) -> (
    normalElements(idB,n)
 )
 
--- worker function for normalAutomorphism
-findNormalComplement = method()
-findNormalComplement (RingElement,RingElement) := (f,x) -> (
+normalElementRing = f -> (
+   B := ring f;
+   if not isFreeAlgebraOrQuotient B then error "Expected an element in a free algebra or free algebra quotient.";
+   if not isHomogeneous B or not isHomogeneous f then error "Expected a homogeneous element in a graded algebra.";
+   if not isCommutative coefficientRing B then error "Expected a commutative coefficient ring.";
+   B
+)
+
+-- Find y and z such that f*x = y*f and x*f = f*z.
+findNormalComplements = (f,x) -> (
+   fx := f*x;
+   xf := x*f;
+   if fx == xf then return (x,x);
    B := ring f;
    kk := coefficientRing B;
-   if B =!= ring x then error "Expected elements from the same ring.";
-   if not isHomogeneous f or not isHomogeneous x then error "Expected homogeneous elements";
-   n := first degree f;  -- assumes singly graded!
-   m := first degree x;  -- assumes singly graded!
-   leftFCoeff := sub(last coefficients(f*x,Monomials=>flatten entries ncBasis(n+m,B)), kk);
-   rightMultF := sub(rightMultiplicationMap(f,m), kk);
-   factorMap := (leftFCoeff // rightMultF);
-   if rightMultF * factorMap == leftFCoeff then
-      first flatten entries (ncBasis(m,B) * factorMap)
-   else
-      null
+   basisX := ncBasis(degree x,B);
+   fromBasis := flatten entries basisX;
+   toBasis := flatten entries ncBasis(degree f + degree x,B);
+   coords := g -> sub(last coefficients(g,Monomials=>toBasis), kk);
+   rightMult := rightMultiplicationMap(f,fromBasis,toBasis);
+   fxCoords := coords fx;
+   forward := fxCoords // rightMult;
+   if rightMult * forward != fxCoords then return null;
+   leftMult := leftMultiplicationMap(f,fromBasis,toBasis);
+   xfCoords := coords xf;
+   backward := xfCoords // leftMult;
+   if leftMult * backward != xfCoords then return null;
+   ((basisX * forward)_(0,0), (basisX * backward)_(0,0))
 )
 
 normalAutomorphism = method()
 normalAutomorphism RingElement := f -> (
-   if not isFreeAlgebraOrQuotient(ring f) then error "Expected an element in a noncommutative ring.";
-   if not isHomogeneous f then error "Expected a homogeneous element.";
-   B := ring f;
-   normalComplements := apply(gens B, x -> findNormalComplement(f,x));
-   if any(normalComplements, f -> f === null) then error "Expected a normal element.";
-   map(B, B, normalComplements)
+   B := normalElementRing f;
+   comps := apply(gens B, x -> findNormalComplements(f,x));
+   if any(comps, c -> c === null) then error "Expected a normal element.";
+   forward := comps / first;
+   backward := comps / last;
+   rels := gens ideal B;
+   if any({forward,backward}, images -> (map(B,ambient B,images)) rels != 0)
+      then error "The computed normalizing maps do not preserve the defining relations.";
+   sigma := map(B,B,forward);
+   tau := map(B,B,backward);
+   if not all(gens B, x -> sigma(tau x) == x and tau(sigma x) == x)
+      then error "The computed normalizing maps are not inverse automorphisms.";
+   sigma
 )
 
 isCentral = method()
@@ -629,9 +648,8 @@ isCentral (RingElement, Ideal) := (f,I) -> (
 --     All we need is the symbol, not the functionality.
 -- isNormal = method()
 isNormal RingElement := f -> (
-   if not isFreeAlgebraOrQuotient(ring f) then error "Expected an element in a noncommutative ring.";
-   if not isHomogeneous f then error "Expected a homogeneous element.";
-   all(gens ring f, x -> findNormalComplement(f,x) =!= null)
+   B := normalElementRing f;
+   all(gens B, x -> findNormalComplements(f,x) =!= null)
 )
 
 normalElements = method()
@@ -642,7 +660,7 @@ normalElements(FreeAlgebraQuotient, ZZ, Symbol) := Sequence => (R,n,x) -> (
    --              expressed as ideals in terms of coefficients of non-normal monomial basis elements
    -- 
    -- The variety also contains information about the normalizing automorphism. This information is not displayed.
-   -- The user can obtain the normalizing automorphism of a normal element via the normalAutomorphism function
+   -- The user can obtain the normalizing automorphism of a regular normal element via normalAutomorphism.
 
    -- WARNING: This code currently is only valid for a singly graded algebra generated in degree one.  
    if degreeLength R != 1 or max flatten degrees R != 1 then error "Requires a singly graded algebra generated in degree one.";

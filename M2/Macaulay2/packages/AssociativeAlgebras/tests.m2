@@ -820,6 +820,30 @@ assert(NCReductionTwoSided(a*c-1,NCGB(J,4,Strategy=>"Naive")) == 0);
 ///
 
 TEST ///
+-- Normality requires both inclusions of principal ideals.
+A = QQ<|x,y|>;
+B = A/ideal(x*y,x^2);
+assert(B_0*B_1 == 0 and B_1*B_0 != 0);
+assert not isNormal B_0;
+assert not isNormal B_1;
+assert(try (normalAutomorphism B_0; false) else true);
+
+-- A normal zero divisor can still admit a normalizing automorphism.
+C = QQ<|a,b|>;
+D = C/ideal(a*b-2*b*a,a^2);
+assert(D_0 != 0 and D_0^2 == 0 and isNormal D_0);
+sigma = normalAutomorphism D_0;
+assert(sigma D_0 == D_0 and sigma D_1 == 2*D_1);
+assert(isNormal (0_D) and matrix(normalAutomorphism (0_D)) == vars D);
+
+-- Solving the equations on generators alone does not certify an automorphism.
+E = QQ<|p,q,r|>;
+F = E/ideal(p^2,p*r,q*p,p*q-r*p);
+assert(F_0*F_1 == F_2*F_0 and F_0*F_1 != 0 and isNormal F_0);
+assert(try (normalAutomorphism F_0; false) else true);
+///
+
+TEST ///
 -*
   restart
   needsPackage "AssociativeAlgebras"
