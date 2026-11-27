@@ -5,16 +5,14 @@ newPackage(
     Authors => {
         {Name => "Laurent Busé", 
         Email => "Laurent.Buse@inria.fr"},
-        {Name => "Justin Chen", 
-        Email => "justin.chen@math.gatech.edu"},
+        {Name => "Justin Chen"},
         {Name => "Kisun Lee", 
-        Email => "kil004@ucsd.edu"},
+        Email => "kisunl@kaist.ac.kr"},
         {Name => "Anton Leykin", 
-        Email => "anton.leykin@gmail.com"},
+        Email => "leykin@math.gatech.edu"},
         {Name => "Tomas Pajdla", 
         Email => "pajdla@cvut.cz"},
-        {Name => "Erika Pirnes", 
-        Email => "pirnes@wisc.edu"}
+        {Name => "Erika Pirnes"}
     },
     Headline => "polynomial system solver via eigen-computations",
     Keywords => {"Numerical Algebraic Geometry"},

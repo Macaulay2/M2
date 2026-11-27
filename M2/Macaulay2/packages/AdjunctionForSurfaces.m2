@@ -22,7 +22,7 @@ newPackage(
     	Authors => { 
 	         {Name => "Frank-Olaf Schreyer", 
 		  Email => "schreyer@math.uni-sb.de", 
-		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}                 
+		  HomePage => "https://www.math.uni-sb.de/ag/schreyer/"}
 	         },
     	Headline => "Adjunction for Surfaces",
         PackageImports => {"Complexes"},

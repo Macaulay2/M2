@@ -4,8 +4,8 @@ newPackage(
     Date => "April 30, 2025",
     Headline => "probabilistic test of isomorphism between modules",
     Authors => {
-	{ Name => "David Eisenbud", Email => "de@berkeley.edu", HomePage => "https://eisenbud.github.io" },
-	{ Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",  HomePage => "https://mahrud.github.io" }
+	{ Name => "David Eisenbud", Email => "de@math.berkeley.edu", HomePage => "https://eisenbud.github.io" },
+	{ Name => "Mahrud Sayrafi", Email => "msayrafi2@unl.edu",  HomePage => "https://mahrud.github.io" }
     },
     Keywords => {"Commutative Algebra", "Homological Algebra"},
     DebuggingMode => false

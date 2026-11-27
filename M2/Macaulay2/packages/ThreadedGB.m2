@@ -5,12 +5,12 @@ newPackage("ThreadedGB",
 	{
 	    Name => "Sonja Petrovic",
 	    Email => "sonja.petrovic@iit.edu",
-	    HomePage => "http://math.iit.edu/~spetrov1/"
+	    HomePage => "https://www.sonjapetrovicstats.com"
 	},
         {
 	    Name => "Sara Jamshidi Zelenberg",
-	    Email => "szelenberg@mx.lakeforest.edu",
-	    HomePage => "https://www.sjzelenberg.com/"
+	    Email => "sjamshidi@lakeforest.edu",
+	    HomePage => "https://www.lakeforest.edu/academics/faculty/sjamshidi"
 	}
     },
     Keywords => {"Groebner Basis Algorithms"},

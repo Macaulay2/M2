@@ -5,7 +5,7 @@ newPackage(
         Date => "March 23, 2022", -- "March 2, 2022",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
-                  HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
+                  HomePage => "https://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "Look up mathematical information online",
 	Keywords => {"System"},
         DebuggingMode => false,

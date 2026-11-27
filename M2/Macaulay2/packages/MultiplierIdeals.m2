@@ -29,8 +29,7 @@ newPackage(
   Authors => {
     {
       Name => "Zach Teitler",
-      Email => "zteitler@member.ams.org",
-      HomePage => "http://math.boisestate.edu/~zteitler/"
+      Email => "zteitler@member.ams.org"
     },
     {
       Name => "Bart Snapp"

@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage ( "Parsing",
      Authors => {
-	  { Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/" }
+	  { Name => "Daniel R. Grayson", HomePage => "https://www.graysonfamily.org/dan/" }
 	  },
      Date => "June, 2006",
      Version => "1.0",

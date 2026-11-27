@@ -3,7 +3,8 @@ newPackage( "Style",
      AuxiliaryFiles => true,
      Headline => "style sheets and images for the documentation",
      Keywords => {"Documentation"},
-     Version => "1.1"
+     Version => "1.2",
+     Date => "August 6, 2026"
      )
 
 ---------------------------------------------

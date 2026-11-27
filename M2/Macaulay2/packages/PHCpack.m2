@@ -9,14 +9,14 @@ newPackage(
   Date => "25 May 2016",
   Authors => {
     {Name => "Elizabeth Gross",
-     Email => "egross7@uic.edu",
-     HomePage => "http://www.math.uic.edu/~lizgross"},
+     Email => "egross@hawaii.edu",
+     HomePage => "https://egross-uh.github.io/"},
     {Name => "Sonja Petrovic", 
-     Email => "Sonja.Petrovic@iit.edu",
-     HomePage => "http://mypages.iit.edu/~spetrov1/"},
+     Email => "sonja.petrovic@iit.edu",
+     HomePage => "https://www.sonjapetrovicstats.com"},
     {Name => "Jan Verschelde", 
-     Email => "jan@math.uic.edu",
-     HomePage => "http://www.math.uic.edu/~jan"}
+     Email => "janv@uic.edu",
+     HomePage => "http://homepages.math.uic.edu/~jan/"}
   },
   Headline => "interface to PHCpack",
   Keywords => {"Numerical Algebraic Geometry", "Interfaces"},

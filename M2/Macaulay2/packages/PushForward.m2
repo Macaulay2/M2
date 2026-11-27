@@ -11,13 +11,13 @@ newPackage(
     Authors => {
         {Name => "Claudiu Raicu",
             Email => "craicu@nd.edu",
-            HomePage => "http://www3.nd.edu/~craicu"},
+            HomePage => "https://academicweb.nd.edu/~craicu/"},
         {Name => "David Eisenbud",
-            Email => "de@msri.org",
-            HomePage => "http://www.msri.org/~de"},
+            Email => "de@math.berkeley.edu",
+            HomePage => "https://eisenbud.github.io"},
         {Name => "Mike Stillman",
-            Email => "mike@math.cornell.edu",
-            HomePage => "http://pi.math.cornell.edu/~mike"}
+            Email => "mikestillman1@gmail.com",
+            HomePage => "https://mikestillman.github.io"}
         },
     Headline => "push forwards of finite ring maps",
     Keywords => {"Commutative Algebra"},

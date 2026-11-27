@@ -4,9 +4,9 @@ newPackage(
         Version => "0.1",  
         Date => "April 11, 2023",
         Authors => {
-            {Name => "Viktoriia Borovik", Email => "vborovik@uni-osnabrueck.de", HomePage => "https://sites.google.com/view/viktoriia-borovik/home"},
-            {Name => "Timothy Duff", Email => "timduff@uw.edu", HomePage => "https://timduff35.github.io/timduff35/"},
-            {Name => "Elima Shehu", Email => "shehu@mis.mpg.de", HomePage => "https://sites.google.com/view/elimawebsite/home"}
+            {Name => "Viktoriia Borovik", Email => "borovik@mis.mpg.de", HomePage => "https://sites.google.com/view/viktoriia-borovik/home"},
+            {Name => "Timothy Duff", Email => "tduff@missouri.edu", HomePage => "https://timduff35.github.io/timduff35/"},
+            {Name => "Elima Shehu", Email => "elima.shehu@ovgu.de", HomePage => "https://elimashehu.github.io/"}
             },
         DebuggingMode => false, 
         PackageExports => { "Polyhedra", "ReesAlgebra", "SubalgebraBases" },   

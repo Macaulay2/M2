@@ -5,15 +5,15 @@ newPackage(
     Date => "Nov 2 2021",
     Authors => {
         {Name => "Robert Krone", 
-        Email => "krone@math.gatech.edu"},
-        {Name => "Justin Chen", 
-        Email => "justin.chen@math.gatech.edu"},
-        {Name => "Marc Harkonen", 
-        Email => "harkonen@gatech.edu"},
+        Email => "rckrone@gmail.com"},
+        {Name => "Justin Chen"},
+        {Name => "Marc Harkonen",
+        Email => "marc.harkonen@gmail.com",
+        HomePage => "https://haerski.github.io/"},
         {Name => "Yairon Cid-Ruiz",
-        Email => "Yairon.CidRuiz@UGent.be"},
+        Email => "ycidrui@ncsu.edu"},
         {Name => "Anton Leykin",
-        Email => "anton.leykin@gmail.com"}
+        Email => "leykin@math.gatech.edu"}
     },
     Headline => "algorithms for computing local dual spaces and sets of Noetherian operators",
     PackageExports => {"Bertini", "NumericalLinearAlgebra", "NAGtypes"},

@@ -3,8 +3,8 @@ newPackage(
     	Version => "0.1", 
     	Date => "March 21, 2008",
     	Authors => {{Name => "Josephine Yu", 
-		  Email => "jyu@math.mit.edu", 
-		  HomePage => "http://www.math.mit.edu/~jyu/"}},
+		  Email => "jyu@math.gatech.edu",
+		  HomePage => "https://sites.gatech.edu/josephineyu/"}},
     	Headline => "interfacing with polymake",
 	Keywords => {"Interfaces"},
     	DebuggingMode => false

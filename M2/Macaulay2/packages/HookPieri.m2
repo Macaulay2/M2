@@ -13,7 +13,7 @@ newPackage(
     },
     HomePage => "https://sites.google.com/view/kellervandebogert/home",
     Headline => "Pieri maps, straightening, and finite hook algebras",
-    Keywords => {"Schur functors","Pieri maps","Young tableaux","Hooks","Representation theory","Groebner bases","Segre products"},
+    Keywords => {"Representation Theory", "Commutative Algebra"},
     PackageImports => {"PieriMaps", "SchurRings", "SchurFunctors", "Complexes"},
     AuxiliaryFiles => true,
     DebuggingMode => false

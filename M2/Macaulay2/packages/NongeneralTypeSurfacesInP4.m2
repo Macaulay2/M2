@@ -23,7 +23,7 @@ newPackage(
     Authors => {
 	        { Name => "Hirotachi Abo",Email => "abo@uidaho.edu", HomePage => "https://sites.google.com/view/hirotachiabo/home"},
 	        { Name => "Kristian Ranestad", Email => "ranestad@math.uio.no",HomePage => "https://www.mn.uio.no/math/english/people/aca/ranestad"},
-	        { Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "https://www.math.uni-sb.de/ag/schreyer"}},
+	        { Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "https://www.math.uni-sb.de/ag/schreyer/"}},
     AuxiliaryFiles => false,
     DebuggingMode => false,
     PackageExports => {"BGG","AdjunctionForSurfaces","PrimaryDecomposition","Varieties","FastMinors"},

@@ -13,7 +13,7 @@ newPackage(
     "MultiprojectiveVarieties",
     Version => "2.7.2",
     Date => "November 22, 2026",
-    Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
+    Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
     PackageImports => {"PrimaryDecomposition","TangentCone"},

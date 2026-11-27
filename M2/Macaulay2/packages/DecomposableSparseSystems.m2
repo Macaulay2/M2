@@ -8,13 +8,13 @@ newPackage(
 	 HomePage=>"https://sites.google.com/view/taylorbrysiewicz"},
         {Name=>"Jose Israel Rodriguez",
 	 Email=>"Jose@math.wisc.edu",
-	 HomePage=>"https://www.math.wisc.edu/~jose/"},
+	 HomePage=>"https://people.math.wisc.edu/~jrodriguez43/"},
         {Name=>"Frank Sottile",
-	 Email=>"sottile@math.tamu.edu",
-	 HomePage=>"https://www.math.tamu.edu/~sottile"},
+	 Email=>"sottile@tamu.edu",
+	 HomePage=>"https://franksottile.github.io/"},
         {Name=>"Thomas Yahl",
-	 Email=>"thomasjyahl@tamu.edu",
-	 HomePage=>"https://math.tamu.edu/~thomasjyahl"}
+	 Email=>"tyahl@wisc.edu",
+	 HomePage=>"https://tjyahl.github.io/"}
         },
     Headline=>"Solving decomposable sparse systems",
     Keywords => {"Numerical Algebraic Geometry"},

@@ -4,10 +4,10 @@ newPackage ( "TorAlgebra",
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",
-	  HomePage => "http://www.math.ttu.edu/~lchriste/index.html" },
+	  HomePage => "https://larswinther.github.io/homepage/index.html" },
 	{ Name => "Oana Veliche", 
 	  Email => "o.veliche@northeastern.edu",
-	  HomePage => "https://web.northeastern.edu/oveliche/index.html" }
+	  HomePage => "https://cos.northeastern.edu/people/oana-veliche/" }
 	},
     Headline => "classification of local rings based on multiplication in homology",
     Keywords => {"Homological Algebra"},

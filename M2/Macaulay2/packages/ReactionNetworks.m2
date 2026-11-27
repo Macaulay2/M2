@@ -4,13 +4,13 @@ newPackage(
     	Version => "1.0",
     	Date => "June, 2016",
     	Authors => {
-	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
-	     {Name => "Timothy Duff", Email => "timothy.duff@ncf.edu"},
-	     {Name => "Kisun Lee", Email => "klee669@math.gatech.edu"},
+	     {Name => "Cvetelina Hill"},
+	     {Name => "Timothy Duff", Email => "tduff@missouri.edu"},
+	     {Name => "Kisun Lee", Email => "kisunl@kaist.ac.kr"},
 	     {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
 	     --since 2018:
-	     {Name => "Alexandru Iosif", Email => "alexandru.iosif@ovgu.de"},
-	     {Name => "Michael Adamer", Email => "adamer@maths.ox.ac.uk"}
+	     {Name => "Alexandru Iosif", Email => "alexandru.iosif@urjc.es"},
+	     {Name => "Michael Adamer"}
 	     },
 --    	HomePage => "http://www.math.uiuc.edu/~doe/", --page not working
         Headline => "reaction networks",

@@ -2,9 +2,7 @@ newPackage(
         "GroebnerWalk",
         Version => "1.0.0",
         Date => "November 17, 2017",
-        Authors => {{Name => "Dylan Peifer",
-                     Email => "djp282@cornell.edu",
-                     HomePage => "https://www.math.cornell.edu/~djp282"}},
+        Authors => {{Name => "Dylan Peifer"}},
 	     Keywords => {"Groebner Basis Algorithms"},
         Headline => "Groebner bases via the Groebner walk"
         )

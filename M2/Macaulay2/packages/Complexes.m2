@@ -8,7 +8,7 @@ newPackage(
             HomePage => "https://ggsmith.ca"
             },
         {   Name => "Mike Stillman", 
-            Email => "mike@math.cornell.edu", 
+            Email => "mikestillman1@gmail.com",
             HomePage => "https://mikestillman.github.io"
             }},
     Headline => "working in the category of chain complexes",

@@ -9,7 +9,7 @@ newPackage("SLnEquivariantMatrices",
      	   Authors => {
 	               {Name => "Ada Boralevi", 
 			   Email => "ada.boralevi@polito.it",
-			       HomePage => "http://www.adaboralevi.com"},
+			       HomePage => "https://staff.polito.it/ada.boralevi/"},
 	               {Name => "Daniele Faenzi",
 			   Email => "daniele.faenzi@u-bourgogne.fr",
 			       HomePage => "http://dfaenzi.perso.math.cnrs.fr"},

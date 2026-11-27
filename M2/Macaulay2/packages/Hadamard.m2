@@ -5,8 +5,7 @@ newPackage(
     Authors => {
 
 	{Name => "Iman Bahmani Jafarloo",
-	    Email => "ibahmani89@gmail.com",
-	    HomePage => "http://calvino.polito.it/~imanbj"
+	    Email => "ibahmani89@gmail.com"
 	    }
 	}, -- TODO
     Headline => "Hadamard products of projective subvarieties",

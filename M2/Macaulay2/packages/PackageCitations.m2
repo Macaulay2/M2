@@ -29,8 +29,8 @@
 -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 newPackage (
     "PackageCitations",
-    Version => "0.1",
-    Date => "2017 03 28",
+    Version => "0.2",
+    Date => "November 12, 2026",
     Authors => {{
         Name => "Aaron Dall",
         Email => "aaronmdall -at- gmail.com",

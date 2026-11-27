@@ -4,7 +4,7 @@ newPackage(
    	Version => "0.1", 
    	Date => "January 24, 2013",
 	Authors => {
-	     {Name => "Gunnar Floystad", Email => "nmagf@uib.no"}
+	     {Name => "Gunnar Floystad", Email => "gunnar.floystad@uib.no"}
 	      },
      	PackageImports => {"BoijSoederberg"},
    	Headline => "triplets of degree sequences and associated Betti diagrams and cohomology tables",

@@ -3,11 +3,11 @@ newPackage("MultigradedBGG",
     Date => "11 April 2025",
     Headline => "the multigraded BGG correspondence and differential modules",
     Authors => {
-	{Name => "Maya Banks",         	     Email => "mdbanks@wisc.edu",      HomePage => "https://sites.google.com/wisc.edu/mayabanks" },
+	{Name => "Maya Banks",         	     Email => "mayadb@uic.edu",      HomePage => "https://mscs.uic.edu/profiles/mayadb/" },
         {Name => "Michael K. Brown",         Email => "mkb0096@auburn.edu",    HomePage => "http://webhome.auburn.edu/~mkb0096/" },
 	{Name => "Tara Gomes",	    	     Email => "gomes072@umn.edu",      HomePage => "https://cse.umn.edu/math/tara-gomes" },
 	{Name => "Prashanth Sridhar",	     Email => "pzs0094@auburn.edu",    HomePage => "https://sites.google.com/view/prashanthsridhar/home"},
-	{Name => "Eduardo Torres Davila",    Email => "torre680@umn.edu",      HomePage => "https://etdavila10.github.io/" },
+	{Name => "Eduardo Torres Davila",    Email => "etdavila10@gmail.com",      HomePage => "https://etdavila10.github.io/" },
 	{Name => "Sasha Zotine",    	     Email => "zotinea@mcmaster.ca",   HomePage => "https://sites.google.com/view/szotine/home" }
     },
     PackageExports => {"NormalToricVarieties", "Complexes"},

@@ -16,8 +16,8 @@
 
 newPackage("LanguageServer",
     Headline => "language server",
-    Version => "0.1",
-    Date => "May 30, 2026",
+    Version => "0.2",
+    Date => "November 20, 2026",
     Authors => {{
             Name => "Doug Torrance",
             Email => "dtorrance9@gatech.edu",
@@ -25,6 +25,23 @@ newPackage("LanguageServer",
     AuxiliaryFiles => true,
     Keywords => {"System"},
     PackageImports => {"JSONRPC", "Parsing"})
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.2 (2026-11-20, M2 1.26.11)
+* add --help and --version options to M2-language-server
+* add manpage for M2-language-server
+* M2-language-server now looks for M2 in its own directory before searching
+  PATH
+
+0.1 (2026-05-30, M2 1.26.06)
+* initial release
+
+*-
 
 export {
     -- classes

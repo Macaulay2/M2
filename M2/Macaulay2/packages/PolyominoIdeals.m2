@@ -15,7 +15,7 @@ newPackage(
 		},
 		{
 			Name => "Rizwan Jahangir", 
-			Email => {"rizwan@sabanciuniv.edu", "rizwan.jahangir@nbs.nust.edu.pk"},
+			Email => "rizwan.jahangir@nbs.nust.edu.pk",
 			HomePage => "https://rizwan.phd"
 			}
 	},

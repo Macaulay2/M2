@@ -3,8 +3,8 @@ newPackage ("TangentCone",
        	Version => "1.0", 
     	Date => "June 27, 2006",
     	Authors => {
-	     {Name => "Craig Huneke", Email => "huneke@math.ku.edu"},
-	     {Name => "David Eisenbud", Email => "de@msri.org"}
+	     {Name => "Craig Huneke", Email => "huneke@virginia.edu"},
+	     {Name => "David Eisenbud", Email => "de@math.berkeley.edu"}
 	     },
     	Headline => "tangent cones",
 	Keywords => {"Commutative Algebra"},

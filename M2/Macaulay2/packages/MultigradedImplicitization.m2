@@ -5,13 +5,13 @@ newPackage(
   Authors => {
     {Name => "Joseph Cummings",
     Email => "josephcummings03@gmail.com",
-    HomePage => "https://sites.google.com/view/josephcummingsuky/home"},
+    HomePage => "https://sites.google.com/view/josephcummingsmath/home"},
     {Name => "Benjamin Hollering",
     Email => "benhollering@gmail.com",
     HomePage => "https://sites.google.com/view/benhollering"},
     {Name => "Mahrud Sayrafi",
-    Email => "mahrud@umn.edu",
-    HomePage => "https://math.umn.edu/~mahrud"}
+    Email => "msayrafi2@unl.edu",
+    HomePage => "https://mahrud.github.io"}
   },
   Headline => "solving implicitization problems using multigradings",
   Keywords => {"Algebraic Statistics", "Commutative Algebra"},

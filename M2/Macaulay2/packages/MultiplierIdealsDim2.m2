@@ -4,9 +4,7 @@ newPackage(
         "MultiplierIdealsDim2",
         Version  =>  "1.0", 
         Date  =>  "Aug 27, 2015",
-        Authors  =>  {{Name  =>  "Ferran Dachs-Cadefau", 
-                     Email  =>  "ferran.dachscadefau@wis.kuleuven.be",
-                     HomePage  =>  "http://perswww.kuleuven.be/ferran_dachs_cadefau"}},
+        Authors  =>  {{Name  =>  "Ferran Dachs-Cadefau"}},
         Headline  =>  "multiplier ideals in 2-dimensional rings",
 	Keywords => {"D-modules"},
         DebuggingMode  =>  false

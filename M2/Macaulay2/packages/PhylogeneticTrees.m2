@@ -6,15 +6,15 @@ newPackage(
      Headline => "invariants for group-based phylogenetic models",
      --HomePage => "",
      Authors => {
-	  {Name => "Hector Baños", Email => "hbanos@gatech.edu"},
-	  {Name => "Nathaniel Bushek", Email => "nbushek@css.edu"},
+	  {Name => "Hector Baños", Email => "hector.banoscervantes@csusb.edu"},
+	  {Name => "Nathaniel Bushek"},
 	  {Name => "Ruth Davidson", Email => "ruth.davidson.math@gmail.com"},
 	  {Name => "Elizabeth Gross", Email => "egross@hawaii.edu"},
-	  {Name => "Pamela Harris", Email => "peh2@williams.edu"},
+	  {Name => "Pamela Harris", Email => "peharris@uwm.edu"},
 	  {Name => "Robert Krone", Email => "rckrone@gmail.com"},
 	  {Name => "Colby Long", Email => "clong@wooster.edu"},
 	  {Name => "AJ Stewart", Email => "stewaral@seattleu.edu"},
-	  {Name => "Robert Walker", Email => "robmarsw@umich.edu"}
+	  {Name => "Robert Walker"}
 	  },
      Keywords => {"Applied Algebraic Geometry"},
      PackageImports => {

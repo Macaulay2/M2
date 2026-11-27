@@ -77,9 +77,116 @@ doc ///
     Text
       @UL {
           LI {
+              "new packages:",
+              UL {
+                  LI {TO "CanonicalMaps::CanonicalMaps", ", a package by Gregory G. Smith and Mike Stillman for canonical and standard maps for modules, has been added."},
+                  LI {TO "ComprehensiveGBs::ComprehensiveGBs", ", a package by Agustina Cagliero, Oliver Clarke, Woody Cohen, Lorenzo De Biase, Angelo El Saliby, Giulia Gaggero, Sam Knight, and Weijia Wang for computing comprehensive Gröbner bases (CGBs), has been added."},
+                  LI {TO "CotangentCohomology::CotangentCohomology", ", a package by Nathan Ilten for arborescent resolutions and cotangent cohomology, has been added."},
+                  LI {TO "HilbertSchemeStrata::HilbertSchemeStrata", ", a package by Frank Schreyer for computing strata of Hilbert schemes, as used in Schreyer's ", EM "Introduction to Algebraic Geometry", ", has been added."},
+                  LI {TO "HookPieri::HookPieri", ", a package by Keller VandeBogert for Pieri maps, straightening, and finite hook algebras, has been added."},
+                  LI {TO "KacMoody::KacMoody", ", a package by Keller VandeBogert for computing with symmetrizable Kac-Moody algebras and their representations, including roots, Weyl groups, characters, tensor product decompositions, and Kostant homology, has been added."},
+                  LI {TO "KoszulFiltrations::KoszulFiltrations", ", a package by Emily Berghofer, Lisa Nicklasson, Peder Thompson, and Thomas Westerbäck for computing with Koszul filtrations, has been added."},
+                  LI {TO "NongeneralTypeSurfacesInP4::NongeneralTypeSurfacesInP4", ", a package by Hirotachi Abo, Kristian Ranestad, and Frank-Olaf Schreyer for constructing smooth non-general type surfaces in $\\mathbb{P}^4$, has been added."},
+                  LI {TO "PALPInterface::PALPInterface", ", a package by Mike Stillman providing an interface to the PALP software for lattice polytopes, has been added.  PALP is now built and installed with Macaulay2 if it is not found on the system."}
+                  }
+              },
+          LI {
               "improved packages:",
               UL {
-                  LI {TO "InvariantRing::InvariantRing", " has been updated to version 2.6, which introduces the new type ", TT "PermutationAction", " with the faster orbit sum method for computing invariants. This version also simplifies inputs for ", TT "permutationMatrix", " a minor breaking change."}
+                  LI {TO "A1BrouwerDegrees::A1BrouwerDegrees", " has been updated to version 2.1, fixing a bug in ", TO "A1BrouwerDegrees::getAnisotropicPart", " for forms over the rational numbers and computing square classes modulo primes of arbitrary size."},
+                  LI {TO "AdjunctionForSurfaces::AdjunctionForSurfaces", " has been updated to version 1.0 with documentation fixes."},
+                  LI {TO "CoincidentRootLoci::CoincidentRootLoci", " has been updated to version 0.1.4 for compatibility with the renaming of ", CODE "RationalMap", " in ", TO "Cremona::Cremona", ".  Its parametrizations are now of type ", TO "Cremona::LegacyRationalMap", "."},
+                  LI {TO "Complexes::Complexes", " has been updated to version 1.1 and is no longer in beta."},
+                  LI {TO "Bertini::Bertini", " has been updated to version 2.1.2.4, fixing a crash in ", TO "Bertini::makeB'InputFile", " when ", CODE "PathVariable", " is given but ", CODE "SetParameterGroup", " is not."},
+                  LI {TO "CotangentSchubert::CotangentSchubert", " has been updated to version 0.81 with changes from code review."},
+                  LI {TO "Cremona::Cremona", " has been updated to version 5.3.0.  Its ", CODE "RationalMap", " type and ", CODE "rationalMap", " method have been renamed to ", TO "Cremona::LegacyRationalMap", " and ", TO "Cremona::legacyRationalMap", "."},
+                  LI {TO "Elimination::Elimination", " has been updated to version 1.0.1.  ", TO "Elimination::discriminant", " now returns zero instead of raising an error for polynomials whose derivative is identically zero, such as ", M2CODE "x^3+2", " over ", M2CODE "ZZ/3", "."},
+                  LI {TO "ForeignFunctions::ForeignFunctions", " has been updated to version 0.9.  ", TO "ForeignFunctions::foreignFunction", " and ", TO "ForeignFunctions::foreignSymbol", " now accept ", TO null, " as their first argument, which is the same as omitting it."},
+                  LI {TO "GameTheory::GameTheory", " has been updated to version 1.1, adding a reference to the accompanying paper and speeding up an example."},
+                  LI {TO "GeometricDecomposability::GeometricDecomposability", " has been updated to version 1.4.4.  ", TO "GeometricDecomposability::findLexCompatiblyGVDOrders", " no longer sometimes returns an empty list when a compatible lexicographic order exists."},
+                  LI {TO "GradedLieAlgebras::GradedLieAlgebras", " has been updated to version 3.1, installing its method for computing the center of a Lie algebra on the new ", TO center, " function."},
+                  LI {TO "Graphs::Graphs", " has been updated to version 0.3.5, adding the method ", TO "Graphs::stronglyConnectedComponents", " for computing the strongly connected components of a digraph."},
+                  LI {TO "InvariantRing::InvariantRing", " has been updated to version 2.6, which introduces the new type ", TO "InvariantRing::PermutationAction", " with the faster orbit sum method for computing invariants. This version also simplifies inputs for ", TO "InvariantRing::permutationMatrix", ", a minor breaking change."},
+                  LI {TO "K3Surfaces::K3Surfaces", " has been updated to version 1.2 for compatibility with the renaming of rational map types in ", TO "Cremona::Cremona", " and ", TO "MultiprojectiveVarieties::MultiprojectiveVarieties", ", and embedded K3 surfaces now have improved display, including in WebApp mode."},
+                  LI {TO "LanguageServer::LanguageServer", " has been updated to version 0.2.  The ", CODE "M2-language-server", " program now has ", CODE "--help", " and ", CODE "--version", " options and a manual page, and it now looks for the ", CODE "M2", " executable in its own directory before searching the path."},
+                  LI {TO "LieAlgebraRepresentations::LieAlgebraRepresentations", " has been updated to version 1.02.  It is now much faster at computing characters, weight diagrams, tensor products, and Killing forms.  ", TO "LieAlgebraRepresentations::character", " now gives the correct virtual character of a non-dominant weight with every strategy, and ", TO "LieAlgebraRepresentations::LieAlgebraModuleFromWeights", " now raises an error for weights that are not invariant under the Weyl group.  The Cartan matrices of rank-0 Lie algebras have also been fixed."},
+                  LI {TO "MatrixFactorizations::MatrixFactorizations", " has been updated to version 0.2.  It now preserves internal degrees through Hom, tensor products, constructors, and direct sums, and computes boundary maps, homotopies, and homology correctly for higher-period factorizations."},
+                  LI {TO "MultiprojectiveVarieties::MultiprojectiveVarieties", " has been updated to version 2.7.2.  Its ", CODE "MultirationalMap", " type and ", CODE "multirationalMap", " method have been renamed to ", TO "MultiprojectiveVarieties::RationalMap", " and ", TO "MultiprojectiveVarieties::rationalMap", ", and ", CODE "toRationalMap", " to ", TO "MultiprojectiveVarieties::toLegacyRationalMap", ".  The new operator ", TO "MultiprojectiveVarieties::RationalMap \@\@ RationalMap", " gives the virtual composition of rational maps, and projective varieties and rational maps now have improved display, including ", TO texMath, " methods for WebApp mode."},
+                  LI {TO "NumericalAlgebraicGeometry::NumericalAlgebraicGeometry", " has been updated to version 1.25, fixing ", TO "NumericalAlgebraicGeometry::refine", " with ", CODE "Software => BERTINI", "."},
+                  LI {TO "PackageCitations::PackageCitations", " has been updated to version 0.2.  ", TO "PackageCitations::cite", " now uses a package's ", TO HomePage, " whenever it is set and no longer warns when a package that is not distributed with Macaulay2 has none."},
+                  LI {TO "Padic::Padic", " has been updated to version 0.3, adding ", TO texMath, " and ", TO mathML, " methods so that $p$-adic fields display properly in WebApp mode."},
+                  LI {TO "Parametrization::Parametrization", " has been updated to version 0.7, removing ", CODE "legendreSymbol", ", which is now part of Core."},
+                  LI {TO "PencilsOfQuadrics::PencilsOfQuadrics", " has been updated to version 1.1, adding printing methods and fixing bugs."},
+                  LI {TO "PositivityToricBundles::PositivityToricBundles", " has been updated to version 1.10, fixing a bug in ", TO "PositivityToricBundles::isGloballyGenerated", " and ", TO "PositivityToricBundles::separatesJets", " along with minor cleanups."},
+                  LI {TO "PushForward::PushForward", " has been updated to version 0.7.  New methods such as ", TO "PushForward::Hom(RingMap,Module,Module)", ", ", TO "PushForward::End(RingMap,Module)", ", and ", TO "PushForward::Ext^ZZ(RingMap,Module,Module)", " compute Hom, End, and Ext over a noncommutative ring, such as an exterior algebra, as modules over the source of a finite ring map, along with ", TO "PushForward::homomorphism'(RingMap,Matrix)", ", ", TO "PushForward::yonedaExtension'(RingMap,Complex)", ", and ", TO "PushForward::yonedaMap'(RingMap,ComplexMap)", " for identifying their elements.  It also has new ", TO "PushForward::pushforward", " and ", TO "PushForward::pushforward'", " methods for moving elements between a module and its push-forward, and ", TO "PushForward::pushFwd", " and ", TO "PushForward::isModuleFinite", " now support skew commutative polynomial rings and handle towers of rings better."},
+                  LI {TO "ReflexivePolytopesDB::ReflexivePolytopesDB", " has been updated to version 1.1.  It now connects to the Kreuzer-Skarke database using HTTPS, and ", TO "ReflexivePolytopesDB::kreuzerSkarke", " now works around incomplete responses from the server for large values of $h^{1,1}$ and requires the ", TT "Limit", " option to be a positive integer."},
+                  LI {TO "RInterface::RInterface", " has been updated to version 0.4.  Loading it no longer replaces Macaulay2's signal handlers with R's, so computations may be interrupted as usual."},
+                  LI {TO "SCMAlgebras::SCMAlgebras", " has been updated to version 1.2, fixing a bug in ", TO "SCMAlgebras::isSCM", " and adding the type ", TO "SCMAlgebras::PrimaryDataList", " and the function ", TO "SCMAlgebras::getPrimaryData", " for storing primary decomposition data, which may be passed to ", TO "SCMAlgebras::filterIdeal", " to avoid recomputing it."},
+                  LI {TO "SpecialFanoFourfolds::SpecialFanoFourfolds", " has been updated to version 2.8.1, adding ", TO "SpecialFanoFourfolds::example", " for retrieving fourfolds saved with ", TO "SpecialFanoFourfolds::store(HodgeSpecialFourfold,String)", ", ", TO "SpecialFanoFourfolds::texTables", " for generating summary tables of collections of fourfolds, ", TO "SpecialFanoFourfolds::localExamplesArchive", " for managing the local archive of examples, and ", TO "SpecialFanoFourfolds::updatePackage", " for updating it and related packages.  It also improves ", TO "SpecialFanoFourfolds::parameterCount", " and the display of fourfolds and related objects, including in WebApp mode."},
+                  LI {TO "Style::Style", " has been updated to version 1.2, adding the client-side search used by the search bar in the HTML documentation."},
+                  LI {TO "TerraciniLoci::TerraciniLoci", " has been updated to version 0.7.  ", TO "TerraciniLoci::terraciniLocus", " is now much faster in many cases, and it now raises an error when asked for the ", VAR "r", "th Terracini locus of an ideal with ", VAR "r", " > 2, which requires a parametrization."},
+                  LI {TO "ToricTopology::ToricTopology", " has been updated to version 1.2.1 with improved and expanded documentation."},
+                  LI {"The email addresses and home pages listed for package authors have been updated throughout the packages distributed with Macaulay2, replacing outdated contact information and removing dead links.  If you are a package author, please confirm that your contact information is correct and open an issue or pull request if anything needs to be changed."}
+                  }
+              },
+          LI {
+              "functionality added or improved:",
+              UL {
+                  LI {"The search bar in the HTML documentation now searches the documentation itself rather than sending queries to Google."},
+                  LI {"The new method ", TO center, " computes the center of a ring, and ", TO centerMap, " the inclusion of the center into the ring.  Currently, commutative rings and rings with skew commuting variables, such as exterior algebras, are supported.  The methods for graphs and Lie algebras from the ", TO "Graphs::Graphs", " and ", TO "GradedLieAlgebras::GradedLieAlgebras", " packages are now installed on the same function."},
+                  LI {"The new function ", TO isSkewAffineRing, " checks whether a ring is an affine ring containing skew commuting variables."},
+                  LI {"There is a new strategy for computing the ", TO2((kernel, RingMap), "kernel"), " of a ring map whose target is skew commutative."},
+                  LI {"The ", TO legendreSymbol, " function has been added to Core.  It replaces the much slower version previously exported by ", TO "Parametrization::Parametrization", "."},
+                  LI {TO pushForward, " now accepts more ring maps, removing the error ", SAMP "not implemented yet: unexpected degree map of ring map", " in many cases."},
+                  LI {TO2((prune, Ring), "Pruning"), " a quotient of a skew commutative polynomial ring now gives a correctly configured ring, and the ", TO [monoid, SkewCommutative], " option is now validated."},
+                  LI {"New methods ", TO (mutableMatrix, Number), ", ", TO (mutableMatrix, RingElement), ", and similar have been added for constructing $1 \\times 1$ mutable matrices.  Mutable matrices are now displayed with their ring and size, like ordinary matrices, and ", TO rank, " now raises an error when it is not implemented for a mutable matrix instead of returning -1."},
+                  LI {TO GF, " and ", M2CODE "ZZ/n", " now return the same ring when called again with the same arguments, even when ", VAR "n", " is not prime."},
+                  LI {TO runLengthEncode, " has been rewritten.  Repeated entries are now encoded before consecutive ones, and a range is only encoded if it has at least three entries."},
+                  LI {TO roots, " now accepts univariate polynomials in multivariate polynomial rings."},
+                  LI {"The new function ", TO pullbackDegrees, " replaces the degree map of a homogeneous ring map with the identity by regrading its source."},
+                  LI {TO partition, " now accepts an optional function to apply to each element as it is grouped, and the list or tally may now be given before the function."},
+                  LI {"Appending elements to a ", TO MutableList, " is now much faster, as its underlying storage grows geometrically rather than being reallocated on every change."}
+                  }
+              },
+          LI {
+              "functionality changed in a way that could break code:",
+              UL {
+                  LI {TO (matrix, Vector), " no longer requires the source to be generated in degree 0, so the result is homogeneous of degree 0 when possible.  For example, ", M2CODE "matrix {{x*M_0, x^2*M_0}}", " and ", M2CODE "M/{x*M_0, x^2*M_0}", " are now homogeneous when ", M2CODE "M = (QQ[x])^1", "."},
+                  LI {TO coefficient, " now raises an error if the monomial and the polynomial do not belong to the same ring."},
+                  LI {"In the ", TO "GeometricDecomposability::GeometricDecomposability", " package, the ", CODE "SquarefreeOnly", " option of ", TO "GeometricDecomposability::findOneStepGVD", " has been renamed to ", TO "GeometricDecomposability::OnlySquarefree", "."},
+                  LI {"In the ", TO "PushForward::PushForward", " package, ", TO "PushForward::pushFwd", " now returns only the push-forward module when given a ring or a ring map, instead of a sequence.  Use ", TO "PushForward::pushFwdGens", " for its generators and ", TO "PushForward::pushforward", " for mapping elements into it.  The ", CODE "NoPrune", " option has been replaced by ", TO MinimalGenerators, ", so ", M2CODE "NoPrune => true", " is now ", M2CODE "MinimalGenerators => false", "."},
+                  LI {"In the ", TO "MultiprojectiveVarieties::MultiprojectiveVarieties", " package, ", CODE "MultirationalMap", " has been renamed to ", TO "MultiprojectiveVarieties::RationalMap", ", ", CODE "multirationalMap", " to ", TO "MultiprojectiveVarieties::rationalMap", ", and ", CODE "toRationalMap", " to ", TO "MultiprojectiveVarieties::toLegacyRationalMap", ".  The ", CODE "RationalMap", " type and ", CODE "rationalMap", " method previously exported by ", TO "Cremona::Cremona", " are now ", TO "Cremona::LegacyRationalMap", " and ", TO "Cremona::legacyRationalMap", "."},
+                  LI {"Functions that iterate over a ", TO MutableList, ", such as ", TO apply, ", ", TO scan, ", and ", TO symbol for, " loops, now work with a snapshot of its entries, so modifying the list during the iteration no longer affects which entries are visited."}
+                  }
+              },
+          LI {
+              "bugs fixed:",
+              UL {
+                  LI {"Gröbner bases computed using a ", TO2("using a Hilbert hint for a Groebner basis calculation", "Hilbert hint"), " are no longer sometimes incomplete."},
+                  LI {"Gröbner bases computed with the ", TO2("Gröbner basis algorithms", "F4 algorithm"), " no longer occasionally contain incorrect generators."},
+                  LI {TO GLex, " blocks following another block in a ", TO MonomialOrder, " now have the correct weights."},
+                  LI {"Subtracting sparse ", TO2(MutableMatrix, "mutable matrices"), " now gives the correct result and no longer crashes on empty columns."},
+                  LI {TO sort, " and ", TO rsort, " no longer ignore errors raised by the comparison method."},
+                  LI {TO lift, " now works from a ", TO2(FractionField, "fraction field"), " to its base or coefficient ring."},
+                  LI {"Elements of ", TO2(FractionField, "fraction fields"), " now have a canonical numerator and denominator, so equal fractions such as ", M2CODE "1/2*y", " and ", M2CODE "y/2", " now compare as identical.  Fractions whose denominator is a unit are also simplified, so for example ", M2CODE "1/a", " is now ", M2CODE "b", " in ", M2CODE "QQ[a,b]/(a*b-1)", " and can be lifted to it."},
+                  LI {TO (inverse, Matrix), " now raises an error for singular matrices over ", TO RR, " and ", TO CC, " instead of returning a zero matrix."},
+                  LI {TO2(substitute, "Substituting"), " zero for a variable appearing in the denominator of a ", TO2([monoid, Inverses], "Laurent polynomial"), " now raises an error."},
+                  LI {TO roots, " no longer crashes on elements of ", TO2(FractionField, "fraction fields"), ", nor ", TO coefficients, " over inexact fields, and ", TO factor, " now works correctly over fraction fields."},
+                  LI {TO Hom, " no longer returns a cached result computed with different options."},
+                  LI {TO2((symbol //, Matrix, Matrix), "Quotients"), " of matrices over ", TO ZZ, ", ", M2CODE "ZZ/n", ", and inexact fields now have the expected source and target, rather than other free modules of the same rank."},
+                  LI {TO code, " now works for functions defined in multi-line input at the prompt."},
+                  LI {"Attempting to ", TO close, " ", TO stdio, " or ", TO stderr, " now raises an error instead of breaking the session."},
+                  LI {"Local file paths containing URL fragments (", CODE "#...", ") are now handled correctly when generating links, and errors from ", TO realpath, " are now reported."}
+                  }
+              },
+          LI {
+              "Emacs updates:",
+              UL {
+                  LI {"The Macaulay2 major mode no longer registers itself with Eglot or lsp-mode automatically.  Add ", CODE "(with-eval-after-load 'eglot (M2-register-eglot))", " or ", CODE "(with-eval-after-load 'lsp-mode (M2-register-lsp))", " to your Emacs configuration to use the ", TO "LanguageServer::LanguageServer", "."},
+                  LI {"The ", CODE "M2-language-server", " program is now found next to the ", SAMP "M2-exe", " executable before searching the path, and the new ", SAMP "M2-language-server-command", " variable may be set to run a custom or remote language server."},
+                  LI {"Changing ", SAMP "M2-exe", " after the Macaulay2 major mode has loaded now affects the command used to start new Macaulay2 sessions."},
+                  LI {"The Emacs package can now also be installed with ", CODE "package-install", " from the ", HREF{"https://macaulay2.com/Repositories/Emacs/", "Macaulay2 Emacs package archive"}, ", which also hosts ", HREF{"https://github.com/d-torrance/ob-M2", "ob-M2"}, "."},
+                  LI {"The presentation frame opened by ", SAMP "M2-demo", " (", KBD "M-F12", ") now shows the current Macaulay2 session, or another chosen with a prefix argument, instead of requiring a session named ", SAMP "*M2*", "."}
                   }
               }
           }@

@@ -3,16 +3,16 @@ newPackage(
      Version => "1.2",
      Date => "May 20, 2026",
      Authors => {
-	  {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de"},
-	  {Name => "Frank Moore", Email => "fmoore@math.unl.edu", HomePage => "http://www.math.unl.edu/~s-wmoore3"},
-	  {Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
-	  {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"},
-	  {Name => "Lily Silverstein", Email => "lsilverstein@cpp.edu", HomePage => "https://www.cpp.edu/faculty/lsilverstein/"},
+	  {Name => "David Eisenbud", Email => "de@math.berkeley.edu", HomePage => "https://eisenbud.github.io"},
+	  {Name => "Frank Moore", Email => "moorewf@wfu.edu", HomePage => "https://users.wfu.edu/moorewf/"},
+	  {Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "https://www.math.uni-sb.de/ag/schreyer/"},
+	  {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "https://ggsmith.ca"},
+	  {Name => "Lily Silverstein", Email => "lsilverstein@cpp.edu"},
 	  -- Authors of the merged-in MonomialIdealResolutions package (originally
 	  -- developed at the 2011 Goettingen and 2012 Wake Forest M2 workshops):
 	  {Name => "Eduardo Saenz De Cabezon Irigaray", Email => "eduardo.saenz-de-cabezon@unirioja.es"},
 	  {Name => "Oscar Fernandez-Ramos", Email => "caribefresno@gmail.com"},
-	  {Name => "Christof Soeger", Email => "csoeger@uos.de"}
+	  {Name => "Christof Soeger"}
 	  },
      Headline => "some additional ChainComplex Functions",
      PackageExports => {"OldChainComplexes"},

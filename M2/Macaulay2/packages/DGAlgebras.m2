@@ -5,7 +5,7 @@ newPackage("DGAlgebras",
      Date => "June 4, 2026",
      Authors => {
 	  {Name => "Frank Moore",
-	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html",
+	   HomePage => "https://users.wfu.edu/moorewf/",
 	   Email => "moorewf@wfu.edu"},
 	  {Name => "Keller VandeBogert",
 	   HomePage => "https://sites.google.com/view/kellervandebogert/home",

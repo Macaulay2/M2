@@ -22,10 +22,10 @@
 
 newPackage(
 	"ToricTopology",
-	Version => "1.2",
-	Date => "May 20, 2026",
+	Version => "1.2.1",
+	Date => "November 16, 2026",
 	Authors => {
-		{Name => "Alvise Trevisan", Email => "a.trevisan@enpicom.com", HomePage => "http://www.enpicom.com"},
+		{Name => "Alvise Trevisan", Email => "a.trevisan@enpicom.com"},
 		{Name => "Alexander I. Suciu", Email => "a.suciu@neu.edu"},
 		{Name => "Kumar Sannidhya Shukla", Email => "kshukla5@uwo.ca"}
 	},

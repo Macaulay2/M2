@@ -639,7 +639,7 @@ mergepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
 	       else return WrongArg(1,"a list of pairs"));
 	  if n < length(x)+length(y)
 	  then z = new Sequence len n do foreach a in z do provide a;
-	  Expr(sethash(List(commonAncestor(xl.Class,yl.Class), z,hash_t(0),false),xl.Mutable | yl.Mutable)))
+	  list(commonAncestor(xl.Class,yl.Class), z, xl.Mutable | yl.Mutable))
      else WrongArg(2,"a list")
      else WrongArg(1,"a list"));
 mergepairsfun(e:Expr):Expr := (
@@ -1608,11 +1608,7 @@ setupfun("sqrt",sqrt).Protected=false;
 export toSequence(e:Expr):Expr := (
      when e
      is Sequence do e
-     is b:List do (
-	  if b.Mutable
-	  then Expr(new Sequence len length(b.v) do foreach i in b.v do provide i)
-	  else Expr(b.v)
-	  )
+     is b:List do Expr(elements(b))
      is s:stringCell do Expr(strtoseq(s))
      else (
 	 iter := getIterator(e);
@@ -2114,7 +2110,7 @@ map(e:Expr,f:Expr):Expr := (
 --	  if obj.Mutable then return WrongArg("an immutable hash table");
 --	  if ancestor(obj.Class,VirtualTally) then mapkeys(f,obj) else mapvalues(f,obj))
      is b:List do (
-	  c := map(b.v,f);
+	  c := map(elements(b),f);
 	  when c is err:Error do if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else c
 	  is v:Sequence do list(b.Class,v,b.Mutable)
 	  else nullE			  -- will not happen
@@ -2625,7 +2621,7 @@ scan(e1:Expr,e2:Expr,f:Expr):Expr := (
 scan(e:Expr,f:Expr):Expr := (
      when e
      is a:Sequence do scan(a,f)
-     is b:List do scan(b.v,f)
+     is b:List do scan(elements(b),f)
      is i:ZZcell do (
 	  if !isInt(i)
 	  then WrongArgSmallInteger(1)

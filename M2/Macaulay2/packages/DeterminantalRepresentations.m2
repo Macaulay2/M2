@@ -3,10 +3,9 @@ newPackage("DeterminantalRepresentations",
 	Version => "1.3.1",
 	Date => "November 8, 2021",
 	Authors => {
-		{Name => "Justin Chen",
-		Email => "jchen646@gatech.edu"},
+		{Name => "Justin Chen"},
 		{Name => "Papri Dey",
-		Email => "papridey@berkeley.edu"}
+		Email => "yedirpap@gmail.com"}
 	},
 	Headline => "determinantal representations",
 	Keywords => {"Representation Theory", "Commutative Algebra"},

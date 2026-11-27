@@ -21,9 +21,9 @@ newPackage(
 	Version => "1.10",
 	Date => "May 27, 2026",
     	Authors => {
-     	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},
-	     {Name => "Thomas Enkosky", Email => "tomenk@bu.edu", HomePage => "http://math.bu.edu/people/tomenk/"},
-	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelpi.edu/~bstone/"},
+     	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu"},
+	     {Name => "Thomas Enkosky", Email => "tomenk@bu.edu", HomePage => "https://www.bu.edu/math/profile/thomas-enkosky/"},
+	     {Name => "Branden Stone", Email => "branden.stone@gtri.gatech.edu", HomePage => "http://stonebranden.com/"},
 	     {Name => "Jim Vallandingham", Email => "vlandham@gmail.com", HomePage => "http://vallandingham.me/"},
 	     {Name => "Doug Torrance", Email => "dtorrance9@gatech.edu", HomePage => "https://d-torrance.github.io"}
 -- Contributing Author	     {Name => "Ata Firat Pir", Email => "atafirat@math.tamu.edu"},

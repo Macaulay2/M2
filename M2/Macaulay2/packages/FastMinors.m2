@@ -2,7 +2,7 @@ newPackage( "FastMinors",
 Version => "1.3.1", Date => "May 13th, 2026", Authors => {
     {
         Name => "Boyana Martinova",
-        Email=> "martinova@wisc.edu",
+        Email=> "martinova@stanford.edu",
         HomePage=> "https://sites.google.com/view/bmartinova"
     },
     {
@@ -13,7 +13,7 @@ Version => "1.3.1", Date => "May 13th, 2026", Authors => {
     {
         Name => "Karl Schwede",
         Email=> "schwede@math.utah.edu",
-        HomePage=> "http://www.math.utah.edu/~schwede"
+        HomePage=> "https://kschwede.github.io/"
     },
     {
         Name => "Yuhui (Wei) Yao",

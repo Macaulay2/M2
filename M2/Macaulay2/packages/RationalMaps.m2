@@ -1,12 +1,12 @@
 newPackage( "RationalMaps",
     Version => "1.0", Date => "March 11th, 2022", Authors => {
         {Name => "Karl Schwede",
-        Email=> "kschwede@gmail.com",
-        HomePage=> "http://www.math.utah.edu/~schwede"
+        Email=> "schwede@math.utah.edu",
+        HomePage=> "https://kschwede.github.io/"
         }, --Karl Schwede was partially supported by  NSF FRG Grant DMS #1265261/1501115, NSF CAREER Grant DMS #1252860/1501102, and NSF grant #1801849
         {Name => "Daniel Smolkin",
-        Email=> "smolkind@umich.edu",
-        HomePage=> "http://dan.smolk.in"
+        Email=> "dan.smolkin@gmail.com",
+        HomePage=> "https://dan.smolk.in/"
         },--Dan Smolkin was partially supported by  NSF FRG Grant DMS #1265261/1501115, NSF CAREER Grant DMS #1252860/1501102
         {Name => "S. Hamid Hassanzadeh",
         Email => "hassanzadeh.ufrj@gmail.com",
@@ -14,7 +14,7 @@ newPackage( "RationalMaps",
         }, --S. Hamid Hassanzadeh was supported by CNPq-bolsa de Produtividade
         {Name => "C.J. Bott",
         Email => "cjamesbott@gmail.com",
-        HomePage=>"https://www.math.tamu.edu/directory/formalpg.php?user=cbott2"}
+        HomePage=>"https://math.byu.edu/directory/c-j-bott"}
     }, --this file is in the public domain
     Keywords => {"Commutative Algebra"},
     Headline => "rational maps between varieties", 

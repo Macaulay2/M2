@@ -37,16 +37,16 @@ newPackage(
   Authors => {
     {	 
       Name => "David Eisenbud", 
-      Email => "de@msri.org", 
-      HomePage => "http://www.msri.org/~de/"},
+      Email => "de@math.berkeley.edu",
+      HomePage => "https://eisenbud.github.io"},
     {
       Name => "Daniel Erman", 
-      Email => "derman@math.stanford.edu", 
-      HomePage => "http://math.stanford.edu/~derman/"},	     
+      Email => "erman@hawaii.edu",
+      HomePage => "https://math.hawaii.edu/~erman/"},
     {
       Name => "Gregory G. Smith", 
       Email => "ggsmith@mast.queensu.ca", 
-      HomePage => "http://www.mast.queensu.ca/~ggsmith"},
+      HomePage => "https://ggsmith.ca"},
     {
       Name => "Dumitru Stamate", 
       Email => "dumitru.stamate@fmi.unibuc.ro"}},

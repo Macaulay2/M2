@@ -4,7 +4,7 @@ newPackage(
         Version => "1.1", 
         Date => "February 13, 2018",
         Authors => {{Name => "Marilena Crupi", Email => "mcrupi@unime.it", HomePage => "http://www.unime.it/it/persona/marilena-crupi"},
-                    {Name => "Luca Amata", Email => "lamata@unime.it", HomePage => "http://mat521.unime.it/amata"}},
+                    {Name => "Luca Amata", Email => "luca.amata@scuola.istruzione.it", HomePage => "https://lucamata.github.io"}},
         Headline => "monomial ideals over exterior algebras",
         Keywords => {"Commutative Algebra"},
         DebuggingMode => false,

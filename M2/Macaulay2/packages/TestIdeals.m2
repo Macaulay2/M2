@@ -22,26 +22,22 @@ newPackage( "TestIdeals",
 Version => "1.01",
 Date => "3/22/2019, 2019",
 Authors => {
-     {Name => "Erin Bela",
-     Email => "ebela@nd.edu"
+     {Name => "Erin Bela"
      },
      {Name => "Alberto F. Boix",
      Email => "albertof.boix@gmail.com"
      },
      {Name => "Juliette Bruce",
-     Email => "juliette.bruce@math.wisc.edu",
-     HomePage => "https://juliettebruce.github.io/"
+     Email => "juliette.bruce@dartmouth.edu",
+     HomePage => "https://www.juliettebruce.xyz/"
      },
-     {Name => "Drew Ellingson",
-     Email => "drewtell@umich.edu"
+     {Name => "Drew Ellingson"
      },
      {Name => "Daniel Hernández",
      Email => "hernandez@ku.edu",
-     HomePage => "https://hernandez.faculty.ku.edu"
+     HomePage => "https://hernandez.ku.edu"
      },
-     {Name => "Zhibek Kadyrsizova",
-     Email => "zhikadyr@umich.edu"
-     },
+     {Name => "Zhibek Kadyrsizova"},
      {Name => "Mordechai Katzman",
      Email => "m.katzman@sheffield.ac.uk",
      HomePage => "http://www.katzman.staff.shef.ac.uk/"
@@ -50,30 +46,29 @@ Authors => {
      Email => "malec@hood.edu"
      },
      {Name => "Matthew Mastroeni",
-     Email => "mmastro@okstate.edu",
-     HomePage => "https://mnmastro.github.io/"
+     Email => "mastromn@sunypoly.edu",
+     HomePage => "https://sunypoly.edu/faculty-and-staff/matthew-mastroeni.html"
      },
      {Name => "Maral Mostafazadehfard",
      Email => "maralmostafazadehfard@gmail.com"
      },
      {Name => "Marcus Robinson",
-     Email => "robinson@math.utah.edu"
+     Email => "mrobinso@reed.edu"
      },
      {Name => "Karl Schwede",
      Email => "schwede@math.utah.edu",
-     HomePage => "http://math.utah.edu/~schwede/"
+     HomePage => "https://kschwede.github.io/"
      },
      {Name => "Dan Smolkin",
-     Email => "smolkin@math.utah.edu",
-     HomePage => "http://cohenmacaulay.life"
+     Email => "dan.smolkin@gmail.com",
+     HomePage => "https://dan.smolk.in/"
      },
      {Name => "Pedro Teixeira",
-     Email => "pteixeir@knox.edu",
-     HomePage => "https://www.knox.edu/academics/majors-and-minors/mathematics/faculty/teixeira-pedro"
+     Email => "pteixeir@knox.edu"
      },
      {Name=> "Emily Witt",
      Email => "witt@ku.edu",
-     HomePage => "https://witt.faculty.ku.edu"
+     HomePage => "https://witt.ku.edu"
      }
 },
 Headline => "singularities in positive characteristic",

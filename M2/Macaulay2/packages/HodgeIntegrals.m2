@@ -17,9 +17,7 @@ newPackage(
 	"volume URI" => "https://msp.org/jsag/2010/2-1/"
 	},
    Authors => {
-	 {  Name => "Stephanie Yang",
-	    Email => "stpyang@math.kth.se",
-	    HomePage => "http://www.stephanieyang.com"}
+	 {  Name => "Stephanie Yang"}
          },
    Headline => "Hodge integrals on the moduli space of curves",
    Keywords => {"Commutative Algebra"},

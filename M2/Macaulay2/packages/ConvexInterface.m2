@@ -4,7 +4,7 @@ newPackage(
     	Date =>"December 1, 2010",
     	Authors =>{{Name =>"Janko Boehm", 
 		  Email =>"boehm@mathematik.uni-kl.de", 
-		  HomePage =>"http://www.math.uni-sb.de/ag/schreyer/jb/"}
+		  HomePage =>"https://agag-jboehm.math.rptu.de/~boehm/"}
                   },
     	Headline =>"interface to Convex",
         Keywords => {"Interfaces"},

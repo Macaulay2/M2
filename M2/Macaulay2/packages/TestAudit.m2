@@ -5,10 +5,10 @@ newPackage(
     Headline => "test audit functionality",
     Authors => {
         { Name => "Taylor Brysiewicz", Email => "tbrysiew@uwo.ca", HomePage => "https://sites.google.com/view/taylorbrysiewicz/home" },
-        { Name => "Ashley Dean", Email => "amd069@uark.edu" },
+        { Name => "Ashley Dean" },
         { Name => "Connor Haynes" },
         { Name => "David K. Johnson", Email => "djohn225@uwo.ca", HomePage => "https://sites.google.com/view/davidkjohnson" },
-        { Name => "Guanyu Li", Email => "gl479@cornell.edu", HomePage => "https://sites.google.com/view/guanyu-li-math/home" },
+        { Name => "Guanyu Li", Email => "guanyulimath@sjtu.edu.cn", HomePage => "https://sites.google.com/view/guanyu-li-math/home" },
         { Name => "Keller VandeBogert", Email => "keller.v@uky.edu", HomePage => "https://sites.google.com/view/kellervandebogert/home" }
         },
     Keywords => {"Miscellaneous"},

@@ -15,7 +15,7 @@ newPackage(
 	   HomePage => "http://gdenham.math.uwo.ca/"},
 	  {Name => "Gregory G. Smith", 
 	   Email => "ggsmith@mast.queensu.ca", 
-	   HomePage => "http://www.mast.queensu.ca/~ggsmith"},
+	   HomePage => "https://ggsmith.ca"},
 	  {Name => "Avi Steiner", 
 	   Email => "avi.steiner@gmail.com", 
 	   HomePage => "https://sites.google.com/view/avi-steiner"}

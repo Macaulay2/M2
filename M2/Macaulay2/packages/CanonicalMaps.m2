@@ -8,7 +8,7 @@ newPackage(
             HomePage => "https://ggsmith.ca"
             },
         {   Name => "Mike Stillman", 
-            Email => "mike@math.cornell.edu", 
+            Email => "mikestillman1@gmail.com",
             HomePage => "https://mikestillman.github.io"
             }},
     Headline => "implements canonical and standard maps for modules",

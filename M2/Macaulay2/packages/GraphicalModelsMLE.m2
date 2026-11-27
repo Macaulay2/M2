@@ -14,32 +14,30 @@ newPackage(
      Date => "April 19, 2022",
      Authors => {
 	  {Name=> "Carlos Amendola",
-	   Email=> "carlos.amendola@mis.mpg.de",
-	   HomePage=>"http://www.carlos-amendola.com/"},
+	   Email=> "amendola@math.tu-berlin.de",
+	   HomePage=>"http://www.luke-amendola.appspot.com/"},
 
 	  {Name => "Luis David Garcia Puente",
 	   Email => "lgarciapuente@coloradocollege.edu",
 	   HomePage => "https://luisgarciapuente.github.io"},
 
           {Name=> "Roser Homs Pons",
-	   Email=> "roser.homs@tum.de",
-	   HomePage=>"https://personal-homepages.mis.mpg.de/homspons/index.html"},
+	   Email=> "roser.homs@upc.edu",
+	   HomePage=>"https://roserhp.github.io"},
 
           {Name=> "Olga Kuznetsova",
-	   Email=> "kuznetsova.olga@gmail.com",
-	   HomePage=>"https://okuznetsova.com"},
+	   Email=> "kuznetsova.olga@gmail.com"},
 
           {Name=> "Harshit J Motwani",
-	   Email=> "harshitmotwani2015@gmail.com",
-	   HomePage=>"https://sites.google.com/view/harshitjmotwani/home"},
+	   Email=> "harshitmotwani2015@gmail.com"},
 
           {Name=> "Elina Robeva",
 	   Email=> "erobeva@gmail.com",
-	   HomePage=>"https://www.math.ubc.ca/~erobeva/"},
+	   HomePage=>"https://personal.math.ubc.ca/~erobeva/"},
 
           {Name=> "David Swinarski",
 	   Email=> "dswinarski@fordham.edu",
-	   HomePage=>"http://faculty.fordham.edu/dswinarski"}
+	   HomePage=>"https://faculty.fordham.edu/dswinarski/"}
 	  },
      Headline => "maximum likelihood estimates for graphical statistical models",
      Keywords => {"Algebraic Statistics"},

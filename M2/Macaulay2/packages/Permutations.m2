@@ -6,7 +6,7 @@ newPackage(
     Keywords => {"Combinatorics"},
     Authors => {
         {Name => "Sean Grate", 
-         Email => "sean.grate@auburn.edu", 
+         Email => "sgrate@iastate.edu",
          HomePage => "https://seangrate.com/"}
     },
     Headline => "functions for working with permutations",

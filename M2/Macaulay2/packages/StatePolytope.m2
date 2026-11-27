@@ -6,7 +6,7 @@ newPackage(
     	Version => "1.2", 
     	Date => "October 6, 2008",
     	Authors => {
-	     {Name => "Dave Swinarski", Email => "swinarsk@math.columbia.edu"}
+	     {Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"}
 	     },
     	Headline => "the state polytope of an ideal",
 	Keywords => {"Convex Geometry", "Interfaces"},

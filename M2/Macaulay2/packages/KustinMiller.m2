@@ -6,10 +6,10 @@ newPackage(
     	Date => "May 14, 2012",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@mathematik.uni-kl.de", 
-		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"},
+		  HomePage => "https://agag-jboehm.math.rptu.de/~boehm/"},
                   {Name => "Stavros Papadakis", 
-		  Email => "papadak@math.ist.utl.pt", 
-		  HomePage => "http://www.math.ist.utl.pt/~papadak/"}
+		  Email => "spapadak@uoi.gr",
+		  HomePage => "https://www.math.tecnico.ulisboa.pt/~papadak/"}
                    },
     	Headline => "unprojection and the Kustin-Miller complex construction",
 	Keywords => {"Commutative Algebra"},

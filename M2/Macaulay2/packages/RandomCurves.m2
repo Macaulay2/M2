@@ -7,9 +7,7 @@ newPackage(
 	         Email => "hcvbothmer@gmail.com",
 		 HomePage => "https://www.math.uni-hamburg.de/personen/bothmer/"},
 
-		{Name=> "Florian Geiss",
-		 Email=> "fg@math.uni-sb.de",
-		 HomePage=>"https://www.math.uni-sb.de/ag/schreyer/"},
+		{Name=> "Florian Geiss"},
 
 	        {Name => "Frank-Olaf Schreyer",
 		 Email => "schreyer@math.uni-sb.de",

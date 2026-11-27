@@ -3,7 +3,7 @@ newPackage(
 	Version => "2.0", 
 	Date => "May 20, 2019",
 	Authors => {
-	    {Name => "Eloisa Grifo", Email => "grifo@umich.edu", HomePage => "http://www-personal.umich.edu/~grifo/"}
+	    {Name => "Eloisa Grifo", Email => "grifo@unl.edu", HomePage => "https://eloisagrifo.github.io/"}
 	    },
 	Headline => "symbolic powers",
 	Keywords => {"Commutative Algebra"},

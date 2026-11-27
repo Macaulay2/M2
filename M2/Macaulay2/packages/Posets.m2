@@ -14,9 +14,9 @@ newPackage(
         Version => "1.1.3",
         Date => "May 15, 2021",
         Authors => {
-            {Name => "David Cook II", Email => "dwcook@eiu.edu", HomePage => "http://ux1.eiu.edu/~dwcook/"},
-            {Name => "Sonja Mapes", Email => "smapes1@nd.edu", HomePage => "http://www.nd.edu/~smapes1/"},
-            {Name => "Gwyn Whieldon", Email => "whieldon@hood.edu", HomePage => "http://www.hood.edu/Academics/Departments/Mathematics/Faculty/Gwyneth-Whieldon.html"}
+            {Name => "David Cook II"},
+            {Name => "Sonja Mapes", Email => "smapes@northwestern.edu", HomePage => "https://www.math.northwestern.edu/people/faculty/sonja-mapes.html"},
+            {Name => "Gwyn Whieldon", Email => "gwyn.whieldon@gmail.com"}
         },
         Headline => "partially ordered sets (posets)",
 	Keywords => {"Combinatorics"},

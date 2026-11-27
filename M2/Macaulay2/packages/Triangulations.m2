@@ -17,7 +17,7 @@ newPackage(
         Date => "5 June 2026",
         Authors => {{
                 Name => "Mike Stillman", 
-                Email => "mike@math.cornell.edu", 
+                Email => "mikestillman1@gmail.com",
                 HomePage=>"https://mikestillman.github.io"
                 }},
         Headline => "triangulations of polyhedra and point sets",

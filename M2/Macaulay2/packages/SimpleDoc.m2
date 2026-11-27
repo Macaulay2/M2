@@ -6,9 +6,9 @@ newPackage(
     Date => "March 13, 2025",
     Headline => "a simple documentation function",
     Authors => {
-	{ Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "https://faculty.math.illinois.edu/~dan/" },
-	{ Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "https://pi.math.cornell.edu/~mike/" },
-	{ Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu", HomePage => "https://math.umn.edu/~mahrud/" }
+	{ Name => "Daniel R. Grayson", HomePage => "https://www.graysonfamily.org/dan/" },
+	{ Name => "Mike Stillman", Email => "mikestillman1@gmail.com", HomePage => "https://mikestillman.github.io" },
+	{ Name => "Mahrud Sayrafi", Email => "msayrafi2@unl.edu", HomePage => "https://mahrud.github.io" }
 	},
     Keywords => {"Documentation"},
     PackageImports => { "Text" },
