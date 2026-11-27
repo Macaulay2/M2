@@ -32,7 +32,7 @@ struct internal_error : public engine_error
   catch (const exc::engine_error& __x424621) \
   {                                   \
     ERROR(__x424621.what());          \
-    return NULL;                      \
+    return nullptr;                      \
   }
 
 #endif

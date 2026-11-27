@@ -50,7 +50,7 @@ inline vecHeap::vecHeap(const FreeModule *FF)
 {
   // set K
   int i;
-  for (i = 0; i < GEOHEAP_SIZE; i++) heap[i] = NULL;
+  for (i = 0; i < GEOHEAP_SIZE; i++) heap[i] = nullptr;
 }
 
 inline vecHeap::~vecHeap()
@@ -68,13 +68,13 @@ inline void vecHeap::add(vecterm *p)
   while (len >= heap_size[i]) i++;
   K->add_vec_to(heap[i], p);
   len = K->n_nonzero_terms(heap[i]);
-  p = NULL;
+  p = nullptr;
   while (len >= heap_size[i])
     {
       i++;
       K->add_vec_to(heap[i], heap[i - 1]);
       len = K->n_nonzero_terms(heap[i]);
-      heap[i - 1] = NULL;
+      heap[i - 1] = nullptr;
     }
   if (i > top_of_heap) top_of_heap = i;
 }
@@ -92,7 +92,7 @@ inline const vecterm *vecHeap::get_lead_term()
   int lead_so_far = -1;
   for (int i = 0; i <= top_of_heap; i++)
     {
-      if (heap[i] == NULL) continue;
+      if (heap[i] == nullptr) continue;
       if (lead_so_far < 0)
         {
           lead_so_far = i;
@@ -109,7 +109,7 @@ inline const vecterm *vecHeap::get_lead_term()
       K->add_to(heap[lead_so_far]->coeff, heap[i]->coeff);
       vecterm *tmp = heap[i];
       heap[i] = tmp->next;
-      tmp->next = NULL;
+      tmp->next = nullptr;
       K->remove_vec(tmp);
 
       if (K->is_zero(heap[lead_so_far]->coeff))
@@ -117,46 +117,46 @@ inline const vecterm *vecHeap::get_lead_term()
           // Remove, and start over
           tmp = heap[lead_so_far];
           heap[lead_so_far] = tmp->next;
-          tmp->next = NULL;
+          tmp->next = nullptr;
           K->remove_vec(tmp);
           lead_so_far = -1;
           i = -1;
         }
     }
   mLead = lead_so_far;
-  if (lead_so_far < 0) return NULL;
+  if (lead_so_far < 0) return nullptr;
   vecterm *result = heap[lead_so_far];
   return result;
 }
 inline vecterm *vecHeap::remove_lead_term()
 {
   if (mLead < 0) get_lead_term();
-  if (mLead < 0) return NULL;
+  if (mLead < 0) return nullptr;
   vecterm *result = heap[mLead];
   heap[mLead] = result->next;
-  result->next = NULL;
+  result->next = nullptr;
   mLead = -1;
   return result;
 }
 
 inline vecterm *vecHeap::value()
 {
-  vecterm *result = NULL;
+  vecterm *result = nullptr;
   for (int i = 0; i <= top_of_heap; i++)
     {
-      if (heap[i] == NULL) continue;
+      if (heap[i] == nullptr) continue;
       K->add_vec_to(result, heap[i]);
-      heap[i] = NULL;
+      heap[i] = nullptr;
     }
   top_of_heap = -1;
   return result;
 }
 inline vecterm *vecHeap::current_value() const
 {
-  vecterm *result = NULL;
+  vecterm *result = nullptr;
   for (int i = 0; i <= top_of_heap; i++)
     {
-      if (heap[i] == NULL) continue;
+      if (heap[i] == nullptr) continue;
       vecterm *tmp = K->copy_vec(heap[i]);
       K->add_vec_to(result, tmp);
     }

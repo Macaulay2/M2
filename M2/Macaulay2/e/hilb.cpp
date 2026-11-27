@@ -256,7 +256,7 @@ static int find_pivot(const MonomialIdeal &I,
   // non pure power.
   if (npure >= I.size() - 1)
     {
-      assert(vp != NULL);
+      assert(vp != nullptr);
       varpower::copy(vp, m);
       return 0;
     }
