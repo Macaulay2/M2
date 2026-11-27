@@ -80,6 +80,9 @@ jobs:
           cd macaulay2
           dpkg-buildpackage --build=source
       - name: Build binary package
+        env:
+          # skip the -dbgsym packages; they're big and nobody uses them
+          DEB_BUILD_OPTIONS: noautodbgsym
         run: |
           dpkg-source -x macaulay2_*.dsc
           cd macaulay2-*
