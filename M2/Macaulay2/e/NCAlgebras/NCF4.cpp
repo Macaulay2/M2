@@ -68,21 +68,20 @@ void NCF4::compute(int softDegreeLimit)
 {
   while (!mOverlapTable.isFinished(softDegreeLimit))
     {
-      auto degSet = mOverlapTable.nextDegreeOverlaps();
-      auto toBeProcessed = degSet.second;
+      auto batch = mOverlapTable.nextDegreeOverlaps();
+      const auto& toBeProcessed = batch->second;
       if (M2_gbTrace >= 1)
         {
           buffer o;
-          o << "{" << degSet.first << "}(" << toBeProcessed->size() << ")";
+          o << "{" << batch->first.first << "}(" << toBeProcessed.size() << ")";
           emit_wrapped(o.str());
         }
       mScheduler.execute([this,&toBeProcessed]()
       {
-        process(*toBeProcessed);
+        process(toBeProcessed);
       });
       
-      mOverlapTable.removeLowestDegree(); // TODO: suspect line.
-      // we really want to just delete toBeProcessed...
+      mOverlapTable.removeBatch(batch);
       }
 }
 

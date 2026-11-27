@@ -1224,6 +1224,20 @@ hsC = apply(15, i -> numgens source ncBasis(i,C))
 -- not sure what else to test here yet.
 ///
 
+TEST ///
+-- The action of gl(2) on the affine chart of P^1 gives an inhomogeneous graph ideal.
+R = QQ<|x,d|>;
+R = R/ideal(d*x-x*d-1);
+S = QQ<|e_(0,0)..e_(1,1)|>;
+phi = map(R,S,{-x*d,d,-x^2*d,x*d});
+(t,a,b,h) = toSequence gens S;
+rels = {t+h, a*b-b*a+2*h, a*h-h*a-a, b*h-h*b+b, b*a+h^2-h};
+assert(all(rels, r -> phi r == 0));
+K = ncKernel(phi, DegreeLimit => 6);
+assert(all(flatten entries gens K, r -> phi r == 0));
+assert(all(rels, r -> NCReductionTwoSided(r,K) == 0));
+///
+
 DEVELOPMENT ///
 -*
   restart

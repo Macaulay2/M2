@@ -34,14 +34,13 @@ public:
   // is the overlap map empty in degrees <= topDegree?
   auto isFinished(int topDegree) const -> bool;
 
-  // returns the lowest degree and a pointer to the overlaps
-  // in that degree if isFinished returns true.  Otherwise
-  // return (-1,nullptr).
-  auto nextDegreeOverlaps() -> std::pair<int,std::deque<Overlap>*>;
+  // Get the first batch after checking isFinished(). Insertions do not
+  // invalidate this iterator, even if they add a batch before it.
+  auto nextDegreeOverlaps() -> OverlapMap::iterator;
 
   auto size() const -> size_t;
 
-  auto removeLowestDegree() -> void; // TODO: logic BUG in inhomogeneous case: won't delete what we want!
+  auto removeBatch(OverlapMap::iterator batch) -> void;
 
   auto overlapWordLength(Overlap o) const -> int;
 

@@ -436,6 +436,19 @@ TEST(OverlapTable, insertion)
   EXPECT_TRUE(overlapTable.size() == 3);
 }
 
+TEST(OverlapTable, removeProcessedBatch)
+{
+  OverlapTable overlapTable;
+  overlapTable.insert(3,true,std::make_tuple(0,-1,-1,true));
+  auto batch = overlapTable.nextDegreeOverlaps();
+  auto pair = std::make_tuple(0,1,1,true);
+  overlapTable.insert(3,false,pair);
+  overlapTable.removeBatch(batch);
+
+  ASSERT_EQ(overlapTable.size(), 1);
+  EXPECT_EQ(overlapTable.nextDegreeOverlaps()->second.front(), pair);
+}
+
 TEST(NCGroebner, sorting)
 {
   auto key1 = std::make_pair(1,false);

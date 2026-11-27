@@ -71,22 +71,22 @@ void NCGroebner::computeHomogeneous(int softDegreeLimit)
   size_t n_spairs = 0;
   while (!mOverlapTable.isFinished(softDegreeLimit))
     {
-      auto degSet = mOverlapTable.nextDegreeOverlaps();
-      auto toBeProcessed = degSet.second;
+      auto batch = mOverlapTable.nextDegreeOverlaps();
+      auto& toBeProcessed = batch->second;
       if (M2_gbTrace >= 1)
         {
           buffer o;
-          o << "[" << degSet.first << "](" << toBeProcessed->size() << ")";
+          o << "[" << batch->first.first << "](" << toBeProcessed.size() << ")";
           emit(o.str());
         }
-      while(!toBeProcessed->empty())
+      while(!toBeProcessed.empty())
         {
-          auto overlap = toBeProcessed->front();
+          auto overlap = toBeProcessed.front();
           //if this is a `real' overlap, and the overlap is not necessary, then move
           //on to the next overlap.
           if (std::get<1>(overlap) != -1 && !isOverlapNecessary(overlap))
             {
-              toBeProcessed->pop_front();
+              toBeProcessed.pop_front();
               if (M2_gbTrace >= 3)
                 {
                   std::cout << "Reduction avoided using 2nd criterion." << std::endl;
@@ -117,10 +117,9 @@ void NCGroebner::computeHomogeneous(int softDegreeLimit)
                             << std::endl;
                 }
             }
-          toBeProcessed->pop_front();
+          toBeProcessed.pop_front();
         }
-      // remove the lowest degree overlaps from the overlap table
-      mOverlapTable.removeLowestDegree();
+      mOverlapTable.removeBatch(batch);
     }
   if (M2_gbTrace >= 1)
     {
@@ -135,22 +134,22 @@ void NCGroebner::computeInhomogeneous(int softDegreeLimit)
   size_t n_spairs = 0;
   while (!mOverlapTable.isFinished(softDegreeLimit))
     {
-      auto degSet = mOverlapTable.nextDegreeOverlaps();
-      auto toBeProcessed = degSet.second;
+      auto batch = mOverlapTable.nextDegreeOverlaps();
+      auto& toBeProcessed = batch->second;
       if (M2_gbTrace >= 1)
         {
           buffer o;
-          o << "[" << degSet.first << "](" << toBeProcessed->size() << ")";
+          o << "[" << batch->first.first << "](" << toBeProcessed.size() << ")";
           emit(o.str());
         }
-      while(!toBeProcessed->empty())
+      while(!toBeProcessed.empty())
         {
-          auto overlap = toBeProcessed->front();
+          auto overlap = toBeProcessed.front();
           //if this is a `real' overlap, and the overlap is not necessary, then move
           //on to the next overlap.
           if (std::get<1>(overlap) != -1 && !isOverlapNecessary(overlap))
             {
-              toBeProcessed->pop_front();
+              toBeProcessed.pop_front();
               if (M2_gbTrace >= 2)
                 {
                   std::cout << "Reduction avoided using 2nd criterion." << std::endl;
@@ -181,10 +180,10 @@ void NCGroebner::computeInhomogeneous(int softDegreeLimit)
                             << std::endl;
                 }
             }
-          toBeProcessed->pop_front();
+          toBeProcessed.pop_front();
         }
-      // remove the lowest degree overlaps from the overlap table
-      mOverlapTable.removeLowestDegree();
+      // New overlaps may sort before the batch we just processed.
+      mOverlapTable.removeBatch(batch);
     }
   if (M2_gbTrace >= 1)
     {
