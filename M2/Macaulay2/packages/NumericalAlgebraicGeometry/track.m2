@@ -663,16 +663,7 @@ extractM2engineOutput (MutableMatrix,MutableMatrix) := (out,statusOut) -> (
     apply(nSols, sN->(
 	    s'status := solutionStatusLIST#(statusOut_(0,sN));
 	    count := statusOut_(1,sN);
-	    if DBG > 0 then << (if s'status == Regular then "."
-		else if s'status == Singular then "S"
-		else if s'status == MinStepFailure then "M"
-		else if s'status == Infinity then "I"
-		else if s'status == Origin then "O"
-		else if s'status == IncreasePrecision then "P"
-		else if s'status == DecreasePrecision then "p"
-		else error "unknown solution status"
-		) << if (sN+1)%100 == 0 or sN==nSols-1 then endl else flush;
-	    -- create a solution record 
+	    -- create a solution record
 	    x0 := submatrix(out,toList(0..n-1),{sN});
 	    point {flatten entries x0,
 		SolutionStatus => s'status, 
@@ -911,9 +902,12 @@ trackHomotopy(Homotopy,List) := List => o -> (H,solsS) -> (
 		     ); -- while ... 
 		     if status s =!= Regular then -- change status to Regular if at t=1 
 		     if abs(realPart s.cache.LastT) < theSmallestNumber then s.cache.SolutionStatus = Regular;   
-		 ) -- for nS ... 
-	     );	      
-	 toList sols 
+		 ) -- for nS ...
+	     );
+	 if DBG > 0 then << "-- " << demark(", ",
+	     apply(sort pairs tally apply(toList sols, status), (st, k) -> toString k | " " | toString st))
+	 << endl;
+	 toList sols
 	 )
      ---------------- M2 (top-level) -------------------------------------------------------------------------------------
      else if o.Software===M2 
@@ -1130,4 +1124,15 @@ assert all(sols, s->status s === MinStepFailure)
 sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 100,CorrectorTolerance=>1e-15,Precision=>100,EndZoneFactor=>0)
 peek sols 
 assert all(sols, s->status s === Regular)
+///
+
+TEST /// -- example with speedup from tbb_for loop 
+needsPackage "ExampleSystems"                                                                                     
+T = katsura(10,CC_53)                                                                                             
+(S,solsS) = totalDegreeStartSystem T;                                                                             
+H = segmentHomotopy(ii*S,T)                                                                                       
+NAGtrace 2                                                                                                        
+numTBBThreads = 4                                                                                                 
+elapsedTime sols = trackHomotopy(H,solsS);                                                                        
+assert(#solsS == #sols)
 ///
