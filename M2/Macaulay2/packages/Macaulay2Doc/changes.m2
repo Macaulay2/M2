@@ -5,7 +5,7 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
-	  -- TO "changes made for the next release",
+	  TO "changes made for the next release",
 	  TO "changes, 1.26.11",
 	  TO "changes, 1.26.06",
 	  TO "changes, 1.26.05",
@@ -68,6 +68,31 @@ changesHelper List := opt -> pkgnames -> (
 	    << (if opt.Certification then "published" else "added")
 	    << ".\" },"
 	    << endl)))
+
+document {
+    Key => "changes made for the next release",
+    UL {
+        LI { "improved packages:",
+            UL {
+                LI { TO "Binomials::Binomials", " has been updated to version 2.0, a rewrite with the same interface.  ",
+                    "On the benchmark examples primary decompositions are 4 to 76 times faster and associated primes 3 to 39 times faster, ",
+                    "and the primary decomposition of the adjacent 2x2 minors of a 4x5 matrix, out of reach before, now takes about three minutes.  ",
+                    "The package now works over finite fields.  ",
+                    "Several wrong answers have been fixed, among them primary decompositions with components that are not primary ",
+                    "and associated primes that are not associated.  ",
+                    "The new function ", TO "Binomials::binomialBasis", " and the option ", TO "Binomials::GroebnerFree", " of ", TO "Binomials::isBinomial", ", ",
+                    "a binomiality test without Gröbner bases, come from an unreleased version by Ruilong Zhuang and Alexandru Iosif." },
+                LI { TO "Cyclotomic::Cyclotomic", " has been updated to version 2.0.  ",
+                    "Bugs in ", TO "Cyclotomic::findRootPower", " and ", TO "Cyclotomic::joinCyclotomic", " have been fixed, ",
+                    TO "Cyclotomic::cyclotomicPoly", " is much faster and no longer restricted to QQ and ZZ, ",
+                    "and new functions handle roots of unity in cyclotomic and finite fields: ",
+                    TO "Cyclotomic::cyclotomicRoot", ", ", TO "Cyclotomic::rootOfUnityGenerator", ", ", TO "Cyclotomic::rootOfUnityExponent", ", ",
+                    TO "Cyclotomic::rootOfUnityOrder", ", ", TO "Cyclotomic::discreteLog", ", ", TO "Cyclotomic::cyclotomicInclusion", ", ",
+                    TO "Cyclotomic::cyclotomicExtension", ", and ", TO "Cyclotomic::galoisAutomorphism", "." },
+                },
+            },
+        }
+    }
 
 document {
     Key => "changes, 1.26.11",
