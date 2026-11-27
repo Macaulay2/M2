@@ -14,10 +14,12 @@
 # Once each branch is ready and pushed to Salsa, run this action using "workflow
 # dispatch" to generate each Debian package.
 
-# Download the artifacts and unzip them.  Push files using dput to
-# Repositories/Debian/mini-dinstall/incoming on the webserver, and then
-# run "mini-install -b -v" on the server.  Finally sign the Release files
-# in each directory (gpg --clearsign -o InRelease Release).
+# Then upload the packages to the apt repository on the webserver using
+# Repositories/upload-debs.sh in the Macaulay2-web-site repository, e.g.,
+#   Repositories/upload-debs.sh -u USER -R OWNER/M2 RUN-ID
+# It downloads the artifacts, signs the .changes files, uploads them with
+# dput, runs mini-dinstall on the server, and signs the Release files.
+# See the comment at the top of that script for details.
 
 name: Build Debian packages
 on: workflow_dispatch
