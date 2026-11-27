@@ -38,13 +38,30 @@ TEST ///
   -- describe
   R = QQ<|a,b, x_1..x_3, c, y_1..y_4|>
   isWellDefined R
-  unstack describe R === {"QQ<|a, b, x , x , x , c, y , y , y , y |>", 
-                            "           1   2   3      1   2   3   4"}
+  expectedVars = {symbol a, symbol b, (expression symbol x_1)..(expression symbol x_3),
+                  symbol c, (expression symbol y_1)..(expression symbol y_4)};
+  expectedOpts = {Degrees => {BinaryOperation {symbol :, 10, expression 1}}, Heft => {1}};
+  expected = Describe (expression QQ) (new AngleBarList from ((expectedVars | expectedOpts) / expression));
+  assert(describe R === expected)
   assert(net R === "R")
   assert(net R == net expression R)
-  assert((depth describe R, height describe R, width describe R) == (1,1,41))
   assert(toString R === "R")
-  assert(toExternalString R === "QQ<|a, b, x_1, x_2, x_3, c, y_1, y_2, y_3, y_4|>")
+  assert(toExternalString R === toString expected)
+///
+
+TEST ///
+  -- The description is a recipe for rebuilding the grading and order.
+  A = QQ<|u,v,Degrees=>{2,3},Heft=>{2},Weights=>{1,0}|>;
+  B = value describe A;
+  assert(degrees B === {{2},{3}} and B.Heft === {2});
+  assert(B.Weights === {{1,0},{2,3}} and leadMonomial(B_0+B_1) == B_0);
+
+  C = QQ<|z_1..z_4,Degrees=>{{2,0},{2,0},{2,0},{0,3}},Heft=>{2,3},
+           Weights=>{{1,1,1,0},{0,0,0,1}}|>;
+  D = value toExternalString C;
+  assert(numgens D === 4 and degreeLength D === 2 and degrees D === degrees C);
+  assert(D.Heft === C.Heft and D.Weights === C.Weights);
+  assert(describe D === describe C);
 ///
 
 TEST ///

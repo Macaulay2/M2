@@ -8,11 +8,9 @@ undocumented {sequenceToVariableSymbols,
 	      (net, FreeAlgebra),
 	      (symbol _, FreeAlgebra, ZZ),
 	      (degreesRing, FreeAlgebra),
-	      (describe, FreeAlgebra),
 	      (expression, FreeAlgebra),
 	      (isWellDefined, FreeAlgebra),
 	      (toString, FreeAlgebra),
-	      (toExternalString, FreeAlgebra),
 	      (NewFromMethod, FreeAlgebra, List),
 	      (coefficientRing, FreeAlgebra)}
 
@@ -116,6 +114,26 @@ doc ///
 	 numgens D
    SeeAlso
       "Basic operations on noncommutative algebras"
+///
+
+doc ///
+   Key
+      (describe, FreeAlgebra)
+   Headline
+      Describe the generators, grading, and weights of a free algebra
+   Usage
+      describe A
+   Inputs
+      A : FreeAlgebra
+   Outputs
+      : Describe
+   Description
+      Text
+         The description includes the coefficient ring, generator names, degrees,
+         and heft vector, along with any explicit weight vectors for the monomial order.
+      Example
+         A = QQ<|x_1..x_4,Degrees=>{1,1,1,2},Weights=>{1,1,1,0}|>
+         describe A
 ///
 
 doc ///

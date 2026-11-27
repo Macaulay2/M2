@@ -161,13 +161,13 @@ net FreeAlgebra := R -> (
      if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
      else net expression R)
 describe FreeAlgebra := R -> (
-     k := last R.baseRings;
-     net (getNameIfAny k) | net (new AngleBarList from R#generatorSymbols)
-     )
-toExternalString FreeAlgebra := R -> (
-    --toString describe R
-     k := last R.baseRings;
-     toString (getNameIfAny k) | toString(new AngleBarList from R#generatorSymbols)
+     G := toList runLengthEncode R#generatorExpressions;
+     D := runLengthEncode if degreeLength R === 1 then flatten degrees R else degrees R / (deg -> VerticalList deg);
+     -- The last weight vector is derived from the degrees by the constructor.
+     W := drop(R.Weights, -1);
+     opts := {Degrees => D, Heft => R.Heft};
+     if W =!= {} then opts = append(opts, Weights => runLengthEncode expression W);
+     Describe (expression coefficientRing R) (new AngleBarList from apply(G | opts, expression))
      )
 toString FreeAlgebra := R -> (
     toString expression R
@@ -278,7 +278,7 @@ freeAlgebra(Ring, BasicList) := FreeAlgebra => (A, args)  -> (
 		    (coeffs,monoms) -> (
 			 if #coeffs === 0
 			 then expression 0
-			 else sum(coeffs,monoms, (a,m) -> expression (if a == 1 then 1 else promote(a,A)) * expression (if m == {} then 1 else processFactors m))
+			 else sum(coeffs,monoms, (a,m) -> expression promote(a,A) * expression (if m == {} then 1 else processFactors m))
 			 )
 		    ) (rawP#0, rawP#1 / rawSparseListFormMonomial)
         );
@@ -322,8 +322,8 @@ isWellDefined FreeAlgebra := Boolean => R -> (
         return isbad "generatorSymbols are not all symbols or indexed variables";
     if not instance(expression R, Expression) then
         return isbad "expression R should be an expression";
-    if not instance(describe R, Net) then
-        return isbad "'describe R' should be a Net";
+    if not instance(describe R, Describe) then
+        return isbad "'describe R' should be a Describe";
     if not instance(net R, Net) then
         return isbad "'net R' should be a Net";
     if not instance(toString R, String) then
