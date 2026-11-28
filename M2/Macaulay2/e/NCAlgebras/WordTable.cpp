@@ -188,25 +188,12 @@ void WordTable::superwords(Word word,
     }
 }
 
-auto WordTable::isNontrivialSuperword(Word word, int index1, int index2) const -> bool
+bool WordTable::hasInternalSubword(Word word) const
 {
-  // this command is only called on an overlap between the words mMonomials[index1]
-  // and mMonomials[index2].
-  std::vector<int> start_indices;
-  for (auto i = 0; i < mMonomials.size(); ++i)
-    {
-      start_indices.clear();
-      subwordPositions(mMonomials[i], word, start_indices);
-      for (auto j : start_indices)
-        {
-          if (i != index1 && i != index2) return true;
-          // these commands handle when the overlap is *trivially* a multiple of one of
-          // the monomials in index1 or index2
-          if (j == 0 && i != index1) return true;
-          if (j == word.size() - mMonomials[index2].size() && i != index2) return true;
-        }
-    }
-  return false;
+  // Avoid either endpoint so both induced overlaps have strictly smaller words.
+  if (word.size() <= 2) return false;
+  std::pair<int, int> match;
+  return subword(Word(word.begin() + 1, word.end() - 1), match);
 }
 
 // This function finds overlap where suffix of word at lindex == prefix of word at rindex

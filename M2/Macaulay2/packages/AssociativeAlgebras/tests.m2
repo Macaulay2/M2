@@ -38,13 +38,30 @@ TEST ///
   -- describe
   R = QQ<|a,b, x_1..x_3, c, y_1..y_4|>
   isWellDefined R
-  unstack describe R === {"QQ<|a, b, x , x , x , c, y , y , y , y |>", 
-                            "           1   2   3      1   2   3   4"}
+  expectedVars = {symbol a, symbol b, (expression symbol x_1)..(expression symbol x_3),
+                  symbol c, (expression symbol y_1)..(expression symbol y_4)};
+  expectedOpts = {Degrees => {BinaryOperation {symbol :, 10, expression 1}}, Heft => {1}};
+  expected = Describe (expression QQ) (new AngleBarList from ((expectedVars | expectedOpts) / expression));
+  assert(describe R === expected)
   assert(net R === "R")
   assert(net R == net expression R)
-  assert((depth describe R, height describe R, width describe R) == (1,1,41))
   assert(toString R === "R")
-  assert(toExternalString R === "QQ<|a, b, x_1, x_2, x_3, c, y_1, y_2, y_3, y_4|>")
+  assert(toExternalString R === toString expected)
+///
+
+TEST ///
+  -- The description is a recipe for rebuilding the grading and order.
+  A = QQ<|u,v,Degrees=>{2,3},Heft=>{2},Weights=>{1,0}|>;
+  B = value describe A;
+  assert(degrees B === {{2},{3}} and B.Heft === {2});
+  assert(B.Weights === {{1,0},{2,3}} and leadMonomial(B_0+B_1) == B_0);
+
+  C = QQ<|z_1..z_4,Degrees=>{{2,0},{2,0},{2,0},{0,3}},Heft=>{2,3},
+           Weights=>{{1,1,1,0},{0,0,0,1}}|>;
+  D = value toExternalString C;
+  assert(numgens D === 4 and degreeLength D === 2 and degrees D === degrees C);
+  assert(D.Heft === C.Heft and D.Weights === C.Weights);
+  assert(describe D === describe C);
 ///
 
 TEST ///
@@ -762,6 +779,79 @@ TEST ///
 ///
 
 TEST ///
+-- A bounded basis may not yet include all of the original generators.
+A = QQ<|x,y|>;
+I = ideal(x,y^3);
+assert(NCGB(I,1,Strategy=>"Naive") == matrix{{x}});
+assert(NCReductionTwoSided(y^3,NCGB(I,4,Strategy=>"Naive")) == 0);
+J = ideal(x,y^3);
+NCGB(J,1,Strategy=>"Naive");
+B = A/J;
+assert(B_0 == 0 and B_1 != 0 and B_1^3 == 0);
+
+-- The cutoff uses heft, including for inhomogeneous generators.
+C = QQ<|u,v,Degrees=>{{1,-1},{1,-2}},Heft=>{2,0}|>;
+L = ideal(u^2-v);
+assert(NCGB(L,3,Strategy=>"Naive") == 0);
+D = C/L;
+assert(D_0^2 == D_1 and D_1 != 0);
+
+-- A reduction can also turn an input relation into one of higher heft.
+E = QQ<|a,b,c,Weights=>{1,0,0}|>;
+H = ideal(a-b^2,a^2-c);
+NCGB(H,2,Strategy=>"Naive");
+assert(NCReductionTwoSided(a^2-c,NCGB(H,3,Strategy=>"Naive")) == 0);
+///
+
+TEST ///
+-- xyx has two reductions, giving x-1. Its leading word is contained in xy.
+A = QQ<|x,y|>;
+I = ideal(x*y-1,y*x-y);
+G = NCGB(I,4,Strategy=>"Naive");
+assert(NCReductionTwoSided(y-1,G) == 0);
+B = A/I;
+assert(1_B != 0 and B_0 == 1 and B_1 == 1);
+assert(B_0*B_1 == 1 and B_1*B_0 == B_1);
+
+-- An inclusion can also have a nonempty prefix and suffix.
+C = QQ<|a,b,c,t|>;
+J = ideal(a*b*c-1,b*t^2-1,t^2*b-t^2);
+assert(NCReductionTwoSided(a*c-1,NCGB(J,4,Strategy=>"Naive")) == 0);
+///
+
+TEST ///
+-- ab is derived from xyzb. Neither abc nor ab makes the other's overlap
+-- with bcd redundant: both overlaps have the same word abcd.
+A = QQ<|a,b,c,d,x,y,z,u|>;
+I = ideal(x*y*z-a,y*z*b,a*b*c,b*c*d-u);
+assert(NCReductionTwoSided(a*u,NCGB(I,4,Strategy=>"Naive")) == 0);
+///
+
+TEST ///
+-- Normality requires both inclusions of principal ideals.
+A = QQ<|x,y|>;
+B = A/ideal(x*y,x^2);
+assert(B_0*B_1 == 0 and B_1*B_0 != 0);
+assert not isNormal B_0;
+assert not isNormal B_1;
+assert(try (normalAutomorphism B_0; false) else true);
+
+-- A normal zero divisor can still admit a normalizing automorphism.
+C = QQ<|a,b|>;
+D = C/ideal(a*b-2*b*a,a^2);
+assert(D_0 != 0 and D_0^2 == 0 and isNormal D_0);
+sigma = normalAutomorphism D_0;
+assert(sigma D_0 == D_0 and sigma D_1 == 2*D_1);
+assert(isNormal (0_D) and matrix(normalAutomorphism (0_D)) == vars D);
+
+-- Solving the equations on generators alone does not certify an automorphism.
+E = QQ<|p,q,r|>;
+F = E/ideal(p^2,p*r,q*p,p*q-r*p);
+assert(F_0*F_1 == F_2*F_0 and F_0*F_1 != 0 and isNormal F_0);
+assert(try (normalAutomorphism F_0; false) else true);
+///
+
+TEST ///
 -*
   restart
   needsPackage "AssociativeAlgebras"
@@ -1222,6 +1312,32 @@ K = ncKernel phi
 C = A/K
 hsC = apply(15, i -> numgens source ncBasis(i,C))
 -- not sure what else to test here yet.
+///
+
+TEST ///
+-- Conversion preserves both the Weyl relations and the commuting pairs.
+W = QQ[x,dx,y,dy,WeylAlgebra=>{x=>dx,y=>dy}];
+A = toFreeAlgebraQuotient W;
+assert(class A === FreeAlgebraQuotient);
+assert(A_1*A_0-A_0*A_1 == 1);
+assert(A_3*A_2-A_2*A_3 == 1);
+assert(all({(0,2),(0,3),(1,2),(1,3)}, (i,j) -> A_i*A_j == A_j*A_i));
+back = map(W,ambient A,gens W);
+assert(all(flatten entries gens ideal A, r -> back r == 0));
+///
+
+TEST ///
+-- The action of gl(2) on the affine chart of P^1 gives an inhomogeneous graph ideal.
+R = QQ<|x,d|>;
+R = R/ideal(d*x-x*d-1);
+S = QQ<|e_(0,0)..e_(1,1)|>;
+phi = map(R,S,{-x*d,d,-x^2*d,x*d});
+(t,a,b,h) = toSequence gens S;
+rels = {t+h, a*b-b*a+2*h, a*h-h*a-a, b*h-h*b+b, b*a+h^2-h};
+assert(all(rels, r -> phi r == 0));
+K = ncKernel(phi, DegreeLimit => 6);
+assert(all(flatten entries gens K, r -> phi r == 0));
+assert(all(rels, r -> NCReductionTwoSided(r,K) == 0));
 ///
 
 DEVELOPMENT ///

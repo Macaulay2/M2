@@ -436,6 +436,19 @@ TEST(OverlapTable, insertion)
   EXPECT_TRUE(overlapTable.size() == 3);
 }
 
+TEST(OverlapTable, removeProcessedBatch)
+{
+  OverlapTable overlapTable;
+  overlapTable.insert(3,true,std::make_tuple(0,-1,-1,true));
+  auto batch = overlapTable.nextDegreeOverlaps();
+  auto pair = std::make_tuple(0,1,1,true);
+  overlapTable.insert(3,false,pair);
+  overlapTable.removeBatch(batch);
+
+  ASSERT_EQ(overlapTable.size(), 1);
+  EXPECT_EQ(overlapTable.nextDegreeOverlaps()->second.front(), pair);
+}
+
 TEST(NCGroebner, sorting)
 {
   auto key1 = std::make_pair(1,false);
@@ -726,8 +739,8 @@ TEST(WordTable, skylanin)
   EXPECT_EQ(ans2, matches);
 
   matches.clear();
-  EXPECT_TRUE(W.isNontrivialSuperword(Word(std::vector<int> {1,2,1,1,2,1,1}), 6, 6));
-  EXPECT_TRUE(W.isNontrivialSuperword(Word(std::vector<int> {1,1,2,1,1,2,1,1,2}), 4, 4));
+  EXPECT_TRUE(W.hasInternalSubword(Word(std::vector<int> {1,2,1,1,2,1,1})));
+  EXPECT_TRUE(W.hasInternalSubword(Word(std::vector<int> {1,1,2,1,1,2,1,1,2})));
   
   matches.clear();
   W.subwords(Word(std::vector<int> {2,2,0,1,1,0,1,0,1,1}), matches); // ZZXYYXYXYY
@@ -743,6 +756,15 @@ TEST(WordTable, skylanin)
   std::sort(matches.begin(),matches.end());
   EXPECT_EQ(ans3, matches);
 
+}
+
+TEST(WordTable, internalSubword)
+{
+  WordTable words;
+  words.insert(Word(std::vector<int>{1, 2}));
+  EXPECT_FALSE(words.hasInternalSubword(Word(std::vector<int>{1, 2, 3})));
+  EXPECT_FALSE(words.hasInternalSubword(Word(std::vector<int>{0, 1, 2})));
+  EXPECT_TRUE(words.hasInternalSubword(Word(std::vector<int>{0, 1, 2, 3})));
 }
 
 // Comment this out temporarily.  Working on speeding up the suffix tree code.

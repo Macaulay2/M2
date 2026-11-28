@@ -13,6 +13,7 @@
 #include "rings/ringelem.hpp"                 // for ring_elem
 #include "text-io.hpp"                  // for emit_line, emit
 
+#include <algorithm>                   // for max, min
 #include <deque>                        // for deque
 #include <tuple>                        // for get, make_tuple
 #include <utility>                      // for pair
@@ -71,22 +72,22 @@ void NCGroebner::computeHomogeneous(int softDegreeLimit)
   size_t n_spairs = 0;
   while (!mOverlapTable.isFinished(softDegreeLimit))
     {
-      auto degSet = mOverlapTable.nextDegreeOverlaps();
-      auto toBeProcessed = degSet.second;
+      auto batch = mOverlapTable.nextDegreeOverlaps();
+      auto& toBeProcessed = batch->second;
       if (M2_gbTrace >= 1)
         {
           buffer o;
-          o << "[" << degSet.first << "](" << toBeProcessed->size() << ")";
+          o << "[" << batch->first.first << "](" << toBeProcessed.size() << ")";
           emit(o.str());
         }
-      while(!toBeProcessed->empty())
+      while(!toBeProcessed.empty())
         {
-          auto overlap = toBeProcessed->front();
+          auto overlap = toBeProcessed.front();
           //if this is a `real' overlap, and the overlap is not necessary, then move
           //on to the next overlap.
           if (std::get<1>(overlap) != -1 && !isOverlapNecessary(overlap))
             {
-              toBeProcessed->pop_front();
+              toBeProcessed.pop_front();
               if (M2_gbTrace >= 3)
                 {
                   std::cout << "Reduction avoided using 2nd criterion." << std::endl;
@@ -117,10 +118,9 @@ void NCGroebner::computeHomogeneous(int softDegreeLimit)
                             << std::endl;
                 }
             }
-          toBeProcessed->pop_front();
+          toBeProcessed.pop_front();
         }
-      // remove the lowest degree overlaps from the overlap table
-      mOverlapTable.removeLowestDegree();
+      mOverlapTable.removeBatch(batch);
     }
   if (M2_gbTrace >= 1)
     {
@@ -135,22 +135,22 @@ void NCGroebner::computeInhomogeneous(int softDegreeLimit)
   size_t n_spairs = 0;
   while (!mOverlapTable.isFinished(softDegreeLimit))
     {
-      auto degSet = mOverlapTable.nextDegreeOverlaps();
-      auto toBeProcessed = degSet.second;
+      auto batch = mOverlapTable.nextDegreeOverlaps();
+      auto& toBeProcessed = batch->second;
       if (M2_gbTrace >= 1)
         {
           buffer o;
-          o << "[" << degSet.first << "](" << toBeProcessed->size() << ")";
+          o << "[" << batch->first.first << "](" << toBeProcessed.size() << ")";
           emit(o.str());
         }
-      while(!toBeProcessed->empty())
+      while(!toBeProcessed.empty())
         {
-          auto overlap = toBeProcessed->front();
+          auto overlap = toBeProcessed.front();
           //if this is a `real' overlap, and the overlap is not necessary, then move
           //on to the next overlap.
           if (std::get<1>(overlap) != -1 && !isOverlapNecessary(overlap))
             {
-              toBeProcessed->pop_front();
+              toBeProcessed.pop_front();
               if (M2_gbTrace >= 2)
                 {
                   std::cout << "Reduction avoided using 2nd criterion." << std::endl;
@@ -181,10 +181,10 @@ void NCGroebner::computeInhomogeneous(int softDegreeLimit)
                             << std::endl;
                 }
             }
-          toBeProcessed->pop_front();
+          toBeProcessed.pop_front();
         }
-      // remove the lowest degree overlaps from the overlap table
-      mOverlapTable.removeLowestDegree();
+      // New overlaps may sort before the batch we just processed.
+      mOverlapTable.removeBatch(batch);
     }
   if (M2_gbTrace >= 1)
     {
@@ -233,7 +233,18 @@ void NCGroebner::updateOverlaps(const Poly * toAdd)
   std::vector<Overlap> newOverlaps;
   Word newLeadWord = freeAlgebra().lead_word(*toAdd);
 
-  // the word table insert places the right overlaps into newOverlaps
+  // Reducing the new polynomial first rules out old words inside its lead
+  // word. In the inhomogeneous case it can still be inside an older word.
+  if (!mIsGraded && newLeadWord.size() > 0)
+    {
+      int newIndex = mWordTable.monomialCount();
+      std::vector<std::pair<int,int>> occurrences;
+      mWordTable.superwords(newLeadWord, occurrences);
+      for (auto [oldIndex, position] : occurrences)
+        newOverlaps.emplace_back(oldIndex, position, newIndex, true);
+    }
+
+  // The word table insert appends the right overlaps to newOverlaps.
   mWordTable.insert(newLeadWord,newOverlaps);
   insertNewOverlaps(newOverlaps);
 
@@ -358,13 +369,27 @@ auto NCGroebner::createOverlapPoly(const FreeAlgebra& A,
   // is the index where the overlap starts in the polynomial pointed in
   // by *polyIndex1*.
   Poly* result = new Poly;
+  const Poly& left = *polyList[polyIndex1];
+  const Poly& right = *polyList[polyIndex2];
+  int leftLength = A.lead_word(left).size();
+  int rightEnd = overlapIndex + A.lead_word(right).size();
+  Word prefix = A.lead_word_prefix(left, overlapIndex);
+  auto one = A.coefficientRing()->from_long(1);
   Poly tmp1, tmp2;
-  Word prefix, suffix;
-  prefix = A.lead_word_prefix(*polyList[polyIndex1], overlapIndex);
-  suffix = A.lead_word_suffix(*polyList[polyIndex2], *(polyList[polyIndex1]->cbegin().monom().begin()) - A.monoid().numWeights() - 1 - overlapIndex);
-  A.mult_by_term_right(tmp1, *polyList[polyIndex1], A.coefficientRing()->from_long(1), suffix);
-  A.mult_by_term_left(tmp2, *polyList[polyIndex2], A.coefficientRing()->from_long(1), prefix);
-  A.subtract(*result, tmp1, tmp2);
+  if (rightEnd <= leftLength)
+    {
+      // The right leading word is contained in the left one: f - p*g*q.
+      Word suffix = A.lead_word_suffix(left, rightEnd);
+      A.mult_by_term_left_and_right(tmp2, right, one, prefix, suffix);
+      A.subtract(*result, left, tmp2);
+    }
+  else
+    {
+      Word suffix = A.lead_word_suffix(right, leftLength - overlapIndex);
+      A.mult_by_term_right(tmp1, left, one, suffix);
+      A.mult_by_term_left(tmp2, right, one, prefix);
+      A.subtract(*result, tmp1, tmp2);
+    }
   return result;
 }
                           
@@ -387,18 +412,22 @@ auto NCGroebner::createOverlapPoly(Overlap overlap) const -> Poly*
 
 auto NCGroebner::createOverlapLeadWord(Poly& wordAsPoly, Overlap o) const -> void
 {
-  auto A = freeAlgebra();
+  const auto& A = freeAlgebra();
+  if (overlapWordLength(o) == mWordTable[std::get<0>(o)].size())
+    {
+      A.lead_term_as_poly(wordAsPoly, *mGroebner[std::get<0>(o)]);
+      return;
+    }
   Poly tmp;
   Word prefix = A.lead_word_prefix(*mGroebner[std::get<0>(o)], std::get<1>(o));
   A.lead_term_as_poly(tmp, *mGroebner[std::get<2>(o)]);
   A.mult_by_term_left(wordAsPoly, tmp, A.coefficientRing()->from_long(1), prefix);
 }
 
-// not what we need - need an overlapDegree function
 auto NCGroebner::overlapWordLength(Overlap o) const -> int
 {
-  Word tmp = freeAlgebra().lead_word(*mGroebner[std::get<2>(o)]);
-  return std::get<1>(o) + tmp.size();
+  return std::max(mWordTable[std::get<0>(o)].size(),
+                  std::get<1>(o) + mWordTable[std::get<2>(o)].size());
 }
 
 auto NCGroebner::overlapHeft(Overlap o) const -> int
@@ -409,7 +438,7 @@ auto NCGroebner::overlapHeft(Overlap o) const -> int
 {
   Word tmpL = freeAlgebra().lead_word(*mGroebner[std::get<0>(o)]);
   Word tmpR = freeAlgebra().lead_word(*mGroebner[std::get<2>(o)]);
-  int len_of_s = tmpL.size() - std::get<1>(o);
+  int len_of_s = std::min(tmpL.size() - std::get<1>(o), tmpR.size());
   return freeAlgebra().monoid().wordHeft(tmpL) +
     freeAlgebra().monoid().wordHeft(tmpR, len_of_s);
 }
@@ -462,21 +491,12 @@ auto NCGroebner::insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void
 
 auto NCGroebner::isOverlapNecessary(Overlap o) const -> bool
 {
-  // this function tests if the lead word of the overlap polynomial
-  // of o is a multiple of another pattern in the word table.
+  // The criterion below assumes a proper suffix-prefix overlap.
+  if (overlapWordLength(o) == mWordTable[std::get<0>(o)].size()) return true;
 
-  // need to be careful, however, since an overlap lead word is trivially
-  // a multiple of the words used to build it.  These possibilities must be discarded
-  bool retval;
-
-  auto A = freeAlgebra();
   Poly tmp;
-  Word w;
-  
   createOverlapLeadWord(tmp,o);
-  w = A.lead_word(tmp);
-  retval = !mWordTable.isNontrivialSuperword(w, std::get<0>(o), std::get<2>(o));
-  return retval;
+  return !mWordTable.hasInternalSubword(freeAlgebra().lead_word(tmp));
 }
 
 // Local Variables:

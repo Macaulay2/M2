@@ -161,13 +161,13 @@ net FreeAlgebra := R -> (
      if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
      else net expression R)
 describe FreeAlgebra := R -> (
-     k := last R.baseRings;
-     net (getNameIfAny k) | net (new AngleBarList from R#generatorSymbols)
-     )
-toExternalString FreeAlgebra := R -> (
-    --toString describe R
-     k := last R.baseRings;
-     toString (getNameIfAny k) | toString(new AngleBarList from R#generatorSymbols)
+     G := toList runLengthEncode R#generatorExpressions;
+     D := runLengthEncode if degreeLength R === 1 then flatten degrees R else degrees R / (deg -> VerticalList deg);
+     -- The last weight vector is derived from the degrees by the constructor.
+     W := drop(R.Weights, -1);
+     opts := {Degrees => D, Heft => R.Heft};
+     if W =!= {} then opts = append(opts, Weights => runLengthEncode expression W);
+     Describe (expression coefficientRing R) (new AngleBarList from apply(G | opts, expression))
      )
 toString FreeAlgebra := R -> (
     toString expression R
@@ -278,7 +278,7 @@ freeAlgebra(Ring, BasicList) := FreeAlgebra => (A, args)  -> (
 		    (coeffs,monoms) -> (
 			 if #coeffs === 0
 			 then expression 0
-			 else sum(coeffs,monoms, (a,m) -> expression (if a == 1 then 1 else promote(a,A)) * expression (if m == {} then 1 else processFactors m))
+			 else sum(coeffs,monoms, (a,m) -> expression promote(a,A) * expression (if m == {} then 1 else processFactors m))
 			 )
 		    ) (rawP#0, rawP#1 / rawSparseListFormMonomial)
         );
@@ -322,8 +322,8 @@ isWellDefined FreeAlgebra := Boolean => R -> (
         return isbad "generatorSymbols are not all symbols or indexed variables";
     if not instance(expression R, Expression) then
         return isbad "expression R should be an expression";
-    if not instance(describe R, Net) then
-        return isbad "'describe R' should be a Net";
+    if not instance(describe R, Describe) then
+        return isbad "'describe R' should be a Describe";
     if not instance(net R, Net) then
         return isbad "'net R' should be a Net";
     if not instance(toString R, String) then
@@ -350,12 +350,23 @@ setNCGBStrategy := stratStr -> (
    else error "Unknown NCGB strategy provided."
 )
 
+ncgbMaxGeneratorHeft = I -> (
+    h := (ring I).Heft;
+    -- The engine queues each generator at the maximum heft of its terms.
+    max(0, max flatten apply(flatten entries gens I, f -> apply(terms f, t -> sum(degree t, h, times))))
+    )
+
+ncgbCacheCoversGenerators = I -> I.cache.?NCGB and (
+    I.cache.NCGB#0 === infinity or I.cache.NCGB#0 >= ncgbMaxGeneratorHeft I)
+
 NCGB = method(Options => {Strategy=>"F4Parallel"})
 NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
     if I == 0 then return gens I;
     strat := opts#Strategy;
     if not I.cache.?NCGB or I.cache.NCGB#0 < maxdeg then (
-	tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else compress gens I;
+	input := compress gens I;
+	-- A cached basis can omit inputs or replace them by relations of higher heft.
+	if I.cache.?NCGB then input = I.cache.NCGB#1 | input;
 	possField := ZZ/(char ultimate(coefficientRing, ring I));
 	f4Allowed := (possField === (coefficientRing ring I)); -- or instance(coefficientRing ring I, GaloisField) or coefficientRing ring I === QQ;
 	if not isHomogeneous I or (not f4Allowed and (strat == "F4" or strat == "F4Parallel")) then (
@@ -365,18 +376,15 @@ NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
 	   strat = "Naive";
 	   << "Converting to " << strat << " algorithm." << endl;
 	);
-    	gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg, setNCGBStrategy(strat)));
+	gbI := map(ring I, rawNCGroebnerBasisTwoSided(raw input, maxdeg, setNCGBStrategy(strat)));
         I.cache.NCGB = {maxdeg, gbI};
         );
     I.cache.NCGB#1
     )
 NCGB Ideal := opts -> (I) -> (
     if I == 0 then return gens I;
-    if I.cache.?NCGB then I.cache.NCGB#1
-    else (
-        maxdegI := max((degrees source gens I) / sum); -- TODO: change once multidegrees are allowed.
-        NCGB(I, 2*maxdegI, opts)
-        )
+    if ncgbCacheCoversGenerators I then I.cache.NCGB#1
+    else NCGB(I, 2*ncgbMaxGeneratorHeft I, opts)
     )
 
 NCReductionTwoSided = method()
@@ -575,32 +583,51 @@ centralElements(Ring,ZZ) := (B,n) -> (
    normalElements(idB,n)
 )
 
--- worker function for normalAutomorphism
-findNormalComplement = method()
-findNormalComplement (RingElement,RingElement) := (f,x) -> (
+normalElementRing = f -> (
+   B := ring f;
+   if not isFreeAlgebraOrQuotient B then error "Expected an element in a free algebra or free algebra quotient.";
+   if not isHomogeneous B or not isHomogeneous f then error "Expected a homogeneous element in a graded algebra.";
+   if not isCommutative coefficientRing B then error "Expected a commutative coefficient ring.";
+   B
+)
+
+-- Find y and z such that f*x = y*f and x*f = f*z.
+findNormalComplements = (f,x) -> (
+   fx := f*x;
+   xf := x*f;
+   if fx == xf then return (x,x);
    B := ring f;
    kk := coefficientRing B;
-   if B =!= ring x then error "Expected elements from the same ring.";
-   if not isHomogeneous f or not isHomogeneous x then error "Expected homogeneous elements";
-   n := first degree f;  -- assumes singly graded!
-   m := first degree x;  -- assumes singly graded!
-   leftFCoeff := sub(last coefficients(f*x,Monomials=>flatten entries ncBasis(n+m,B)), kk);
-   rightMultF := sub(rightMultiplicationMap(f,m), kk);
-   factorMap := (leftFCoeff // rightMultF);
-   if rightMultF * factorMap == leftFCoeff then
-      first flatten entries (ncBasis(m,B) * factorMap)
-   else
-      null
+   basisX := ncBasis(degree x,B);
+   fromBasis := flatten entries basisX;
+   toBasis := flatten entries ncBasis(degree f + degree x,B);
+   coords := g -> sub(last coefficients(g,Monomials=>toBasis), kk);
+   rightMult := rightMultiplicationMap(f,fromBasis,toBasis);
+   fxCoords := coords fx;
+   forward := fxCoords // rightMult;
+   if rightMult * forward != fxCoords then return null;
+   leftMult := leftMultiplicationMap(f,fromBasis,toBasis);
+   xfCoords := coords xf;
+   backward := xfCoords // leftMult;
+   if leftMult * backward != xfCoords then return null;
+   ((basisX * forward)_(0,0), (basisX * backward)_(0,0))
 )
 
 normalAutomorphism = method()
 normalAutomorphism RingElement := f -> (
-   if not isFreeAlgebraOrQuotient(ring f) then error "Expected an element in a noncommutative ring.";
-   if not isHomogeneous f then error "Expected a homogeneous element.";
-   B := ring f;
-   normalComplements := apply(gens B, x -> findNormalComplement(f,x));
-   if any(normalComplements, f -> f === null) then error "Expected a normal element.";
-   map(B, B, normalComplements)
+   B := normalElementRing f;
+   comps := apply(gens B, x -> findNormalComplements(f,x));
+   if any(comps, c -> c === null) then error "Expected a normal element.";
+   forward := comps / first;
+   backward := comps / last;
+   rels := gens ideal B;
+   if any({forward,backward}, images -> (map(B,ambient B,images)) rels != 0)
+      then error "The computed normalizing maps do not preserve the defining relations.";
+   sigma := map(B,B,forward);
+   tau := map(B,B,backward);
+   if not all(gens B, x -> sigma(tau x) == x and tau(sigma x) == x)
+      then error "The computed normalizing maps are not inverse automorphisms.";
+   sigma
 )
 
 isCentral = method()
@@ -621,9 +648,8 @@ isCentral (RingElement, Ideal) := (f,I) -> (
 --     All we need is the symbol, not the functionality.
 -- isNormal = method()
 isNormal RingElement := f -> (
-   if not isFreeAlgebraOrQuotient(ring f) then error "Expected an element in a noncommutative ring.";
-   if not isHomogeneous f then error "Expected a homogeneous element.";
-   all(gens ring f, x -> findNormalComplement(f,x) =!= null)
+   B := normalElementRing f;
+   all(gens B, x -> findNormalComplements(f,x) =!= null)
 )
 
 normalElements = method()
@@ -634,7 +660,7 @@ normalElements(FreeAlgebraQuotient, ZZ, Symbol) := Sequence => (R,n,x) -> (
    --              expressed as ideals in terms of coefficients of non-normal monomial basis elements
    -- 
    -- The variety also contains information about the normalizing automorphism. This information is not displayed.
-   -- The user can obtain the normalizing automorphism of a normal element via the normalAutomorphism function
+   -- The user can obtain the normalizing automorphism of a regular normal element via normalAutomorphism.
 
    -- WARNING: This code currently is only valid for a singly graded algebra generated in degree one.  
    if degreeLength R != 1 or max flatten degrees R != 1 then error "Requires a singly graded algebra generated in degree one.";
@@ -708,18 +734,23 @@ isExterior Ring := A -> (
 
 toFreeAlgebraQuotient = method()
 toFreeAlgebraQuotient Ring := FreeAlgebraQuotient => R -> (
-   --- generate the (skew)commutativity relations
+   W := ambient R;
+   weyl := isWeylAlgebra W;
+   if weyl and W.?homogenize then error "conversion of homogenized Weyl algebras is not supported";
    Q := coefficientRing R;
    gensA := new AngleBarList from ((gens R) / baseName | {Degrees=> degrees R});
    A := Q gensA;
    -- if only one generator and no relations, return the free algebra on one variable
    if numgens R == 1 and ideal R == 0 then return A;
-   phi := map(A,ambient R,gens A);
+   phi := map(A,W,gens A);
    skewCommIndices := if R.?SkewCommutative then R.SkewCommutative else {};
    bothExter := (i,j) -> member(i,skewCommIndices) and member(j,skewCommIndices);
-   commRelations := apply(subsets(numgens A,2), s -> A_(s_0)*A_(s_1)+(-1)^(if bothExter(s_0,s_1) then 0 else 1)*A_(s_1)*A_(s_0));
+   commRelations := apply(subsets(numgens A,2), s -> (
+      (i,j) := toSequence s;
+      if weyl then A_i*A_j - A_j*A_i - phi(W_i*W_j - W_j*W_i)
+      else if bothExter(i,j) then A_i*A_j + A_j*A_i
+      else A_i*A_j - A_j*A_i));
    extRelations := apply(skewCommIndices, i -> A_i^2);
-   --- here is the defining ideal of the commutative algebra, inside the tensor algebra
    I := ideal (commRelations | extRelations | ((flatten entries gens ideal R) / phi));
    commIgb := gb ideal R;
    maxDeg := (((flatten entries gens commIgb) / degree) | {{0}}) / sum // max;
@@ -1163,8 +1194,8 @@ ncGraphIdeal RingMap := phi -> (
    psiA := map(C,ambA,drop(gens C, numgens B));
    psiB := map(C,ambB,take(gens C, numgens B));
    liftToAmbB := map(ambB,B,gens ambB);
-   Igb := flatten entries if I.cache.?NCGB then last I.cache.NCGB else gens I;
-   Jgb := flatten entries if J.cache.?NCGB then last J.cache.NCGB else gens J;
+   Igb := flatten entries if ncgbCacheCoversGenerators I then last I.cache.NCGB else gens I;
+   Jgb := flatten entries if ncgbCacheCoversGenerators J then last J.cache.NCGB else gens J;
    K := (ideal (Igb / psiA)) + (ideal (Jgb / psiB)) + 
          ideal apply(numgens A, i -> (psiA ambA_i) - psiB liftToAmbB phi A_i);
    K

@@ -8,11 +8,9 @@ undocumented {sequenceToVariableSymbols,
 	      (net, FreeAlgebra),
 	      (symbol _, FreeAlgebra, ZZ),
 	      (degreesRing, FreeAlgebra),
-	      (describe, FreeAlgebra),
 	      (expression, FreeAlgebra),
 	      (isWellDefined, FreeAlgebra),
 	      (toString, FreeAlgebra),
-	      (toExternalString, FreeAlgebra),
 	      (NewFromMethod, FreeAlgebra, List),
 	      (coefficientRing, FreeAlgebra)}
 
@@ -120,6 +118,26 @@ doc ///
 
 doc ///
    Key
+      (describe, FreeAlgebra)
+   Headline
+      Describe the generators, grading, and weights of a free algebra
+   Usage
+      describe A
+   Inputs
+      A : FreeAlgebra
+   Outputs
+      : Describe
+   Description
+      Text
+         The description includes the coefficient ring, generator names, degrees,
+         and heft vector, along with any explicit weight vectors for the monomial order.
+      Example
+         A = QQ<|x_1..x_4,Degrees=>{1,1,1,2},Weights=>{1,1,1,0}|>
+         describe A
+///
+
+doc ///
+   Key
       normalAutomorphism
       (normalAutomorphism,RingElement)
    Headline
@@ -133,9 +151,10 @@ doc ///
       : RingMap
    Description
       Text
-         Let x be a homogeneous element in a noncommutative ring R. If x is normal then x determines
-	 a graded ring automorphism f of R by x*a = f(x)*a.  This method returns this 
-	 automorphism as a RingMap. 
+         A homogeneous regular normal element $x$ determines a unique graded
+	 automorphism $f$ by $xa = f(a)x$. For a normal zero divisor, the method
+	 returns an automorphism only if the computed maps preserve the defining
+	 relations and are inverse to each other. Otherwise it reports an error.
       Example
          A = QQ<|a,b,c|>
 	 I = ideal {a*b+b*a,a*c+c*a,b*c+c*b}
@@ -170,8 +189,9 @@ doc ///
       : Boolean
    Description
       Text
-         Given an element x in a noncommutative ring R, this method returns
-	 true if Rx=xR.
+         Given a homogeneous element $x$ in a graded free algebra or quotient
+	 $R$ over a commutative coefficient ring, this method returns true if
+	 $Rx=xR$. The element need not be regular.
       Example
          A = QQ<|a,b,c|>
 	 I = ideal {a*b+b*a,a*c+c*a,b*c+c*b}
@@ -913,15 +933,21 @@ doc ///
      S : FreeAlgebraQuotient
    Description
       Text
-         This function converts commutative rings and quotients of 
-	 exterior algebras (i.e. quotients of @ TO PolynomialRing @) to a ring of
-	 type FreeAlgebraQuotient.  
+         This function converts commutative rings, quotients of exterior algebras,
+	 and ordinary Weyl algebras to a ring of type FreeAlgebraQuotient.
       Example
          R = QQ[a,b,c,d, SkewCommutative=>{2,3}]
 	 I = ideal(a*d-b*c)
          S = R/I
 	 S' = toFreeAlgebraQuotient(S)
 	 ideal S'
+      Text
+	 For an ordinary Weyl algebra, the conversion preserves the coordinate-derivative
+	 commutation relations. Homogenized Weyl algebras are not supported.
+      Example
+	 W = QQ[x,dx,WeylAlgebra=>{x=>dx}]
+	 A = toFreeAlgebraQuotient W
+	 A_1*A_0-A_0*A_1
    SeeAlso
       toCommRing
 ///
@@ -1489,9 +1515,12 @@ doc ///
      Text
        This method performs a two-sided Groebner basis calculation of the ideal
        $I$ to the degree $n$ given.  Possible strategies are "Naive", "F4" and "F4Parallel".
-       If no integer is given, the Groebner basis is computed to twice the maximal degree
-       of a generator.  As usual, one must take care not to provide too high of
-       a degree here, as Groebner bases may be infinite in the noncommutative case.
+       The bound is measured using the heft vector of the ring. A generator whose
+       maximum term heft exceeds the bound is not processed. With no bound, the
+       method reuses a cached result only if its cutoff covered all generators.
+       Otherwise it computes to twice the maximum generator heft. As usual, one
+       must take care not to provide too high a bound, as Groebner bases may be
+       infinite in the noncommutative case.
        
        The current state of the algorithm requires the FreeAlgebra to be defined over
        a field, and the "F4" or "F4Parallel" strategies require the base ring to be

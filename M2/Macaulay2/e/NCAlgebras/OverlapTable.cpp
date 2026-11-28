@@ -37,14 +37,9 @@ auto OverlapTable::isFinished(int topDegree) const -> bool
   return (beginIter->first.first > topDegree);
 }
 
-// returns the lowest degree and a pointer to the overlaps
-// in that degree if isFinished returns false.  Otherwise
-// return (-1,nullptr).
-auto OverlapTable::nextDegreeOverlaps() -> std::pair<int,std::deque<Overlap>*>
+auto OverlapTable::nextDegreeOverlaps() -> OverlapMap::iterator
 {
-  auto iter = mOverlapMap.begin();
-  if (iter == mOverlapMap.end()) return std::make_pair(-1,nullptr);
-  return std::make_pair(iter->first.first, &(iter->second));
+  return mOverlapMap.begin();
 }
 
 auto OverlapTable::size() const -> size_t
@@ -57,11 +52,9 @@ auto OverlapTable::size() const -> size_t
   return sum;
 }
 
-auto OverlapTable::removeLowestDegree() -> void
+auto OverlapTable::removeBatch(OverlapMap::iterator batch) -> void
 {
-  auto iter = mOverlapMap.begin();
-  if (iter == mOverlapMap.end()) return;
-  mOverlapMap.erase(iter);
+  mOverlapMap.erase(batch);
 }
 
 auto operator<<(std::ostream& o, Overlap& a) -> std::ostream&

@@ -68,7 +68,7 @@ public:
   bool isPrefix(Word word, int& output) const;
   bool isSuffix(Word word, int& output) const;
   
-  auto isNontrivialSuperword(Word word, int index1, int index2) const -> bool;
+  bool hasInternalSubword(Word word) const;
   
   // return all pairs (i,j), where
   //   the i-th word in the table is w (say)

@@ -68,21 +68,20 @@ void NCF4::compute(int softDegreeLimit)
 {
   while (!mOverlapTable.isFinished(softDegreeLimit))
     {
-      auto degSet = mOverlapTable.nextDegreeOverlaps();
-      auto toBeProcessed = degSet.second;
+      auto batch = mOverlapTable.nextDegreeOverlaps();
+      const auto& toBeProcessed = batch->second;
       if (M2_gbTrace >= 1)
         {
           buffer o;
-          o << "{" << degSet.first << "}(" << toBeProcessed->size() << ")";
+          o << "{" << batch->first.first << "}(" << toBeProcessed.size() << ")";
           emit_wrapped(o.str());
         }
       mScheduler.execute([this,&toBeProcessed]()
       {
-        process(*toBeProcessed);
+        process(toBeProcessed);
       });
       
-      mOverlapTable.removeLowestDegree(); // TODO: suspect line.
-      // we really want to just delete toBeProcessed...
+      mOverlapTable.removeBatch(batch);
       }
 }
 
@@ -250,24 +249,12 @@ auto NCF4::insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void
 
 auto NCF4::isOverlapNecessary(const Overlap& o) -> bool
 {
-  // this function tests if the lead word of the overlap polynomial
-  // of o is a multiple of another pattern in the word table.
-
-  // need to be careful, however, since an overlap lead word is trivially
-  // a multiple of the words used to build it.  These possibilities must be discarded
-  bool retval;
-  Word w;
-  
-  // not optimal.  Should pass information to wordTable for checking.
-  w = createOverlapLeadWord(o);
-  retval = !mWordTable.isNontrivialSuperword(w, std::get<0>(o), std::get<2>(o));
-  return retval;
+  return !mWordTable.hasInternalSubword(createOverlapLeadWord(o));
 }
 
 auto NCF4::checkOldOverlaps(Word& newLeadWord) -> void
 {
-  // this function flags any previous overlaps that properly
-  // contain newLeadWord as no longer necessary.
+  // Use the same strict interior match as for new overlaps.
 
   // the newest overlaps are not yet added at this point
   std::vector<int> startIndices;
@@ -279,14 +266,14 @@ auto NCF4::checkOldOverlaps(Word& newLeadWord) -> void
       if (not std::get<3>(o)) continue;
       if (std::get<1>(o) == -1) continue;
       int overlapLen = std::get<1>(o) + mWordTable[std::get<2>(o)].size();
-      if (overlapLen <= newLeadWord.size()) continue;
+      if (overlapLen - 2 < newLeadWord.size()) continue;
       startIndices.clear();
       // this is not optimal.  Should pass info to word table to avoid creation of another word
       auto w = createOverlapLeadWord(o);
       WordTable::subwordPositions(newLeadWord,w,startIndices);
       for (auto j : startIndices)
       {
-        if (j != 0 or j != w.size() - newLeadWord.size())
+        if (j > 0 && j + newLeadWord.size() < overlapLen)
         {
           if (M2_gbTrace >= 3)
              std::cout << "Reduction avoided using lazy 2nd criterion." << std::endl;        
