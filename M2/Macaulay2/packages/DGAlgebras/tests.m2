@@ -44,6 +44,20 @@ Add = toComplex(A)
 assert(apply(maxDegree(A)+1, i -> prune HH_i(Add)) == {coker vars R,0,0,coker vars R,0,0,0})
 ///
 
+-- With no adjoined generators, the base keeps its internal grading and has homological degree zero.
+TEST ///
+S = QQ[z, Degrees => {2}]
+A = freeDGAlgebra(S,{})
+setDiff(A,{})
+assert(degree promote(S_0,A.natural) == {0,2})
+assert(lift(matrix(A.natural,1),S) == matrix(S,1))
+assert(zerothHomology A === S)
+S = QQ[x,y, Degrees => {{1,0},{0,1}}]
+A = freeDGAlgebra(S,{})
+assert(apply(gens S, t -> degree promote(t,A.natural)) == {{0,1,0},{0,0,1}})
+assert(flatten entries getBasis(0,A) == {1_(A.natural)} and numcols getBasis(1,A) == 0)
+///
+
 TEST ///
 -- test 1 : differential tests
 R = ZZ/101[x,y,z, Degrees => {2,2,3}]
@@ -1200,6 +1214,23 @@ assert(all(0..3, n -> (
 -- non-acyclic complex that happened to have aug-ideal entries.
 -- ============================================================
 
+-- Over QQ[x][y], multiplication by x survives minimization.
+TEST ///
+B = QQ[x]
+S = B[y, Join => false]
+A = koszulComplexDGA ideal(y^2)
+F = freeDGModule(A, {{0,0},{1,1}})
+setDiff(F, {0, promote(x,A.natural) * F.natural_0})
+assert(isWellDefined F and isMinimalSemifreeResolution F)
+Fmin = minimizeDGModule F
+assert(numgens Fmin == 2)
+assert(ann homology(0,Fmin) == ideal(promote(x,S),y^2))
+G = freeDGModule(A, {{0,0},{1,0}})
+setDiff(G, {0, 2 * G.natural_0})
+assert(not isMinimalSemifreeResolution G)
+assert(numgens minimizeDGModule G == 0)
+///
+
 -- Test: on a complete intersection, minimal A-semifree resolution
 -- per-degree ranks match Tor^S(M_S, k) by uniqueness of minimal res.
 TEST ///
@@ -1534,4 +1565,207 @@ ranks = apply(max(F.Degrees / first) + 1, d -> #select(F.Degrees, e -> first e =
 -- MF module has rank-1 periodic resolution
 assert(ranks == {1, 1, 1, 1, 1, 1})
 assert(isMinimalSemifreeResolution F)
+///
+
+-- Start with K(x^2,y^2). Specializing (x,y) to (z,2z) gives K(z^2,4z^2).
+TEST ///
+S = QQ[x,y]
+A = freeDGAlgebra(S,{{1,2},{1,2}})
+setDiff(A,{x^2,y^2},InitializeComplex=>false,InitializeDegreeZeroHomology=>false)
+assert(not A.?dd and not A.?zerothHomology)
+assert(ideal (toComplex(A,2)).dd_1 == ideal(x^2,y^2))
+R = QQ[z]
+B = baseChange(A,map(R,S,{z,2*z}),InitializeComplex=>true,InitializeDegreeZeroHomology=>true)
+assert(B.dd_1 == matrix{{z^2,4*z^2}} and B.dd_1 * B.dd_2 == 0)
+assert(ideal zerothHomology B == ideal z^2)
+-- Keeping only the second generator gives K(y^2) with either initialization.
+C = subDGAlgebra(A,{1},InitializeComplex=>true,InitializeDegreeZeroHomology=>false)
+assert(ideal C.dd_1 == ideal(y^2) and not C.?zerothHomology)
+D = restrictDifferential(A,{1},InitializeComplex=>false,InitializeDegreeZeroHomology=>true)
+assert(not D.?dd and ideal zerothHomology D == ideal(y^2))
+-- Truncation above degree one keeps the closed degree-two generator.
+A = freeDGAlgebra(S,{{1,2},{2,3}})
+setDiff(A,{x^2,0})
+E = truncateGenerators(A,1,InitializeComplex=>false,InitializeDegreeZeroHomology=>true)
+assert(not E.?dd and ideal zerothHomology E == 0)
+assert(degrees E.natural == {{2,3}} and diff(E,E.natural_0) == 0)
+///
+
+-- For the complete intersection (x^2,y^2), Koszul homology is exterior
+-- on the classes of x e_x and y e_y, both of bidegree (1,2).
+TEST ///
+S = QQ[x,y]
+R = S/ideal(x^2,y^2)
+A = koszulComplexDGA R
+cycles1 = getGenerators(A,Verbosity=>2)
+assert(apply(cycles1,degree) == {{1,2},{1,2}})
+assert(all(cycles1,c -> diff(A,c) == 0))
+H = homologyAlgebra(A,Verbosity=>2)
+assert(degrees H == {{1,2},{1,2}})
+(a,b) = toSequence apply(cycles1,c -> homologyClass(A,c))
+assert(a^2 == 0 and b^2 == 0 and a*b != 0 and b*a == -a*b)
+///
+
+TEST ///
+-- For k[x,y]/(x^2,y^3), the bigraded Poincare series of k is
+-- (1+st)^2 / ((1-s^2*t^2)(1-s^2*t^3)).
+P = QQ[x,y]
+R = P/ideal(x^2,y^3)
+D = deviations(R,DegreeLimit=>6)
+assert(D === hashTable{(1,{1})=>2,(2,{2})=>1,(2,{3})=>1})
+q = deviationsToPoincare(D,DegreeLimit=>6)
+(s,t) = toSequence gens ring q
+assert(q == (1+s*t)^2 * (1+s^2*t^2+s^4*t^4+s^6*t^6) * (1+s^2*t^3+s^4*t^6+s^6*t^9))
+U = ZZ[z]
+assert(expandGeomSeries(z,0) == 1_U)
+assert(expandGeomSeries(z,4) == 1+z+z^2+z^3+z^4)
+assert(expandGeomSeries({z^2,z^3},6) == 1+z^2+z^3+z^4+z^5+2*z^6)
+///
+
+TEST ///
+-- The two linear first syzygies of (x,y)^2 give two degree-(2,3) variables.
+S = QQ[x,y]
+I = ideal(x^2,x*y,y^2)
+A = minimalModel(S/I,EndDegree=>1)
+(p,q,r,u,v) = toSequence gens A.natural
+assert(apply({p,q,r,u,v},degree) == {{1,2},{1,2},{1,2},{2,3},{2,3}})
+assert(ideal apply({p,q,r},w -> lift(diff(A,w),S)) == I)
+assert(prune HH_1 A == 0)
+basisMonomials = {p*q,p*r,q*r,u,v}
+assert(set flatten entries getBasis(2,A) == set basisMonomials)
+limited = flatten entries getBasis(2,A,Limit=>2)
+assert(#unique limited == 2 and all(limited,w -> member(w,basisMonomials)))
+///
+
+TEST ///
+-- After killing z, a and b are cycles with d(h)=ab. The triple
+-- product <a,a,b> is the nonzero class of ah, with H_3(A)=0.
+S = QQ[z]
+A = freeDGAlgebra(S,{{1,1},{1,1},{1,1},{3,2}})
+(u,a,b,h) = toSequence gens A.natural
+setDiff(A,{z,0,0,a*b})
+init = hashTable{{0}=>a,{1}=>b}
+(ok,pairs2) = findNaryTrivialMasseyOperation(A,{a,b},init,2)
+assert(ok and diff(A,pairs2#{0,1}) == a*b)
+(ok,triples) = findNaryTrivialMasseyOperation(A,{a,b},pairs2,3)
+assert(not ok and triples#{0,0,1} == a*h)
+H = homologyAlgebra A
+c = homologyClass(A,a*h)
+assert(prune HH_3 A == 0 and c != 0_H)
+assert(masseyTripleProduct(A,a,a,b) == a*h)
+alpha = homologyClass(A,a)
+assert(masseyTripleProduct(A,alpha,alpha,homologyClass(A,b)) == c)
+///
+
+TEST ///
+-- Two independent internal degrees distinguish the two relation shifts.
+P = QQ[x,y,Degrees=>{{1,0},{0,1}}]
+R = P/ideal(x^2,y^3)
+D = deviations(R,DegreeLimit=>4)
+assert(D === hashTable{(1,{1,0})=>1,(1,{0,1})=>1,(2,{2,0})=>1,(2,{0,3})=>1})
+q = deviationsToPoincare(D,DegreeLimit=>4)
+(s,t,u) = toSequence gens ring q
+assert(q == (1+s*t)*(1+s*u)*(1+s^2*t^2+s^4*t^4)*(1+s^2*u^3+s^4*u^6))
+q = deviationsToPoincare(hashTable{1=>2,2=>1},DegreeLimit=>4)
+s = (ring q)_0
+assert(numgens(ring q) == 1 and q == 1+2*s+2*s^2+2*s^3+2*s^4)
+P = QQ[w]
+D = deviations(P/ideal(w),DegreeLimit=>4)
+assert(#D == 0)
+q = deviationsToPoincare(D,DegreeLimit=>4)
+assert(instance(q,RingElement) and q == 1_(ring q))
+///
+
+-- The two Koszul factors both name their first generator T_(1,1).
+TEST ///
+S = QQ[x,y]
+A = koszulComplexDGA ideal(x)
+B = koszulComplexDGA ideal(y)
+C = A ** B
+assert(tensorFactors C === (A,B))
+(i,j) = tensorInclusions C
+u = i.natural(A.natural_0)
+v = j.natural(B.natural_0)
+assert(u == C.natural_0 and v == C.natural_1)
+assert(u*v != 0 and v*u == -u*v)
+assert(diff(C,u*v) == x*v - y*u)
+-- Sending the generator of K(x) to its negative fails the chain condition.
+f = dgAlgebraMap(A,A,matrix{{-A.natural_0}})
+assert(try (toComplexMap(f,AssertWellDefined=>true); false) else true)
+g = toComplexMap(f,AssertWellDefined=>false)
+assert((target g).dd_1 * g_1 != g_0 * (source g).dd_1)
+///
+
+-- The quotient k[x]/(x^3) -> k[x]/(x^2) preserves the degree-one Tor
+-- generator. The cubic relation maps to x times the quadratic relation,
+-- so its degree-two class maps to zero after passing to the residue field.
+TEST ///
+P = QQ[x]
+R = P/ideal(x^3)
+S = R/ideal(x^2)
+f = map(S,R)
+A = acyclicClosure(R,EndDegree=>1)
+B = acyclicClosure(S,EndDegree=>1)
+g = liftToDGMap(B,A,f)
+assert(isWellDefined g)
+assert(g.natural(A.natural_0) == B.natural_0)
+h = torMap(f,GenDegreeLimit=>2)
+assert(degrees source h == {{1,1},{2,3}} and degrees target h == {{1,1},{2,2}})
+assert(h((source h)_0) == (target h)_0 and h((source h)_1) == 0)
+///
+
+-- F resolves S/(x,y) over K(y). Multiplication by 2 lifts on both
+-- generators. A lift to K(y) taking e_0 to 1 would make x a boundary.
+TEST ///
+S = QQ[x,y]
+A = koszulComplexDGA ideal(y)
+F = freeDGModule(A,{{0,0},{1,1}})
+setDiff(F,{0,x*F.natural_0})
+g = liftToDGModuleMap(F,F,2*F.natural_0)
+assert(isWellDefined g and g.natural == 2*id_(F.natural))
+N = freeDGModule(A,{{0,0}})
+assert(try (liftToDGModuleMap(N,F,N.natural_0); false) else true)
+///
+
+-- Left multiplication by two exterior cycles in opposite orders.
+TEST ///
+S = QQ[x]
+A = freeDGAlgebra(S,{{1,1},{1,1}})
+setDiff(A,{0,0})
+U = dgAlgebraMultMap(A,A.natural_0)
+V = dgAlgebraMultMap(A,A.natural_1)
+assert((U_1 * V_0)_(0,0) == 1 and (V_1 * U_0)_(0,0) == -1)
+assert(U_1 * U_0 == 0 and V_1 * V_0 == 0)
+///
+
+-- In degree two, the e*f and t columns of the differential are distinct.
+TEST ///
+S = QQ[x,y]
+A = freeDGAlgebra(S,{{1,1},{1,1},{2,2}})
+(e,f,t) = toSequence gens A.natural
+setDiff(A,{0,0,x*e+y*f})
+assert(entries displayBlockDiff(A,{0,2},{1,0}) == {{x},{y}})
+assert(displayBlockDiff(A,{2,0},{1,0}) == 0)
+///
+
+-- Split off a shifted copy of the Koszul complex on x^2.
+TEST ///
+S = QQ[x,y]
+A = koszulComplexDGA ideal(x^2)
+F = freeDGModule(A, {{0,0},{1,1}})
+setDiff(F, {0, y * F.natural_0})
+N = freeDGModule(A, {{2,0}})
+D = directSum(F,N)
+assert(components D === {F,N})
+j = dgModuleMap(D,F,{D.natural_0,D.natural_1})
+p = dgModuleMap(F,D,{F.natural_0,F.natural_1,0})
+assert(isWellDefined j and isWellDefined p and p*j == 1)
+assert(isInjective j and not isSurjective j)
+assert(isSurjective p and not isInjective p)
+assert(isIsomorphism(p*j) and not isIsomorphism(j*p))
+-- F resolves S/(x^2,y); the extra summand has homology S/(x^2) in degree 2.
+assert(ann homology(0,F) == ideal(x^2,y))
+assert(homology(2,F) == 0 and ann homology(2,D) == ideal(x^2))
+assert(isQuasiIsomorphism(p, Concentration => (0,0)))
+assert(not isQuasiIsomorphism(p, Concentration => (2,2)))
 ///
