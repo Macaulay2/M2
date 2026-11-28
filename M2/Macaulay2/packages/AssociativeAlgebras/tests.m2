@@ -820,6 +820,14 @@ assert(NCReductionTwoSided(a*c-1,NCGB(J,4,Strategy=>"Naive")) == 0);
 ///
 
 TEST ///
+-- ab is derived from xyzb. Neither abc nor ab makes the other's overlap
+-- with bcd redundant: both overlaps have the same word abcd.
+A = QQ<|a,b,c,d,x,y,z,u|>;
+I = ideal(x*y*z-a,y*z*b,a*b*c,b*c*d-u);
+assert(NCReductionTwoSided(a*u,NCGB(I,4,Strategy=>"Naive")) == 0);
+///
+
+TEST ///
 -- Normality requires both inclusions of principal ideals.
 A = QQ<|x,y|>;
 B = A/ideal(x*y,x^2);

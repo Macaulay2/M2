@@ -494,21 +494,9 @@ auto NCGroebner::isOverlapNecessary(Overlap o) const -> bool
   // The criterion below assumes a proper suffix-prefix overlap.
   if (overlapWordLength(o) == mWordTable[std::get<0>(o)].size()) return true;
 
-  // this function tests if the lead word of the overlap polynomial
-  // of o is a multiple of another pattern in the word table.
-
-  // need to be careful, however, since an overlap lead word is trivially
-  // a multiple of the words used to build it.  These possibilities must be discarded
-  bool retval;
-
-  auto A = freeAlgebra();
   Poly tmp;
-  Word w;
-  
   createOverlapLeadWord(tmp,o);
-  w = A.lead_word(tmp);
-  retval = !mWordTable.isNontrivialSuperword(w, std::get<0>(o), std::get<2>(o));
-  return retval;
+  return !mWordTable.hasInternalSubword(freeAlgebra().lead_word(tmp));
 }
 
 // Local Variables:
