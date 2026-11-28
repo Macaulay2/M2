@@ -50,6 +50,7 @@ S = QQ[z, Degrees => {2}]
 A = freeDGAlgebra(S,{})
 setDiff(A,{})
 assert(degree promote(S_0,A.natural) == {0,2})
+assert(lift(matrix(A.natural,1),S) == matrix(S,1))
 assert(zerothHomology A === S)
 S = QQ[x,y, Degrees => {{1,0},{0,1}}]
 A = freeDGAlgebra(S,{})

@@ -297,7 +297,7 @@ freeDGAlgebra (Ring,List) := opts -> (R,degList) -> (
    -- With no generators, specify the grading explicitly: the base lies in homological degree zero.
    if #degList == 0 then (
       A#(symbol natural) = R[varsList, Join => false, DegreeRank => 1 + degreeLength R,
-         DegreeMap => (d -> prepend(0,d))];
+         DegreeMap => (d -> prepend(0,d)), DegreeLift => (d -> drop(d,1))];
    )
    else if isHomogeneous R then (
       -- make sure the degree list has the right form.
@@ -756,14 +756,12 @@ deviationsToPoincare HashTable := opts -> devHash -> (
    n := max(prepend(opts.DegreeLimit,apply(data,first)));
    A := ZZ[S,apply(numInternal,i -> T_i)];
    B := A/ideal (A_0^(n+1));
-   series := 1_B;
-   for entry in data do (
+   1_B * product(data, entry -> (
        (h,internal,multiplicity) := entry;
-       mon := B_0^h * product(#internal,i -> B_(i+1)^(internal#i));
+       mon := B_(prepend(h,internal));
        factor := if even h then expandGeomSeries(mon,n) else 1_B+mon;
-       series = series * factor^multiplicity;
-   );
-   series
+       factor^multiplicity
+   ))
 )
 
 torAlgebra = method(TypicalValue=>Ring, Options=>{GenDegreeLimit=>infinity,RelDegreeLimit=>infinity})
